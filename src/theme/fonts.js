@@ -4,6 +4,7 @@
 // Noto Nastaliq Urdu is an Urdu-capable Nastaliq typeface (OFL — see
 // assets/fonts/OFL.txt). Urdu text must be rendered with it; the system default
 // does not render Nastaliq well.
+import { isRTL } from '../i18n';
 
 // Passed to expo-font's useFonts(): family name -> local asset.
 export const fontAssets = {
@@ -18,3 +19,12 @@ export const fonts = {
     bold: 'NotoNastaliqUrdu-Bold',
   },
 };
+
+// Resolve the font family for the CURRENT locale/direction.
+// Urdu (RTL) must render in Noto Nastaliq; English falls back to the system
+// font (returning undefined lets React Native use the platform default).
+// Returns a family name string, or undefined for the system font.
+export function localeFont(weight = 'regular') {
+  if (!isRTL) return undefined;
+  return weight === 'bold' ? fonts.urdu.bold : fonts.urdu.regular;
+}
