@@ -1,0 +1,22 @@
+-- ============================================================================
+-- 01_schema.sql — DATABASE SOURCE OF TRUTH (schema)
+-- ============================================================================
+-- PASTE YOUR AUTHORITATIVE SCHEMA HERE.
+--
+-- This file, together with 02_policies.sql, is the single source of truth for
+-- the database (per CLAUDE.md). Do not invent a schema; replace this placeholder
+-- with the real schema you provide.
+--
+-- Rules that constrain what goes in this file:
+--   * Tables (summary): profiles, academic_years, classes, subjects, chapters,
+--     questions, students, enrollments, teacher_assignments, assessments,
+--     assessment_questions, submissions, attendance.
+--   * A student's class lives in `enrollments` (scoped to an academic_year),
+--     NEVER as a column on `students`.
+--   * One `questions` table for all ages; `body`/`answer` are jsonb; every
+--     question carries `cognitive_level`.
+--   * No hard-deletes for anything with consequences — use status flags.
+--
+-- Once applied, never edit this file to change an applied object. Schema changes
+-- go through NEW migration files (e.g. db/03_*.sql), never by editing this one.
+-- ============================================================================
