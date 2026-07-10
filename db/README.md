@@ -1,48 +1,62 @@
 # db/ — database source of truth
 
-These SQL files define the Supabase (Postgres) backend. They are the **source of
-truth**; the app is built to match them, not the other way around. Never edit an
-already-applied file to change an applied object — add a new numbered migration
-(`03_*.sql`, `04_*.sql`, …) instead.
+`setup.sql` is the **actual script run against Supabase** and the source of
+truth for the backend. It is a single, idempotent, from-empty setup: it resets
+any prior state, then rebuilds schema + Row-Level Security + starter seed in one
+run.
 
 | File | Purpose |
 | --- | --- |
-| `01_schema.sql` | Tables, types, constraints, indexes. |
-| `02_policies.sql` | Row-Level Security: enable RLS + role-based policies. |
+| `setup.sql` | One-shot Postgres/Supabase setup: reset → schema → RLS → seed → make yourself `developer`. |
 
 ## Run order (Supabase → SQL Editor)
 
-Run these **in order**, one script per query, in your project's SQL Editor
-(Dashboard → SQL Editor → New query → paste → Run):
+There is **one** script. In your project's SQL Editor
+(Dashboard → SQL Editor → New query), paste **all of `setup.sql`** and **Run**:
 
-1. **`01_schema.sql`** — creates the tables. Must succeed before policies.
-2. **`02_policies.sql`** — enables RLS and installs the role-based policies.
-   Running this before the schema exists will error.
-3. **Promote your own account to `developer` (one-time).**
-   First sign in through the app (or create your auth user in
-   Dashboard → Authentication → Users) so a `profiles` row exists for you —
-   new accounts default to the `pending` role with no access. Then run, adjusting
-   the column/table names to match the schema you pasted:
+1. **`setup.sql`** — runs top to bottom in four parts:
+   - **Part 0 — Reset:** drops the tables/functions/triggers so a re-run starts clean.
+   - **Part 1 — Schema:** `profiles`, `academic_years`, `classes`, `subjects`,
+     `chapters`, `questions`, `students`, `enrollments`, `teacher_assignments`,
+     `assessments`, `assessment_questions`, `submissions`, `attendance`, plus a
+     trigger that auto-creates a `profiles` row (`role = 'pending'`) for every new
+     `auth.users` signup.
+   - **Part 2 — RLS:** enables Row-Level Security on every table and installs the
+     role-based policies (`developer`/`admin` = staff, teacher scoped to assigned
+     classes, authenticated read on syllabus/questions).
+   - **Part 3 — Seed:** starter academic year (`2025-26`), two classes (PG,
+     Class 9), sample subjects/chapters, and two sample questions.
+   - **Part 4 — Promote yourself:** upserts a `profiles` row set to `developer`
+     for the `auth.users` row whose email is `axeofodinson@gmail.com`.
 
-   ```sql
-   update public.profiles
-   set    role = 'developer'
-   where  id = (
-     select id from auth.users
-     where  email = 'axeofodinson@gmail.com'
-   );
-   ```
+### Two expected Supabase safety popups
 
-   Verify:
+Both are expected — the script is written to trigger them:
 
-   ```sql
-   select p.role
-   from   public.profiles p
-   join   auth.users u on u.id = p.id
-   where  u.email = 'axeofodinson@gmail.com';
-   -- expect: developer
-   ```
+- **"destructive operations"** → click **Run query** (that's Part 0, the reset).
+- **"without RLS"** → click **Run without RLS** (the policies are installed in
+  Part 2 of the same script).
 
-> If your `profiles` table keys off a different column than `id`/`auth.users.id`,
-> adjust the `where` clause to match the schema in `01_schema.sql`. This is the
-> only manual privilege grant — every other role change happens in-app under RLS.
+### One-time: promote your account to `developer`
+
+Part 4 handles this automatically **as long as your auth user already exists**.
+So sign in through the app once (or create your user in
+Dashboard → Authentication → Users) **before** running `setup.sql`, so
+`auth.users` has your row for Part 4 to match. If you use a different email,
+change it in Part 4. Verify afterward:
+
+```sql
+select p.role
+from   public.profiles p
+join   auth.users u on u.id = p.id
+where  u.email = 'axeofodinson@gmail.com';
+-- expect: developer
+```
+
+## ⚠️ Re-running is destructive
+
+`setup.sql` **drops every table first** (Part 0), so re-running it **erases all
+data** — students, submissions, attendance, grades. That's fine while
+bootstrapping an empty project, but once real data exists, do **not** re-run it.
+From that point, make schema changes with **new additive migration files**
+(`db/002_*.sql`, `db/003_*.sql`, …), never by editing `setup.sql` or re-running it.

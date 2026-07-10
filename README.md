@@ -31,8 +31,7 @@ Project rules live in [`CLAUDE.md`](./CLAUDE.md) and are non-negotiable.
 │   ├── screens/          # Screens (empty — built in CLAUDE.md build order)
 │   └── hooks/            # Custom hooks (empty)
 └── db/
-    ├── 01_schema.sql     # Database schema — SOURCE OF TRUTH
-    ├── 02_policies.sql   # Row-Level Security — SOURCE OF TRUTH
+    ├── setup.sql         # One-shot Supabase setup — SOURCE OF TRUTH
     └── README.md         # How/what to run in the Supabase SQL Editor
 ```
 
