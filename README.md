@@ -18,12 +18,15 @@ Project rules live in [`CLAUDE.md`](./CLAUDE.md) and are non-negotiable.
 ├── app.json              # Expo app config
 ├── babel.config.js       # babel-preset-expo
 ├── .env.example          # Template for Supabase env vars (copy to .env)
+├── assets/
+│   └── fonts/            # Bundled Noto Nastaliq Urdu (.ttf) + OFL.txt — no CDN
 ├── locales/
 │   ├── en.json           # English strings (source of truth for keys)
 │   └── ur.json           # Urdu strings (human-written; never machine-translated)
 ├── src/
 │   ├── lib/supabase.js   # Supabase client (reads env vars only)
-│   ├── i18n/index.js     # i18n + RTL plumbing
+│   ├── i18n/index.js     # i18n + I18nManager RTL toggle
+│   ├── theme/fonts.js    # Bundled font map for expo-font (no CDN)
 │   ├── components/       # Shared UI (empty)
 │   ├── screens/          # Screens (empty — built in CLAUDE.md build order)
 │   └── hooks/            # Custom hooks (empty)
@@ -85,3 +88,12 @@ npm start        # then press i / a, or scan the QR with Expo Go
 - No hardcoded user-facing text — every English key needs an Urdu one.
 - RTL, real empty states, and offline tolerance are part of "done".
 - Roles are enforced by the DB (RLS), not app code.
+
+## Fonts & RTL
+
+The Urdu-capable **Noto Nastaliq Urdu** font is **bundled** into the app
+(`assets/fonts/*.ttf`, loaded via `expo-font`) — never fetched from a CDN, since
+the target network blocks some. It is licensed under the SIL Open Font License
+(`assets/fonts/OFL.txt`). Layout direction is set at startup via
+`applyLayoutDirection()` in `src/i18n/index.js`, which drives React Native's
+`I18nManager` so the whole UI flips LTR/RTL with the active locale.
