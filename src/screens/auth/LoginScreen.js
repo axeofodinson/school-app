@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 
-import { ScreenContainer, Text, Button, TextField } from '../../components';
+import { ScreenContainer, Text, Button, TextField, LanguageSwitch } from '../../components';
 import { useAuth } from '../../auth/AuthProvider';
 import { t } from '../../i18n';
 import { colors, spacing } from '../../theme/colors';
@@ -29,6 +29,7 @@ export default function LoginScreen() {
 
   return (
     <ScreenContainer scroll center>
+      <LanguageSwitch style={styles.language} />
       <Text variant="title">{t('auth.login.title')}</Text>
       <Text variant="subtitle" color={colors.muted} style={styles.subtitle}>
         {t('auth.login.subtitle')}
@@ -83,6 +84,7 @@ export default function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
+  language: { alignSelf: 'center', marginBottom: spacing.xl },
   subtitle: { marginTop: spacing.xs, marginBottom: spacing.lg },
   banner: {
     backgroundColor: '#fef2f2',

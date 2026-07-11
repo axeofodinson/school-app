@@ -2,9 +2,9 @@
 // order (academic year -> classes -> ...). No navigation library yet, so the
 // console switches between its own screens with local state.
 import { useState } from 'react';
-import { StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 
-import { ScreenContainer, Text, Button } from '../../components';
+import { ScreenContainer, Text, Button, LanguageSwitch } from '../../components';
 import { useAuth } from '../../auth/AuthProvider';
 import { t } from '../../i18n';
 import { colors, spacing } from '../../theme/colors';
@@ -58,7 +58,10 @@ export default function ConsoleHomeScreen() {
 
   return (
     <ScreenContainer>
-      <Text variant="title">{t('console.home.title')}</Text>
+      <View style={styles.header}>
+        <Text variant="title">{t('console.home.title')}</Text>
+        <LanguageSwitch />
+      </View>
       <Text variant="body" style={styles.welcome}>
         {t('console.home.welcome', { name })}
       </Text>
@@ -101,6 +104,11 @@ export default function ConsoleHomeScreen() {
 }
 
 const styles = StyleSheet.create({
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   welcome: { marginTop: spacing.sm },
   placeholder: { marginTop: spacing.md },
   nav: { marginTop: spacing.xl },

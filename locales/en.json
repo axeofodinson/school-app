@@ -3,7 +3,10 @@
     "name": "School App"
   },
   "common": {
-    "loading": "Loading…"
+    "loading": "Loading…",
+    "language": "Language",
+    "english": "English",
+    "urdu": "اردو"
   },
   "auth": {
     "login": {

@@ -2,6 +2,7 @@
 // (which screen to show given session + role), so a conditional render is enough.
 // Role routing here is convenience; RLS in db/setup.sql is the real boundary.
 import { useAuth } from '../auth/AuthProvider';
+import { useLanguage } from '../i18n/LanguageProvider';
 import LoadingScreen from '../screens/common/LoadingScreen';
 import LoginScreen from '../screens/auth/LoginScreen';
 import PendingScreen from '../screens/auth/PendingScreen';
@@ -11,6 +12,9 @@ import TeacherHomeScreen from '../screens/teacher/TeacherHomeScreen';
 
 export default function RootNavigator() {
   const { initializing, session, role, profileStatus } = useAuth();
+  // Subscribe to the language so a runtime switch re-renders the whole screen
+  // tree — refreshing every t() string, the layout direction, and the fonts.
+  useLanguage();
 
   if (initializing) return <LoadingScreen />;
   if (!session) return <LoginScreen />;
