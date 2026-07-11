@@ -1,15 +1,23 @@
-// Landing screen for developer/admin. Placeholder home — setup screens follow
-// in the CLAUDE.md build order (academic year -> classes -> ...).
+// Landing screen for developer/admin. Setup screens follow the CLAUDE.md build
+// order (academic year -> classes -> ...). No navigation library yet, so the
+// console switches between its own screens with local state.
+import { useState } from 'react';
 import { StyleSheet } from 'react-native';
 
 import { ScreenContainer, Text, Button } from '../../components';
 import { useAuth } from '../../auth/AuthProvider';
 import { t } from '../../i18n';
 import { colors, spacing } from '../../theme/colors';
+import AcademicYearsScreen from './AcademicYearsScreen';
 
 export default function ConsoleHomeScreen() {
   const { profile, session, signOut } = useAuth();
   const name = profile?.full_name || session?.user?.email || '';
+  const [screen, setScreen] = useState('home'); // 'home' | 'academicYears'
+
+  if (screen === 'academicYears') {
+    return <AcademicYearsScreen onBack={() => setScreen('home')} />;
+  }
 
   return (
     <ScreenContainer>
@@ -20,6 +28,11 @@ export default function ConsoleHomeScreen() {
       <Text variant="body" color={colors.muted} style={styles.placeholder}>
         {t('console.home.placeholder')}
       </Text>
+      <Button
+        label={t('console.home.openAcademicYears')}
+        onPress={() => setScreen('academicYears')}
+        style={styles.nav}
+      />
       <Button
         variant="secondary"
         label={t('auth.signOut')}
@@ -33,5 +46,6 @@ export default function ConsoleHomeScreen() {
 const styles = StyleSheet.create({
   welcome: { marginTop: spacing.sm },
   placeholder: { marginTop: spacing.md },
-  action: { marginTop: spacing.xl },
+  nav: { marginTop: spacing.xl },
+  action: { marginTop: spacing.md },
 });
