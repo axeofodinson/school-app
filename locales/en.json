@@ -47,7 +47,8 @@
       "openClasses": "Manage classes",
       "openSubjects": "Manage subjects",
       "openStudents": "Register students",
-      "openEnrollments": "Manage enrollments"
+      "openEnrollments": "Manage enrollments",
+      "openAssessments": "Build assessments"
     },
     "students": {
       "title": "Students",
@@ -259,6 +260,115 @@
         "network": "No internet connection. Check your network and try again.",
         "unknown": "Couldn’t save. Please try again."
       }
+    },
+    "assessments": {
+      "title": "Assessments",
+      "back": "Back",
+      "subtitleAdmin": "Build tests, quizzes, and exams for a class and subject in %{year}.",
+      "subtitleTeacher": "Build assessments for the classes you teach in %{year}.",
+      "subtitleNoYear": "Build assessments for a class and subject.",
+      "loadError": "Couldn’t load assessment data. Check your connection and try again.",
+      "retry": "Retry",
+      "needYear": "Set a current academic year first — assessments are scoped to a year.",
+      "goToYears": "Go to academic years",
+      "needClass": "Create a class first — an assessment belongs to a class.",
+      "goToClasses": "Go to classes",
+      "noAssignments": "You’re not assigned to any class yet. Ask an admin to add you to a class first.",
+      "tabs": {
+        "build": "Build",
+        "list": "Assessments"
+      },
+      "build": {
+        "heading": "Build an assessment",
+        "editHeading": "Edit assessment",
+        "cancelEdit": "Cancel",
+        "pickClass": "Class",
+        "pickSubject": "Subject",
+        "context": "%{subject} · %{class}",
+        "needSubjects": "This class has no subjects yet. Set up the syllabus first.",
+        "needSubjectsTeacher": "This class has no subjects yet. Ask an admin to set up the syllabus first.",
+        "loadSubjectsError": "Couldn’t load subjects.",
+        "title": "Title",
+        "titlePlaceholder": "e.g. Chapter 1 Test",
+        "type": "Type",
+        "weightage": "Weightage (%)",
+        "weightagePlaceholder": "e.g. 10",
+        "weightageHint": "How much this counts toward the yearly total, as a percent.",
+        "scheduledOn": "Scheduled date",
+        "datePlaceholder": "YYYY-MM-DD",
+        "status": "Status",
+        "questions": "Questions",
+        "questionsHint": "Pick questions from the bank and set the marks for each.",
+        "loadQuestionsError": "Couldn’t load the question bank.",
+        "noQuestions": "No questions in this subject’s chapters yet. Add questions to the bank first.",
+        "noQuestionsTeacher": "No questions in this subject’s chapters yet. Write some questions first.",
+        "marks": "Marks",
+        "selectedCount": {
+          "one": "%{count} question selected",
+          "other": "%{count} questions selected"
+        },
+        "totalMarks": "Total marks: %{total}",
+        "submit": "Create assessment",
+        "submitting": "Creating…",
+        "updateSubmit": "Save changes",
+        "updating": "Saving…",
+        "success": "Assessment “%{title}” saved."
+      },
+      "types": {
+        "assignment": "Assignment",
+        "test": "Test",
+        "exam": "Exam",
+        "quiz": "Quiz"
+      },
+      "questionTypes": {
+        "mcq": "Multiple choice",
+        "multi_select": "Multi-select",
+        "numeric": "Numeric",
+        "short_text": "Short text",
+        "true_false": "True / false",
+        "tap_image": "Tap image",
+        "match": "Match"
+      },
+      "cognitive": {
+        "recall": "Recall",
+        "understand": "Understand",
+        "apply": "Apply",
+        "analyze": "Analyze"
+      },
+      "statuses": {
+        "draft": "Draft",
+        "published": "Published",
+        "closed": "Closed"
+      },
+      "list": {
+        "empty": "No assessments yet — build your first.",
+        "loadError": "Couldn’t load assessments. Check your connection and try again.",
+        "count": {
+          "one": "%{count} assessment",
+          "other": "%{count} assessments"
+        },
+        "meta": "%{subject} · %{class}",
+        "questionCount": {
+          "one": "%{count} question",
+          "other": "%{count} questions"
+        },
+        "marks": "%{total} marks",
+        "weightage": "%{weightage}% weight",
+        "scheduled": "Scheduled %{date}",
+        "notScheduled": "No date set",
+        "edit": "Edit"
+      },
+      "errors": {
+        "titleRequired": "Enter a title for the assessment.",
+        "classRequired": "Choose a class.",
+        "subjectRequired": "Choose a subject.",
+        "weightageInvalid": "Weightage must be a number between 0 and 100.",
+        "dateInvalid": "Use the date format YYYY-MM-DD.",
+        "marksInvalid": "Marks for each question must be a whole number between 1 and 100.",
+        "needQuestions": "Add at least one question before publishing.",
+        "network": "No internet connection. Check your network and try again.",
+        "unknown": "Couldn’t save. Please try again."
+      }
     }
   },
   "teacher": {
@@ -266,7 +376,8 @@
       "title": "Teacher home",
       "welcome": "Welcome, %{name}",
       "placeholder": "Your classes will appear here.",
-      "openQuestions": "Write questions"
+      "openQuestions": "Write questions",
+      "openAssessments": "Build assessments"
     },
     "questions": {
       "title": "Questions",

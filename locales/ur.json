@@ -47,7 +47,8 @@
       "openClasses": "کلاسیں منیج کریں",
       "openSubjects": "مضامین منیج کریں",
       "openStudents": "طلبہ کا اندراج",
-      "openEnrollments": "داخلے منیج کریں"
+      "openEnrollments": "داخلے منیج کریں",
+      "openAssessments": "ٹیسٹ اور امتحان بنائیں"
     },
     "students": {
       "title": "طلبہ",
@@ -259,6 +260,115 @@
         "network": "انٹرنیٹ نہیں ہے۔ کنکشن چیک کر کے دوبارہ کوشش کریں۔",
         "unknown": "محفوظ نہیں ہو سکا۔ دوبارہ کوشش کریں۔"
       }
+    },
+    "assessments": {
+      "title": "ٹیسٹ اور امتحان",
+      "back": "واپس",
+      "subtitleAdmin": "%{year} میں کسی کلاس اور مضمون کے لیے ٹیسٹ، کوئز اور امتحان بنائیں۔",
+      "subtitleTeacher": "%{year} میں آپ جو کلاسیں پڑھاتے ہیں، اُن کے لیے ٹیسٹ بنائیں۔",
+      "subtitleNoYear": "کسی کلاس اور مضمون کے لیے ٹیسٹ بنائیں۔",
+      "loadError": "ڈیٹا لوڈ نہیں ہو سکا۔ کنکشن چیک کر کے دوبارہ کوشش کریں۔",
+      "retry": "دوبارہ کوشش کریں",
+      "needYear": "پہلے موجودہ تعلیمی سال مقرر کریں — ٹیسٹ سال سے جُڑا ہوتا ہے۔",
+      "goToYears": "تعلیمی سال پر جائیں",
+      "needClass": "پہلے ایک کلاس بنائیں — ٹیسٹ کسی کلاس سے جُڑا ہوتا ہے۔",
+      "goToClasses": "کلاسوں پر جائیں",
+      "noAssignments": "آپ ابھی کسی کلاس سے منسلک نہیں ہیں۔ پہلے ایڈمن سے کہیں کہ آپ کو کسی کلاس میں شامل کرے۔",
+      "tabs": {
+        "build": "بنائیں",
+        "list": "سب ٹیسٹ"
+      },
+      "build": {
+        "heading": "نیا ٹیسٹ بنائیں",
+        "editHeading": "ٹیسٹ میں تبدیلی",
+        "cancelEdit": "منسوخ",
+        "pickClass": "کلاس",
+        "pickSubject": "مضمون",
+        "context": "%{subject} · %{class}",
+        "needSubjects": "اِس کلاس میں ابھی کوئی مضمون نہیں۔ پہلے سلیبس بنائیں۔",
+        "needSubjectsTeacher": "اِس کلاس میں ابھی کوئی مضمون نہیں۔ پہلے ایڈمن سے سلیبس بنوائیں۔",
+        "loadSubjectsError": "مضامین لوڈ نہیں ہو سکے۔",
+        "title": "عنوان",
+        "titlePlaceholder": "مثلاً باب 1 کا ٹیسٹ",
+        "type": "قسم",
+        "weightage": "وزن (%)",
+        "weightagePlaceholder": "مثلاً 10",
+        "weightageHint": "یہ سالانہ نتیجے میں کتنا شمار ہوگا، فیصد میں۔",
+        "scheduledOn": "تاریخ",
+        "datePlaceholder": "YYYY-MM-DD",
+        "status": "حالت",
+        "questions": "سوالات",
+        "questionsHint": "بینک سے سوال چنیں اور ہر ایک کے نمبر مقرر کریں۔",
+        "loadQuestionsError": "سوالات کا بینک لوڈ نہیں ہو سکا۔",
+        "noQuestions": "اِس مضمون کے ابواب میں ابھی کوئی سوال نہیں۔ پہلے بینک میں سوال شامل کریں۔",
+        "noQuestionsTeacher": "اِس مضمون کے ابواب میں ابھی کوئی سوال نہیں۔ پہلے کچھ سوال بنائیں۔",
+        "marks": "نمبر",
+        "selectedCount": {
+          "one": "%{count} سوال چنا گیا",
+          "other": "%{count} سوال چنے گئے"
+        },
+        "totalMarks": "کل نمبر: %{total}",
+        "submit": "ٹیسٹ بنائیں",
+        "submitting": "بن رہا ہے…",
+        "updateSubmit": "تبدیلیاں محفوظ کریں",
+        "updating": "محفوظ ہو رہا ہے…",
+        "success": "ٹیسٹ “%{title}” محفوظ ہو گیا۔"
+      },
+      "types": {
+        "assignment": "اسائنمنٹ",
+        "test": "ٹیسٹ",
+        "exam": "امتحان",
+        "quiz": "کوئز"
+      },
+      "questionTypes": {
+        "mcq": "کثیر الانتخاب",
+        "multi_select": "کئی درست",
+        "numeric": "عددی",
+        "short_text": "مختصر جواب",
+        "true_false": "درست / غلط",
+        "tap_image": "تصویر پر ٹیپ",
+        "match": "جوڑ ملائیں"
+      },
+      "cognitive": {
+        "recall": "یاد",
+        "understand": "سمجھ",
+        "apply": "اطلاق",
+        "analyze": "تجزیہ"
+      },
+      "statuses": {
+        "draft": "ڈرافٹ",
+        "published": "جاری",
+        "closed": "بند"
+      },
+      "list": {
+        "empty": "ابھی کوئی ٹیسٹ نہیں — پہلا بنائیں۔",
+        "loadError": "ٹیسٹ لوڈ نہیں ہو سکے۔ کنکشن چیک کر کے دوبارہ کوشش کریں۔",
+        "count": {
+          "one": "%{count} ٹیسٹ",
+          "other": "%{count} ٹیسٹ"
+        },
+        "meta": "%{subject} · %{class}",
+        "questionCount": {
+          "one": "%{count} سوال",
+          "other": "%{count} سوالات"
+        },
+        "marks": "%{total} نمبر",
+        "weightage": "%{weightage}% وزن",
+        "scheduled": "تاریخ %{date}",
+        "notScheduled": "کوئی تاریخ نہیں",
+        "edit": "تبدیلی"
+      },
+      "errors": {
+        "titleRequired": "ٹیسٹ کا عنوان لکھیں۔",
+        "classRequired": "کوئی کلاس منتخب کریں۔",
+        "subjectRequired": "کوئی مضمون منتخب کریں۔",
+        "weightageInvalid": "وزن 0 اور 100 کے درمیان نمبر ہونا چاہیے۔",
+        "dateInvalid": "تاریخ اِس طرح لکھیں: YYYY-MM-DD۔",
+        "marksInvalid": "ہر سوال کے نمبر 1 اور 100 کے درمیان پورا عدد ہونے چاہئیں۔",
+        "needQuestions": "جاری کرنے سے پہلے کم از کم ایک سوال شامل کریں۔",
+        "network": "انٹرنیٹ نہیں ہے۔ کنکشن چیک کر کے دوبارہ کوشش کریں۔",
+        "unknown": "محفوظ نہیں ہو سکا۔ دوبارہ کوشش کریں۔"
+      }
     }
   },
   "teacher": {
@@ -266,7 +376,8 @@
       "title": "ٹیچر ہوم",
       "welcome": "خوش آمدید، %{name}",
       "placeholder": "آپ کی کلاسیں یہاں نظر آئیں گی۔",
-      "openQuestions": "سوال بنائیں"
+      "openQuestions": "سوال بنائیں",
+      "openAssessments": "ٹیسٹ اور امتحان بنائیں"
     },
     "questions": {
       "title": "سوالات",
