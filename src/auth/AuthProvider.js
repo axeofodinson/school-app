@@ -1,7 +1,13 @@
-// Staff authentication (admin/teacher) over Supabase Auth email/password.
+// Authentication over Supabase Auth. Two separate sign-in paths share the same
+// underlying session, profile load, and role routing:
 //
-// This is the STAFF flow only. Students never sign in with email/password — they
-// use a school-issued roll number + PIN (a separate flow, not built here).
+//   * STAFF (admin/teacher) — email + password (signIn).
+//   * STUDENT — a school-issued identity: class + roll number + PIN
+//     (studentSignIn). A child NEVER creates an email account. Under the hood a
+//     student has a Supabase account with a synthesized, non-routable email and
+//     the PIN as its password (see db/004_student_login.sql); studentSignIn
+//     just maps the kid-friendly identity to that account and signs in, so all
+//     the session plumbing below is reused unchanged.
 //
 // Routing by role is a convenience: the real security boundary is Row-Level
 // Security in the database (db/setup.sql). A teacher who reaches a screen they
@@ -118,6 +124,34 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
+  // Student sign-in: class + roll number + PIN. Maps the school identity to the
+  // student's synthesized Supabase account (via the student_login_email RPC),
+  // then signs in with the PIN. Returns an i18n key under `auth.studentErrors`,
+  // or null on success. classId is a uuid; rollNumber is an int; pin a string.
+  const studentSignIn = useCallback(async (classId, rollNumber, pin) => {
+    try {
+      const { data: email, error: lookupError } = await supabase.rpc(
+        'student_login_email',
+        { p_class_id: classId, p_roll: rollNumber }
+      );
+      if (lookupError) {
+        return classifyAuthError(lookupError) === 'network' ? 'network' : 'unknown';
+      }
+      // No active enrollment for that class + roll in the current year.
+      if (!email) return 'notFound';
+
+      const { error } = await supabase.auth.signInWithPassword({ email, password: pin });
+      if (!error) return null;
+      // A wrong PIN surfaces as invalid credentials — say "wrong PIN", not the
+      // staff-flavoured "email or password".
+      const key = classifyAuthError(error);
+      if (key === 'invalidCredentials') return 'wrongPin';
+      return key === 'network' ? 'network' : 'unknown';
+    } catch (e) {
+      return classifyAuthError(e) === 'network' ? 'network' : 'unknown';
+    }
+  }, []);
+
   const signOut = useCallback(async () => {
     await supabase.auth.signOut();
   }, []);
@@ -133,6 +167,7 @@ export function AuthProvider({ children }) {
     role: profile?.role ?? null,
     profileStatus,
     signIn,
+    studentSignIn,
     signOut,
     retryProfile,
   };

@@ -18,7 +18,33 @@
       "passwordPlaceholder": "Your password",
       "submit": "Sign in",
       "submitting": "Signing in…",
-      "studentNote": "Students: use the student app to sign in with your roll number."
+      "studentNote": "Students: use the student app to sign in with your roll number.",
+      "studentLink": "Student sign in"
+    },
+    "student": {
+      "title": "Student sign in",
+      "subtitle": "Pick your class, then your roll number and PIN",
+      "pickClass": "Your class",
+      "loadingClasses": "Loading classes…",
+      "classesError": "Couldn’t load classes. Tap to try again.",
+      "noClasses": "No classes yet. Ask your teacher to set up your class first.",
+      "rollNumber": "Roll number",
+      "rollNumberPlaceholder": "e.g. 12",
+      "pin": "PIN",
+      "pinPlaceholder": "Your secret PIN",
+      "submit": "Go",
+      "submitting": "Signing in…",
+      "staffLink": "Teacher or admin?",
+      "staffLinkAction": "Staff sign in"
+    },
+    "studentErrors": {
+      "missingClass": "Tap your class first.",
+      "missingRoll": "Type your roll number.",
+      "missingPin": "Type your PIN.",
+      "notFound": "We couldn’t find that roll number in this class. Check with your teacher.",
+      "wrongPin": "That PIN isn’t right. Try again.",
+      "network": "No internet. Check your connection and try again.",
+      "unknown": "Something went wrong. Try again."
     },
     "errors": {
       "missingFields": "Enter your email and password.",
@@ -37,6 +63,19 @@
       "retry": "Retry"
     },
     "signOut": "Sign out"
+  },
+  "student": {
+    "home": {
+      "title": "Home",
+      "greeting": "Hi, %{name}!",
+      "welcome": "Welcome back!",
+      "placeholder": "Your tests and scores will show up here.",
+      "assessments": "My tests",
+      "scores": "My scores",
+      "attendance": "My attendance",
+      "comingSoon": "Coming soon",
+      "signOut": "Sign out"
+    }
   },
   "console": {
     "home": {

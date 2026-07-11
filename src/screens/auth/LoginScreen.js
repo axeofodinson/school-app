@@ -1,14 +1,15 @@
 // Staff sign-in (admin/teacher) — email + password over Supabase Auth.
-// On success the auth listener re-routes and this screen unmounts.
+// On success the auth listener re-routes and this screen unmounts. Students use
+// a separate flow (StudentLoginScreen); `onStudent` links back to it.
 import { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, Pressable, StyleSheet } from 'react-native';
 
 import { ScreenContainer, Text, Button, TextField, LanguageSwitch } from '../../components';
 import { useAuth } from '../../auth/AuthProvider';
 import { t } from '../../i18n';
 import { colors, spacing } from '../../theme/colors';
 
-export default function LoginScreen() {
+export default function LoginScreen({ onStudent }) {
   const { signIn } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -76,9 +77,16 @@ export default function LoginScreen() {
         style={styles.submit}
       />
 
-      <Text variant="caption" color={colors.muted} align="center" style={styles.studentNote}>
-        {t('auth.login.studentNote')}
-      </Text>
+      <Pressable
+        onPress={onStudent}
+        accessibilityRole="button"
+        hitSlop={8}
+        style={styles.studentLink}
+      >
+        <Text variant="label" color={colors.primary} align="center">
+          {t('auth.login.studentLink')}
+        </Text>
+      </Pressable>
     </ScreenContainer>
   );
 }
@@ -95,5 +103,5 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   submit: { marginTop: spacing.sm },
-  studentNote: { marginTop: spacing.lg },
+  studentLink: { marginTop: spacing.xl, alignSelf: 'center' },
 });

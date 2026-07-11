@@ -4,11 +4,12 @@
 import { useAuth } from '../auth/AuthProvider';
 import { useLanguage } from '../i18n/LanguageProvider';
 import LoadingScreen from '../screens/common/LoadingScreen';
-import LoginScreen from '../screens/auth/LoginScreen';
+import AuthLanding from '../screens/auth/AuthLanding';
 import PendingScreen from '../screens/auth/PendingScreen';
 import ProfileErrorScreen from '../screens/auth/ProfileErrorScreen';
 import ConsoleHomeScreen from '../screens/console/ConsoleHomeScreen';
 import TeacherHomeScreen from '../screens/teacher/TeacherHomeScreen';
+import StudentHomeScreen from '../screens/student/StudentHomeScreen';
 
 export default function RootNavigator() {
   const { initializing, session, role, profileStatus } = useAuth();
@@ -17,7 +18,7 @@ export default function RootNavigator() {
   useLanguage();
 
   if (initializing) return <LoadingScreen />;
-  if (!session) return <LoginScreen />;
+  if (!session) return <AuthLanding />;
 
   // Signed in — resolve the profile before routing by role.
   if (profileStatus === 'idle' || profileStatus === 'loading') return <LoadingScreen />;
@@ -25,7 +26,8 @@ export default function RootNavigator() {
 
   if (role === 'developer' || role === 'admin') return <ConsoleHomeScreen />;
   if (role === 'teacher') return <TeacherHomeScreen />;
+  if (role === 'student') return <StudentHomeScreen />;
 
-  // pending, student, parent, or unknown → no console access.
+  // pending, parent, or unknown → no home yet.
   return <PendingScreen />;
 }
