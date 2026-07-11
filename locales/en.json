@@ -1,0 +1,52 @@
+{
+  "app": {
+    "name": "School App"
+  },
+  "common": {
+    "loading": "Loading…"
+  },
+  "auth": {
+    "login": {
+      "title": "Staff sign in",
+      "subtitle": "For admins and teachers",
+      "email": "Email",
+      "emailPlaceholder": "you@school.edu",
+      "password": "Password",
+      "passwordPlaceholder": "Your password",
+      "submit": "Sign in",
+      "submitting": "Signing in…",
+      "studentNote": "Students: use the student app to sign in with your roll number."
+    },
+    "errors": {
+      "missingFields": "Enter your email and password.",
+      "invalidCredentials": "Email or password is incorrect.",
+      "network": "No internet connection. Check your network and try again.",
+      "unknown": "Something went wrong. Please try again."
+    },
+    "pending": {
+      "title": "Awaiting access",
+      "body": "Your account isn’t active yet. An admin needs to approve it before you can use the console.",
+      "signedInAs": "Signed in as %{email}"
+    },
+    "profileError": {
+      "title": "Couldn’t load your account",
+      "body": "We couldn’t reach the server. Check your connection and try again.",
+      "retry": "Retry"
+    },
+    "signOut": "Sign out"
+  },
+  "console": {
+    "home": {
+      "title": "Console",
+      "welcome": "Welcome, %{name}",
+      "placeholder": "Admin console — setup screens are coming next."
+    }
+  },
+  "teacher": {
+    "home": {
+      "title": "Teacher home",
+      "welcome": "Welcome, %{name}",
+      "placeholder": "Your classes will appear here."
+    }
+  }
+}

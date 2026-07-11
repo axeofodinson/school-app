@@ -15,15 +15,19 @@ App Store.
 ## Stack
 - **Backend:** Supabase (Postgres + Auth + Row-Level Security + Storage).
 - **Frontend:** Expo (React Native), one JS codebase for iOS + Android.
-- **DB source of truth:** `db/01_schema.sql`, `db/02_policies.sql`. Never invent a
-  new schema — build on these. Schema changes go through new migration files, never
-  by editing applied ones. The tables are summarized below so you don't have to open
-  those files to know the shape; open them only when you need exact column types.
+- **DB source of truth:** `db/setup.sql` — the one-shot Postgres/Supabase script
+  actually run against the project (reset → schema → RLS → seed → promote
+  developer). Never invent a new schema — build on this. `setup.sql` is
+  from-empty bootstrapping and its Part 0 reset is destructive; once real data
+  exists, do NOT re-run or edit it. Further schema changes go through new additive
+  migration files (`db/002_*.sql`, `db/003_*.sql`, …), never by editing applied
+  ones. The tables are summarized below so you don't have to open the file to know
+  the shape; open it only when you need exact column types.
 - **No CDN dependencies for critical libs** — the target network blocks some CDNs.
   Bundle/vendor what the app needs.
 
 ## Data model (summary)
-Full definitions in `db/01_schema.sql`; this is the shape you need day to day.
+Full definitions in `db/setup.sql`; this is the shape you need day to day.
 
 - **profiles** — one row per login account; `role` drives all access
   (developer / admin / teacher / student / parent / pending). New signups default
