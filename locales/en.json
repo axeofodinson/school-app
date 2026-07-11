@@ -39,7 +39,39 @@
     "home": {
       "title": "Console",
       "welcome": "Welcome, %{name}",
-      "placeholder": "Admin console — setup screens are coming next."
+      "placeholder": "Admin console — setup screens are coming next.",
+      "openAcademicYears": "Manage academic years"
+    },
+    "academicYears": {
+      "title": "Academic years",
+      "back": "Back",
+      "subtitle": "Set up the school years everything else is scoped to.",
+      "empty": "No academic year yet — create one to begin.",
+      "current": "Current",
+      "setCurrent": "Set current",
+      "dateRange": "%{start} – %{end}",
+      "noDates": "No dates set",
+      "loadError": "Couldn’t load academic years. Check your connection and try again.",
+      "retry": "Retry",
+      "form": {
+        "heading": "Add an academic year",
+        "label": "Label",
+        "labelPlaceholder": "2025-26",
+        "startsOn": "Start date",
+        "endsOn": "End date",
+        "datePlaceholder": "YYYY-MM-DD",
+        "isCurrent": "Make this the current year",
+        "submit": "Create",
+        "submitting": "Creating…"
+      },
+      "errors": {
+        "labelRequired": "Enter a label, e.g. 2025-26.",
+        "labelExists": "An academic year with this label already exists.",
+        "invalidDate": "Use the date format YYYY-MM-DD.",
+        "dateOrder": "The end date must be after the start date.",
+        "network": "No internet connection. Check your network and try again.",
+        "unknown": "Couldn’t save. Please try again."
+      }
     }
   },
   "teacher": {
