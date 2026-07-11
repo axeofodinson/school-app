@@ -9,14 +9,19 @@ import { useAuth } from '../../auth/AuthProvider';
 import { t } from '../../i18n';
 import { colors, spacing } from '../../theme/colors';
 import QuestionAuthoringScreen from './QuestionAuthoringScreen';
+import AssessmentBuilderScreen from '../console/AssessmentBuilderScreen';
 
 export default function TeacherHomeScreen() {
   const { profile, session, signOut } = useAuth();
   const name = profile?.full_name || session?.user?.email || '';
-  const [screen, setScreen] = useState('home'); // 'home' | 'questions'
+  const [screen, setScreen] = useState('home'); // 'home' | 'questions' | 'assessments'
 
   if (screen === 'questions') {
     return <QuestionAuthoringScreen onBack={() => setScreen('home')} />;
+  }
+
+  if (screen === 'assessments') {
+    return <AssessmentBuilderScreen onBack={() => setScreen('home')} />;
   }
 
   return (
@@ -35,6 +40,11 @@ export default function TeacherHomeScreen() {
         label={t('teacher.home.openQuestions')}
         onPress={() => setScreen('questions')}
         style={styles.nav}
+      />
+      <Button
+        label={t('teacher.home.openAssessments')}
+        onPress={() => setScreen('assessments')}
+        style={styles.action}
       />
       <Button
         variant="secondary"
