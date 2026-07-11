@@ -9,14 +9,24 @@ import { useAuth } from '../../auth/AuthProvider';
 import { t } from '../../i18n';
 import { colors, spacing } from '../../theme/colors';
 import AcademicYearsScreen from './AcademicYearsScreen';
+import ClassesScreen from './ClassesScreen';
 
 export default function ConsoleHomeScreen() {
   const { profile, session, signOut } = useAuth();
   const name = profile?.full_name || session?.user?.email || '';
-  const [screen, setScreen] = useState('home'); // 'home' | 'academicYears'
+  const [screen, setScreen] = useState('home'); // 'home' | 'academicYears' | 'classes'
 
   if (screen === 'academicYears') {
     return <AcademicYearsScreen onBack={() => setScreen('home')} />;
+  }
+
+  if (screen === 'classes') {
+    return (
+      <ClassesScreen
+        onBack={() => setScreen('home')}
+        onManageYears={() => setScreen('academicYears')}
+      />
+    );
   }
 
   return (
@@ -32,6 +42,11 @@ export default function ConsoleHomeScreen() {
         label={t('console.home.openAcademicYears')}
         onPress={() => setScreen('academicYears')}
         style={styles.nav}
+      />
+      <Button
+        label={t('console.home.openClasses')}
+        onPress={() => setScreen('classes')}
+        style={styles.action}
       />
       <Button
         variant="secondary"
