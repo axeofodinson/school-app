@@ -10,11 +10,12 @@ import { t } from '../../i18n';
 import { colors, spacing } from '../../theme/colors';
 import AcademicYearsScreen from './AcademicYearsScreen';
 import ClassesScreen from './ClassesScreen';
+import SubjectsScreen from './SubjectsScreen';
 
 export default function ConsoleHomeScreen() {
   const { profile, session, signOut } = useAuth();
   const name = profile?.full_name || session?.user?.email || '';
-  const [screen, setScreen] = useState('home'); // 'home' | 'academicYears' | 'classes'
+  const [screen, setScreen] = useState('home'); // 'home' | 'academicYears' | 'classes' | 'subjects'
 
   if (screen === 'academicYears') {
     return <AcademicYearsScreen onBack={() => setScreen('home')} />;
@@ -25,6 +26,15 @@ export default function ConsoleHomeScreen() {
       <ClassesScreen
         onBack={() => setScreen('home')}
         onManageYears={() => setScreen('academicYears')}
+      />
+    );
+  }
+
+  if (screen === 'subjects') {
+    return (
+      <SubjectsScreen
+        onBack={() => setScreen('home')}
+        onManageClasses={() => setScreen('classes')}
       />
     );
   }
@@ -46,6 +56,11 @@ export default function ConsoleHomeScreen() {
       <Button
         label={t('console.home.openClasses')}
         onPress={() => setScreen('classes')}
+        style={styles.action}
+      />
+      <Button
+        label={t('console.home.openSubjects')}
+        onPress={() => setScreen('subjects')}
         style={styles.action}
       />
       <Button

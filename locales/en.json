@@ -41,7 +41,8 @@
       "welcome": "Welcome, %{name}",
       "placeholder": "Admin console — setup screens are coming next.",
       "openAcademicYears": "Manage academic years",
-      "openClasses": "Manage classes"
+      "openClasses": "Manage classes",
+      "openSubjects": "Manage subjects"
     },
     "classes": {
       "title": "Classes",
@@ -69,6 +70,53 @@
         "gradeRequired": "Enter a grade level.",
         "gradeInvalid": "Grade level must be a whole number.",
         "gradeRange": "Grade level must be between -5 and 10.",
+        "network": "No internet connection. Check your network and try again.",
+        "unknown": "Couldn’t save. Please try again."
+      }
+    },
+    "subjects": {
+      "title": "Subjects",
+      "back": "Back",
+      "subtitle": "Add the subjects taught in each class.",
+      "pickClass": "Class",
+      "needClass": "Create a class first — subjects belong to a class.",
+      "goToClasses": "Go to classes",
+      "openChapters": "Chapters",
+      "empty": "No subjects in this class yet — add the first.",
+      "loadError": "Couldn’t load subjects. Check your connection and try again.",
+      "retry": "Retry",
+      "form": {
+        "heading": "Add a subject",
+        "name": "Name",
+        "namePlaceholder": "Mathematics, Urdu, Science",
+        "submit": "Create",
+        "submitting": "Creating…"
+      },
+      "errors": {
+        "nameRequired": "Enter a subject name.",
+        "nameExists": "This class already has a subject with that name.",
+        "network": "No internet connection. Check your network and try again.",
+        "unknown": "Couldn’t save. Please try again."
+      }
+    },
+    "chapters": {
+      "title": "Chapters",
+      "back": "Back",
+      "subtitle": "Chapters in %{subject}. Use the arrows to reorder them.",
+      "empty": "No chapters in this subject yet — add the first.",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "loadError": "Couldn’t load chapters. Check your connection and try again.",
+      "retry": "Retry",
+      "form": {
+        "heading": "Add a chapter",
+        "title": "Title",
+        "titlePlaceholder": "Motion, Fractions, Verbs",
+        "submit": "Create",
+        "submitting": "Creating…"
+      },
+      "errors": {
+        "titleRequired": "Enter a chapter title.",
         "network": "No internet connection. Check your network and try again.",
         "unknown": "Couldn’t save. Please try again."
       }
