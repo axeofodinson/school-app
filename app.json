@@ -7,6 +7,10 @@
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
     "scheme": "schoolapp",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
     "assetBundlePatterns": [
       "**/*"
     ],
