@@ -3,28 +3,31 @@ import { StatusBar } from 'expo-status-bar';
 import { useFonts } from 'expo-font';
 
 import { fontAssets } from './src/theme/fonts';
-import { applyLayoutDirection } from './src/i18n';
+import { loadPersistedLocale } from './src/i18n';
+import { LanguageProvider } from './src/i18n/LanguageProvider';
 import { AuthProvider } from './src/auth/AuthProvider';
 import RootNavigator from './src/navigation/RootNavigator';
 
-// Apply the RTL/LTR layout direction as early as possible, before first render.
-applyLayoutDirection();
-
 export default function App() {
   const [fontsLoaded, fontError] = useFonts(fontAssets);
-  const [ready, setReady] = useState(false);
+  const [localeLoaded, setLocaleLoaded] = useState(false);
 
   useEffect(() => {
-    // Bundled fonts either finish loading or error; either way, stop blocking.
-    if (fontsLoaded || fontError) setReady(true);
-  }, [fontsLoaded, fontError]);
+    // Restore the saved language/direction before the first render, so the app
+    // opens in the language the user last chose.
+    loadPersistedLocale().finally(() => setLocaleLoaded(true));
+  }, []);
 
-  if (!ready) return null; // keep the native splash up until fonts resolve
+  // Keep the native splash up until fonts resolve and the locale is restored.
+  const ready = (fontsLoaded || fontError) && localeLoaded;
+  if (!ready) return null;
 
   return (
-    <AuthProvider>
-      <StatusBar style="auto" />
-      <RootNavigator />
-    </AuthProvider>
+    <LanguageProvider>
+      <AuthProvider>
+        <StatusBar style="auto" />
+        <RootNavigator />
+      </AuthProvider>
+    </LanguageProvider>
   );
 }

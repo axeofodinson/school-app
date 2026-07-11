@@ -1,8 +1,8 @@
 // Landing screen for teachers. Placeholder home — assigned classes/subjects
 // (teacher-scoped by RLS) will populate this later.
-import { StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 
-import { ScreenContainer, Text, Button } from '../../components';
+import { ScreenContainer, Text, Button, LanguageSwitch } from '../../components';
 import { useAuth } from '../../auth/AuthProvider';
 import { t } from '../../i18n';
 import { colors, spacing } from '../../theme/colors';
@@ -13,7 +13,10 @@ export default function TeacherHomeScreen() {
 
   return (
     <ScreenContainer>
-      <Text variant="title">{t('teacher.home.title')}</Text>
+      <View style={styles.header}>
+        <Text variant="title">{t('teacher.home.title')}</Text>
+        <LanguageSwitch />
+      </View>
       <Text variant="body" style={styles.welcome}>
         {t('teacher.home.welcome', { name })}
       </Text>
@@ -31,6 +34,11 @@ export default function TeacherHomeScreen() {
 }
 
 const styles = StyleSheet.create({
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   welcome: { marginTop: spacing.sm },
   placeholder: { marginTop: spacing.md },
   action: { marginTop: spacing.xl },

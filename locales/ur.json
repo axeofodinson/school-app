@@ -3,7 +3,10 @@
     "name": "اسکول ایپ"
   },
   "common": {
-    "loading": "لوڈ ہو رہا ہے…"
+    "loading": "لوڈ ہو رہا ہے…",
+    "language": "زبان",
+    "english": "English",
+    "urdu": "اردو"
   },
   "auth": {
     "login": {
