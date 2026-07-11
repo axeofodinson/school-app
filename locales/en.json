@@ -43,7 +43,8 @@
       "openAcademicYears": "Manage academic years",
       "openClasses": "Manage classes",
       "openSubjects": "Manage subjects",
-      "openStudents": "Register students"
+      "openStudents": "Register students",
+      "openEnrollments": "Manage enrollments"
     },
     "students": {
       "title": "Students",
@@ -194,6 +195,64 @@
         "labelExists": "An academic year with this label already exists.",
         "invalidDate": "Use the date format YYYY-MM-DD.",
         "dateOrder": "The end date must be after the start date.",
+        "network": "No internet connection. Check your network and try again.",
+        "unknown": "Couldn’t save. Please try again."
+      }
+    },
+    "enrollments": {
+      "title": "Enrollment",
+      "back": "Back",
+      "subtitle": "Enroll students into a class for %{year}, and see who’s in each class.",
+      "subtitleNoYear": "Enroll students into a class and see each class roster.",
+      "loadError": "Couldn’t load enrollment data. Check your connection and try again.",
+      "retry": "Retry",
+      "needYear": "Set a current academic year first — enrollments are scoped to a year.",
+      "goToYears": "Go to academic years",
+      "needClass": "Create a class first — students are enrolled into a class.",
+      "goToClasses": "Go to classes",
+      "needStudent": "Register a student first — there’s no one to enroll yet.",
+      "goToStudents": "Go to students",
+      "tabs": {
+        "enroll": "Enroll",
+        "roster": "Class roster"
+      },
+      "enroll": {
+        "heading": "Enroll a student",
+        "searchStudents": "Student",
+        "searchPlaceholder": "Search by name or admission number",
+        "noStudentMatches": "No students match “%{query}”.",
+        "code": "Adm# %{code}",
+        "pickClass": "Class",
+        "rollNumber": "Roll number",
+        "rollNumberPlaceholder": "Optional, e.g. 12",
+        "status": "Status",
+        "submit": "Enroll",
+        "submitting": "Enrolling…",
+        "success": "Enrolled %{name} in %{class}."
+      },
+      "statuses": {
+        "active": "Active",
+        "transferred": "Transferred",
+        "graduated": "Graduated",
+        "withdrawn": "Withdrawn"
+      },
+      "roster": {
+        "pickClass": "Class",
+        "empty": "No students enrolled in %{class} for %{year} yet.",
+        "loadError": "Couldn’t load the roster. Check your connection and try again.",
+        "count": {
+          "one": "%{count} student",
+          "other": "%{count} students"
+        },
+        "roll": "Roll %{roll}",
+        "noRoll": "No roll number",
+        "code": "Adm# %{code}"
+      },
+      "errors": {
+        "studentRequired": "Choose a student to enroll.",
+        "classRequired": "Choose a class.",
+        "rollInvalid": "Roll number must be a positive whole number.",
+        "alreadyEnrolled": "This student is already enrolled this year.",
         "network": "No internet connection. Check your network and try again.",
         "unknown": "Couldn’t save. Please try again."
       }
