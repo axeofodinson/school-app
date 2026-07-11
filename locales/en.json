@@ -265,7 +265,93 @@
     "home": {
       "title": "Teacher home",
       "welcome": "Welcome, %{name}",
-      "placeholder": "Your classes will appear here."
+      "placeholder": "Your classes will appear here.",
+      "openQuestions": "Write questions"
+    },
+    "questions": {
+      "title": "Questions",
+      "back": "Back",
+      "subtitle": "Write questions for the chapters in the classes you teach.",
+      "loadError": "Couldn’t load your classes. Check your connection and try again.",
+      "retry": "Retry",
+      "needYear": "There’s no active school year yet. An admin needs to set one up before questions can be added.",
+      "noAssignments": "You’re not assigned to any class yet. Ask an admin to add you to a class first.",
+      "tabs": {
+        "create": "New question",
+        "mine": "My questions"
+      },
+      "create": {
+        "heading": "Write a question",
+        "editHeading": "Edit question",
+        "cancelEdit": "Cancel",
+        "pickClass": "Class",
+        "pickSubject": "Subject",
+        "pickChapter": "Chapter",
+        "needSyllabus": "This class has no subjects yet. Ask an admin to set up the syllabus first.",
+        "needChapters": "This subject has no chapters yet. Ask an admin to add chapters first.",
+        "loadSubjectsError": "Couldn’t load subjects.",
+        "loadChaptersError": "Couldn’t load chapters.",
+        "chapterContext": "%{chapter} · %{subject} · %{class}",
+        "type": "Question type",
+        "cognitive": "Thinking level",
+        "cognitiveHint": "Required — pick the kind of thinking this question needs.",
+        "stem": "Question",
+        "stemPlaceholder": "Type the question here",
+        "options": "Options",
+        "optionsHint": "Tap the letter to mark the correct option.",
+        "optionPlaceholder": "Option %{letter}",
+        "markCorrect": "Mark correct",
+        "removeOption": "Remove option",
+        "addOption": "Add option",
+        "numericAnswer": "Correct answer",
+        "numericPlaceholder": "e.g. 42",
+        "tfAnswer": "Correct answer",
+        "marks": "Marks",
+        "marksPlaceholder": "1",
+        "submit": "Save question",
+        "submitting": "Saving…",
+        "updateSubmit": "Update question",
+        "updating": "Updating…",
+        "success": "Question saved."
+      },
+      "types": {
+        "mcq": "Multiple choice",
+        "numeric": "Numeric",
+        "true_false": "True / false"
+      },
+      "cognitive": {
+        "recall": "Recall",
+        "understand": "Understand",
+        "apply": "Apply",
+        "analyze": "Analyze"
+      },
+      "tf": {
+        "true": "True",
+        "false": "False"
+      },
+      "mine": {
+        "empty": "You haven’t written any questions yet.",
+        "loadError": "Couldn’t load your questions. Check your connection and try again.",
+        "context": "%{chapter} · %{subject} · %{class}",
+        "edit": "Edit",
+        "count": {
+          "one": "%{count} question",
+          "other": "%{count} questions"
+        }
+      },
+      "errors": {
+        "chapterRequired": "Pick a chapter first.",
+        "cognitiveRequired": "Pick a thinking level — a question can’t be saved without one.",
+        "stemRequired": "Type the question.",
+        "optionTextRequired": "Fill in every option, or remove the empty ones.",
+        "correctRequired": "Mark which option is correct.",
+        "numericRequired": "Enter the correct answer.",
+        "numericInvalid": "The answer must be a number.",
+        "tfRequired": "Choose True or False.",
+        "marksInvalid": "Marks must be a whole number between 1 and 100.",
+        "network": "No internet connection. Check your network and try again.",
+        "unknown": "Couldn’t save. Please try again."
+      }
     }
   }
 }
