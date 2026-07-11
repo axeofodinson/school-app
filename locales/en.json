@@ -18,7 +18,28 @@
       "passwordPlaceholder": "Your password",
       "submit": "Sign in",
       "submitting": "Signing in…",
-      "studentNote": "Students: use the student app to sign in with your roll number."
+      "studentNote": "Students: use the student app to sign in with your roll number.",
+      "studentLink": "Student sign in"
+    },
+    "student": {
+      "title": "Student sign in",
+      "subtitle": "Enter your admission number and PIN",
+      "admissionNumber": "Admission number",
+      "admissionNumberPlaceholder": "e.g. 2025-041",
+      "pin": "PIN",
+      "pinPlaceholder": "Your secret PIN",
+      "submit": "Go",
+      "submitting": "Signing in…",
+      "staffLink": "Teacher or admin?",
+      "staffLinkAction": "Staff sign in"
+    },
+    "studentErrors": {
+      "missingCode": "Type your admission number.",
+      "missingPin": "Type your PIN.",
+      "notFound": "We couldn’t find that admission number. Check with your teacher.",
+      "wrongPin": "That PIN isn’t right. Try again.",
+      "network": "No internet. Check your connection and try again.",
+      "unknown": "Something went wrong. Try again."
     },
     "errors": {
       "missingFields": "Enter your email and password.",
@@ -37,6 +58,19 @@
       "retry": "Retry"
     },
     "signOut": "Sign out"
+  },
+  "student": {
+    "home": {
+      "title": "Home",
+      "greeting": "Hi, %{name}!",
+      "welcome": "Welcome back!",
+      "placeholder": "Your tests and scores will show up here.",
+      "assessments": "My tests",
+      "scores": "My scores",
+      "attendance": "My attendance",
+      "comingSoon": "Coming soon",
+      "signOut": "Sign out"
+    }
   },
   "console": {
     "home": {
@@ -94,6 +128,22 @@
         "admissionInvalid": "Use the date format YYYY-MM-DD.",
         "network": "No internet connection. Check your network and try again.",
         "unknown": "Couldn’t save. Please try again."
+      },
+      "provision": {
+        "action": "Give login / set PIN",
+        "hint": "Set a PIN so this student can sign in to the student app with their admission number.",
+        "pinLabel": "PIN",
+        "pinPlaceholder": "4–8 digits",
+        "save": "Save PIN",
+        "saving": "Saving…",
+        "cancel": "Cancel",
+        "success": "Login ready. The student signs in with admission number %{code} and this PIN.",
+        "errors": {
+          "pinInvalid": "PIN must be 4–8 digits.",
+          "notStaff": "Only admins can set a student PIN.",
+          "network": "No internet connection. Check your network and try again.",
+          "unknown": "Couldn’t set the PIN. Please try again."
+        }
       }
     },
     "classes": {

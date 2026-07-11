@@ -54,6 +54,122 @@ function classifyError(error) {
   return 'unknown';
 }
 
+// Map a provision_student_login error to a key under console.students.provision.errors.
+function classifyProvisionError(error) {
+  if (!error) return null;
+  const msg = (error.message || '').toLowerCase();
+  if (/network request failed|failed to fetch|network|timeout|econn/.test(msg)) {
+    return 'network';
+  }
+  if (/only staff/.test(msg)) return 'notStaff';
+  return 'unknown';
+}
+
+// A student's PIN is 4–8 digits — long enough to not be guessable at a glance,
+// short enough for a young child to remember and type.
+const PIN_RE = /^\d{4,8}$/;
+
+// Inline "give login / set PIN" control for one student. Staff-only in practice
+// (this whole screen is), and the RPC re-checks is_staff() as the real boundary.
+// Setting a PIN provisions (or re-PINs) the student's login account; the student
+// then signs in to the student app with their admission number + this PIN.
+function StudentLoginControl({ student }) {
+  const [open, setOpen] = useState(false);
+  const [pin, setPin] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [errorKey, setErrorKey] = useState(null);
+  const [done, setDone] = useState(false);
+
+  const save = async () => {
+    setErrorKey(null);
+    const value = pin.trim();
+    if (!PIN_RE.test(value)) return setErrorKey('pinInvalid');
+
+    setSaving(true);
+    const { error } = await supabase.rpc('provision_student_login', {
+      p_student_id: student.id,
+      p_pin: value,
+    });
+    setSaving(false);
+
+    if (error) {
+      setErrorKey(classifyProvisionError(error));
+      return;
+    }
+    setDone(true);
+    setOpen(false);
+    setPin('');
+  };
+
+  if (!open) {
+    return (
+      <View style={styles.loginArea}>
+        <Button
+          variant="secondary"
+          label={t('console.students.provision.action')}
+          onPress={() => {
+            setDone(false);
+            setErrorKey(null);
+            setOpen(true);
+          }}
+          style={styles.loginBtn}
+        />
+        {done ? (
+          <Text variant="caption" color={colors.muted} style={styles.loginNote}>
+            {t('console.students.provision.success', { code: student.student_code })}
+          </Text>
+        ) : null}
+      </View>
+    );
+  }
+
+  return (
+    <View style={styles.loginArea}>
+      <Text variant="caption" color={colors.muted} style={styles.loginNote}>
+        {t('console.students.provision.hint')}
+      </Text>
+      <TextField
+        label={t('console.students.provision.pinLabel')}
+        placeholder={t('console.students.provision.pinPlaceholder')}
+        value={pin}
+        onChangeText={setPin}
+        keyboardType="number-pad"
+        maxLength={8}
+        editable={!saving}
+      />
+      {errorKey ? (
+        <Text variant="caption" color={colors.danger} style={styles.loginNote}>
+          {t(`console.students.provision.errors.${errorKey}`)}
+        </Text>
+      ) : null}
+      <View style={styles.loginActions}>
+        <Button
+          label={
+            saving
+              ? t('console.students.provision.saving')
+              : t('console.students.provision.save')
+          }
+          onPress={save}
+          loading={saving}
+          disabled={saving}
+          style={styles.loginActionBtn}
+        />
+        <Button
+          variant="secondary"
+          label={t('console.students.provision.cancel')}
+          onPress={() => {
+            setOpen(false);
+            setErrorKey(null);
+            setPin('');
+          }}
+          disabled={saving}
+          style={styles.loginActionBtn}
+        />
+      </View>
+    </View>
+  );
+}
+
 function StudentRow({ student }) {
   // Guardian line is only shown when we have something to show — an unknown
   // guardian shouldn't render an empty, confusing row.
@@ -77,6 +193,7 @@ function StudentRow({ student }) {
             {guardian}
           </Text>
         ) : null}
+        <StudentLoginControl student={student} />
       </View>
     </View>
   );
@@ -351,4 +468,9 @@ const styles = StyleSheet.create({
   },
   rowInfo: { flex: 1, marginEnd: spacing.md },
   rowMeta: { marginTop: spacing.xs },
+  loginArea: { marginTop: spacing.sm },
+  loginBtn: { minHeight: 40, paddingVertical: spacing.xs, alignSelf: 'flex-start' },
+  loginNote: { marginTop: spacing.xs, marginBottom: spacing.xs },
+  loginActions: { flexDirection: 'row', marginTop: spacing.xs },
+  loginActionBtn: { flex: 1, marginEnd: spacing.sm },
 });
