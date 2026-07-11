@@ -23,13 +23,9 @@
     },
     "student": {
       "title": "Student sign in",
-      "subtitle": "Pick your class, then your roll number and PIN",
-      "pickClass": "Your class",
-      "loadingClasses": "Loading classes…",
-      "classesError": "Couldn’t load classes. Tap to try again.",
-      "noClasses": "No classes yet. Ask your teacher to set up your class first.",
-      "rollNumber": "Roll number",
-      "rollNumberPlaceholder": "e.g. 12",
+      "subtitle": "Enter your admission number and PIN",
+      "admissionNumber": "Admission number",
+      "admissionNumberPlaceholder": "e.g. 2025-041",
       "pin": "PIN",
       "pinPlaceholder": "Your secret PIN",
       "submit": "Go",
@@ -38,10 +34,9 @@
       "staffLinkAction": "Staff sign in"
     },
     "studentErrors": {
-      "missingClass": "Tap your class first.",
-      "missingRoll": "Type your roll number.",
+      "missingCode": "Type your admission number.",
       "missingPin": "Type your PIN.",
-      "notFound": "We couldn’t find that roll number in this class. Check with your teacher.",
+      "notFound": "We couldn’t find that admission number. Check with your teacher.",
       "wrongPin": "That PIN isn’t right. Try again.",
       "network": "No internet. Check your connection and try again.",
       "unknown": "Something went wrong. Try again."
@@ -133,6 +128,22 @@
         "admissionInvalid": "Use the date format YYYY-MM-DD.",
         "network": "No internet connection. Check your network and try again.",
         "unknown": "Couldn’t save. Please try again."
+      },
+      "provision": {
+        "action": "Give login / set PIN",
+        "hint": "Set a PIN so this student can sign in to the student app with their admission number.",
+        "pinLabel": "PIN",
+        "pinPlaceholder": "4–8 digits",
+        "save": "Save PIN",
+        "saving": "Saving…",
+        "cancel": "Cancel",
+        "success": "Login ready. The student signs in with admission number %{code} and this PIN.",
+        "errors": {
+          "pinInvalid": "PIN must be 4–8 digits.",
+          "notStaff": "Only admins can set a student PIN.",
+          "network": "No internet connection. Check your network and try again.",
+          "unknown": "Couldn’t set the PIN. Please try again."
+        }
       }
     },
     "classes": {

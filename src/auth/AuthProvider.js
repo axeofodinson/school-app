@@ -2,7 +2,7 @@
 // underlying session, profile load, and role routing:
 //
 //   * STAFF (admin/teacher) — email + password (signIn).
-//   * STUDENT — a school-issued identity: class + roll number + PIN
+//   * STUDENT — a school-issued identity: admission number + PIN
 //     (studentSignIn). A child NEVER creates an email account. Under the hood a
 //     student has a Supabase account with a synthesized, non-routable email and
 //     the PIN as its password (see db/004_student_login.sql); studentSignIn
@@ -124,15 +124,15 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
-  // Student sign-in: class + roll number + PIN. Maps the school identity to the
+  // Student sign-in: admission number + PIN. Maps the school identity to the
   // student's synthesized Supabase account (via the student_login_email RPC),
   // then signs in with the PIN. Returns an i18n key under `auth.studentErrors`,
-  // or null on success. classId is a uuid; rollNumber is an int; pin a string.
-  const studentSignIn = useCallback(async (classId, rollNumber, pin) => {
+  // or null on success. studentCode and pin are strings.
+  const studentSignIn = useCallback(async (studentCode, pin) => {
     try {
       const { data: email, error: lookupError } = await supabase.rpc(
         'student_login_email',
-        { p_class_id: classId, p_roll: rollNumber }
+        { p_student_code: studentCode }
       );
       if (lookupError) {
         return classifyAuthError(lookupError) === 'network' ? 'network' : 'unknown';

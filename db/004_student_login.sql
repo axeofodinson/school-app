@@ -1,5 +1,5 @@
 -- ============================================================
---  004 — Student login (school-issued roll number + PIN)
+--  004 — Student login (school-issued admission number + PIN)
 --
 --  Additive migration. The read-side pieces (Parts 1–4) are SAFE to run on a
 --  live database (no drops, no data loss) and idempotent (safe to re-run).
@@ -19,25 +19,22 @@
 --  ---------------------------------------------------------------
 --  A student never creates an email account (CLAUDE.md: "student auth is
 --  school-issued ... never a child creating an email/password account"). The
---  school issues each enrolled student a PIN. Under the hood we reuse Supabase
---  Auth so the existing session plumbing (getSession, autoRefresh,
---  persistSession, onAuthStateChange, RLS via auth.uid()) works unchanged:
+--  school issues each student a PIN. Under the hood we reuse Supabase Auth so
+--  the existing session plumbing (getSession, autoRefresh, persistSession,
+--  onAuthStateChange, RLS via auth.uid()) works unchanged:
 --
 --    * The auth account's email is a SYNTHESIZED, non-routable address derived
---      from the student's enrollment id (see student_login_handle) — the child
+--      from the immutable student id (see student_login_handle) — the child
 --      never sees or types it. Its password is the school-issued PIN.
---    * The child signs in with three things they know: their CLASS (tapped from
---      a picker), their ROLL NUMBER, and their PIN.
---    * `student_login_email(class_id, roll)` maps the kid-friendly identity to
---      the synthesized email so the app can call signInWithPassword. Sign-in
---      still requires the PIN.
+--    * The child signs in with two things they know: their ADMISSION NUMBER
+--      (students.student_code) and their PIN. student_code is globally unique
+--      and stable across years, so it needs no class or year context — no
+--      picker, one identity for a student's whole time at the school.
+--    * `student_login_email(student_code)` maps that identity to the
+--      synthesized email so the app can call signInWithPassword. Sign-in still
+--      requires the PIN.
 --    * A `profiles` row with role='student' and `student_id` set links the
 --      session back to the student record; RLS uses that link (Part 4).
---
---  Roll numbers live on `enrollments` (per class, per year), so the login
---  identity is naturally scoped to the CURRENT academic year — re-issued each
---  year as part of enrollment, which matches how the rest of the app models
---  time (CLAUDE.md rule 2).
 --
 --  Run it once in the Supabase SQL Editor after setup.sql.
 -- ============================================================
@@ -59,59 +56,46 @@ create unique index if not exists ux_profiles_student
 -- ============================================================
 --  PART 2 — Synthesized login handle (single source of truth)
 -- ============================================================
--- The synthesized, non-routable email for a given enrollment. Both the login
--- lookup (Part 3) and provisioning (Part 5) derive the address from here, so
--- they can never drift. `.invalid` is a reserved TLD — the address can never
--- reach a real inbox, which is the point: it's an internal identifier, not a
--- contactable email.
-create or replace function public.student_login_handle(p_enrollment_id uuid)
+-- The synthesized, non-routable email for a given student. Keyed on the
+-- immutable students.id (a uuid), so a student's login identity is stable for
+-- their whole time at the school. Both the login lookup (Part 3) and
+-- provisioning (Part 5) derive the address from here, so they can never drift.
+-- `.invalid` is a reserved TLD — the address can never reach a real inbox,
+-- which is the point: it's an internal identifier, not a contactable email.
+create or replace function public.student_login_handle(p_student_id uuid)
 returns text
 language sql immutable set search_path = public as $$
-  select 's.' || replace(p_enrollment_id::text, '-', '') || '@students.school.invalid'
+  select 's.' || replace(p_student_id::text, '-', '') || '@students.school.invalid'
 $$;
 
 
 -- ============================================================
---  PART 3 — Read-side RPCs the (pre-auth) login screen calls
+--  PART 3 — Read-side RPC the (pre-auth) login screen calls
 -- ============================================================
--- Before sign-in there is no session, so RLS hides `classes` and `enrollments`.
--- These two SECURITY DEFINER functions are the deliberate, minimal, read-only
--- public surface the login screen needs — nothing more is exposed to `anon`.
+-- Before sign-in there is no session, so RLS hides `students`. This SECURITY
+-- DEFINER function is the deliberate, minimal, read-only surface the login
+-- screen needs — nothing more is exposed to `anon`.
 
--- Class list for the login picker (keeps the picker data-driven, not a
--- hardcoded class list — CLAUDE.md rule 1). Exposes only id + name.
-create or replace function public.login_classes()
-returns table (id uuid, name text)
-language sql stable security definer set search_path = public as $$
-  select c.id, c.name
-  from public.classes c
-  order by c.sort_order, c.name
-$$;
-
--- Resolve (class, roll number) in the CURRENT academic year to the synthesized
--- login email, or null when there is no matching active enrollment. Returns
--- only the derived handle — never student PII. Signing in still requires the
--- PIN, so at most this confirms a roll number exists in a class; that is
+-- Resolve an admission number (student_code) to the synthesized login email, or
+-- null when no student has that code. student_code is globally unique and stable
+-- across years, so it is all the identity a student needs — no class, no year.
+-- The match is trimmed and case-insensitive so a kid isn't tripped by casing.
+-- Returns only the derived handle — never student PII. Signing in still requires
+-- the PIN, so at most this confirms an admission number exists; that is
 -- low-sensitivity for a school roster. If you want to remove even that signal,
 -- move this lookup behind an Edge Function that also checks the PIN.
-create or replace function public.student_login_email(p_class_id uuid, p_roll int)
+create or replace function public.student_login_email(p_student_code text)
 returns text
 language sql stable security definer set search_path = public as $$
-  select public.student_login_handle(e.id)
-  from public.enrollments e
-  join public.academic_years y on y.id = e.year_id
-  where e.class_id = p_class_id
-    and e.roll_number = p_roll
-    and e.status = 'active'
-    and y.is_current
+  select public.student_login_handle(s.id)
+  from public.students s
+  where lower(s.student_code) = lower(trim(p_student_code))
   limit 1
 $$;
 
--- Only these two functions are reachable before sign-in.
-revoke all on function public.login_classes() from public;
-revoke all on function public.student_login_email(uuid, int) from public;
-grant execute on function public.login_classes() to anon, authenticated;
-grant execute on function public.student_login_email(uuid, int) to anon, authenticated;
+-- Only this function is reachable before sign-in.
+revoke all on function public.student_login_email(text) from public;
+grant execute on function public.student_login_email(text) to anon, authenticated;
 
 
 -- ============================================================
@@ -177,17 +161,16 @@ create policy p_att_student_read on public.attendance
 --      signup min-password-length check, so short PINs (e.g. 4 digits) work;
 --      signInWithPassword does not re-check length. Still, longer PINs are
 --      safer — rate-limit sign-ins at the edge for a kids' roster.
---    * Idempotent per enrollment: re-provisioning updates the PIN in place.
---    * The email is derived from student_login_handle(enrollment_id), so it
+--    * Idempotent per student: re-provisioning updates the PIN in place.
+--    * The email is derived from student_login_handle(student_id), so it
 --      matches what student_login_email() returns at login time.
 create or replace function public.provision_student_login(
-  p_enrollment_id uuid,
+  p_student_id uuid,
   p_pin text
 )
 returns uuid
 language plpgsql security definer set search_path = public, auth, extensions as $$
 declare
-  v_student_id uuid;
   v_full_name  text;
   v_email      text;
   v_uid        uuid;
@@ -196,17 +179,15 @@ begin
     raise exception 'only staff may provision student logins';
   end if;
 
-  select e.student_id, s.full_name
-    into v_student_id, v_full_name
-  from public.enrollments e
-  join public.students s on s.id = e.student_id
-  where e.id = p_enrollment_id;
+  select full_name into v_full_name
+  from public.students
+  where id = p_student_id;
 
-  if v_student_id is null then
-    raise exception 'enrollment % not found', p_enrollment_id;
+  if not found then
+    raise exception 'student % not found', p_student_id;
   end if;
 
-  v_email := public.student_login_handle(p_enrollment_id);
+  v_email := public.student_login_handle(p_student_id);
 
   select id into v_uid from auth.users where email = v_email;
 
@@ -243,7 +224,7 @@ begin
   -- Link + promote the profile. The handle_new_user trigger already inserted a
   -- 'pending' row on the auth.users insert; upsert makes this safe either way.
   insert into public.profiles (id, role, full_name, student_id)
-  values (v_uid, 'student', v_full_name, v_student_id)
+  values (v_uid, 'student', v_full_name, p_student_id)
   on conflict (id) do update
     set role = 'student', full_name = excluded.full_name, student_id = excluded.student_id;
 

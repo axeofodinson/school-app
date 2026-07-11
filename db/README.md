@@ -19,14 +19,18 @@ data — run each once in the SQL Editor, in order, after `setup.sql`. They neve
 drop or reset anything.
 
 `004_student_login.sql` adds the student sign-in backend the staff flow never
-had: a `profiles.student_id` link to `students`, two read-only RPCs the pre-auth
-login screen calls (`login_classes`, `student_login_email`), student self-read
-RLS, and a synthesized-email handle so a child signs in with **class + roll
-number + PIN** instead of an email account. **Part 5 (provisioning) creates
-Supabase Auth accounts by writing to `auth.users` directly** — review it against
-your GoTrue version before using it, and prefer the Auth Admin API from an Edge
-Function in production. Until students are provisioned there is nobody to sign in
-with, but the login screen and its empty states work regardless.
+had: a `profiles.student_id` link to `students`, a read-only RPC the pre-auth
+login screen calls (`student_login_email`), student self-read RLS, and a
+synthesized-email handle so a child signs in with **admission number + PIN**
+(the globally-unique, stable `students.student_code`) instead of an email
+account. **Part 5 (provisioning) creates Supabase Auth accounts by writing to
+`auth.users` directly** — review it against your GoTrue version before using it,
+and prefer the Auth Admin API from an Edge Function in production.
+
+To create a student login end to end: run `setup.sql` then this migration, sign
+in as staff, open **Register students**, and use **Give login / set PIN** on a
+student — it calls `provision_student_login(student_id, pin)`. That student can
+then sign in on the student screen with their admission number and that PIN.
 
 ## Run order (Supabase → SQL Editor)
 
