@@ -14,11 +14,12 @@ import SubjectsScreen from './SubjectsScreen';
 import StudentsScreen from './StudentsScreen';
 import EnrollmentScreen from './EnrollmentScreen';
 import AssessmentBuilderScreen from './AssessmentBuilderScreen';
+import AttendanceScreen from './AttendanceScreen';
 
 export default function ConsoleHomeScreen() {
   const { profile, session, signOut } = useAuth();
   const name = profile?.full_name || session?.user?.email || '';
-  const [screen, setScreen] = useState('home'); // 'home' | 'academicYears' | 'classes' | 'subjects' | 'students' | 'enrollments' | 'assessments'
+  const [screen, setScreen] = useState('home'); // 'home' | 'academicYears' | 'classes' | 'subjects' | 'students' | 'enrollments' | 'assessments' | 'attendance'
 
   if (screen === 'academicYears') {
     return <AcademicYearsScreen onBack={() => setScreen('home')} />;
@@ -67,6 +68,17 @@ export default function ConsoleHomeScreen() {
     );
   }
 
+  if (screen === 'attendance') {
+    return (
+      <AttendanceScreen
+        onBack={() => setScreen('home')}
+        onManageYears={() => setScreen('academicYears')}
+        onManageClasses={() => setScreen('classes')}
+        onManageEnrollments={() => setScreen('enrollments')}
+      />
+    );
+  }
+
   return (
     <ScreenContainer>
       <View style={styles.header}>
@@ -107,6 +119,11 @@ export default function ConsoleHomeScreen() {
       <Button
         label={t('console.home.openAssessments')}
         onPress={() => setScreen('assessments')}
+        style={styles.action}
+      />
+      <Button
+        label={t('console.home.openAttendance')}
+        onPress={() => setScreen('attendance')}
         style={styles.action}
       />
       <Button
