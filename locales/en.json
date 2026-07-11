@@ -40,7 +40,38 @@
       "title": "Console",
       "welcome": "Welcome, %{name}",
       "placeholder": "Admin console — setup screens are coming next.",
-      "openAcademicYears": "Manage academic years"
+      "openAcademicYears": "Manage academic years",
+      "openClasses": "Manage classes"
+    },
+    "classes": {
+      "title": "Classes",
+      "back": "Back",
+      "subtitle": "Set up the classes students are enrolled into, from PG to Class 10.",
+      "empty": "No classes yet — add your first.",
+      "needYear": "Create an academic year first — classes need a year to enroll students into.",
+      "goToYears": "Go to academic years",
+      "gradeLevel": "Grade level %{level}",
+      "loadError": "Couldn’t load classes. Check your connection and try again.",
+      "retry": "Retry",
+      "form": {
+        "heading": "Add a class",
+        "name": "Name",
+        "namePlaceholder": "PG, Class 9",
+        "gradeLevel": "Grade level",
+        "gradePlaceholder": "9",
+        "gradeHint": "A number for ordering — PG and pre-primary can be negative, matric goes up to 10.",
+        "submit": "Create",
+        "submitting": "Creating…"
+      },
+      "errors": {
+        "nameRequired": "Enter a name, e.g. Class 9.",
+        "nameExists": "A class with this name already exists.",
+        "gradeRequired": "Enter a grade level.",
+        "gradeInvalid": "Grade level must be a whole number.",
+        "gradeRange": "Grade level must be between -5 and 10.",
+        "network": "No internet connection. Check your network and try again.",
+        "unknown": "Couldn’t save. Please try again."
+      }
     },
     "academicYears": {
       "title": "Academic years",
