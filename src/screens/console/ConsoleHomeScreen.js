@@ -11,11 +11,12 @@ import { colors, spacing } from '../../theme/colors';
 import AcademicYearsScreen from './AcademicYearsScreen';
 import ClassesScreen from './ClassesScreen';
 import SubjectsScreen from './SubjectsScreen';
+import StudentsScreen from './StudentsScreen';
 
 export default function ConsoleHomeScreen() {
   const { profile, session, signOut } = useAuth();
   const name = profile?.full_name || session?.user?.email || '';
-  const [screen, setScreen] = useState('home'); // 'home' | 'academicYears' | 'classes' | 'subjects'
+  const [screen, setScreen] = useState('home'); // 'home' | 'academicYears' | 'classes' | 'subjects' | 'students'
 
   if (screen === 'academicYears') {
     return <AcademicYearsScreen onBack={() => setScreen('home')} />;
@@ -37,6 +38,10 @@ export default function ConsoleHomeScreen() {
         onManageClasses={() => setScreen('classes')}
       />
     );
+  }
+
+  if (screen === 'students') {
+    return <StudentsScreen onBack={() => setScreen('home')} />;
   }
 
   return (
@@ -61,6 +66,11 @@ export default function ConsoleHomeScreen() {
       <Button
         label={t('console.home.openSubjects')}
         onPress={() => setScreen('subjects')}
+        style={styles.action}
+      />
+      <Button
+        label={t('console.home.openStudents')}
+        onPress={() => setScreen('students')}
         style={styles.action}
       />
       <Button

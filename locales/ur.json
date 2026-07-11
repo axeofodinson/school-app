@@ -42,7 +42,53 @@
       "placeholder": "ایڈمن کنسول — سیٹ اپ اسکرینیں جلد آ رہی ہیں۔",
       "openAcademicYears": "تعلیمی سال منیج کریں",
       "openClasses": "کلاسیں منیج کریں",
-      "openSubjects": "مضامین منیج کریں"
+      "openSubjects": "مضامین منیج کریں",
+      "openStudents": "طلبہ کا اندراج"
+    },
+    "students": {
+      "title": "طلبہ",
+      "back": "واپس",
+      "subtitle": "طلبہ کا اندراج کریں اور پہلے سے داخل طلبہ تلاش کریں۔ بچے کی کلاس بعد میں داخلے کے ذریعے شامل ہوتی ہے۔",
+      "empty": "ابھی کوئی طالبِ علم نہیں — پہلے کا اندراج کریں۔",
+      "code": "ایڈمشن# %{code}",
+      "guardianBoth": "%{name} · %{phone}",
+      "loadError": "طلبہ لوڈ نہیں ہو سکے۔ کنکشن چیک کر کے دوبارہ کوشش کریں۔",
+      "retry": "دوبارہ کوشش کریں",
+      "count": {
+        "one": "%{count} طالبِ علم",
+        "other": "%{count} طلبہ"
+      },
+      "noMatches": "“%{query}” سے کوئی طالبِ علم نہیں ملا۔",
+      "search": {
+        "label": "تلاش",
+        "placeholder": "نام، ایڈمشن نمبر، یا سرپرست"
+      },
+      "form": {
+        "heading": "نئے طالبِ علم کا اندراج",
+        "studentCode": "ایڈمشن نمبر",
+        "studentCodePlaceholder": "مثلاً 2025-041",
+        "fullName": "پورا نام",
+        "fullNamePlaceholder": "طالبِ علم کا پورا نام",
+        "dob": "تاریخِ پیدائش",
+        "admissionDate": "داخلے کی تاریخ",
+        "datePlaceholder": "YYYY-MM-DD",
+        "guardianName": "سرپرست کا نام",
+        "guardianNamePlaceholder": "والد یا سرپرست",
+        "guardianPhone": "سرپرست کا فون",
+        "guardianPhonePlaceholder": "03xx-xxxxxxx",
+        "submit": "اندراج کریں",
+        "submitting": "اندراج ہو رہا ہے…"
+      },
+      "errors": {
+        "codeRequired": "ایڈمشن نمبر لکھیں۔",
+        "codeExists": "اِس ایڈمشن نمبر کا طالبِ علم پہلے سے موجود ہے۔",
+        "nameRequired": "طالبِ علم کا پورا نام لکھیں۔",
+        "dobInvalid": "تاریخ اِس طرح لکھیں: YYYY-MM-DD۔",
+        "admissionRequired": "داخلے کی تاریخ لکھیں۔",
+        "admissionInvalid": "تاریخ اِس طرح لکھیں: YYYY-MM-DD۔",
+        "network": "انٹرنیٹ نہیں ہے۔ کنکشن چیک کر کے دوبارہ کوشش کریں۔",
+        "unknown": "محفوظ نہیں ہو سکا۔ دوبارہ کوشش کریں۔"
+      }
     },
     "classes": {
       "title": "کلاسیں",

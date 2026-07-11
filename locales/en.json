@@ -42,7 +42,53 @@
       "placeholder": "Admin console — setup screens are coming next.",
       "openAcademicYears": "Manage academic years",
       "openClasses": "Manage classes",
-      "openSubjects": "Manage subjects"
+      "openSubjects": "Manage subjects",
+      "openStudents": "Register students"
+    },
+    "students": {
+      "title": "Students",
+      "back": "Back",
+      "subtitle": "Register students and search the ones already admitted. A student's class is added later through enrollment.",
+      "empty": "No students yet — register your first.",
+      "code": "Adm# %{code}",
+      "guardianBoth": "%{name} · %{phone}",
+      "loadError": "Couldn’t load students. Check your connection and try again.",
+      "retry": "Retry",
+      "count": {
+        "one": "%{count} student",
+        "other": "%{count} students"
+      },
+      "noMatches": "No students match “%{query}”.",
+      "search": {
+        "label": "Search",
+        "placeholder": "Name, admission number, or guardian"
+      },
+      "form": {
+        "heading": "Register a student",
+        "studentCode": "Admission number",
+        "studentCodePlaceholder": "e.g. 2025-041",
+        "fullName": "Full name",
+        "fullNamePlaceholder": "Student’s full name",
+        "dob": "Date of birth",
+        "admissionDate": "Admission date",
+        "datePlaceholder": "YYYY-MM-DD",
+        "guardianName": "Guardian name",
+        "guardianNamePlaceholder": "Parent or guardian",
+        "guardianPhone": "Guardian phone",
+        "guardianPhonePlaceholder": "03xx-xxxxxxx",
+        "submit": "Register",
+        "submitting": "Registering…"
+      },
+      "errors": {
+        "codeRequired": "Enter an admission number.",
+        "codeExists": "A student with this admission number already exists.",
+        "nameRequired": "Enter the student’s full name.",
+        "dobInvalid": "Use the date format YYYY-MM-DD.",
+        "admissionRequired": "Enter an admission date.",
+        "admissionInvalid": "Use the date format YYYY-MM-DD.",
+        "network": "No internet connection. Check your network and try again.",
+        "unknown": "Couldn’t save. Please try again."
+      }
     },
     "classes": {
       "title": "Classes",
