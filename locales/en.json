@@ -48,7 +48,8 @@
       "openSubjects": "Manage subjects",
       "openStudents": "Register students",
       "openEnrollments": "Manage enrollments",
-      "openAssessments": "Build assessments"
+      "openAssessments": "Build assessments",
+      "openAttendance": "Mark attendance"
     },
     "students": {
       "title": "Students",
@@ -369,6 +370,69 @@
         "network": "No internet connection. Check your network and try again.",
         "unknown": "Couldn’t save. Please try again."
       }
+    },
+    "attendance": {
+      "title": "Attendance",
+      "back": "Back",
+      "subtitleAdmin": "Mark daily attendance for any class in %{year}.",
+      "subtitleTeacher": "Mark daily attendance for the classes you teach in %{year}.",
+      "subtitleNoYear": "Mark daily attendance for a class.",
+      "loadError": "Couldn’t load attendance data. Check your connection and try again.",
+      "retry": "Retry",
+      "needYear": "Set a current academic year first — attendance is scoped to a year.",
+      "goToYears": "Go to academic years",
+      "needClass": "Create a class first — attendance is marked per class.",
+      "goToClasses": "Go to classes",
+      "noAssignments": "You’re not assigned to any class yet. Ask an admin to add you to a class first.",
+      "pickClass": "Class",
+      "tabs": {
+        "mark": "Mark",
+        "history": "History"
+      },
+      "statuses": {
+        "present": "Present",
+        "absent": "Absent",
+        "late": "Late",
+        "leave": "Leave"
+      },
+      "mark": {
+        "date": "Date",
+        "datePlaceholder": "YYYY-MM-DD",
+        "today": "Today",
+        "fixDate": "Fix the date to load the class.",
+        "loadRosterError": "Couldn’t load the roster. Check your connection and try again.",
+        "empty": "No students enrolled in %{class} for %{year} yet.",
+        "goToEnrollments": "Go to enrollment",
+        "markAllPresent": "Mark all present",
+        "count": {
+          "one": "%{count} student",
+          "other": "%{count} students"
+        },
+        "roll": "Roll %{roll}",
+        "noRoll": "No roll number",
+        "code": "Adm# %{code}",
+        "summary": "%{present} present · %{absent} absent · %{late} late · %{leave} leave",
+        "save": "Save attendance",
+        "saving": "Saving…",
+        "success": "Attendance saved for %{date}."
+      },
+      "history": {
+        "pickStudent": "Student",
+        "loadRosterError": "Couldn’t load the roster. Check your connection and try again.",
+        "rosterEmpty": "No students enrolled in %{class} for %{year} yet.",
+        "loadError": "Couldn’t load attendance history. Check your connection and try again.",
+        "empty": "No attendance marked for %{name} yet.",
+        "presentRate": "Present on %{rate}% of %{total} marked days",
+        "summary": "%{present} present · %{absent} absent · %{late} late · %{leave} leave"
+      },
+      "errors": {
+        "dateRequired": "Enter a date.",
+        "dateInvalid": "Use the date format YYYY-MM-DD.",
+        "dateFuture": "You can’t mark attendance for a future date.",
+        "noStudents": "There are no students to mark.",
+        "network": "No internet connection. Check your network and try again.",
+        "unknown": "Couldn’t save. Please try again."
+      }
     }
   },
   "teacher": {
@@ -377,7 +441,8 @@
       "welcome": "Welcome, %{name}",
       "placeholder": "Your classes will appear here.",
       "openQuestions": "Write questions",
-      "openAssessments": "Build assessments"
+      "openAssessments": "Build assessments",
+      "openAttendance": "Mark attendance"
     },
     "questions": {
       "title": "Questions",
