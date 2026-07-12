@@ -66,10 +66,72 @@
       "welcome": "Welcome back!",
       "placeholder": "Your tests and scores will show up here.",
       "assessments": "My tests",
+      "assessmentsNote": "See your tests and start one",
       "scores": "My scores",
       "attendance": "My attendance",
       "comingSoon": "Coming soon",
       "signOut": "Sign out"
+    },
+    "assessments": {
+      "title": "My tests",
+      "back": "Back",
+      "subtitle": "Tests your teachers have set for your class.",
+      "noYear": "No school year is set up yet. Check back later.",
+      "noEnrollment": "You’re not in a class yet. Your teacher will add you.",
+      "empty": "No tests yet. When your teacher sets one, it’ll show up here.",
+      "todoCount": {
+        "one": "%{count} test to do",
+        "other": "%{count} tests to do"
+      },
+      "questionCount": {
+        "one": "%{count} question",
+        "other": "%{count} questions"
+      },
+      "start": "Start",
+      "view": "View",
+      "retry": "Try again",
+      "types": {
+        "assignment": "Homework",
+        "test": "Test",
+        "exam": "Exam",
+        "quiz": "Quiz"
+      },
+      "status": {
+        "todo": "To do",
+        "submitted": "Done",
+        "pending": "Saved"
+      },
+      "errors": {
+        "network": "No internet. Check your connection and try again.",
+        "unknown": "Something went wrong. Try again."
+      }
+    },
+    "attempt": {
+      "back": "Back",
+      "context": "%{type} · %{subject}",
+      "questionNumber": "Question %{number}",
+      "marks": {
+        "one": "%{count} mark",
+        "other": "%{count} marks"
+      },
+      "true": "True",
+      "false": "False",
+      "numericPlaceholder": "Type your answer",
+      "answeredSummary": "%{answered} of %{total} answered",
+      "submit": "Submit test",
+      "submitting": "Submitting…",
+      "submitted": "Done! Your answers are saved.",
+      "queued": "No internet — your answers are saved and will send when you’re back online.",
+      "alreadyDone": "You’ve already done this test.",
+      "doneBack": "Back to my tests",
+      "loadError": "Couldn’t load this test. Check your connection and try again.",
+      "retry": "Try again",
+      "noQuestions": "This test has no questions yet.",
+      "offlineBanner": "You’re offline — showing your saved copy of this test.",
+      "errors": {
+        "network": "No internet. Your answers are saved — try again when you’re back online.",
+        "unknown": "Couldn’t submit. Please try again."
+      }
     }
   },
   "console": {
