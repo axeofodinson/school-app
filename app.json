@@ -4,19 +4,35 @@
     "slug": "school-app",
     "version": "0.1.0",
     "orientation": "portrait",
+    "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
     "scheme": "schoolapp",
-    "assetBundlePatterns": ["**/*"],
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#fbf0d9"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.school.app"
+      "bundleIdentifier": "com.school.app",
+      "buildNumber": "1"
     },
     "android": {
-      "package": "com.school.app"
+      "package": "com.school.app",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#55a049"
+      }
     },
     "extra": {
-      "supabaseUrl": "$EXPO_PUBLIC_SUPABASE_URL",
-      "supabaseAnonKey": "$EXPO_PUBLIC_SUPABASE_ANON_KEY"
-    }
+      "eas": {
+        "projectId": "d0d4fed8-afe4-4599-9c3e-31e5de0ec715"
+      }
+    },
+    "owner": "ice_010"
   }
 }
