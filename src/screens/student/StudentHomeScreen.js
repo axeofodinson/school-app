@@ -17,25 +17,30 @@ import { t } from '../../i18n';
 import { colors, spacing } from '../../theme/colors';
 import StudentAssessmentsScreen from './StudentAssessmentsScreen';
 import StudentResultsScreen from './StudentResultsScreen';
+import StudentReportCardScreen from './StudentReportCardScreen';
 import StudentAttendanceScreen from './StudentAttendanceScreen';
 
 // The live tiles, in order, each mapping to a screen the home switches to.
 const TILES = [
   { key: 'assessments', screen: 'assessments', note: 'assessmentsNote' },
   { key: 'scores', screen: 'results', note: 'scoresNote' },
+  { key: 'report', screen: 'report', note: 'reportNote' },
   { key: 'attendance', screen: 'attendance', note: 'attendanceNote' },
 ];
 
 export default function StudentHomeScreen() {
   const { profile, signOut } = useAuth();
   const name = profile?.full_name?.trim();
-  const [screen, setScreen] = useState('home'); // 'home' | 'assessments' | 'results' | 'attendance'
+  const [screen, setScreen] = useState('home'); // 'home' | 'assessments' | 'results' | 'report' | 'attendance'
 
   if (screen === 'assessments') {
     return <StudentAssessmentsScreen onBack={() => setScreen('home')} />;
   }
   if (screen === 'results') {
     return <StudentResultsScreen onBack={() => setScreen('home')} />;
+  }
+  if (screen === 'report') {
+    return <StudentReportCardScreen onBack={() => setScreen('home')} />;
   }
   if (screen === 'attendance') {
     return <StudentAttendanceScreen onBack={() => setScreen('home')} />;

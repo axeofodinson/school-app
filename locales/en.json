@@ -69,6 +69,8 @@
       "assessmentsNote": "See your tests and start one",
       "scores": "My scores",
       "scoresNote": "See how you did on your tests",
+      "report": "My report card",
+      "reportNote": "Your results rolled up for the year",
       "attendance": "My attendance",
       "attendanceNote": "See the days you were present",
       "signOut": "Sign out"
@@ -150,6 +152,53 @@
       "score": "%{score} / %{total}",
       "percent": "%{percent}%",
       "waiting": "Not marked yet",
+      "retry": "Try again",
+      "errors": {
+        "network": "No internet. Check your connection and try again.",
+        "unknown": "Something went wrong. Try again."
+      }
+    },
+    "report": {
+      "title": "My report card",
+      "back": "Back",
+      "subtitle": "Your whole year, rolled up: %{year}.",
+      "subtitleNoYear": "Your results, rolled up across your tests.",
+      "noYear": "No school year is set up yet. Check back later.",
+      "noEnrollment": "You’re not in a class yet. Your teacher will add you.",
+      "empty": "No report yet. When you finish tests and your teacher marks them, your report shows up here.",
+      "overall": "Overall",
+      "overallPercent": "%{percent}%",
+      "fromMarked": {
+        "one": "From %{count} marked test",
+        "other": "From %{count} marked tests"
+      },
+      "noneMarked": "None of your tests are marked yet. Your report fills in as your teacher marks them.",
+      "unweightedNote": "This is a simple average — your teacher hasn’t set how much each test counts yet.",
+      "waiting": {
+        "one": "%{count} test still to be marked",
+        "other": "%{count} tests still to be marked"
+      },
+      "bySubject": "By subject",
+      "subjectPercent": "%{percent}%",
+      "subjectWaiting": "Not marked yet",
+      "subjectMarked": {
+        "one": "%{count} marked test",
+        "other": "%{count} marked tests"
+      },
+      "cognitive": {
+        "heading": "What your tests checked",
+        "hint": "How much of your tests was remembering facts versus thinking things through.",
+        "recall": "Remembering",
+        "conceptual": "Thinking",
+        "levels": {
+          "recall": "Recall",
+          "understand": "Understand",
+          "apply": "Apply",
+          "analyze": "Analyze"
+        },
+        "levelDetail": "%{share}% · %{marks} marks",
+        "share": "%{share}%"
+      },
       "retry": "Try again",
       "errors": {
         "network": "No internet. Check your connection and try again.",
