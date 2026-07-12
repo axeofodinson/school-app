@@ -64,7 +64,7 @@
       "title": "Home",
       "greeting": "Hi, %{name}!",
       "welcome": "Welcome back!",
-      "placeholder": "Your tests and scores will show up here.",
+      "placeholder": "Tap to see your tests, scores, and attendance.",
       "assessments": "My tests",
       "assessmentsNote": "See your tests and start one",
       "scores": "My scores",
