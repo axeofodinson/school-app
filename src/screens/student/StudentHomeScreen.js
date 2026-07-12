@@ -7,7 +7,9 @@
 //
 // No navigation library yet, so it switches screens with local state (same
 // pattern as the console). The home itself reads only the already-loaded profile
-// — no network on mount — so it opens instantly.
+// — no network on mount — so it opens instantly. The journey card below the
+// greeting paints from its offline cache and refreshes itself in the
+// background, so it never delays the screen either.
 //
 // Visuals: quest theme — each tile is a big colored game-tile with its own
 // sprite, entering with a small stagger; pressing pushes it into the ground.
@@ -26,6 +28,7 @@ import {
   Sprite,
   Enter,
 } from '../../components/quest';
+import { JourneyCard } from '../../components/engagement';
 import { useAuth } from '../../auth/AuthProvider';
 import { t } from '../../i18n';
 import { quest, spacing, displayText } from '../../theme/quest';
@@ -116,6 +119,10 @@ export default function StudentHomeScreen() {
           </View>
         </QuestPanel>
       </Enter>
+
+      {/* My journey — tests finished, medals, show-up streak (real data,
+          cache-first; renders its own invite state for a brand-new student). */}
+      <JourneyCard />
 
       <View style={styles.tiles}>
         {TILES.map((tile, i) => (

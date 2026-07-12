@@ -10,7 +10,8 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "verify:report": "node scripts/verify-report-aggregate.mjs",
-    "verify:prereader": "node scripts/verify-prereader.mjs"
+    "verify:prereader": "node scripts/verify-prereader.mjs",
+    "verify:engagement": "node scripts/verify-engagement.mjs"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "1.23.1",

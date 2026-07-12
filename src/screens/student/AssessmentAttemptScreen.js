@@ -26,8 +26,13 @@
 //
 // Visuals: quest theme — questions are parchment cards, answers are chunky
 // push-buttons that light up green when picked, progress is an XP bar that
-// fills as the child answers, and submitting opens a treasure chest. Same
-// logic, same i18n keys, logical start/end layout throughout.
+// fills as the child answers, and submitting opens a treasure chest under a
+// burst of stars and the tada fanfare. The finish line also speaks real data:
+// "that's test N this year" and, when one was just crossed, the new medal —
+// both from engagementStore (the child's own submission count), never
+// invented. Celebration is about FINISHING, not being right: grading is a
+// later teacher pass and stays out of it. Same logic, same i18n keys,
+// logical start/end layout throughout.
 import { useCallback, useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 
@@ -64,8 +69,9 @@ import {
   loadCachedQuestions,
   submitAttempt,
 } from '../../lib/attemptStore';
+import { recordFinishedAttempt } from '../../lib/engagementStore';
 import { isPreReaderSet, promptText, promptAudio } from '../../prereader/tapImage';
-import { speakPrompt } from '../../prereader/sound';
+import { speakPrompt, playEffect } from '../../prereader/sound';
 import { t, getLocale } from '../../i18n';
 import { quest, px, spacing } from '../../theme/quest';
 
@@ -202,6 +208,7 @@ export default function AssessmentAttemptScreen({
 
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState(null); // 'submitted' | 'queued' | null
+  const [finish, setFinish] = useState(null); // { testsFinished, crossed } from engagementStore
   const [errorKey, setErrorKey] = useState(null);
 
   const enrollmentId = enrollment?.id;
@@ -278,6 +285,10 @@ export default function AssessmentAttemptScreen({
       return;
     }
     // 'submitted' or 'queued' — the attempt is safe (server or local queue).
+    // Bump the journey count (works offline; the next server load recounts)
+    // so the celebration can say "that's test N" / show a freshly earned
+    // medal. Unknown count -> nulls, and those lines are simply omitted.
+    setFinish(await recordFinishedAttempt());
     setResult(res.status);
     onSubmitted?.(assessmentId, res.status);
   }, [questions, answers, enrollmentId, assessmentId, onSubmitted]);
@@ -289,6 +300,11 @@ export default function AssessmentAttemptScreen({
   // A PG–2 test (every question tap_image) gets the paged pre-reader
   // experience and its celebration; anything else keeps the reading list.
   const preReader = isPreReaderSet(questions);
+
+  // Reading-age finish fanfare — the pre-reader Celebration plays its own.
+  useEffect(() => {
+    if (result && !preReader) playEffect('tada');
+  }, [result, preReader]);
 
   // --- Header (shared across states) ---
   const header = (
@@ -322,6 +338,18 @@ export default function AssessmentAttemptScreen({
       <QuestScreen scroll>
         {header}
         <View style={styles.stateBox}>
+          {/* A short burst of stars over the chest — celebratory, then done. */}
+          <View style={styles.starsRow}>
+            <Pop delay={280}>
+              <Sprite name="star" size={26} />
+            </Pop>
+            <Pop delay={120}>
+              <Sprite name="star" size={38} />
+            </Pop>
+            <Pop delay={420}>
+              <Sprite name="star" size={26} />
+            </Pop>
+          </View>
           <Pop>
             <Sprite name="chest" size={96} />
           </Pop>
@@ -332,6 +360,30 @@ export default function AssessmentAttemptScreen({
                 : t('student.attempt.queued')}
             </Text>
           </Enter>
+          {/* Real-data progress feedback: the child's own finished-test count
+              this year, and — only when one was just crossed — the new medal.
+              Both come from engagementStore; unknown counts show nothing. */}
+          {finish?.testsFinished ? (
+            <Enter delay={350}>
+              <Text variant="caption" color={quest.faint} align="center">
+                {t('student.celebrate.testCount', { count: finish.testsFinished })}
+              </Text>
+            </Enter>
+          ) : null}
+          {finish?.crossed ? (
+            <Pop delay={500}>
+              <View style={styles.medalRow}>
+                <Sprite name="medal" size={30} />
+                <QuestBadge
+                  label={t('student.celebrate.newMedal', {
+                    name: t(`student.journey.milestones.${finish.crossed.key}`),
+                  })}
+                  tone="goldSolid"
+                  style={styles.medalBadge}
+                />
+              </View>
+            </Pop>
+          ) : null}
           <QuestButton
             label={t('student.attempt.doneBack')}
             onPress={onBack}
@@ -502,6 +554,18 @@ const styles = StyleSheet.create({
   formErr: { marginTop: spacing.sm },
   submit: { marginTop: spacing.md },
   stateBox: { marginTop: spacing.xl, alignItems: 'center' },
+  starsRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    columnGap: spacing.sm,
+    marginBottom: spacing.sm,
+  },
+  medalRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: spacing.md,
+  },
+  medalBadge: { marginStart: spacing.sm },
   resultText: { marginTop: spacing.md, marginBottom: spacing.sm, paddingHorizontal: spacing.lg },
   stateAction: { marginTop: spacing.md, minWidth: 200 },
 });

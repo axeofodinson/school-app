@@ -264,6 +264,51 @@ const SPRITES = {
       '................',
     ],
   },
+  // Flame — the "school days in a row" attendance streak (My journey card).
+  flame: {
+    legend: { k: K, o: '#e8722a', g: '#f2a93b', c: '#fff9ec' },
+    rows: [
+      '................',
+      '.......kk.......',
+      '......kook......',
+      '......kook......',
+      '.....kooook.....',
+      '.....kooook.....',
+      '....kooooook....',
+      '....koggggok....',
+      '...koggggggok...',
+      '...koggccggok...',
+      '...kogccccgok...',
+      '...kogccccgok...',
+      '....kgccccgk....',
+      '.....kgccgk.....',
+      '......kkkk......',
+      '................',
+    ],
+  },
+  // Medal — finished-test milestones: the journey card and the "new medal"
+  // moment after submitting. Red ribbon, gold disc, cream star.
+  medal: {
+    legend: { k: K, r: '#d64545', g: '#f2a93b', w: '#fff9ec' },
+    rows: [
+      '...kkkk..kkkk...',
+      '...krrk..krrk...',
+      '....krrkkrrk....',
+      '....krrrrrrk....',
+      '.....krrrrk.....',
+      '.....kkkkkk.....',
+      '....kggggggk....',
+      '...kgggwwgggk...',
+      '...kggwwwwggk...',
+      '...kggwwwwggk...',
+      '...kgggwwgggk...',
+      '....kggggggk....',
+      '.....kkkkkk.....',
+      '................',
+      '................',
+      '................',
+    ],
+  },
 };
 
 // ---- minimal PNG encoder (RGBA, no interlace) ----
