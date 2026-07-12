@@ -10,16 +10,31 @@
 // waiting on the teacher). The overall line aggregates only the marked ones, so a
 // child sees a real number and isn't misled by tests still being graded.
 //
+// Visuals: quest theme — the overall score is a trophy card with an XP bar,
+// each marked test shows its score in the display face with a star. Same
+// queries, same i18n keys, logical start/end layout throughout.
+//
 // Build-order prerequisites (CLAUDE.md): a current academic year and an active
 // enrolment. Each missing step gets a real, honest empty state — never a blank
 // page. A dropped load falls back to a clear retry rather than a frozen screen.
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { View, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 
-import { ScreenContainer, Text, Button } from '../../components';
+import { Text } from '../../components';
+import {
+  QuestScreen,
+  QuestHeader,
+  QuestPanel,
+  QuestBadge,
+  QuestBar,
+  QuestLoading,
+  QuestEmpty,
+  Sprite,
+  Enter,
+} from '../../components/quest';
 import { supabase } from '../../lib/supabase';
 import { t } from '../../i18n';
-import { colors, spacing } from '../../theme/colors';
+import { quest, spacing, displayText } from '../../theme/quest';
 
 // Map a Supabase error to an i18n key under student.results.errors.
 function classifyError(error) {
@@ -60,41 +75,44 @@ export function overallResult(submissions) {
   };
 }
 
-// One result row: the assessment (title, type · subject) and a badge showing the
-// score out of total, or a "not marked yet" note while it's still being graded.
-function ResultRow({ submission }) {
+// One result row: star + the assessment (title, type · subject), and either the
+// score in the display face or a "not marked yet" badge while it's being graded.
+function ResultRow({ submission, delay }) {
   const a = submission.assessment;
   const graded = submission.score != null;
   const total = a?.total_marks ?? 0;
   const percent = percentOf(submission.score, total);
   return (
-    <View style={styles.row}>
-      <View style={styles.rowInfo}>
-        <Text variant="label">{a?.title}</Text>
-        <Text variant="caption" color={colors.muted} style={styles.rowMeta}>
-          {t(`student.assessments.types.${a?.type}`)}
-          {a?.subject?.name ? ` · ${a.subject.name}` : ''}
-        </Text>
-      </View>
-      {graded ? (
-        <View style={styles.scoreBox}>
-          <Text variant="label" color={colors.primary}>
-            {t('student.results.score', { score: submission.score, total })}
+    <Enter delay={delay}>
+      <QuestPanel style={styles.row} faceStyle={styles.rowFace}>
+        <Sprite name="star" size={36} style={!graded && styles.dimmed} />
+        <View style={styles.rowInfo}>
+          <Text variant="label" color={quest.ink}>
+            {a?.title}
           </Text>
-          {percent != null ? (
-            <Text variant="caption" color={colors.muted} style={styles.percent}>
-              {t('student.results.percent', { percent })}
+          <Text variant="caption" color={quest.faint} style={styles.rowMeta}>
+            {t(`student.assessments.types.${a?.type}`)}
+            {a?.subject?.name ? ` · ${a.subject.name}` : ''}
+          </Text>
+        </View>
+        {graded ? (
+          <View style={styles.scoreBox}>
+            <Text color={quest.greenEdge} align="end" style={displayText(18)}>
+              {t('student.results.score', { score: submission.score, total })}
             </Text>
-          ) : null}
-        </View>
-      ) : (
-        <View style={styles.waitingBadge}>
-          <Text variant="caption" color={colors.muted}>
-            {t('student.results.waiting')}
-          </Text>
-        </View>
-      )}
-    </View>
+            {percent != null ? (
+              <QuestBadge
+                label={t('student.results.percent', { percent })}
+                tone="gold"
+                style={styles.percentBadge}
+              />
+            ) : null}
+          </View>
+        ) : (
+          <QuestBadge label={t('student.results.waiting')} tone="faint" />
+        )}
+      </QuestPanel>
+    </Enter>
   );
 }
 
@@ -173,153 +191,119 @@ export default function StudentResultsScreen({ onBack }) {
   const overall = useMemo(() => overallResult(submissions), [submissions]);
 
   const header = (
-    <>
-      <View style={styles.header}>
-        <Text variant="title">{t('student.results.title')}</Text>
-        <Button
-          variant="secondary"
-          label={t('student.results.back')}
-          onPress={onBack}
-          style={styles.backBtn}
-        />
-      </View>
-      <Text variant="body" color={colors.muted} style={styles.subtitle}>
-        {t('student.results.subtitle')}
-      </Text>
-    </>
+    <QuestHeader
+      title={t('student.results.title')}
+      subtitle={t('student.results.subtitle')}
+      backLabel={t('student.results.back')}
+      onBack={onBack}
+    />
   );
 
   if (!loaded) {
     return (
-      <ScreenContainer scroll>
+      <QuestScreen scroll>
         {header}
-        <ActivityIndicator color={colors.primary} style={styles.loading} />
-      </ScreenContainer>
+        <QuestLoading sprite="star" />
+      </QuestScreen>
     );
   }
 
   if (errorKey) {
     return (
-      <ScreenContainer scroll>
+      <QuestScreen scroll>
         {header}
-        <View style={styles.stateBox}>
-          <Text variant="body" color={colors.danger} align="center">
-            {t(`student.results.errors.${errorKey}`)}
-          </Text>
-          <Button
-            variant="secondary"
-            label={t('student.results.retry')}
-            onPress={load}
-            style={styles.retry}
-          />
-        </View>
-      </ScreenContainer>
+        <QuestEmpty
+          message={t(`student.results.errors.${errorKey}`)}
+          tone="danger"
+          actionLabel={t('student.results.retry')}
+          onAction={load}
+        />
+      </QuestScreen>
     );
   }
 
   // Prerequisite empty states — honest, not a blank screen (CLAUDE.md).
   if (!year) {
     return (
-      <ScreenContainer scroll>
+      <QuestScreen scroll>
         {header}
-        <EmptyState message={t('student.results.noYear')} />
-      </ScreenContainer>
+        <QuestEmpty message={t('student.results.noYear')} />
+      </QuestScreen>
     );
   }
   if (!enrollment) {
     return (
-      <ScreenContainer scroll>
+      <QuestScreen scroll>
         {header}
-        <EmptyState message={t('student.results.noEnrollment')} />
-      </ScreenContainer>
+        <QuestEmpty message={t('student.results.noEnrollment')} />
+      </QuestScreen>
     );
   }
   if (!submissions || submissions.length === 0) {
     return (
-      <ScreenContainer scroll>
+      <QuestScreen scroll>
         {header}
-        <EmptyState message={t('student.results.empty')} />
-      </ScreenContainer>
+        <QuestEmpty message={t('student.results.empty')} />
+      </QuestScreen>
     );
   }
 
   return (
-    <ScreenContainer scroll>
+    <QuestScreen scroll>
       {header}
 
       {/* Overall stands on the marked tests only — honest when some are pending. */}
       {overall.percent != null ? (
-        <View style={styles.overallBox}>
-          <Text variant="label" color={colors.primary}>
-            {t('student.results.overall', { percent: overall.percent })}
-          </Text>
-          <Text variant="caption" color={colors.muted} style={styles.overallSub}>
-            {t('student.results.markedCount', { count: overall.count })}
-          </Text>
-        </View>
+        <Enter>
+          <QuestPanel
+            outline={quest.goldEdge}
+            edge={quest.goldEdge}
+            style={styles.overallBox}
+            faceStyle={styles.overallFace}
+          >
+            <Sprite name="trophy" size={48} />
+            <View style={styles.overallText}>
+              <Text color={quest.ink} style={displayText(22)}>
+                {t('student.results.overall', { percent: overall.percent })}
+              </Text>
+              <QuestBar value={overall.percent} color={quest.gold} style={styles.overallBar} />
+              <Text variant="caption" color={quest.faint} style={styles.overallSub}>
+                {t('student.results.markedCount', { count: overall.count })}
+              </Text>
+            </View>
+          </QuestPanel>
+        </Enter>
       ) : (
-        <Text variant="caption" color={colors.muted} style={styles.noneMarked}>
+        <Text variant="caption" color={quest.faint} style={styles.noneMarked}>
           {t('student.results.noneMarked')}
         </Text>
       )}
 
-      {submissions.map((s) => (
-        <ResultRow key={s.id} submission={s} />
+      {submissions.map((s, i) => (
+        <ResultRow key={s.id} submission={s} delay={i < 8 ? 60 + i * 50 : 0} />
       ))}
-    </ScreenContainer>
-  );
-}
-
-function EmptyState({ message }) {
-  return (
-    <View style={styles.stateBox}>
-      <Text variant="body" color={colors.muted} align="center">
-        {message}
-      </Text>
-    </View>
+    </QuestScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  header: {
+  overallBox: { marginTop: spacing.lg, marginBottom: spacing.md },
+  overallFace: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
   },
-  backBtn: { minHeight: 40, paddingVertical: spacing.xs, marginStart: spacing.md },
-  subtitle: { marginTop: spacing.xs },
-  loading: { marginTop: spacing.xl },
-  stateBox: { marginTop: spacing.xl, alignItems: 'center' },
-  retry: { marginTop: spacing.md },
-  overallBox: {
-    marginTop: spacing.lg,
-    marginBottom: spacing.sm,
-    padding: spacing.md,
-    borderWidth: 1,
-    borderColor: colors.primary,
-    borderRadius: 12,
-    backgroundColor: colors.surface,
-  },
+  overallText: { flex: 1, marginStart: spacing.md },
+  overallBar: { marginTop: spacing.sm },
   overallSub: { marginTop: spacing.xs },
   noneMarked: { marginTop: spacing.lg, marginBottom: spacing.sm },
-  row: {
+  row: { marginBottom: spacing.md },
+  rowFace: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
   },
-  rowInfo: { flex: 1, marginEnd: spacing.md },
+  rowInfo: { flex: 1, marginStart: spacing.md, marginEnd: spacing.sm },
   rowMeta: { marginTop: spacing.xs },
   scoreBox: { alignItems: 'flex-end' },
-  percent: { marginTop: spacing.xs },
-  waitingBadge: {
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.surface,
-  },
+  percentBadge: { marginTop: spacing.xs },
+  dimmed: { opacity: 0.35 },
 });

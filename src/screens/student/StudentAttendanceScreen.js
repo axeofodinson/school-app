@@ -8,16 +8,31 @@
 // rate + a per-status tally) so both surfaces describe the same data the same
 // way, then lists each marked day newest-first.
 //
+// Visuals: quest theme — the present rate is a heart card with an XP bar, and
+// each day's status is a coloured badge (present green, absent red, late gold,
+// leave sky). Same queries, same i18n keys, logical start/end layout.
+//
 // Build-order prerequisites (CLAUDE.md): a current academic year and an active
 // enrolment. Each missing step gets a real, honest empty state — never a blank
 // page. A dropped load falls back to a clear retry rather than a frozen screen.
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { View, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 
-import { ScreenContainer, Text, Button } from '../../components';
+import { Text } from '../../components';
+import {
+  QuestScreen,
+  QuestHeader,
+  QuestPanel,
+  QuestBadge,
+  QuestBar,
+  QuestLoading,
+  QuestEmpty,
+  Sprite,
+  Enter,
+} from '../../components/quest';
 import { supabase } from '../../lib/supabase';
 import { t } from '../../i18n';
-import { colors, spacing } from '../../theme/colors';
+import { quest, spacing, displayText } from '../../theme/quest';
 
 // Map a Supabase error to an i18n key under student.attendance.errors.
 function classifyError(error) {
@@ -38,24 +53,25 @@ export function tally(records) {
   return counts;
 }
 
+// How each attendance status reads as a badge.
+const STATUS_TONES = {
+  present: 'greenSolid',
+  absent: 'red',
+  late: 'gold',
+  leave: 'sky',
+};
+
 // One day in the record: the date and the status marked that day.
 function DayRow({ record }) {
   return (
     <View style={styles.row}>
-      <Text variant="label">{record.on_date}</Text>
-      <View
-        style={[
-          styles.statusBadge,
-          record.status === 'present' && styles.statusPresent,
-        ]}
-      >
-        <Text
-          variant="caption"
-          color={record.status === 'present' ? colors.primaryText : colors.primary}
-        >
-          {t(`student.attendance.statuses.${record.status}`)}
-        </Text>
-      </View>
+      <Text variant="label" color={quest.ink}>
+        {record.on_date}
+      </Text>
+      <QuestBadge
+        label={t(`student.attendance.statuses.${record.status}`)}
+        tone={STATUS_TONES[record.status] ?? 'faint'}
+      />
     </View>
   );
 }
@@ -132,141 +148,118 @@ export default function StudentAttendanceScreen({ onBack }) {
   const presentRate = total > 0 ? Math.round((counts.present / total) * 100) : 0;
 
   const header = (
-    <>
-      <View style={styles.header}>
-        <Text variant="title">{t('student.attendance.title')}</Text>
-        <Button
-          variant="secondary"
-          label={t('student.attendance.back')}
-          onPress={onBack}
-          style={styles.backBtn}
-        />
-      </View>
-      <Text variant="body" color={colors.muted} style={styles.subtitle}>
-        {t('student.attendance.subtitle')}
-      </Text>
-    </>
+    <QuestHeader
+      title={t('student.attendance.title')}
+      subtitle={t('student.attendance.subtitle')}
+      backLabel={t('student.attendance.back')}
+      onBack={onBack}
+    />
   );
 
   if (!loaded) {
     return (
-      <ScreenContainer scroll>
+      <QuestScreen scroll>
         {header}
-        <ActivityIndicator color={colors.primary} style={styles.loading} />
-      </ScreenContainer>
+        <QuestLoading sprite="heart" />
+      </QuestScreen>
     );
   }
 
   if (errorKey) {
     return (
-      <ScreenContainer scroll>
+      <QuestScreen scroll>
         {header}
-        <View style={styles.stateBox}>
-          <Text variant="body" color={colors.danger} align="center">
-            {t(`student.attendance.errors.${errorKey}`)}
-          </Text>
-          <Button
-            variant="secondary"
-            label={t('student.attendance.retry')}
-            onPress={load}
-            style={styles.retry}
-          />
-        </View>
-      </ScreenContainer>
+        <QuestEmpty
+          message={t(`student.attendance.errors.${errorKey}`)}
+          tone="danger"
+          actionLabel={t('student.attendance.retry')}
+          onAction={load}
+        />
+      </QuestScreen>
     );
   }
 
   // Prerequisite empty states — honest, not a blank screen (CLAUDE.md).
   if (!year) {
     return (
-      <ScreenContainer scroll>
+      <QuestScreen scroll>
         {header}
-        <EmptyState message={t('student.attendance.noYear')} />
-      </ScreenContainer>
+        <QuestEmpty message={t('student.attendance.noYear')} />
+      </QuestScreen>
     );
   }
   if (!enrollment) {
     return (
-      <ScreenContainer scroll>
+      <QuestScreen scroll>
         {header}
-        <EmptyState message={t('student.attendance.noEnrollment')} />
-      </ScreenContainer>
+        <QuestEmpty message={t('student.attendance.noEnrollment')} />
+      </QuestScreen>
     );
   }
   if (total === 0) {
     return (
-      <ScreenContainer scroll>
+      <QuestScreen scroll>
         {header}
-        <EmptyState message={t('student.attendance.empty')} />
-      </ScreenContainer>
+        <QuestEmpty message={t('student.attendance.empty')} />
+      </QuestScreen>
     );
   }
 
   return (
-    <ScreenContainer scroll>
+    <QuestScreen scroll>
       {header}
 
-      <View style={styles.summaryBox}>
-        <Text variant="label" color={colors.primary}>
-          {t('student.attendance.presentRate', { rate: presentRate })}
-        </Text>
-        <Text variant="caption" color={colors.muted} style={styles.summarySub}>
-          {t('student.attendance.summary', counts)}
-        </Text>
-      </View>
+      <Enter>
+        <QuestPanel
+          outline={quest.berryEdge}
+          edge={quest.berryEdge}
+          style={styles.summaryBox}
+          faceStyle={styles.summaryFace}
+        >
+          <Sprite name="heart" size={48} />
+          <View style={styles.summaryText}>
+            <Text color={quest.ink} style={displayText(18)}>
+              {t('student.attendance.presentRate', { rate: presentRate })}
+            </Text>
+            <QuestBar value={presentRate} color={quest.berry} style={styles.summaryBar} />
+            <Text variant="caption" color={quest.faint} style={styles.summarySub}>
+              {t('student.attendance.summary', counts)}
+            </Text>
+          </View>
+        </QuestPanel>
+      </Enter>
 
-      {records.map((record) => (
-        <DayRow key={record.id} record={record} />
-      ))}
-    </ScreenContainer>
-  );
-}
-
-function EmptyState({ message }) {
-  return (
-    <View style={styles.stateBox}>
-      <Text variant="body" color={colors.muted} align="center">
-        {message}
-      </Text>
-    </View>
+      <Enter delay={80}>
+        <QuestPanel padded={false} faceStyle={styles.daysFace}>
+          {records.map((record, i) => (
+            <View key={record.id} style={i > 0 && styles.dayDivider}>
+              <DayRow record={record} />
+            </View>
+          ))}
+        </QuestPanel>
+      </Enter>
+    </QuestScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  header: {
+  summaryBox: { marginTop: spacing.lg, marginBottom: spacing.md },
+  summaryFace: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
   },
-  backBtn: { minHeight: 40, paddingVertical: spacing.xs, marginStart: spacing.md },
-  subtitle: { marginTop: spacing.xs },
-  loading: { marginTop: spacing.xl },
-  stateBox: { marginTop: spacing.xl, alignItems: 'center' },
-  retry: { marginTop: spacing.md },
-  summaryBox: {
-    marginTop: spacing.lg,
-    marginBottom: spacing.sm,
-    padding: spacing.md,
-    borderWidth: 1,
-    borderColor: colors.primary,
-    borderRadius: 12,
-    backgroundColor: colors.surface,
-  },
+  summaryText: { flex: 1, marginStart: spacing.md },
+  summaryBar: { marginTop: spacing.sm },
   summarySub: { marginTop: spacing.xs },
+  daysFace: { paddingHorizontal: spacing.md },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingVertical: spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
   },
-  statusBadge: {
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: colors.primary,
+  dayDivider: {
+    borderTopWidth: 1,
+    borderTopColor: quest.bgDeep,
   },
-  statusPresent: { backgroundColor: colors.primary, borderColor: colors.primary },
 });

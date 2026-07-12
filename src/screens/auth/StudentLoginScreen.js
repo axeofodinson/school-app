@@ -5,14 +5,27 @@
 // Designed for young users: big tap targets, minimal text. Bilingual + RTL like
 // every screen.
 //
+// Visuals: quest theme — the sprout buddy greets the child at the door, the
+// fields sit on a parchment card, and "Go" is a big gold push-button. Same
+// i18n keys and logic as before.
+//
 // On success the auth listener re-routes and this screen unmounts.
 import { useState } from 'react';
 import { View, Pressable, StyleSheet } from 'react-native';
 
-import { ScreenContainer, Text, Button, TextField, LanguageSwitch } from '../../components';
+import { Text } from '../../components';
+import {
+  QuestScreen,
+  QuestPanel,
+  QuestButton,
+  QuestField,
+  QuestLanguageSwitch,
+  Sprite,
+  Enter,
+} from '../../components/quest';
 import { useAuth } from '../../auth/AuthProvider';
 import { t } from '../../i18n';
-import { colors, spacing } from '../../theme/colors';
+import { quest, px, spacing, displayText } from '../../theme/quest';
 
 export default function StudentLoginScreen({ onStaff }) {
   const { studentSignIn } = useAuth();
@@ -34,76 +47,90 @@ export default function StudentLoginScreen({ onStaff }) {
   };
 
   return (
-    <ScreenContainer scroll>
-      <LanguageSwitch style={styles.language} />
-      <Text variant="title" align="center">{t('auth.student.title')}</Text>
-      <Text variant="subtitle" color={colors.muted} align="center" style={styles.subtitle}>
-        {t('auth.student.subtitle')}
-      </Text>
+    <QuestScreen scroll>
+      <QuestLanguageSwitch style={styles.language} />
+
+      <Enter style={styles.hero}>
+        <Sprite name="sprout" size={72} />
+        <Text color={quest.ink} align="center" style={[styles.title, displayText(26)]}>
+          {t('auth.student.title')}
+        </Text>
+        <Text variant="subtitle" color={quest.faint} align="center" style={styles.subtitle}>
+          {t('auth.student.subtitle')}
+        </Text>
+      </Enter>
 
       {errorKey ? (
         <View style={styles.banner} accessibilityLiveRegion="polite">
-          <Text variant="body" color={colors.danger} align="center">
+          <Text variant="body" color={quest.red} align="center">
             {t(`auth.studentErrors.${errorKey}`)}
           </Text>
         </View>
       ) : null}
 
-      <TextField
-        label={t('auth.student.admissionNumber')}
-        value={code}
-        onChangeText={setCode}
-        placeholder={t('auth.student.admissionNumberPlaceholder')}
-        autoCapitalize="characters"
-        autoCorrect={false}
-        editable={!submitting}
-      />
-      <TextField
-        label={t('auth.student.pin')}
-        value={pin}
-        onChangeText={setPin}
-        placeholder={t('auth.student.pinPlaceholder')}
-        keyboardType="number-pad"
-        secureTextEntry
-        maxLength={8}
-        editable={!submitting}
-        returnKeyType="go"
-        onSubmitEditing={onSubmit}
-      />
-
-      <Button
-        label={submitting ? t('auth.student.submitting') : t('auth.student.submit')}
-        onPress={onSubmit}
-        loading={submitting}
-        style={styles.submit}
-      />
+      <Enter delay={90}>
+        <QuestPanel faceStyle={styles.formFace}>
+          <QuestField
+            label={t('auth.student.admissionNumber')}
+            value={code}
+            onChangeText={setCode}
+            placeholder={t('auth.student.admissionNumberPlaceholder')}
+            autoCapitalize="characters"
+            autoCorrect={false}
+            editable={!submitting}
+          />
+          <QuestField
+            label={t('auth.student.pin')}
+            value={pin}
+            onChangeText={setPin}
+            placeholder={t('auth.student.pinPlaceholder')}
+            keyboardType="number-pad"
+            secureTextEntry
+            maxLength={8}
+            editable={!submitting}
+            returnKeyType="go"
+            onSubmitEditing={onSubmit}
+          />
+          <QuestButton
+            variant="gold"
+            size="lg"
+            label={submitting ? t('auth.student.submitting') : t('auth.student.submit')}
+            onPress={onSubmit}
+            loading={submitting}
+            style={styles.submit}
+          />
+        </QuestPanel>
+      </Enter>
 
       <View style={styles.staffRow}>
-        <Text variant="caption" color={colors.muted} align="center">
+        <Text variant="caption" color={quest.faint} align="center">
           {t('auth.student.staffLink')}
         </Text>
         <Pressable onPress={onStaff} accessibilityRole="button" hitSlop={8}>
-          <Text variant="label" color={colors.primary} align="center" style={styles.staffAction}>
+          <Text variant="label" color={quest.skyEdge} align="center" style={styles.staffAction}>
             {t('auth.student.staffLinkAction')}
           </Text>
         </Pressable>
       </View>
-    </ScreenContainer>
+    </QuestScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  language: { alignSelf: 'center', marginBottom: spacing.xl },
-  subtitle: { marginTop: spacing.xs, marginBottom: spacing.lg },
+  language: { alignSelf: 'center', marginBottom: spacing.lg },
+  hero: { alignItems: 'center', marginBottom: spacing.lg },
+  title: { marginTop: spacing.sm },
+  subtitle: { marginTop: spacing.xs },
   banner: {
-    backgroundColor: '#fef2f2',
-    borderColor: colors.danger,
-    borderWidth: 1,
-    borderRadius: 10,
+    backgroundColor: quest.redTint,
+    borderColor: quest.red,
+    borderWidth: px.border,
+    borderRadius: px.radius,
     padding: spacing.md,
     marginBottom: spacing.md,
   },
-  submit: { marginTop: spacing.sm, minHeight: 56 },
+  formFace: { padding: spacing.lg },
+  submit: { marginTop: spacing.sm },
   staffRow: { marginTop: spacing.xl, alignItems: 'center' },
   staffAction: { marginTop: spacing.xs },
 });

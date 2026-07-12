@@ -8,24 +8,71 @@
 // No navigation library yet, so it switches screens with local state (same
 // pattern as the console). The home itself reads only the already-loaded profile
 // — no network on mount — so it opens instantly.
+//
+// Visuals: quest theme — each tile is a big colored game-tile with its own
+// sprite, entering with a small stagger; pressing pushes it into the ground.
+// All copy is the same i18n keys as before; layout is logical start/end so the
+// whole screen mirrors under Urdu/RTL.
 import { useState } from 'react';
-import { View, Pressable, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 
-import { ScreenContainer, Text, Button, LanguageSwitch } from '../../components';
+import { Text } from '../../components';
+import {
+  QuestScreen,
+  QuestPanel,
+  QuestPressable,
+  QuestButton,
+  QuestLanguageSwitch,
+  Sprite,
+  Enter,
+} from '../../components/quest';
 import { useAuth } from '../../auth/AuthProvider';
 import { t } from '../../i18n';
-import { colors, spacing } from '../../theme/colors';
+import { quest, spacing, displayText } from '../../theme/quest';
 import StudentAssessmentsScreen from './StudentAssessmentsScreen';
 import StudentResultsScreen from './StudentResultsScreen';
 import StudentReportCardScreen from './StudentReportCardScreen';
 import StudentAttendanceScreen from './StudentAttendanceScreen';
 
-// The live tiles, in order, each mapping to a screen the home switches to.
+// The live tiles, in order, each mapping to a screen the home switches to —
+// now also carrying their quest look (sprite + tile colours).
 const TILES = [
-  { key: 'assessments', screen: 'assessments', note: 'assessmentsNote' },
-  { key: 'scores', screen: 'results', note: 'scoresNote' },
-  { key: 'report', screen: 'report', note: 'reportNote' },
-  { key: 'attendance', screen: 'attendance', note: 'attendanceNote' },
+  {
+    key: 'assessments',
+    screen: 'assessments',
+    note: 'assessmentsNote',
+    sprite: 'sword',
+    face: quest.green,
+    edge: quest.greenEdge,
+    text: quest.cream,
+  },
+  {
+    key: 'scores',
+    screen: 'results',
+    note: 'scoresNote',
+    sprite: 'star',
+    face: quest.gold,
+    edge: quest.goldEdge,
+    text: quest.ink,
+  },
+  {
+    key: 'report',
+    screen: 'report',
+    note: 'reportNote',
+    sprite: 'scroll',
+    face: quest.purple,
+    edge: quest.purpleEdge,
+    text: quest.cream,
+  },
+  {
+    key: 'attendance',
+    screen: 'attendance',
+    note: 'attendanceNote',
+    sprite: 'heart',
+    face: quest.berry,
+    edge: quest.berryEdge,
+    text: quest.cream,
+  },
 ];
 
 export default function StudentHomeScreen() {
@@ -47,48 +94,66 @@ export default function StudentHomeScreen() {
   }
 
   return (
-    <ScreenContainer scroll>
+    <QuestScreen scroll>
       <View style={styles.header}>
-        <Text variant="title">{t('student.home.title')}</Text>
-        <LanguageSwitch />
+        <Text color={quest.ink} style={[styles.headerTitle, displayText(24)]}>
+          {t('student.home.title')}
+        </Text>
+        <QuestLanguageSwitch />
       </View>
 
-      <Text variant="subtitle" style={styles.greeting}>
-        {name ? t('student.home.greeting', { name }) : t('student.home.welcome')}
-      </Text>
-      <Text variant="body" color={colors.muted} style={styles.placeholder}>
-        {t('student.home.placeholder')}
-      </Text>
+      {/* Greeting card — the sprout buddy welcomes the child by name. */}
+      <Enter>
+        <QuestPanel style={styles.greetingCard} faceStyle={styles.greetingFace}>
+          <Sprite name="sprout" size={56} />
+          <View style={styles.greetingText}>
+            <Text color={quest.ink} style={displayText(20)}>
+              {name ? t('student.home.greeting', { name }) : t('student.home.welcome')}
+            </Text>
+            <Text variant="caption" color={quest.faint} style={styles.greetingNote}>
+              {t('student.home.placeholder')}
+            </Text>
+          </View>
+        </QuestPanel>
+      </Enter>
 
       <View style={styles.tiles}>
-        {TILES.map((tile) => (
-          <Pressable
-            key={tile.key}
-            onPress={() => setScreen(tile.screen)}
-            accessibilityRole="button"
-            style={({ pressed }) => [
-              styles.tile,
-              styles.tileActive,
-              pressed && styles.tilePressed,
-            ]}
-          >
-            <Text variant="label" color={colors.primary}>
-              {t(`student.home.${tile.key}`)}
-            </Text>
-            <Text variant="caption" color={colors.muted} style={styles.tileNote}>
-              {t(`student.home.${tile.note}`)}
-            </Text>
-          </Pressable>
+        {TILES.map((tile, i) => (
+          <Enter key={tile.key} delay={80 + i * 70}>
+            <QuestPressable
+              onPress={() => setScreen(tile.screen)}
+              face={tile.face}
+              edge={tile.edge}
+              outline={tile.edge}
+              style={styles.tile}
+              faceStyle={styles.tileFace}
+            >
+              <Sprite name={tile.sprite} size={44} />
+              <View style={styles.tileText}>
+                <Text color={tile.text} style={displayText(18)}>
+                  {t(`student.home.${tile.key}`)}
+                </Text>
+                <Text
+                  variant="caption"
+                  color={tile.text}
+                  style={styles.tileNote}
+                >
+                  {t(`student.home.${tile.note}`)}
+                </Text>
+              </View>
+            </QuestPressable>
+          </Enter>
         ))}
       </View>
 
-      <Button
-        variant="secondary"
+      <QuestButton
+        variant="ghost"
+        size="sm"
         label={t('student.home.signOut')}
         onPress={signOut}
         style={styles.signOut}
       />
-    </ScreenContainer>
+    </QuestScreen>
   );
 }
 
@@ -98,21 +163,22 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  greeting: { marginTop: spacing.md },
-  placeholder: { marginTop: spacing.sm },
-  tiles: { marginTop: spacing.xl },
-  tile: {
-    minHeight: 72,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 14,
-    padding: spacing.lg,
-    marginBottom: spacing.md,
-    backgroundColor: colors.surface,
-    justifyContent: 'center',
+  headerTitle: { flex: 1, marginEnd: spacing.md },
+  greetingCard: { marginTop: spacing.lg },
+  greetingFace: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
-  tileActive: { borderColor: colors.primary },
-  tilePressed: { opacity: 0.85 },
-  tileNote: { marginTop: spacing.xs },
-  signOut: { marginTop: spacing.lg },
+  greetingText: { flex: 1, marginStart: spacing.md },
+  greetingNote: { marginTop: spacing.xs },
+  tiles: { marginTop: spacing.lg },
+  tile: { marginBottom: spacing.md },
+  tileFace: {
+    minHeight: 84,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  tileText: { flex: 1, marginStart: spacing.md },
+  tileNote: { marginTop: 2, opacity: 0.85 },
+  signOut: { marginTop: spacing.md, alignSelf: 'center', minWidth: 160 },
 });

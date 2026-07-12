@@ -7,9 +7,12 @@
 import { isRTL } from '../i18n';
 
 // Passed to expo-font's useFonts(): family name -> local asset.
+// Pixelify Sans (OFL — see assets/fonts/OFL-PixelifySans.txt) is the student
+// app's display face for English titles/numbers; Urdu display stays Nastaliq.
 export const fontAssets = {
   'NotoNastaliqUrdu-Regular': require('../../assets/fonts/NotoNastaliqUrdu-Regular.ttf'),
   'NotoNastaliqUrdu-Bold': require('../../assets/fonts/NotoNastaliqUrdu-Bold.ttf'),
+  'PixelifySans-SemiBold': require('../../assets/fonts/PixelifySans-SemiBold.ttf'),
 };
 
 // Semantic names for use in styles, so screens never hardcode the raw family.

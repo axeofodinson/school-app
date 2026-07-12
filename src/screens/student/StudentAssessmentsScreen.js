@@ -12,18 +12,33 @@
 // test hands off to AssessmentAttemptScreen, which caches questions + drafts
 // answers locally.
 //
+// Visuals: quest theme — each test is a quest card with a sprite for its type
+// (test=sword, homework=scroll, exam=shield, quiz=bolt) and a status badge.
+// Same queries, same i18n keys, logical start/end layout throughout.
+//
 // Build-order prerequisites (CLAUDE.md): a current academic year and an active
 // enrolment. Each missing step gets a real, honest empty state — never a blank
 // page.
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { View, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 
-import { ScreenContainer, Text, Button } from '../../components';
+import { Text } from '../../components';
+import {
+  QuestScreen,
+  QuestHeader,
+  QuestPanel,
+  QuestButton,
+  QuestBadge,
+  QuestLoading,
+  QuestEmpty,
+  Sprite,
+  Enter,
+} from '../../components/quest';
 import { useAuth } from '../../auth/AuthProvider';
 import { supabase } from '../../lib/supabase';
 import { getPendingKeys, syncPendingSubmissions } from '../../lib/attemptStore';
 import { t } from '../../i18n';
-import { colors, spacing } from '../../theme/colors';
+import { quest, spacing } from '../../theme/quest';
 import AssessmentAttemptScreen from './AssessmentAttemptScreen';
 
 // Map a Supabase error to an i18n key under student.assessments.errors.
@@ -36,50 +51,59 @@ function classifyError(error) {
   return 'unknown';
 }
 
-// One assessment in the list: title, subject/type, question count, and a status
-// badge (to-do / submitted / waiting-to-sync). Whole row opens the attempt.
-function AssessmentRow({ assessment, status, onOpen }) {
+// Which sprite stands for each assessment type on its quest card.
+const TYPE_SPRITES = {
+  assignment: 'scroll',
+  test: 'sword',
+  exam: 'shield',
+  quiz: 'bolt',
+};
+
+// How each status badge reads: still to do (gold), done (solid green),
+// saved offline and waiting to sync (sky).
+const STATUS_TONES = {
+  todo: 'gold',
+  submitted: 'greenSolid',
+  pending: 'sky',
+};
+
+// One assessment in the list: sprite + title, subject/type, question count, a
+// status badge, and the Start/View action. Rendered as a quest card.
+function AssessmentRow({ assessment, status, onOpen, delay }) {
   const count = assessment.assessment_questions?.[0]?.count ?? 0;
   const done = status === 'submitted' || status === 'pending';
   return (
-    <View style={styles.row}>
-      <View style={styles.rowInfo}>
-        <Text variant="label">{assessment.title}</Text>
-        <Text variant="caption" color={colors.muted} style={styles.rowMeta}>
-          {t(`student.assessments.types.${assessment.type}`)}
-          {assessment.subject?.name ? ` · ${assessment.subject.name}` : ''}
-        </Text>
-        <Text variant="caption" color={colors.muted} style={styles.rowMeta}>
-          {t('student.assessments.questionCount', { count })}
-        </Text>
-      </View>
-      <View style={styles.rowActions}>
-        <View
-          style={[
-            styles.badge,
-            status === 'submitted' && styles.badgeDone,
-            status === 'pending' && styles.badgePending,
-          ]}
-        >
-          <Text
-            variant="caption"
-            color={status === 'todo' ? colors.primary : colors.primaryText}
-          >
-            {t(`student.assessments.status.${status}`)}
+    <Enter delay={delay}>
+      <QuestPanel style={styles.row} faceStyle={styles.rowFace}>
+        <Sprite name={TYPE_SPRITES[assessment.type] ?? 'sword'} size={40} />
+        <View style={styles.rowInfo}>
+          <Text variant="label" color={quest.ink}>
+            {assessment.title}
+          </Text>
+          <Text variant="caption" color={quest.faint} style={styles.rowMeta}>
+            {t(`student.assessments.types.${assessment.type}`)}
+            {assessment.subject?.name ? ` · ${assessment.subject.name}` : ''}
+          </Text>
+          <Text variant="caption" color={quest.faint} style={styles.rowMeta}>
+            {t('student.assessments.questionCount', { count })}
           </Text>
         </View>
-        <Button
-          variant={done ? 'secondary' : 'primary'}
-          label={
-            done
-              ? t('student.assessments.view')
-              : t('student.assessments.start')
-          }
-          onPress={() => onOpen(assessment, done)}
-          style={styles.rowAction}
-        />
-      </View>
-    </View>
+        <View style={styles.rowActions}>
+          <QuestBadge
+            label={t(`student.assessments.status.${status}`)}
+            tone={STATUS_TONES[status] ?? 'faint'}
+            style={styles.badge}
+          />
+          <QuestButton
+            variant={done ? 'ghost' : 'primary'}
+            size="sm"
+            label={done ? t('student.assessments.view') : t('student.assessments.start')}
+            onPress={() => onOpen(assessment, done)}
+            style={styles.rowAction}
+          />
+        </View>
+      </QuestPanel>
+    </Enter>
   );
 }
 
@@ -231,136 +255,94 @@ export default function StudentAssessmentsScreen({ onBack }) {
   }
 
   const header = (
-    <>
-      <View style={styles.header}>
-        <Text variant="title">{t('student.assessments.title')}</Text>
-        <Button
-          variant="secondary"
-          label={t('student.assessments.back')}
-          onPress={onBack}
-          style={styles.backBtn}
-        />
-      </View>
-      <Text variant="body" color={colors.muted} style={styles.subtitle}>
-        {t('student.assessments.subtitle')}
-      </Text>
-    </>
+    <QuestHeader
+      title={t('student.assessments.title')}
+      subtitle={t('student.assessments.subtitle')}
+      backLabel={t('student.assessments.back')}
+      onBack={onBack}
+    />
   );
 
   if (!loaded) {
     return (
-      <ScreenContainer scroll>
+      <QuestScreen scroll>
         {header}
-        <ActivityIndicator color={colors.primary} style={styles.loading} />
-      </ScreenContainer>
+        <QuestLoading sprite="sword" />
+      </QuestScreen>
     );
   }
 
   if (errorKey) {
     return (
-      <ScreenContainer scroll>
+      <QuestScreen scroll>
         {header}
-        <View style={styles.stateBox}>
-          <Text variant="body" color={colors.danger} align="center">
-            {t(`student.assessments.errors.${errorKey}`)}
-          </Text>
-          <Button
-            variant="secondary"
-            label={t('student.assessments.retry')}
-            onPress={load}
-            style={styles.retry}
-          />
-        </View>
-      </ScreenContainer>
+        <QuestEmpty
+          message={t(`student.assessments.errors.${errorKey}`)}
+          tone="danger"
+          actionLabel={t('student.assessments.retry')}
+          onAction={load}
+        />
+      </QuestScreen>
     );
   }
 
   // Prerequisite empty states — honest, not a blank screen (CLAUDE.md).
   if (!year) {
     return (
-      <ScreenContainer scroll>
+      <QuestScreen scroll>
         {header}
-        <EmptyState message={t('student.assessments.noYear')} />
-      </ScreenContainer>
+        <QuestEmpty message={t('student.assessments.noYear')} />
+      </QuestScreen>
     );
   }
   if (!enrollment) {
     return (
-      <ScreenContainer scroll>
+      <QuestScreen scroll>
         {header}
-        <EmptyState message={t('student.assessments.noEnrollment')} />
-      </ScreenContainer>
+        <QuestEmpty message={t('student.assessments.noEnrollment')} />
+      </QuestScreen>
     );
   }
   if (!list || list.length === 0) {
     return (
-      <ScreenContainer scroll>
+      <QuestScreen scroll>
         {header}
-        <EmptyState message={t('student.assessments.empty')} />
-      </ScreenContainer>
+        <QuestEmpty message={t('student.assessments.empty')} />
+      </QuestScreen>
     );
   }
 
   return (
-    <ScreenContainer scroll>
+    <QuestScreen scroll>
       {header}
-      <Text variant="caption" color={colors.muted} style={styles.count}>
-        {t('student.assessments.todoCount', { count: todoCount })}
-      </Text>
-      {list.map((a) => (
+      <QuestBadge
+        label={t('student.assessments.todoCount', { count: todoCount })}
+        tone={todoCount > 0 ? 'gold' : 'greenSolid'}
+        style={styles.count}
+      />
+      {list.map((a, i) => (
         <AssessmentRow
           key={a.id}
           assessment={a}
           status={statusFor(a)}
           onOpen={openAttempt}
+          delay={i < 8 ? i * 50 : 0}
         />
       ))}
-    </ScreenContainer>
-  );
-}
-
-function EmptyState({ message }) {
-  return (
-    <View style={styles.stateBox}>
-      <Text variant="body" color={colors.muted} align="center">
-        {message}
-      </Text>
-    </View>
+    </QuestScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  backBtn: { minHeight: 40, paddingVertical: spacing.xs, marginStart: spacing.md },
-  subtitle: { marginTop: spacing.xs },
   count: { marginTop: spacing.md, marginBottom: spacing.sm },
-  loading: { marginTop: spacing.xl },
-  stateBox: { marginTop: spacing.xl, alignItems: 'center' },
-  retry: { marginTop: spacing.md },
-  row: {
+  row: { marginBottom: spacing.md },
+  rowFace: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
   },
-  rowInfo: { flex: 1, marginEnd: spacing.md },
+  rowInfo: { flex: 1, marginStart: spacing.md, marginEnd: spacing.sm },
   rowMeta: { marginTop: spacing.xs },
   rowActions: { alignItems: 'flex-end' },
-  badge: {
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: colors.primary,
-    marginBottom: spacing.sm,
-  },
-  badgeDone: { backgroundColor: colors.primary, borderColor: colors.primary },
-  badgePending: { backgroundColor: colors.muted, borderColor: colors.muted },
-  rowAction: { minHeight: 40, paddingVertical: spacing.xs },
+  badge: { marginBottom: spacing.sm, alignSelf: 'flex-end' },
+  rowAction: { minWidth: 96 },
 });
