@@ -68,8 +68,9 @@
       "assessments": "My tests",
       "assessmentsNote": "See your tests and start one",
       "scores": "My scores",
+      "scoresNote": "See how you did on your tests",
       "attendance": "My attendance",
-      "comingSoon": "Coming soon",
+      "attendanceNote": "See the days you were present",
       "signOut": "Sign out"
     },
     "assessments": {
@@ -131,6 +132,49 @@
       "errors": {
         "network": "No internet. Your answers are saved — try again when you’re back online.",
         "unknown": "Couldn’t submit. Please try again."
+      }
+    },
+    "results": {
+      "title": "My scores",
+      "back": "Back",
+      "subtitle": "Your scores for the tests you’ve done.",
+      "noYear": "No school year is set up yet. Check back later.",
+      "noEnrollment": "You’re not in a class yet. Your teacher will add you.",
+      "empty": "No scores yet. When you finish a test and your teacher marks it, your score shows up here.",
+      "overall": "Overall: %{percent}%",
+      "markedCount": {
+        "one": "From %{count} marked test",
+        "other": "From %{count} marked tests"
+      },
+      "noneMarked": "Your tests aren’t marked yet. Your scores will show once your teacher marks them.",
+      "score": "%{score} / %{total}",
+      "percent": "%{percent}%",
+      "waiting": "Not marked yet",
+      "retry": "Try again",
+      "errors": {
+        "network": "No internet. Check your connection and try again.",
+        "unknown": "Something went wrong. Try again."
+      }
+    },
+    "attendance": {
+      "title": "My attendance",
+      "back": "Back",
+      "subtitle": "The days your teacher marked you this year.",
+      "noYear": "No school year is set up yet. Check back later.",
+      "noEnrollment": "You’re not in a class yet. Your teacher will add you.",
+      "empty": "No attendance yet. It’ll show up here once your teacher marks it.",
+      "presentRate": "You were present on %{rate}% of your days",
+      "summary": "%{present} present · %{absent} absent · %{late} late · %{leave} leave",
+      "statuses": {
+        "present": "Present",
+        "absent": "Absent",
+        "late": "Late",
+        "leave": "Leave"
+      },
+      "retry": "Try again",
+      "errors": {
+        "network": "No internet. Check your connection and try again.",
+        "unknown": "Something went wrong. Try again."
       }
     }
   },
