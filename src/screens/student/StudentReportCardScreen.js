@@ -10,19 +10,34 @@
 // Weightage rules change there, never here (and the numbers are pinned by
 // `npm run verify:report`), so this file stays about layout + honest states.
 //
+// Visuals: quest theme — the year's headline is a trophy card, subjects fill
+// XP bars, and the recall-vs-thinking split gets gold/green bars. Same math,
+// same i18n keys, logical start/end layout throughout.
+//
 // Honesty (CLAUDE.md rule 3): the headline stands on the MARKED tests only, so a
 // pending test never inflates or deflates it; ungraded tests are surfaced as a
 // count, not hidden. Build-order prerequisites each get a real empty state, and a
 // dropped load falls back to a retry rather than a frozen screen. Bilingual + RTL
 // throughout (strings from i18n, logical start/end layout).
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { View, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 
-import { ScreenContainer, Text, Button } from '../../components';
+import { Text } from '../../components';
+import {
+  QuestScreen,
+  QuestHeader,
+  QuestPanel,
+  QuestBadge,
+  QuestBar,
+  QuestLoading,
+  QuestEmpty,
+  Sprite,
+  Enter,
+} from '../../components/quest';
 import { supabase } from '../../lib/supabase';
 import { buildReport } from '../../reporting/aggregate';
 import { t } from '../../i18n';
-import { colors, spacing } from '../../theme/colors';
+import { quest, spacing, displayText } from '../../theme/quest';
 
 // Map a Supabase error to an i18n key under student.report.errors.
 function classifyError(error) {
@@ -32,17 +47,6 @@ function classifyError(error) {
     return 'network';
   }
   return 'unknown';
-}
-
-// One horizontal share bar (0–100%). Purely presentational; width follows the
-// share. Uses logical margins so it mirrors correctly in RTL.
-function ShareBar({ share, color }) {
-  const pct = Math.max(0, Math.min(100, Number(share) || 0));
-  return (
-    <View style={styles.barTrack}>
-      <View style={[styles.barFill, { width: `${pct}%`, backgroundColor: color }]} />
-    </View>
-  );
 }
 
 export default function StudentReportCardScreen({ onBack }) {
@@ -162,268 +166,232 @@ export default function StudentReportCardScreen({ onBack }) {
   );
 
   const header = (
-    <>
-      <View style={styles.header}>
-        <Text variant="title">{t('student.report.title')}</Text>
-        <Button
-          variant="secondary"
-          label={t('student.report.back')}
-          onPress={onBack}
-          style={styles.backBtn}
-        />
-      </View>
-      <Text variant="body" color={colors.muted} style={styles.subtitle}>
-        {year
+    <QuestHeader
+      title={t('student.report.title')}
+      subtitle={
+        year
           ? t('student.report.subtitle', { year: year.label })
-          : t('student.report.subtitleNoYear')}
-      </Text>
-    </>
+          : t('student.report.subtitleNoYear')
+      }
+      backLabel={t('student.report.back')}
+      onBack={onBack}
+    />
   );
 
   if (!loaded) {
     return (
-      <ScreenContainer scroll>
+      <QuestScreen scroll>
         {header}
-        <ActivityIndicator color={colors.primary} style={styles.loading} />
-      </ScreenContainer>
+        <QuestLoading sprite="scroll" />
+      </QuestScreen>
     );
   }
 
   if (errorKey) {
     return (
-      <ScreenContainer scroll>
+      <QuestScreen scroll>
         {header}
-        <View style={styles.stateBox}>
-          <Text variant="body" color={colors.danger} align="center">
-            {t(`student.report.errors.${errorKey}`)}
-          </Text>
-          <Button
-            variant="secondary"
-            label={t('student.report.retry')}
-            onPress={load}
-            style={styles.retry}
-          />
-        </View>
-      </ScreenContainer>
+        <QuestEmpty
+          message={t(`student.report.errors.${errorKey}`)}
+          tone="danger"
+          actionLabel={t('student.report.retry')}
+          onAction={load}
+        />
+      </QuestScreen>
     );
   }
 
   // Prerequisite empty states — honest, not a blank screen (CLAUDE.md).
   if (!year) {
     return (
-      <ScreenContainer scroll>
+      <QuestScreen scroll>
         {header}
-        <EmptyState message={t('student.report.noYear')} />
-      </ScreenContainer>
+        <QuestEmpty message={t('student.report.noYear')} />
+      </QuestScreen>
     );
   }
   if (!enrollment) {
     return (
-      <ScreenContainer scroll>
+      <QuestScreen scroll>
         {header}
-        <EmptyState message={t('student.report.noEnrollment')} />
-      </ScreenContainer>
+        <QuestEmpty message={t('student.report.noEnrollment')} />
+      </QuestScreen>
     );
   }
   if (!assessments || assessments.length === 0) {
     return (
-      <ScreenContainer scroll>
+      <QuestScreen scroll>
         {header}
-        <EmptyState message={t('student.report.empty')} />
-      </ScreenContainer>
+        <QuestEmpty message={t('student.report.empty')} />
+      </QuestScreen>
     );
   }
 
   const { overall, subjects, cognitive } = report;
 
   return (
-    <ScreenContainer scroll>
+    <QuestScreen scroll>
       {header}
 
       {/* Headline — stands on the marked tests only. */}
-      <View style={styles.overallBox}>
-        <Text variant="label" color={colors.muted}>
-          {t('student.report.overall')}
-        </Text>
-        {overall.percent != null ? (
-          <>
-            <Text variant="title" color={colors.primary} style={styles.overallPercent}>
-              {t('student.report.overallPercent', { percent: overall.percent })}
+      <Enter>
+        <QuestPanel
+          outline={quest.goldEdge}
+          edge={quest.goldEdge}
+          style={styles.overallBox}
+          faceStyle={styles.overallFace}
+        >
+          <Sprite name="trophy" size={56} />
+          <View style={styles.overallText}>
+            <Text variant="label" color={quest.faint}>
+              {t('student.report.overall')}
             </Text>
-            <Text variant="caption" color={colors.muted}>
-              {t('student.report.fromMarked', { count: overall.gradedCount })}
-            </Text>
-            {!overall.weighted ? (
-              <Text variant="caption" color={colors.muted} style={styles.note}>
-                {t('student.report.unweightedNote')}
+            {overall.percent != null ? (
+              <>
+                <Text color={quest.ink} style={displayText(32)}>
+                  {t('student.report.overallPercent', { percent: overall.percent })}
+                </Text>
+                <QuestBar value={overall.percent} color={quest.gold} style={styles.overallBar} />
+                <Text variant="caption" color={quest.faint} style={styles.note}>
+                  {t('student.report.fromMarked', { count: overall.gradedCount })}
+                </Text>
+                {!overall.weighted ? (
+                  <Text variant="caption" color={quest.faint} style={styles.note}>
+                    {t('student.report.unweightedNote')}
+                  </Text>
+                ) : null}
+              </>
+            ) : (
+              <Text variant="body" color={quest.faint} style={styles.note}>
+                {t('student.report.noneMarked')}
               </Text>
-            ) : null}
-          </>
-        ) : (
-          <Text variant="body" color={colors.muted} style={styles.note}>
-            {t('student.report.noneMarked')}
-          </Text>
-        )}
-        {overall.ungradedCount > 0 ? (
-          <Text variant="caption" color={colors.muted} style={styles.note}>
-            {t('student.report.waiting', { count: overall.ungradedCount })}
-          </Text>
-        ) : null}
-      </View>
-
-      {/* Per-subject roll-up. */}
-      <Text variant="label" style={styles.sectionHeading}>
-        {t('student.report.bySubject')}
-      </Text>
-      {subjects.map((s) => (
-        <View key={s.id ?? '__none__'} style={styles.row}>
-          <View style={styles.rowInfo}>
-            <Text variant="label">{s.name ?? '—'}</Text>
-            {s.gradedCount > 0 ? (
-              <Text variant="caption" color={colors.muted} style={styles.rowMeta}>
-                {t('student.report.subjectMarked', { count: s.gradedCount })}
+            )}
+            {overall.ungradedCount > 0 ? (
+              <Text variant="caption" color={quest.faint} style={styles.note}>
+                {t('student.report.waiting', { count: overall.ungradedCount })}
               </Text>
             ) : null}
           </View>
-          {s.percent != null ? (
-            <Text variant="label" color={colors.primary}>
-              {t('student.report.subjectPercent', { percent: s.percent })}
-            </Text>
-          ) : (
-            <View style={styles.waitingBadge}>
-              <Text variant="caption" color={colors.muted}>
-                {t('student.report.subjectWaiting')}
-              </Text>
+        </QuestPanel>
+      </Enter>
+
+      {/* Per-subject roll-up — each subject fills its own XP bar. */}
+      <Text color={quest.ink} style={[styles.sectionHeading, displayText(18)]}>
+        {t('student.report.bySubject')}
+      </Text>
+      <Enter delay={80}>
+        <QuestPanel>
+          {subjects.map((s, i) => (
+            <View key={s.id ?? '__none__'} style={[styles.subjectRow, i > 0 && styles.subjectGap]}>
+              <View style={styles.subjectHead}>
+                <View style={styles.subjectInfo}>
+                  <Text variant="label" color={quest.ink}>
+                    {s.name ?? '—'}
+                  </Text>
+                  {s.gradedCount > 0 ? (
+                    <Text variant="caption" color={quest.faint} style={styles.rowMeta}>
+                      {t('student.report.subjectMarked', { count: s.gradedCount })}
+                    </Text>
+                  ) : null}
+                </View>
+                {s.percent != null ? (
+                  <Text color={quest.greenEdge} style={displayText(18)}>
+                    {t('student.report.subjectPercent', { percent: s.percent })}
+                  </Text>
+                ) : (
+                  <QuestBadge label={t('student.report.subjectWaiting')} tone="faint" />
+                )}
+              </View>
+              {s.percent != null ? (
+                <QuestBar value={s.percent} height={10} style={styles.subjectBar} />
+              ) : null}
             </View>
-          )}
-        </View>
-      ))}
+          ))}
+        </QuestPanel>
+      </Enter>
 
       {/* What was tested — recall vs conceptual, by marks. */}
       {cognitive.totalMarks > 0 ? (
-        <View style={styles.cognitiveBox}>
-          <Text variant="label" style={styles.sectionHeading}>
+        <Enter delay={140}>
+          <Text color={quest.ink} style={[styles.sectionHeading, displayText(18)]}>
             {t('student.report.cognitive.heading')}
           </Text>
-          <Text variant="caption" color={colors.muted} style={styles.cognitiveHint}>
-            {t('student.report.cognitive.hint')}
-          </Text>
+          <QuestPanel>
+            <Text variant="caption" color={quest.faint} style={styles.cognitiveHint}>
+              {t('student.report.cognitive.hint')}
+            </Text>
 
-          <View style={styles.splitRow}>
-            <View style={styles.splitCol}>
-              <Text variant="caption" color={colors.muted}>
-                {t('student.report.cognitive.recall')}
-              </Text>
-              <Text variant="label" color={colors.text}>
-                {t('student.report.cognitive.share', { share: cognitive.recall.share })}
-              </Text>
-              <ShareBar share={cognitive.recall.share} color={colors.muted} />
-            </View>
-            <View style={styles.splitCol}>
-              <Text variant="caption" color={colors.muted}>
-                {t('student.report.cognitive.conceptual')}
-              </Text>
-              <Text variant="label" color={colors.primary}>
-                {t('student.report.cognitive.share', {
-                  share: cognitive.conceptual.share,
-                })}
-              </Text>
-              <ShareBar share={cognitive.conceptual.share} color={colors.primary} />
-            </View>
-          </View>
-
-          {/* The four levels behind the split, marks + share each. */}
-          {cognitive.levels
-            .filter((l) => l.marks > 0)
-            .map((l) => (
-              <View key={l.level} style={styles.levelRow}>
-                <Text variant="caption" color={colors.text}>
-                  {t(`student.report.cognitive.levels.${l.level}`)}
+            <View style={styles.splitRow}>
+              <View style={styles.splitCol}>
+                <Text variant="caption" color={quest.faint}>
+                  {t('student.report.cognitive.recall')}
                 </Text>
-                <Text variant="caption" color={colors.muted}>
-                  {t('student.report.cognitive.levelDetail', {
-                    share: l.share,
-                    marks: l.marks,
+                <Text color={quest.goldEdge} style={displayText(18)}>
+                  {t('student.report.cognitive.share', { share: cognitive.recall.share })}
+                </Text>
+                <QuestBar value={cognitive.recall.share} height={10} color={quest.gold} style={styles.splitBar} />
+              </View>
+              <View style={[styles.splitCol, styles.splitColEnd]}>
+                <Text variant="caption" color={quest.faint}>
+                  {t('student.report.cognitive.conceptual')}
+                </Text>
+                <Text color={quest.greenEdge} style={displayText(18)}>
+                  {t('student.report.cognitive.share', {
+                    share: cognitive.conceptual.share,
                   })}
                 </Text>
+                <QuestBar value={cognitive.conceptual.share} height={10} color={quest.green} style={styles.splitBar} />
               </View>
-            ))}
-        </View>
-      ) : null}
-    </ScreenContainer>
-  );
-}
+            </View>
 
-function EmptyState({ message }) {
-  return (
-    <View style={styles.stateBox}>
-      <Text variant="body" color={colors.muted} align="center">
-        {message}
-      </Text>
-    </View>
+            {/* The four levels behind the split, marks + share each. */}
+            {cognitive.levels
+              .filter((l) => l.marks > 0)
+              .map((l) => (
+                <View key={l.level} style={styles.levelRow}>
+                  <Text variant="caption" color={quest.ink}>
+                    {t(`student.report.cognitive.levels.${l.level}`)}
+                  </Text>
+                  <Text variant="caption" color={quest.faint}>
+                    {t('student.report.cognitive.levelDetail', {
+                      share: l.share,
+                      marks: l.marks,
+                    })}
+                  </Text>
+                </View>
+              ))}
+          </QuestPanel>
+        </Enter>
+      ) : null}
+    </QuestScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  header: {
+  overallBox: { marginTop: spacing.lg },
+  overallFace: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
   },
-  backBtn: { minHeight: 40, paddingVertical: spacing.xs, marginStart: spacing.md },
-  subtitle: { marginTop: spacing.xs },
-  loading: { marginTop: spacing.xl },
-  stateBox: { marginTop: spacing.xl, alignItems: 'center' },
-  retry: { marginTop: spacing.md },
+  overallText: { flex: 1, marginStart: spacing.md },
+  overallBar: { marginTop: spacing.sm },
   note: { marginTop: spacing.xs },
-  overallBox: {
-    marginTop: spacing.lg,
-    marginBottom: spacing.sm,
-    padding: spacing.lg,
-    borderWidth: 1,
-    borderColor: colors.primary,
-    borderRadius: 12,
-    backgroundColor: colors.surface,
-  },
-  overallPercent: { marginTop: spacing.xs },
-  sectionHeading: { marginTop: spacing.lg, marginBottom: spacing.xs },
-  row: {
+  sectionHeading: { marginTop: spacing.lg, marginBottom: spacing.sm },
+  subjectRow: {},
+  subjectGap: { marginTop: spacing.md },
+  subjectHead: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
   },
-  rowInfo: { flex: 1, marginEnd: spacing.md },
-  rowMeta: { marginTop: spacing.xs },
-  waitingBadge: {
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.surface,
-  },
-  cognitiveBox: {
-    marginTop: spacing.lg,
-    padding: spacing.lg,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 12,
-    backgroundColor: colors.surface,
-  },
+  subjectInfo: { flex: 1, marginEnd: spacing.md },
+  subjectBar: { marginTop: spacing.xs },
+  rowMeta: { marginTop: 2 },
   cognitiveHint: { marginBottom: spacing.md },
-  splitRow: { flexDirection: 'row', justifyContent: 'space-between' },
-  splitCol: { flex: 1, marginEnd: spacing.md },
-  barTrack: {
-    height: 8,
-    borderRadius: 999,
-    backgroundColor: colors.border,
-    marginTop: spacing.xs,
-    overflow: 'hidden',
-  },
-  barFill: { height: 8, borderRadius: 999 },
+  splitRow: { flexDirection: 'row' },
+  splitCol: { flex: 1 },
+  splitColEnd: { marginStart: spacing.md },
+  splitBar: { marginTop: spacing.xs },
   levelRow: {
     flexDirection: 'row',
     alignItems: 'center',

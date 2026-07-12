@@ -17,10 +17,30 @@
 // true_false (pick True/False) — matching what the authoring screen writes
 // (one `questions` table, jsonb body — rule 5). RLS (db/005) is the real
 // boundary; this screen only shows what the student may read.
+//
+// Visuals: quest theme — questions are parchment cards, answers are chunky
+// push-buttons that light up green when picked, progress is an XP bar that
+// fills as the child answers, and submitting opens a treasure chest. Same
+// logic, same i18n keys, logical start/end layout throughout.
 import { useCallback, useEffect, useState } from 'react';
-import { View, Pressable, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 
-import { ScreenContainer, Text, TextField, Button } from '../../components';
+import { Text } from '../../components';
+import {
+  QuestScreen,
+  QuestHeader,
+  QuestPanel,
+  QuestPressable,
+  QuestButton,
+  QuestBadge,
+  QuestBar,
+  QuestField,
+  QuestLoading,
+  QuestEmpty,
+  Sprite,
+  Enter,
+  Pop,
+} from '../../components/quest';
 import { supabase } from '../../lib/supabase';
 import {
   buildResponses,
@@ -33,78 +53,81 @@ import {
   submitAttempt,
 } from '../../lib/attemptStore';
 import { t } from '../../i18n';
-import { colors, spacing } from '../../theme/colors';
+import { quest, px, spacing } from '../../theme/quest';
 
-// A pressable pill for single-choice answers (mcq options, true/false). Selected
-// fills with the primary colour; logical margins keep it RTL-correct.
-function Chip({ label, selected, onPress, disabled }) {
+// A single-choice answer as a chunky push-button (mcq options, true/false).
+// Picked = solid green with cream text, like flipping a switch in a dungeon.
+function Choice({ label, selected, onPress, disabled, style }) {
   return (
-    <Pressable
+    <QuestPressable
       onPress={onPress}
       disabled={disabled}
-      accessibilityRole="button"
       accessibilityState={{ selected, disabled: !!disabled }}
-      style={({ pressed }) => [
-        styles.chip,
-        selected && styles.chipSelected,
-        disabled && styles.chipDisabled,
-        pressed && !disabled && styles.chipPressed,
-      ]}
+      face={selected ? quest.green : quest.surface}
+      edge={selected ? quest.greenEdge : quest.outline}
+      outline={selected ? quest.greenEdge : quest.outline}
+      style={style}
+      faceStyle={styles.choiceFace}
     >
-      <Text variant="label" color={selected ? colors.primaryText : colors.primary}>
+      <Text variant="label" color={selected ? quest.cream : quest.ink}>
         {label}
       </Text>
-    </Pressable>
+    </QuestPressable>
   );
 }
 
-// One question card: the stem, its marks, and the type-specific answer input.
+// One question card: the number badge, its marks, the stem, and the
+// type-specific answer input on a parchment panel.
 function QuestionCard({ index, question, value, onChange, disabled }) {
   const stem = question.body?.stem || '';
   return (
-    <View style={styles.qCard}>
+    <QuestPanel style={styles.qCard}>
       <View style={styles.qHead}>
-        <Text variant="label" style={styles.qNum}>
-          {t('student.attempt.questionNumber', { number: index + 1 })}
-        </Text>
-        <Text variant="caption" color={colors.muted}>
+        <QuestBadge
+          label={t('student.attempt.questionNumber', { number: index + 1 })}
+          tone="gold"
+        />
+        <Text variant="caption" color={quest.faint}>
           {t('student.attempt.marks', { count: question.marks })}
         </Text>
       </View>
-      <Text variant="body" style={styles.qStem}>
+      <Text variant="body" color={quest.ink} style={styles.qStem}>
         {stem}
       </Text>
 
       {question.type === 'mcq' ? (
-        <View style={styles.optionCol}>
+        <View>
           {(question.body?.options ?? []).map((opt) => (
-            <Chip
+            <Choice
               key={opt.key}
               label={`${opt.key}. ${opt.text}`}
               selected={value === opt.key}
               onPress={() => onChange(opt.key)}
               disabled={disabled}
+              style={styles.option}
             />
           ))}
         </View>
       ) : question.type === 'true_false' ? (
-        <View style={styles.chipRow}>
-          <Chip
+        <View style={styles.choiceRow}>
+          <Choice
             label={t('student.attempt.true')}
             selected={value === true}
             onPress={() => onChange(true)}
             disabled={disabled}
+            style={styles.choiceHalf}
           />
-          <Chip
+          <Choice
             label={t('student.attempt.false')}
             selected={value === false}
             onPress={() => onChange(false)}
             disabled={disabled}
+            style={[styles.choiceHalf, styles.choiceHalfEnd]}
           />
         </View>
       ) : (
         // numeric
-        <TextField
+        <QuestField
           value={value ?? ''}
           onChangeText={onChange}
           placeholder={t('student.attempt.numericPlaceholder')}
@@ -115,7 +138,7 @@ function QuestionCard({ index, question, value, onChange, disabled }) {
           style={styles.numericField}
         />
       )}
-    </View>
+    </QuestPanel>
   );
 }
 
@@ -221,124 +244,108 @@ export default function AssessmentAttemptScreen({
 
   // --- Header (shared across states) ---
   const header = (
-    <>
-      <View style={styles.header}>
-        <Text variant="title" style={styles.title}>
-          {assessment?.title}
-        </Text>
-        <Button
-          variant="secondary"
-          label={t('student.attempt.back')}
-          onPress={onBack}
-          style={styles.backBtn}
-        />
-      </View>
-      {assessment?.subject?.name ? (
-        <Text variant="caption" color={colors.muted} style={styles.subtitle}>
-          {t('student.attempt.context', {
-            subject: assessment.subject.name,
-            type: t(`student.assessments.types.${assessment.type}`),
-          })}
-        </Text>
-      ) : null}
-    </>
+    <QuestHeader
+      title={assessment?.title}
+      subtitle={
+        assessment?.subject?.name
+          ? t('student.attempt.context', {
+              subject: assessment.subject.name,
+              type: t(`student.assessments.types.${assessment.type}`),
+            })
+          : null
+      }
+      backLabel={t('student.attempt.back')}
+      onBack={onBack}
+    />
   );
 
   // Result state — the attempt is recorded (or safely queued for reconnect).
+  // The treasure chest pops in: finishing a test should feel like a reward.
   if (result) {
     return (
-      <ScreenContainer scroll>
+      <QuestScreen scroll>
         {header}
         <View style={styles.stateBox}>
-          <Text variant="body" align="center" style={styles.resultText}>
-            {result === 'submitted'
-              ? t('student.attempt.submitted')
-              : t('student.attempt.queued')}
-          </Text>
-          <Button
+          <Pop>
+            <Sprite name="chest" size={96} />
+          </Pop>
+          <Enter delay={200}>
+            <Text variant="body" color={quest.ink} align="center" style={styles.resultText}>
+              {result === 'submitted'
+                ? t('student.attempt.submitted')
+                : t('student.attempt.queued')}
+            </Text>
+          </Enter>
+          <QuestButton
             label={t('student.attempt.doneBack')}
             onPress={onBack}
-            style={styles.retry}
+            style={styles.stateAction}
           />
         </View>
-      </ScreenContainer>
+      </QuestScreen>
     );
   }
 
   // Already submitted before this session — read-only notice, no re-attempt.
   if (alreadySubmitted) {
     return (
-      <ScreenContainer scroll>
+      <QuestScreen scroll>
         {header}
-        <View style={styles.stateBox}>
-          <Text variant="body" color={colors.muted} align="center">
-            {t('student.attempt.alreadyDone')}
-          </Text>
-          <Button
-            variant="secondary"
-            label={t('student.attempt.doneBack')}
-            onPress={onBack}
-            style={styles.retry}
-          />
-        </View>
-      </ScreenContainer>
+        <QuestEmpty
+          sprite="chest"
+          message={t('student.attempt.alreadyDone')}
+          actionLabel={t('student.attempt.doneBack')}
+          onAction={onBack}
+        />
+      </QuestScreen>
     );
   }
 
   if (questions === null && !loadError) {
     return (
-      <ScreenContainer scroll>
+      <QuestScreen scroll>
         {header}
-        <ActivityIndicator color={colors.primary} style={styles.loading} />
-      </ScreenContainer>
+        <QuestLoading sprite="sword" />
+      </QuestScreen>
     );
   }
 
   if (loadError) {
     return (
-      <ScreenContainer scroll>
+      <QuestScreen scroll>
         {header}
-        <View style={styles.stateBox}>
-          <Text variant="body" color={colors.danger} align="center">
-            {t('student.attempt.loadError')}
-          </Text>
-          <Button
-            variant="secondary"
-            label={t('student.attempt.retry')}
-            onPress={load}
-            style={styles.retry}
-          />
-        </View>
-      </ScreenContainer>
+        <QuestEmpty
+          message={t('student.attempt.loadError')}
+          tone="danger"
+          actionLabel={t('student.attempt.retry')}
+          onAction={load}
+        />
+      </QuestScreen>
     );
   }
 
   if (questions.length === 0) {
     return (
-      <ScreenContainer scroll>
+      <QuestScreen scroll>
         {header}
-        <View style={styles.stateBox}>
-          <Text variant="body" color={colors.muted} align="center">
-            {t('student.attempt.noQuestions')}
-          </Text>
-          <Button
-            variant="secondary"
-            label={t('student.attempt.doneBack')}
-            onPress={onBack}
-            style={styles.retry}
-          />
-        </View>
-      </ScreenContainer>
+        <QuestEmpty
+          message={t('student.attempt.noQuestions')}
+          actionLabel={t('student.attempt.doneBack')}
+          onAction={onBack}
+        />
+      </QuestScreen>
     );
   }
 
+  const progressPct = questions.length > 0 ? (answeredCount / questions.length) * 100 : 0;
+
   return (
-    <ScreenContainer scroll>
+    <QuestScreen scroll>
       {header}
 
       {usingCache ? (
         <View style={styles.offlineBanner}>
-          <Text variant="caption" color={colors.muted}>
+          <Text variant="caption" color={quest.skyEdge}>
             {t('student.attempt.offlineBanner')}
           </Text>
         </View>
@@ -355,86 +362,72 @@ export default function AssessmentAttemptScreen({
         />
       ))}
 
-      <Text variant="caption" color={colors.muted} style={styles.progress}>
-        {t('student.attempt.answeredSummary', {
-          answered: answeredCount,
-          total: questions.length,
-        })}
-      </Text>
+      {/* XP-style progress: fills as the child answers, gold when complete. */}
+      <View style={styles.progressBlock}>
+        <QuestBar
+          value={progressPct}
+          color={answeredCount === questions.length ? quest.gold : quest.green}
+        />
+        <Text variant="caption" color={quest.faint} style={styles.progressText}>
+          {t('student.attempt.answeredSummary', {
+            answered: answeredCount,
+            total: questions.length,
+          })}
+        </Text>
+      </View>
 
       {errorKey ? (
-        <Text variant="caption" color={colors.danger} style={styles.formErr}>
+        <Text variant="caption" color={quest.red} style={styles.formErr}>
           {t(`student.attempt.errors.${errorKey}`)}
         </Text>
       ) : null}
 
-      <Button
+      <QuestButton
+        variant="gold"
+        size="lg"
         label={submitting ? t('student.attempt.submitting') : t('student.attempt.submit')}
         onPress={submit}
         loading={submitting}
         disabled={submitting}
         style={styles.submit}
       />
-    </ScreenContainer>
+    </QuestScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  title: { flex: 1, marginEnd: spacing.md },
-  backBtn: { minHeight: 40, paddingVertical: spacing.xs },
-  subtitle: { marginTop: spacing.xs },
   offlineBanner: {
     marginTop: spacing.md,
     padding: spacing.sm,
-    borderRadius: 8,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
+    borderRadius: px.radius,
+    backgroundColor: quest.skyTint,
+    borderWidth: px.border,
+    borderColor: quest.sky,
   },
-  qCard: {
-    marginTop: spacing.md,
-    padding: spacing.md,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 12,
-    backgroundColor: colors.surface,
-  },
+  qCard: { marginTop: spacing.md },
   qHead: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  qNum: {},
   qStem: { marginTop: spacing.sm, marginBottom: spacing.md },
-  optionCol: {},
-  chipRow: { flexDirection: 'row', flexWrap: 'wrap' },
-  chip: {
-    minHeight: 44,
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: colors.primary,
-    backgroundColor: colors.bg,
-    marginEnd: spacing.sm,
-    marginBottom: spacing.sm,
+  option: { marginBottom: spacing.sm },
+  choiceRow: { flexDirection: 'row' },
+  choiceHalf: { flex: 1 },
+  choiceHalfEnd: { marginStart: spacing.sm },
+  choiceFace: {
+    minHeight: 48,
     alignItems: 'center',
     justifyContent: 'center',
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
   },
-  chipSelected: { backgroundColor: colors.primary },
-  chipDisabled: { borderColor: colors.disabled, opacity: 0.6 },
-  chipPressed: { opacity: 0.85 },
-  numericField: { marginTop: spacing.xs },
-  progress: { marginTop: spacing.md },
+  numericField: { marginTop: spacing.xs, marginBottom: 0 },
+  progressBlock: { marginTop: spacing.lg },
+  progressText: { marginTop: spacing.xs },
   formErr: { marginTop: spacing.sm },
   submit: { marginTop: spacing.md },
-  loading: { marginTop: spacing.xl },
   stateBox: { marginTop: spacing.xl, alignItems: 'center' },
-  resultText: { marginBottom: spacing.sm },
-  retry: { marginTop: spacing.md },
+  resultText: { marginTop: spacing.md, marginBottom: spacing.sm, paddingHorizontal: spacing.lg },
+  stateAction: { marginTop: spacing.md, minWidth: 200 },
 });

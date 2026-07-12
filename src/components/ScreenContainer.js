@@ -21,6 +21,7 @@ export default function ScreenContainer({
   scroll = false,
   center = false,
   padded = true,
+  backgroundColor = colors.bg, // themed surfaces (student app) can override
   style,
   contentContainerStyle,
 }) {
@@ -30,7 +31,7 @@ export default function ScreenContainer({
     styles.content,
     padded && styles.padded,
     center && styles.center,
-    { direction },
+    { direction, backgroundColor },
     scroll ? contentContainerStyle : style,
   ];
 
@@ -47,7 +48,7 @@ export default function ScreenContainer({
   );
 
   return (
-    <SafeAreaView style={[styles.safe, style]}>
+    <SafeAreaView style={[styles.safe, { backgroundColor }, style]}>
       <KeyboardAvoidingView
         style={styles.flex}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
