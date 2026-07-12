@@ -15,8 +15,14 @@
 //
 // Question shapes handled: mcq (pick one option), numeric (type a number),
 // true_false (pick True/False) — matching what the authoring screen writes
-// (one `questions` table, jsonb body — rule 5). RLS (db/005) is the real
+// (one `questions` table, jsonb body — rule 5) — plus tap_image, the
+// pre-reader shape (see src/prereader/tapImage.js). RLS (db/005) is the real
 // boundary; this screen only shows what the student may read.
+//
+// Pre-reader mode: when EVERY question is a well-formed tap_image (a PG–2
+// test), the whole attempt switches to the paged, audio-first experience in
+// PreReaderAttempt — same load/draft/offline plumbing (this file), different
+// body. A tap_image inside a mixed test renders inline in the list instead.
 //
 // Visuals: quest theme — questions are parchment cards, answers are chunky
 // push-buttons that light up green when picked, progress is an XP bar that
@@ -41,6 +47,12 @@ import {
   Enter,
   Pop,
 } from '../../components/quest';
+import {
+  TapImageChoices,
+  SpeakerButton,
+  Celebration,
+} from '../../components/prereader';
+import PreReaderAttempt from './PreReaderAttempt';
 import { supabase } from '../../lib/supabase';
 import {
   buildResponses,
@@ -52,7 +64,9 @@ import {
   loadCachedQuestions,
   submitAttempt,
 } from '../../lib/attemptStore';
-import { t } from '../../i18n';
+import { isPreReaderSet, promptText, promptAudio } from '../../prereader/tapImage';
+import { speakPrompt } from '../../prereader/sound';
+import { t, getLocale } from '../../i18n';
 import { quest, px, spacing } from '../../theme/quest';
 
 // A single-choice answer as a chunky push-button (mcq options, true/false).
@@ -79,7 +93,12 @@ function Choice({ label, selected, onPress, disabled, style }) {
 // One question card: the number badge, its marks, the stem, and the
 // type-specific answer input on a parchment panel.
 function QuestionCard({ index, question, value, onChange, disabled }) {
-  const stem = question.body?.stem || '';
+  const isTap = question.type === 'tap_image';
+  // tap_image keeps its prompt in body.prompt (bilingual) / body.prompt_text,
+  // the reading types in body.stem.
+  const stem = isTap
+    ? promptText(question.body, getLocale()) ?? t('student.prereader.tapFallback')
+    : question.body?.stem || '';
   return (
     <QuestPanel style={styles.qCard}>
       <View style={styles.qHead}>
@@ -95,7 +114,32 @@ function QuestionCard({ index, question, value, onChange, disabled }) {
         {stem}
       </Text>
 
-      {question.type === 'mcq' ? (
+      {isTap ? (
+        // A pre-reader question inside a mixed test: same picture cards,
+        // compact, with a small speaker to hear the prompt. No confirm step
+        // here — it behaves like the other list answers (tap = pick).
+        <View>
+          <SpeakerButton
+            size={52}
+            onPress={() =>
+              speakPrompt({
+                audio: promptAudio(question.body, getLocale()),
+                text: stem,
+                locale: getLocale(),
+              })
+            }
+            accessibilityLabel={t('student.prereader.listen')}
+            style={styles.qSpeaker}
+          />
+          <TapImageChoices
+            body={question.body}
+            selectedId={value}
+            onSelect={onChange}
+            disabled={disabled}
+            size="compact"
+          />
+        </View>
+      ) : question.type === 'mcq' ? (
         <View>
           {(question.body?.options ?? []).map((opt) => (
             <Choice
@@ -242,6 +286,10 @@ export default function AssessmentAttemptScreen({
     ? questions.filter((q) => isAnswered(q.type, answers[q.id])).length
     : 0;
 
+  // A PG–2 test (every question tap_image) gets the paged pre-reader
+  // experience and its celebration; anything else keeps the reading list.
+  const preReader = isPreReaderSet(questions);
+
   // --- Header (shared across states) ---
   const header = (
     <QuestHeader
@@ -261,6 +309,14 @@ export default function AssessmentAttemptScreen({
 
   // Result state — the attempt is recorded (or safely queued for reconnect).
   // The treasure chest pops in: finishing a test should feel like a reward.
+  // Pre-readers get the full works: star burst, fanfare, spoken praise.
+  if (result && preReader) {
+    return (
+      <QuestScreen scroll>
+        <Celebration status={result} onDone={onBack} />
+      </QuestScreen>
+    );
+  }
   if (result) {
     return (
       <QuestScreen scroll>
@@ -334,6 +390,23 @@ export default function AssessmentAttemptScreen({
           onAction={onBack}
         />
       </QuestScreen>
+    );
+  }
+
+  // Paged, audio-first flow for pre-readers; this screen keeps doing the
+  // loading/draft/offline work behind it.
+  if (preReader) {
+    return (
+      <PreReaderAttempt
+        questions={questions}
+        answers={answers}
+        onAnswer={setAnswer}
+        onSubmit={submit}
+        submitting={submitting}
+        errorKey={errorKey}
+        usingCache={usingCache}
+        onBack={onBack}
+      />
     );
   }
 
@@ -411,6 +484,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   qStem: { marginTop: spacing.sm, marginBottom: spacing.md },
+  qSpeaker: { alignSelf: 'center', marginBottom: spacing.md },
   option: { marginBottom: spacing.sm },
   choiceRow: { flexDirection: 'row' },
   choiceHalf: { flex: 1 },

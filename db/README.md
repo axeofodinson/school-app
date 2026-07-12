@@ -12,6 +12,7 @@ run.
 | `003_questions_teacher_chapter_scope.sql` | Additive: scope teacher question-writing to their own classes. |
 | `004_student_login.sql` | Additive: student login (roll number + PIN) — see note below. |
 | `005_student_assessment_attempts.sql` | Additive: let a signed-in student read their class's published assessments and submit an attempt. |
+| `006_prereader_tap_image_content.sql` | Additive, content-only (no schema change): bilingual pre-reader `tap_image` questions for PG + one published "Tap & Learn 1" quiz. |
 
 ## Additive migrations (run after `setup.sql`, in order)
 

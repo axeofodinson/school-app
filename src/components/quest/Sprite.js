@@ -17,6 +17,8 @@ const SPRITES = {
   chest: require('../../../assets/sprites/chest.png'),
   trophy: require('../../../assets/sprites/trophy.png'),
   sprout: require('../../../assets/sprites/sprout.png'),
+  speaker: require('../../../assets/sprites/speaker.png'),
+  check: require('../../../assets/sprites/check.png'),
 };
 
 export default function Sprite({ name, size = 40, style }) {

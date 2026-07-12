@@ -136,6 +136,18 @@
         "unknown": "Couldn’t submit. Please try again."
       }
     },
+    "prereader": {
+      "listen": "Hear the question",
+      "tapFallback": "Tap the right picture!",
+      "next": "Next question",
+      "finish": "Finish my test",
+      "choiceFallback": "Picture %{number}",
+      "offline": "Offline — using your saved test",
+      "celebrate": {
+        "title": "You did it!",
+        "saved": "Your stars are saved!"
+      }
+    },
     "results": {
       "title": "My scores",
       "back": "Back",
