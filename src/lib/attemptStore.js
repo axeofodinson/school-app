@@ -40,7 +40,7 @@ export function isAnswered(type, value) {
   if (type === 'numeric') {
     return typeof value === 'string' ? value.trim() !== '' : value != null;
   }
-  // mcq (and any string-keyed type)
+  // mcq option key / tap_image choice id (and any string-keyed type)
   return typeof value === 'string' && value.length > 0;
 }
 
