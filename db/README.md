@@ -11,6 +11,7 @@ run.
 | `002_academic_years_single_current.sql` | Additive: enforce at most one current academic year. |
 | `003_questions_teacher_chapter_scope.sql` | Additive: scope teacher question-writing to their own classes. |
 | `004_student_login.sql` | Additive: student login (roll number + PIN) — see note below. |
+| `005_student_assessment_attempts.sql` | Additive: let a signed-in student read their class's published assessments and submit an attempt. |
 
 ## Additive migrations (run after `setup.sql`, in order)
 
