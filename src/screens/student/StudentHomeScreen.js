@@ -1,12 +1,13 @@
-// Landing screen for a signed-in student. The "My tests" tile is now live — it
-// opens the published assessments assigned to the student's class and the
-// attempt flow (StudentAssessmentsScreen). Scores and attendance are still
-// honest "coming soon" placeholders so the screen has a real empty state instead
-// of a blank page (CLAUDE.md). Greets by the name on the profile. Bilingual + RTL.
+// Landing screen for a signed-in student. Three tiles are now live: "My tests"
+// opens the published assessments and the attempt flow (StudentAssessmentsScreen),
+// "My scores" opens the student's own graded results (StudentResultsScreen), and
+// "My attendance" opens their attendance record (StudentAttendanceScreen). All
+// three are read-only and RLS-scoped to the signed-in student. Greets by the name
+// on the profile. Bilingual + RTL.
 //
-// No navigation library yet, so it switches to the assessments screen with local
-// state (same pattern as the console). The home itself reads only the
-// already-loaded profile — no network on mount — so it opens instantly.
+// No navigation library yet, so it switches screens with local state (same
+// pattern as the console). The home itself reads only the already-loaded profile
+// — no network on mount — so it opens instantly.
 import { useState } from 'react';
 import { View, Pressable, StyleSheet } from 'react-native';
 
@@ -15,14 +16,29 @@ import { useAuth } from '../../auth/AuthProvider';
 import { t } from '../../i18n';
 import { colors, spacing } from '../../theme/colors';
 import StudentAssessmentsScreen from './StudentAssessmentsScreen';
+import StudentResultsScreen from './StudentResultsScreen';
+import StudentAttendanceScreen from './StudentAttendanceScreen';
+
+// The live tiles, in order, each mapping to a screen the home switches to.
+const TILES = [
+  { key: 'assessments', screen: 'assessments', note: 'assessmentsNote' },
+  { key: 'scores', screen: 'results', note: 'scoresNote' },
+  { key: 'attendance', screen: 'attendance', note: 'attendanceNote' },
+];
 
 export default function StudentHomeScreen() {
   const { profile, signOut } = useAuth();
   const name = profile?.full_name?.trim();
-  const [screen, setScreen] = useState('home'); // 'home' | 'assessments'
+  const [screen, setScreen] = useState('home'); // 'home' | 'assessments' | 'results' | 'attendance'
 
   if (screen === 'assessments') {
     return <StudentAssessmentsScreen onBack={() => setScreen('home')} />;
+  }
+  if (screen === 'results') {
+    return <StudentResultsScreen onBack={() => setScreen('home')} />;
+  }
+  if (screen === 'attendance') {
+    return <StudentAttendanceScreen onBack={() => setScreen('home')} />;
   }
 
   return (
@@ -40,32 +56,24 @@ export default function StudentHomeScreen() {
       </Text>
 
       <View style={styles.tiles}>
-        {/* Live tile — opens the assessments list + attempt flow. */}
-        <Pressable
-          onPress={() => setScreen('assessments')}
-          accessibilityRole="button"
-          style={({ pressed }) => [
-            styles.tile,
-            styles.tileActive,
-            pressed && styles.tilePressed,
-          ]}
-        >
-          <Text variant="label" color={colors.primary}>
-            {t('student.home.assessments')}
-          </Text>
-          <Text variant="caption" color={colors.muted} style={styles.tileNote}>
-            {t('student.home.assessmentsNote')}
-          </Text>
-        </Pressable>
-
-        {/* Not built yet — honest placeholders. */}
-        {['scores', 'attendance'].map((key) => (
-          <View key={key} style={styles.tile}>
-            <Text variant="label">{t(`student.home.${key}`)}</Text>
-            <Text variant="caption" color={colors.muted} style={styles.tileNote}>
-              {t('student.home.comingSoon')}
+        {TILES.map((tile) => (
+          <Pressable
+            key={tile.key}
+            onPress={() => setScreen(tile.screen)}
+            accessibilityRole="button"
+            style={({ pressed }) => [
+              styles.tile,
+              styles.tileActive,
+              pressed && styles.tilePressed,
+            ]}
+          >
+            <Text variant="label" color={colors.primary}>
+              {t(`student.home.${tile.key}`)}
             </Text>
-          </View>
+            <Text variant="caption" color={colors.muted} style={styles.tileNote}>
+              {t(`student.home.${tile.note}`)}
+            </Text>
+          </Pressable>
         ))}
       </View>
 
