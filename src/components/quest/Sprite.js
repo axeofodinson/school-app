@@ -19,6 +19,8 @@ const SPRITES = {
   sprout: require('../../../assets/sprites/sprout.png'),
   speaker: require('../../../assets/sprites/speaker.png'),
   check: require('../../../assets/sprites/check.png'),
+  flame: require('../../../assets/sprites/flame.png'),
+  medal: require('../../../assets/sprites/medal.png'),
 };
 
 export default function Sprite({ name, size = 40, style }) {

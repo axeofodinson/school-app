@@ -75,6 +75,40 @@
       "attendanceNote": "See the days you were present",
       "signOut": "Sign out"
     },
+    "journey": {
+      "title": "My journey",
+      "invite": "Finish your first test to start your journey — there's a medal waiting!",
+      "tests": {
+        "one": "%{count} test finished this year",
+        "other": "%{count} tests finished this year"
+      },
+      "next": {
+        "one": "Next medal: %{name} — %{count} test to go",
+        "other": "Next medal: %{name} — %{count} tests to go"
+      },
+      "allDone": "You've earned every medal this year. Amazing!",
+      "streak": {
+        "one": "%{count} school day in a row!",
+        "other": "%{count} school days in a row!"
+      },
+      "bestStreak": "Your best run: %{count} school days in a row",
+      "milestones": {
+        "first": "First step",
+        "three": "Good start",
+        "five": "Five star",
+        "ten": "Test master",
+        "twenty": "Champion",
+        "thirty": "Star collector",
+        "fifty": "Legend"
+      }
+    },
+    "celebrate": {
+      "testCount": {
+        "one": "That's your first test finished this year!",
+        "other": "That's %{count} tests finished this year!"
+      },
+      "newMedal": "New medal: %{name}!"
+    },
     "assessments": {
       "title": "My tests",
       "back": "Back",
