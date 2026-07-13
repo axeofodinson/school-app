@@ -25,14 +25,19 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { View, Pressable, ActivityIndicator, StyleSheet } from 'react-native';
 
+import * as DocumentPicker from 'expo-document-picker';
+import * as FileSystem from 'expo-file-system';
+import { decode as decodeBase64 } from 'base64-arraybuffer';
+
 import { ScreenContainer, Text, TextField, Button } from '../../components';
 import { useAuth } from '../../auth/AuthProvider';
 import { supabase } from '../../lib/supabase';
 import { t } from '../../i18n';
 import { colors, spacing } from '../../theme/colors';
 
-// Enums mirror the DB check constraints (db/setup.sql: assessments.type / .status).
-const TYPES = ['assignment', 'test', 'exam', 'quiz'];
+// Enums mirror the DB check constraints (db/setup.sql + db/014: assessments.type).
+// 'file' is a worksheet uploaded to Storage instead of assembled from questions.
+const TYPES = ['assignment', 'test', 'exam', 'quiz', 'file'];
 const STATUSES = ['draft', 'published', 'closed'];
 
 // Marks per question are a small positive integer (matches questions.default_marks
@@ -98,6 +103,53 @@ function classifyError(error) {
     return 'network';
   }
   return 'unknown';
+}
+
+// Total marks for a file worksheet are OPTIONAL (set only if it'll be graded).
+// Blank -> null; otherwise a whole number >= 1. Returns { value } or { error }.
+export function parseOptionalMarks(str) {
+  const s = String(str ?? '').trim();
+  if (!s) return { value: null };
+  if (!/^\d+$/.test(s)) return { error: 'fileMarksInvalid' };
+  const n = Number(s);
+  if (!Number.isInteger(n) || n < 1) return { error: 'fileMarksInvalid' };
+  return { value: n };
+}
+
+// A dropped upload vs a real failure — same network heuristic as classifyError,
+// but its own i18n key so the message is about uploading.
+function classifyUploadError(error) {
+  if (!error) return 'uploadFailed';
+  const msg = (error.message || '').toLowerCase();
+  if (/network request failed|failed to fetch|network|timeout|econn/.test(msg)) {
+    return 'network';
+  }
+  return 'uploadFailed';
+}
+
+// Upload a picked file into the private assessment-files bucket under the
+// assessment's id (path "{assessmentId}/{ts}.{ext}" — the storage RLS in db/014
+// keys on that first segment). Reads the file as base64 (Expo FileSystem) and
+// decodes to bytes, the reliable way to send a local file through supabase-js in
+// React Native. Returns { path, name, mime } or { error }.
+async function uploadAssessmentFile(assessmentId, asset) {
+  const name = asset.name || 'file';
+  const ext = (name.split('.').pop() || 'bin').toLowerCase();
+  const path = `${assessmentId}/${Date.now()}.${ext}`;
+  const contentType = asset.mimeType || 'application/octet-stream';
+  try {
+    const base64 = await FileSystem.readAsStringAsync(asset.uri, {
+      encoding: FileSystem.EncodingType.Base64,
+    });
+    const bytes = decodeBase64(base64);
+    const { error } = await supabase.storage
+      .from('assessment-files')
+      .upload(path, bytes, { contentType, upsert: true });
+    if (error) return { error };
+    return { path, name, mime: contentType };
+  } catch (e) {
+    return { error: e };
+  }
 }
 
 // A pressable pill used for tabs and every single-choice picker (class, subject,
@@ -256,6 +308,9 @@ export default function AssessmentBuilderScreen({ onBack, onManageYears, onManag
   const [status, setStatus] = useState('draft');
   // picks: questionId -> marks string. Presence = included in the assessment.
   const [picks, setPicks] = useState({});
+  // File type: the picked file (DocumentPicker asset) and its optional total marks.
+  const [pickedFile, setPickedFile] = useState(null);
+  const [fileMarks, setFileMarks] = useState('');
 
   const [editing, setEditing] = useState(null); // assessment row being edited
   const [formError, setFormError] = useState(null); // i18n key under errors
@@ -273,6 +328,8 @@ export default function AssessmentBuilderScreen({ onBack, onManageYears, onManag
     setScheduledOn('');
     setStatus('draft');
     setPicks({});
+    setPickedFile(null);
+    setFileMarks('');
     setFormError(null);
   }, []);
 
@@ -388,6 +445,7 @@ export default function AssessmentBuilderScreen({ onBack, onManageYears, onManag
       .from('assessments')
       .select(
         'id, title, type, weightage, total_marks, scheduled_on, status, ' +
+          'file_path, file_name, file_mime, ' +
           'class:classes(id, name), subject:subjects(id, name), ' +
           'assessment_questions(count)'
       )
@@ -474,8 +532,13 @@ export default function AssessmentBuilderScreen({ onBack, onManageYears, onManag
       setScheduledOn(a.scheduled_on ?? '');
       setStatus(a.status ?? 'draft');
       setPicks({});
+      setPickedFile(null);
+      setFileMarks(a.type === 'file' && a.total_marks != null ? String(a.total_marks) : '');
       setFormError(null);
       setSuccess(null);
+
+      // A file assessment has no bank questions to reload.
+      if (a.type === 'file') return;
 
       const { data, error } = await supabase
         .from('assessment_questions')
@@ -513,6 +576,20 @@ export default function AssessmentBuilderScreen({ onBack, onManageYears, onManag
     const dateT = scheduledOn.trim();
     if (dateT && !isValidDate(dateT)) return { error: 'dateInvalid' };
 
+    // A file worksheet carries no bank questions — just an optional total for
+    // grading. The file itself is validated + uploaded in save().
+    if (type === 'file') {
+      const fm = parseOptionalMarks(fileMarks);
+      if (fm.error) return { error: fm.error };
+      return {
+        title: titleT,
+        weightage: w,
+        scheduledOn: dateT || null,
+        total_marks: fm.value,
+        questionRows: [],
+      };
+    }
+
     // Every picked question needs a valid mark.
     const ids = Object.keys(picks);
     for (const id of ids) {
@@ -535,7 +612,7 @@ export default function AssessmentBuilderScreen({ onBack, onManageYears, onManag
         sort_order: i,
       })),
     };
-  }, [title, weightage, scheduledOn, status, picks]);
+  }, [title, type, weightage, scheduledOn, status, picks, fileMarks]);
 
   const save = useCallback(async () => {
     if (!editing && !selectedClassId) return setFormError('classRequired');
@@ -543,6 +620,17 @@ export default function AssessmentBuilderScreen({ onBack, onManageYears, onManag
 
     const built = buildPayload();
     if (built.error) return setFormError(built.error);
+
+    // A published/closed file worksheet must actually have a file attached (a new
+    // pick, or one already on the assessment being edited). A draft may wait.
+    if (
+      type === 'file' &&
+      status !== 'draft' &&
+      !pickedFile &&
+      !(editing && editing.file_path)
+    ) {
+      return setFormError('needFile');
+    }
 
     setFormError(null);
     setSuccess(null);
@@ -567,42 +655,65 @@ export default function AssessmentBuilderScreen({ onBack, onManageYears, onManag
         return;
       }
 
-      // Reconcile the question set: remove what was dropped, upsert the rest
-      // (updates marks/order or inserts new). We diff rather than wipe-and-refill
-      // so unchanged rows are never briefly deleted.
-      const existingRes = await supabase
-        .from('assessment_questions')
-        .select('question_id')
-        .eq('assessment_id', editing.id);
-      const existingIds = new Set(
-        (existingRes.data ?? []).map((r) => r.question_id)
-      );
-      const keepIds = new Set(built.questionRows.map((r) => r.question_id));
-      const toRemove = [...existingIds].filter((id) => !keepIds.has(id));
-
-      if (toRemove.length > 0) {
-        const { error: delErr } = await supabase
-          .from('assessment_questions')
-          .delete()
-          .eq('assessment_id', editing.id)
-          .in('question_id', toRemove);
-        if (delErr) {
-          setSaving(false);
-          setFormError(classifyError(delErr));
-          return;
+      if (type === 'file') {
+        // Upload a newly chosen file (if any) and point the assessment at it.
+        if (pickedFile) {
+          const up = await uploadAssessmentFile(editing.id, pickedFile);
+          if (up.error) {
+            setSaving(false);
+            setFormError(classifyUploadError(up.error));
+            return;
+          }
+          const { error: fErr } = await supabase
+            .from('assessments')
+            .update({ file_path: up.path, file_name: up.name, file_mime: up.mime })
+            .eq('id', editing.id);
+          if (fErr) {
+            setSaving(false);
+            setFormError(classifyError(fErr));
+            return;
+          }
         }
-      }
-      if (built.questionRows.length > 0) {
-        const { error: upsertErr } = await supabase
+        // If this used to be a structured test, drop the questions it carried.
+        await supabase.from('assessment_questions').delete().eq('assessment_id', editing.id);
+      } else {
+        // Reconcile the question set: remove what was dropped, upsert the rest
+        // (updates marks/order or inserts new). We diff rather than wipe-and-refill
+        // so unchanged rows are never briefly deleted.
+        const existingRes = await supabase
           .from('assessment_questions')
-          .upsert(
-            built.questionRows.map((r) => ({ ...r, assessment_id: editing.id })),
-            { onConflict: 'assessment_id,question_id' }
-          );
-        if (upsertErr) {
-          setSaving(false);
-          setFormError(classifyError(upsertErr));
-          return;
+          .select('question_id')
+          .eq('assessment_id', editing.id);
+        const existingIds = new Set(
+          (existingRes.data ?? []).map((r) => r.question_id)
+        );
+        const keepIds = new Set(built.questionRows.map((r) => r.question_id));
+        const toRemove = [...existingIds].filter((id) => !keepIds.has(id));
+
+        if (toRemove.length > 0) {
+          const { error: delErr } = await supabase
+            .from('assessment_questions')
+            .delete()
+            .eq('assessment_id', editing.id)
+            .in('question_id', toRemove);
+          if (delErr) {
+            setSaving(false);
+            setFormError(classifyError(delErr));
+            return;
+          }
+        }
+        if (built.questionRows.length > 0) {
+          const { error: upsertErr } = await supabase
+            .from('assessment_questions')
+            .upsert(
+              built.questionRows.map((r) => ({ ...r, assessment_id: editing.id })),
+              { onConflict: 'assessment_id,question_id' }
+            );
+          if (upsertErr) {
+            setSaving(false);
+            setFormError(classifyError(upsertErr));
+            return;
+          }
         }
       }
 
@@ -641,7 +752,30 @@ export default function AssessmentBuilderScreen({ onBack, onManageYears, onManag
       return;
     }
 
-    if (built.questionRows.length > 0) {
+    if (type === 'file') {
+      // Upload the file (if one was chosen — a draft may be saved without) and
+      // point the fresh assessment at it. Any failure rolls the create back so
+      // the user sees all-or-nothing (the row is brand new, no consequences).
+      if (pickedFile) {
+        const up = await uploadAssessmentFile(created.id, pickedFile);
+        if (up.error) {
+          await supabase.from('assessments').delete().eq('id', created.id);
+          setSaving(false);
+          setFormError(classifyUploadError(up.error));
+          return;
+        }
+        const { error: fErr } = await supabase
+          .from('assessments')
+          .update({ file_path: up.path, file_name: up.name, file_mime: up.mime })
+          .eq('id', created.id);
+        if (fErr) {
+          await supabase.from('assessments').delete().eq('id', created.id);
+          setSaving(false);
+          setFormError(classifyError(fErr));
+          return;
+        }
+      }
+    } else if (built.questionRows.length > 0) {
       const { error: aqErr } = await supabase.from('assessment_questions').insert(
         built.questionRows.map((r) => ({ ...r, assessment_id: created.id }))
       );
@@ -673,7 +807,29 @@ export default function AssessmentBuilderScreen({ onBack, onManageYears, onManag
     loadList,
     resetForm,
     classes,
+    pickedFile,
   ]);
+
+  // Open the OS file picker; keep the chosen file for upload on save. Accepts any
+  // image or document (the user asked for both); rendering picks the right viewer.
+  const chooseFile = useCallback(async () => {
+    try {
+      const res = await DocumentPicker.getDocumentAsync({
+        type: '*/*',
+        copyToCacheDirectory: true,
+        multiple: false,
+      });
+      if (res.canceled) return;
+      const asset = res.assets?.[0];
+      if (asset) {
+        setPickedFile(asset);
+        setFormError(null);
+        setSuccess(null);
+      }
+    } catch (e) {
+      setFormError('unknown');
+    }
+  }, []);
 
   const pickedCount = useMemo(() => Object.keys(picks).length, [picks]);
   const totalMarks = useMemo(() => sumMarks(picks), [picks]);
@@ -940,43 +1096,86 @@ export default function AssessmentBuilderScreen({ onBack, onManageYears, onManag
                 ))}
               </View>
 
-              {/* Questions from the bank */}
-              <Text variant="label" style={styles.pickLabel}>
-                {t('console.assessments.build.questions')}
-              </Text>
-              <Text variant="caption" color={colors.muted} style={styles.hint}>
-                {t('console.assessments.build.questionsHint')}
-              </Text>
-              {bank === null && !bankError ? (
-                <ActivityIndicator color={colors.primary} style={styles.pickLoading} />
-              ) : bankError ? (
-                <InlineRetry
-                  message={t('console.assessments.build.loadQuestionsError')}
-                  onRetry={() => loadBank(selectedSubjectId)}
-                />
-              ) : bank.length === 0 ? (
-                <Text variant="caption" color={colors.muted} style={styles.hint}>
-                  {isStaff
-                    ? t('console.assessments.build.noQuestions')
-                    : t('console.assessments.build.noQuestionsTeacher')}
-                </Text>
+              {type === 'file' ? (
+                /* File worksheet — upload instead of picking bank questions. */
+                <>
+                  <Text variant="label" style={styles.pickLabel}>
+                    {t('console.assessments.build.file')}
+                  </Text>
+                  <Text variant="caption" color={colors.muted} style={styles.hint}>
+                    {t('console.assessments.build.fileHint')}
+                  </Text>
+                  <Button
+                    variant="secondary"
+                    label={
+                      pickedFile || editing?.file_name
+                        ? t('console.assessments.build.changeFile')
+                        : t('console.assessments.build.pickFile')
+                    }
+                    onPress={chooseFile}
+                    style={styles.field}
+                  />
+                  <Text variant="caption" color={colors.muted} style={styles.hint}>
+                    {pickedFile
+                      ? t('console.assessments.build.fileSelected', { name: pickedFile.name })
+                      : editing?.file_name
+                      ? t('console.assessments.build.fileCurrent', { name: editing.file_name })
+                      : t('console.assessments.build.fileNone')}
+                  </Text>
+                  <TextField
+                    label={t('console.assessments.build.fileMarks')}
+                    value={fileMarks}
+                    onChangeText={setFileMarks}
+                    keyboardType="number-pad"
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    style={styles.field}
+                  />
+                  <Text variant="caption" color={colors.muted} style={styles.hint}>
+                    {t('console.assessments.build.fileMarksHint')}
+                  </Text>
+                </>
               ) : (
                 <>
-                  {bank.map((q) => (
-                    <QuestionPickRow
-                      key={q.id}
-                      question={q}
-                      picked={q.id in picks}
-                      marks={picks[q.id] ?? ''}
-                      onToggle={() => toggleQuestion(q)}
-                      onMarks={(v) => setQuestionMarks(q.id, v)}
-                    />
-                  ))}
-                  <Text variant="caption" color={colors.muted} style={styles.summary}>
-                    {t('console.assessments.build.selectedCount', { count: pickedCount })}
-                    {' · '}
-                    {t('console.assessments.build.totalMarks', { total: totalMarks })}
+                  {/* Questions from the bank */}
+                  <Text variant="label" style={styles.pickLabel}>
+                    {t('console.assessments.build.questions')}
                   </Text>
+                  <Text variant="caption" color={colors.muted} style={styles.hint}>
+                    {t('console.assessments.build.questionsHint')}
+                  </Text>
+                  {bank === null && !bankError ? (
+                    <ActivityIndicator color={colors.primary} style={styles.pickLoading} />
+                  ) : bankError ? (
+                    <InlineRetry
+                      message={t('console.assessments.build.loadQuestionsError')}
+                      onRetry={() => loadBank(selectedSubjectId)}
+                    />
+                  ) : bank.length === 0 ? (
+                    <Text variant="caption" color={colors.muted} style={styles.hint}>
+                      {isStaff
+                        ? t('console.assessments.build.noQuestions')
+                        : t('console.assessments.build.noQuestionsTeacher')}
+                    </Text>
+                  ) : (
+                    <>
+                      {bank.map((q) => (
+                        <QuestionPickRow
+                          key={q.id}
+                          question={q}
+                          picked={q.id in picks}
+                          marks={picks[q.id] ?? ''}
+                          onToggle={() => toggleQuestion(q)}
+                          onMarks={(v) => setQuestionMarks(q.id, v)}
+                        />
+                      ))}
+                      <Text variant="caption" color={colors.muted} style={styles.summary}>
+                        {t('console.assessments.build.selectedCount', { count: pickedCount })}
+                        {' · '}
+                        {t('console.assessments.build.totalMarks', { total: totalMarks })}
+                      </Text>
+                    </>
+                  )}
                 </>
               )}
 

@@ -130,21 +130,37 @@
       },
       "start": "Start",
       "view": "View",
+      "open": "Open",
       "retry": "Try again",
+      "worksheet": "Worksheet",
       "types": {
         "assignment": "Homework",
         "test": "Test",
         "exam": "Exam",
-        "quiz": "Quiz"
+        "quiz": "Quiz",
+        "file": "Worksheet"
       },
       "status": {
         "todo": "To do",
         "submitted": "Done",
-        "pending": "Saved"
+        "pending": "Saved",
+        "file": "Worksheet"
       },
       "errors": {
         "network": "No internet. Check your connection and try again.",
         "unknown": "Something went wrong. Try again."
+      }
+    },
+    "fileAssessment": {
+      "back": "Back",
+      "loading": "Opening…",
+      "open": "Open file",
+      "tapToOpen": "Tap the image to open it full screen.",
+      "noFile": "This worksheet has no file attached yet.",
+      "retry": "Try again",
+      "errors": {
+        "network": "No internet. Connect to open this worksheet.",
+        "unknown": "Couldn’t open this worksheet. Please try again."
       }
     },
     "attempt": {
@@ -687,6 +703,15 @@
           "other": "%{count} questions selected"
         },
         "totalMarks": "Total marks: %{total}",
+        "file": "Worksheet file",
+        "fileHint": "Upload an image, a markdown (.md) file, or a document. Students in the class will see it as an assessment.",
+        "pickFile": "Choose file",
+        "changeFile": "Choose a different file",
+        "fileSelected": "Selected: %{name}",
+        "fileCurrent": "Current file: %{name}",
+        "fileNone": "No file chosen yet.",
+        "fileMarks": "Total marks (optional)",
+        "fileMarksHint": "Set this if you’ll grade the worksheet; leave blank otherwise.",
         "submit": "Create assessment",
         "submitting": "Creating…",
         "updateSubmit": "Save changes",
@@ -697,7 +722,8 @@
         "assignment": "Assignment",
         "test": "Test",
         "exam": "Exam",
-        "quiz": "Quiz"
+        "quiz": "Quiz",
+        "file": "File"
       },
       "questionTypes": {
         "mcq": "Multiple choice",
@@ -745,6 +771,9 @@
         "dateInvalid": "Use the date format YYYY-MM-DD.",
         "marksInvalid": "Marks for each question must be a whole number between 1 and 100.",
         "needQuestions": "Add at least one question before publishing.",
+        "needFile": "Choose a file before publishing this worksheet.",
+        "fileMarksInvalid": "Total marks must be a whole number.",
+        "uploadFailed": "Couldn’t upload the file. Please try again.",
         "network": "No internet connection. Check your network and try again.",
         "unknown": "Couldn’t save. Please try again."
       }

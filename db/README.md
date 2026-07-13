@@ -19,6 +19,9 @@ run.
 | `010_push_notifications_messaging.sql` | Additive: `push_tokens` (per-device Expo tokens, soft-disabled when dead) + `messages` (school/class/student broadcasts) + `my_student_id()` helper + RLS. Paired with the `send-message-push` Edge Function. |
 | `011_dev_role_hard_delete.sql` | Additive: `is_dev()` helper + `dev_hard_delete_student()` — a dev-only, irreversible cascade (attempts → attendance → push_tokens → enrollments → student + login). Includes a one-time block to promote a dedicated dev account. |
 | `012_messages_realtime.sql` | Additive: adds `public.messages` to the `supabase_realtime` publication so the in-app toast can fire the moment a message lands while the app is open. RLS (from 010) still filters which rows each subscriber receives. |
+| `013_grade_editing_versioned.sql` | Additive: editable grades. `submission_grade_edits` history table + audit columns on `submissions`, and the `record_grade()` RPC (the single SECURITY DEFINER write path — enters a first grade, requires a reason to correct one, archives every change). History readable by staff + teacher-of-class only; students never see it. |
+| `014_assessment_files.sql` | Additive: file-upload assessments. Adds `'file'` to `assessments.type` + `file_path/file_name/file_mime`, a private `assessment-files` Storage bucket, and storage RLS scoped by class enrolment (teacher-of-class writes; enrolled student reads published only). |
+| `015_pg_grade_level_zero.sql` | Additive, data-only: standardise the PG class on `grade_level = 0` (was the legacy `-2`), the lowest level. Paired with `src/lib/gradeLevels.js` which labels level 0 as “PG”. |
 
 ## Additive migrations (run after `setup.sql`, in order)
 
