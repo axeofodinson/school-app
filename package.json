@@ -10,6 +10,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "verify:report": "node scripts/verify-report-aggregate.mjs",
+    "verify:overdue": "node scripts/verify-overdue.mjs",
     "verify:prereader": "node scripts/verify-prereader.mjs",
     "verify:engagement": "node scripts/verify-engagement.mjs"
   },

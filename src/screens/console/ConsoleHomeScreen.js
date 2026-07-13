@@ -15,6 +15,7 @@ import StudentsScreen from './StudentsScreen';
 import EnrollmentScreen from './EnrollmentScreen';
 import AssessmentBuilderScreen from './AssessmentBuilderScreen';
 import AttendanceScreen from './AttendanceScreen';
+import OverdueAssignmentsScreen from './OverdueAssignmentsScreen';
 import MessagesScreen from './MessagesScreen';
 
 export default function ConsoleHomeScreen() {
@@ -80,6 +81,15 @@ export default function ConsoleHomeScreen() {
     );
   }
 
+  if (screen === 'overdue') {
+    return (
+      <OverdueAssignmentsScreen
+        onBack={() => setScreen('home')}
+        onManageYears={() => setScreen('academicYears')}
+      />
+    );
+  }
+
   if (screen === 'messages') {
     return <MessagesScreen onBack={() => setScreen('home')} />;
   }
@@ -129,6 +139,11 @@ export default function ConsoleHomeScreen() {
       <Button
         label={t('console.home.openAttendance')}
         onPress={() => setScreen('attendance')}
+        style={styles.action}
+      />
+      <Button
+        label={t('console.home.openOverdue')}
+        onPress={() => setScreen('overdue')}
         style={styles.action}
       />
       <Button

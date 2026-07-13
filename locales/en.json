@@ -311,6 +311,7 @@
       "openEnrollments": "Manage enrollments",
       "openAssessments": "Build assessments",
       "openAttendance": "Mark attendance",
+      "openOverdue": "Overdue assignments",
       "openMessages": "Send a message"
     },
     "students": {
@@ -741,6 +742,38 @@
         "noStudents": "There are no students to mark.",
         "network": "No internet connection. Check your network and try again.",
         "unknown": "Couldn’t save. Please try again."
+      }
+    },
+    "overdue": {
+      "title": "Overdue assignments",
+      "back": "Back",
+      "subtitle": "Active assignments past due by %{days}+ days, and the enrolled students with no submission, in %{year}.",
+      "subtitleNoYear": "Active assignments past due by %{days}+ days, and the enrolled students with no submission.",
+      "loadError": "Couldn’t load the overdue dashboard. Check your connection and try again.",
+      "retry": "Retry",
+      "needYear": "Set a current academic year first — assignments are scoped to a year.",
+      "goToYears": "Go to academic years",
+      "filterLabel": "Class",
+      "filterAll": "All classes",
+      "empty": "Nothing is overdue by %{days}+ days. Every active assignment is either recent or fully submitted.",
+      "summary": {
+        "one": "%{count} overdue assignment · %{students} missing submission",
+        "other": "%{count} overdue assignments · %{students} missing submissions"
+      },
+      "card": {
+        "meta": "%{class} · %{subject}",
+        "due": "Due %{date}",
+        "daysOverdue": {
+          "one": "%{count} day overdue",
+          "other": "%{count} days overdue"
+        },
+        "missing": "%{count} of %{total} not submitted",
+        "allSubmitted": "All %{total} students submitted.",
+        "noRoster": "No active students enrolled in this class."
+      },
+      "student": {
+        "roll": "Roll %{roll}",
+        "noRoll": "No roll"
       }
     },
     "messages": {
