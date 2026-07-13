@@ -312,7 +312,8 @@
       "openAssessments": "Build assessments",
       "openAttendance": "Mark attendance",
       "openOverdue": "Overdue assignments",
-      "openMessages": "Send a message"
+      "openMessages": "Send a message",
+      "openDevTools": "Developer tools"
     },
     "students": {
       "title": "Students",
@@ -820,6 +821,41 @@
         "notAllowed": "You can only message classes and students you teach.",
         "network": "No internet connection. Check your network and try again.",
         "unknown": "Couldn’t send. Please try again."
+      }
+    },
+    "dev": {
+      "title": "Developer tools",
+      "back": "Back",
+      "subtitle": "Dev-only tools. These bypass the usual soft-delete safeguards — use with care.",
+      "hardDelete": {
+        "heading": "Hard-delete a student",
+        "warning": "Permanently erases a student and ALL their history — attempts, attendance, push tokens, enrollments, and their login. This cannot be undone. Admins never see this; it lives here on purpose.",
+        "searchLabel": "Find the student",
+        "searchPlaceholder": "Name or admission number",
+        "empty": "No students to delete.",
+        "noMatches": "No students match “%{query}”.",
+        "loadError": "Couldn’t load students. Check your connection and try again.",
+        "retry": "Retry",
+        "count": {
+          "one": "%{count} student",
+          "other": "%{count} students"
+        },
+        "select": "Delete…",
+        "confirmHeading": "Delete %{name}?",
+        "confirmBody": "This erases everything for admission number %{code} and cannot be undone. Type the admission number to confirm.",
+        "confirmLabel": "Type %{code} to confirm",
+        "confirmPlaceholder": "Admission number",
+        "confirmDelete": "Permanently delete",
+        "deleting": "Deleting…",
+        "cancel": "Cancel",
+        "success": "Deleted %{name}. Removed %{attempts} attempt(s), %{attendance} attendance record(s), %{tokens} push token(s), %{enrollments} enrollment(s).",
+        "errors": {
+          "mismatch": "That doesn’t match the admission number.",
+          "notDev": "Only the dev role can hard-delete a student.",
+          "notFound": "That student no longer exists.",
+          "network": "No internet connection. Check your network and try again.",
+          "unknown": "Couldn’t delete. Please try again."
+        }
       }
     }
   },
