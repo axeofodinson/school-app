@@ -18,6 +18,7 @@ run.
 | `009_enrollment_status_soft_delete.sql` | Additive: enrollment lifecycle — `struck_off` status + `end_date`/`reason`, soft-remove instead of delete, and auth-layer login revocation when a student's last active enrollment closes. |
 | `010_push_notifications_messaging.sql` | Additive: `push_tokens` (per-device Expo tokens, soft-disabled when dead) + `messages` (school/class/student broadcasts) + `my_student_id()` helper + RLS. Paired with the `send-message-push` Edge Function. |
 | `011_dev_role_hard_delete.sql` | Additive: `is_dev()` helper + `dev_hard_delete_student()` — a dev-only, irreversible cascade (attempts → attendance → push_tokens → enrollments → student + login). Includes a one-time block to promote a dedicated dev account. |
+| `012_messages_realtime.sql` | Additive: adds `public.messages` to the `supabase_realtime` publication so the in-app toast can fire the moment a message lands while the app is open. RLS (from 010) still filters which rows each subscriber receives. |
 
 ## Additive migrations (run after `setup.sql`, in order)
 

@@ -6,7 +6,11 @@
     "loading": "Loading…",
     "language": "Language",
     "english": "English",
-    "urdu": "اردو"
+    "urdu": "اردو",
+    "toast": {
+      "newMessage": "New message",
+      "hint": "Tap to open your messages. Swipe up to dismiss."
+    }
   },
   "auth": {
     "login": {
