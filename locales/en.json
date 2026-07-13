@@ -342,7 +342,6 @@
         "errors": {
           "pinInvalid": "PIN must be 4–8 digits.",
           "notStaff": "Only admins can set a student PIN.",
-          "noEnrollment": "Enroll this student in the current year first, then set their PIN.",
           "network": "No internet connection. Check your network and try again.",
           "unknown": "Couldn’t set the PIN. Please try again."
         }

@@ -62,9 +62,6 @@ function classifyProvisionError(error) {
     return 'network';
   }
   if (/only staff/.test(msg)) return 'notStaff';
-  // The RPC raises this if the enrollment vanished between our lookup and the
-  // call (e.g. withdrawn concurrently) — same remedy as no enrollment at all.
-  if (/enrollment .* not found/.test(msg)) return 'noEnrollment';
   return 'unknown';
 }
 
@@ -77,12 +74,10 @@ const PIN_RE = /^\d{4,8}$/;
 // Setting a PIN provisions (or re-PINs) the student's login account; the student
 // then signs in to the student app with their admission number + this PIN.
 //
-// The provision_student_login RPC is keyed on the student's ENROLLMENT (login is
-// granted to the student behind an enrollment), so the PIN can only be set once
-// the student is enrolled for the current academic year. This screen only holds
-// the student identity, so we look up that active enrollment here before calling
-// the RPC (CLAUDE.md rule 2: a student's class/year lives in enrollments, not on
-// the student). No current-year enrollment → we guide staff to enroll first.
+// The login is keyed on the student's immutable identity: provision_student_login
+// takes the student id, and the student signs in with their admission number
+// (student_code) — stable across academic years, so no enrollment/class/year
+// context is needed here (db/008_revert_login_to_admission_number.sql).
 function StudentLoginControl({ student }) {
   const [open, setOpen] = useState(false);
   const [pin, setPin] = useState('');
@@ -96,33 +91,11 @@ function StudentLoginControl({ student }) {
     if (!PIN_RE.test(value)) return setErrorKey('pinInvalid');
 
     setSaving(true);
-
-    // Find the student's active enrollment in the current academic year. The
-    // unique (student_id, year_id) constraint means this is at most one row.
-    const { data: enrollment, error: lookupError } = await supabase
-      .from('enrollments')
-      .select('id, year:academic_years!inner(is_current)')
-      .eq('student_id', student.id)
-      .eq('status', 'active')
-      .eq('year.is_current', true)
-      .maybeSingle();
-
-    if (lookupError) {
-      setSaving(false);
-      setErrorKey(classifyProvisionError(lookupError));
-      return;
-    }
-    if (!enrollment) {
-      setSaving(false);
-      setErrorKey('noEnrollment');
-      return;
-    }
-
     // PIN goes over as plain text; the RPC hashes it server-side (bcrypt via
     // crypt()/gen_salt). PIN_RE guarantees digits only, so there is no casing
     // or encoding to normalise here.
     const { error } = await supabase.rpc('provision_student_login', {
-      p_enrollment_id: enrollment.id,
+      p_student_id: student.id,
       p_pin: value,
     });
     setSaving(false);
