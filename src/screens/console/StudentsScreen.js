@@ -73,6 +73,11 @@ const PIN_RE = /^\d{4,8}$/;
 // (this whole screen is), and the RPC re-checks is_staff() as the real boundary.
 // Setting a PIN provisions (or re-PINs) the student's login account; the student
 // then signs in to the student app with their admission number + this PIN.
+//
+// The login is keyed on the student's immutable identity: provision_student_login
+// takes the student id, and the student signs in with their admission number
+// (student_code) — stable across academic years, so no enrollment/class/year
+// context is needed here (db/008_revert_login_to_admission_number.sql).
 function StudentLoginControl({ student }) {
   const [open, setOpen] = useState(false);
   const [pin, setPin] = useState('');
@@ -86,6 +91,9 @@ function StudentLoginControl({ student }) {
     if (!PIN_RE.test(value)) return setErrorKey('pinInvalid');
 
     setSaving(true);
+    // PIN goes over as plain text; the RPC hashes it server-side (bcrypt via
+    // crypt()/gen_salt). PIN_RE guarantees digits only, so there is no casing
+    // or encoding to normalise here.
     const { error } = await supabase.rpc('provision_student_login', {
       p_student_id: student.id,
       p_pin: value,

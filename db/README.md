@@ -31,8 +31,10 @@ and prefer the Auth Admin API from an Edge Function in production.
 
 To create a student login end to end: run `setup.sql` then this migration, sign
 in as staff, open **Register students**, and use **Give login / set PIN** on a
-student — it calls `provision_student_login(student_id, pin)`. That student can
-then sign in on the student screen with their admission number and that PIN.
+student who is enrolled for the current year — it looks up that active enrollment
+and calls `provision_student_login(p_enrollment_id, p_pin)` (the login is granted
+to the student behind the enrollment). That student can then sign in on the
+student screen with their admission number and that PIN.
 
 ## Run order (Supabase → SQL Editor)
 

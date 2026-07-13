@@ -137,7 +137,7 @@ export function AuthProvider({ children }) {
       if (lookupError) {
         return classifyAuthError(lookupError) === 'network' ? 'network' : 'unknown';
       }
-      // No active enrollment for that class + roll in the current year.
+      // No student has that admission number (student_code).
       if (!email) return 'notFound';
 
       const { error } = await supabase.auth.signInWithPassword({ email, password: pin });
