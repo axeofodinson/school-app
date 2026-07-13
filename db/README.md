@@ -13,6 +13,9 @@ run.
 | `004_student_login.sql` | Additive: student login (roll number + PIN) — see note below. |
 | `005_student_assessment_attempts.sql` | Additive: let a signed-in student read their class's published assessments and submit an attempt. |
 | `006_prereader_tap_image_content.sql` | Additive, content-only (no schema change): bilingual pre-reader `tap_image` questions for PG + one published "Tap & Learn 1" quiz. |
+| `007_fix_provision_signature.sql` | Corrective: capture the drifted enrollment-keyed student-login functions (superseded by 008). |
+| `008_revert_login_to_admission_number.sql` | Corrective: revert student login to the admission-number design (immutable identity). |
+| `009_enrollment_status_soft_delete.sql` | Additive: enrollment lifecycle — `struck_off` status + `end_date`/`reason`, soft-remove instead of delete, and auth-layer login revocation when a student's last active enrollment closes. |
 
 ## Additive migrations (run after `setup.sql`, in order)
 
@@ -31,10 +34,21 @@ and prefer the Auth Admin API from an Edge Function in production.
 
 To create a student login end to end: run `setup.sql` then this migration, sign
 in as staff, open **Register students**, and use **Give login / set PIN** on a
-student who is enrolled for the current year — it looks up that active enrollment
-and calls `provision_student_login(p_enrollment_id, p_pin)` (the login is granted
-to the student behind the enrollment). That student can then sign in on the
+student who is enrolled for the current year — it calls
+`provision_student_login(p_student_id, p_pin)` (login is keyed on the student's
+immutable admission number, per `008`). That student can then sign in on the
 student screen with their admission number and that PIN.
+
+`009_enrollment_status_soft_delete.sql` makes removing a student a **soft close**
+on their enrollment, never a delete (CLAUDE.md rule 3). It widens
+`enrollments.status` with `struck_off` and adds `end_date` + `reason`. The office
+uses **Manage enrollments → Class roster → Remove** (a reason picker) to close an
+enrollment; struck-off students drop off active rosters (attendance marking, class
+views) but their full history stays queryable by staff. A DB trigger
+(`enrollment_login_sync`) revokes the student's login the moment their last active
+enrollment closes — it **bans the Supabase auth account and kills live sessions
+without deleting credentials**, so access is restored automatically if they're
+re-enrolled (or **Restore**d).
 
 ## Run order (Supabase → SQL Editor)
 

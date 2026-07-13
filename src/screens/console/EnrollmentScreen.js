@@ -23,9 +23,24 @@ import { t } from '../../i18n';
 import { colors, spacing } from '../../theme/colors';
 
 // The enrollment status enum, mirroring the DB check constraint
-// (db/setup.sql: enrollments.status). New enrollments default to 'active'; the
-// office can pick another state (e.g. a mid-year transfer) at enroll time.
+// (db/009: enrollments.status). New enrollments default to 'active'; the office
+// can pick another state (e.g. a mid-year transfer) at enroll time.
 const STATUSES = ['active', 'transferred', 'graduated', 'withdrawn'];
+
+// The terminal states a "Remove student" action can close an enrollment into
+// (everything except 'active'). Picked in the reason picker; 'struck_off' is a
+// disciplinary/administrative removal. Closing an enrollment revokes the
+// student's login server-side (db/009: enrollment_login_sync trigger).
+const REMOVAL_STATUSES = ['struck_off', 'withdrawn', 'transferred', 'graduated'];
+
+// Today as YYYY-MM-DD in local time — the enrollment's end_date when it closes.
+// Built from local parts (not toISOString, which is UTC and can roll a day).
+function todayISO() {
+  const d = new Date();
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${d.getFullYear()}-${mm}-${dd}`;
+}
 
 // roll_number is an optional positive integer. Bounded so a typo can't store an
 // absurd value; there's no DB uniqueness on it, so the office owns collisions.
@@ -112,7 +127,10 @@ function StudentPickRow({ student, selected, onPress }) {
   );
 }
 
-function RosterRow({ entry }) {
+// An active student on the roster, with a Remove control. Tapping Remove opens
+// the reason picker inline (rendered by the parent) rather than a native alert,
+// matching the app's inline-state style.
+function ActiveRosterRow({ entry, onRemove }) {
   const student = entry.student;
   const roll =
     entry.roll_number != null
@@ -130,9 +148,130 @@ function RosterRow({ entry }) {
         <Text variant="label" color={colors.primary}>
           {roll}
         </Text>
+        <Button
+          variant="secondary"
+          label={t('console.enrollments.remove.action')}
+          onPress={() => onRemove(entry.id)}
+          style={styles.removeBtn}
+        />
+      </View>
+    </View>
+  );
+}
+
+// A closed (struck-off/withdrawn/transferred/graduated) enrollment — read-only
+// history the office can still see, with why and when it ended, plus a Restore
+// control to reactivate (which also restores the student's login).
+function RemovedRosterRow({ entry, onRestore, restoring }) {
+  const student = entry.student;
+  return (
+    <View style={styles.removedRow}>
+      <View style={styles.rowInfo}>
+        <Text variant="label" color={colors.muted}>
+          {student?.full_name}
+        </Text>
+        <Text variant="caption" color={colors.muted} style={styles.rowMeta}>
+          {t('console.enrollments.roster.code', { code: student?.student_code })}
+        </Text>
         <Text variant="caption" color={colors.muted} style={styles.rowMeta}>
           {t(`console.enrollments.statuses.${entry.status}`)}
+          {entry.end_date
+            ? ` · ${t('console.enrollments.removed.endedOn', { date: entry.end_date })}`
+            : ''}
         </Text>
+        {entry.reason ? (
+          <Text variant="caption" color={colors.muted} style={styles.rowMeta}>
+            {t('console.enrollments.removed.reason', { reason: entry.reason })}
+          </Text>
+        ) : null}
+      </View>
+      <Button
+        variant="secondary"
+        label={
+          restoring
+            ? t('console.enrollments.restore.working')
+            : t('console.enrollments.restore.action')
+        }
+        onPress={() => onRestore(entry.id)}
+        disabled={restoring}
+        style={styles.removeBtn}
+      />
+    </View>
+  );
+}
+
+// The inline reason picker shown when removing a student: pick the terminal
+// status, optionally add a note, then confirm. Confirm closes the enrollment
+// (status + end_date + reason) and revokes login via the DB trigger.
+function RemovePanel({
+  studentName,
+  status,
+  onStatus,
+  reason,
+  onReason,
+  error,
+  saving,
+  onConfirm,
+  onCancel,
+}) {
+  return (
+    <View style={styles.removePanel}>
+      <Text variant="label" style={styles.formHeading}>
+        {t('console.enrollments.remove.heading', { name: studentName })}
+      </Text>
+      <Text variant="caption" color={colors.muted} style={styles.removeNote}>
+        {t('console.enrollments.remove.note')}
+      </Text>
+
+      <Text variant="label" style={styles.pickLabel}>
+        {t('console.enrollments.remove.pickReason')}
+      </Text>
+      <View style={styles.chipRow}>
+        {REMOVAL_STATUSES.map((s) => (
+          <Chip
+            key={s}
+            label={t(`console.enrollments.statuses.${s}`)}
+            selected={s === status}
+            onPress={() => onStatus(s)}
+          />
+        ))}
+      </View>
+
+      <TextField
+        label={t('console.enrollments.remove.reasonLabel')}
+        placeholder={t('console.enrollments.remove.reasonPlaceholder')}
+        value={reason}
+        onChangeText={onReason}
+        autoCapitalize="sentences"
+        editable={!saving}
+        style={styles.rollField}
+      />
+
+      {error ? (
+        <Text variant="caption" color={colors.danger} style={styles.formErr}>
+          {t(`console.enrollments.errors.${error}`)}
+        </Text>
+      ) : null}
+
+      <View style={styles.removeActions}>
+        <Button
+          label={
+            saving
+              ? t('console.enrollments.remove.working')
+              : t('console.enrollments.remove.confirm')
+          }
+          onPress={onConfirm}
+          loading={saving}
+          disabled={saving}
+          style={styles.removeConfirmBtn}
+        />
+        <Button
+          variant="secondary"
+          label={t('console.enrollments.remove.cancel')}
+          onPress={onCancel}
+          disabled={saving}
+          style={styles.removeConfirmBtn}
+        />
       </View>
     </View>
   );
@@ -168,6 +307,14 @@ export default function EnrollmentScreen({
   const [rosterClassId, setRosterClassId] = useState(null);
   const [roster, setRoster] = useState(null); // null = not loaded for class
   const [rosterError, setRosterError] = useState(false);
+
+  // Remove flow (reason picker). removingId is the enrollment whose panel is open.
+  const [removingId, setRemovingId] = useState(null);
+  const [removeStatus, setRemoveStatus] = useState('struck_off');
+  const [removeReason, setRemoveReason] = useState('');
+  const [removeError, setRemoveError] = useState(null); // i18n key under errors
+  const [removeSaving, setRemoveSaving] = useState(false);
+  const [restoringId, setRestoringId] = useState(null); // enrollment being restored
 
   const load = useCallback(async () => {
     setLoadError(false);
@@ -213,9 +360,16 @@ export default function EnrollmentScreen({
       if (!year || !classId) return;
       setRoster(null);
       setRosterError(false);
+      // Fetch every enrollment for the class+year, active AND closed. The active
+      // roster is filtered out of this below; the closed rows stay visible to
+      // staff as historical record (CLAUDE.md rule 3 — history stays queryable),
+      // just separated from the active-facing list.
       const { data, error } = await supabase
         .from('enrollments')
-        .select('id, roll_number, status, student:students(id, student_code, full_name)')
+        .select(
+          'id, roll_number, status, end_date, reason, ' +
+            'student:students(id, student_code, full_name)'
+        )
         .eq('class_id', classId)
         .eq('year_id', year.id);
       if (error) {
@@ -231,6 +385,58 @@ export default function EnrollmentScreen({
   useEffect(() => {
     if (tab === 'roster' && rosterClassId) loadRoster(rosterClassId);
   }, [tab, rosterClassId, loadRoster]);
+
+  // Open the reason picker for one active enrollment, resetting it to defaults.
+  const openRemove = useCallback((enrollmentId) => {
+    setRemovingId(enrollmentId);
+    setRemoveStatus('struck_off');
+    setRemoveReason('');
+    setRemoveError(null);
+  }, []);
+
+  const cancelRemove = useCallback(() => {
+    setRemovingId(null);
+    setRemoveError(null);
+  }, []);
+
+  // Soft-close the enrollment: set status + end_date + reason instead of deleting
+  // the row (CLAUDE.md rule 3). The DB trigger (db/009) revokes the student's
+  // login when their last active enrollment closes.
+  const confirmRemove = useCallback(async () => {
+    if (!removingId) return;
+    setRemoveError(null);
+    setRemoveSaving(true);
+    const { error } = await supabase
+      .from('enrollments')
+      .update({
+        status: removeStatus,
+        end_date: todayISO(),
+        reason: removeReason.trim() || null,
+      })
+      .eq('id', removingId);
+    setRemoveSaving(false);
+    if (error) {
+      setRemoveError(classifyError(error));
+      return;
+    }
+    setRemovingId(null);
+    loadRoster(rosterClassId);
+  }, [removingId, removeStatus, removeReason, rosterClassId, loadRoster]);
+
+  // Reactivate a closed enrollment: clear the close fields. The same DB trigger
+  // restores the student's login now that they have an active enrollment again.
+  const restore = useCallback(
+    async (enrollmentId) => {
+      setRestoringId(enrollmentId);
+      const { error } = await supabase
+        .from('enrollments')
+        .update({ status: 'active', end_date: null, reason: null })
+        .eq('id', enrollmentId);
+      setRestoringId(null);
+      if (!error) loadRoster(rosterClassId);
+    },
+    [rosterClassId, loadRoster]
+  );
 
   // Client-side search over the loaded students — instant and offline-friendly.
   // Matches name or admission number, case-insensitively.
@@ -391,6 +597,11 @@ export default function EnrollmentScreen({
 
   const selectedClassName =
     classes.find((c) => c.id === rosterClassId)?.name ?? '';
+
+  // Split the loaded roster: the active-facing list (with Remove) vs the closed
+  // enrollments kept as historical record (with Restore).
+  const activeRoster = (roster ?? []).filter((e) => e.status === 'active');
+  const removedRoster = (roster ?? []).filter((e) => e.status !== 'active');
 
   return (
     <ScreenContainer scroll>
@@ -557,12 +768,64 @@ export default function EnrollmentScreen({
             </View>
           ) : (
             <>
-              <Text variant="caption" color={colors.muted} style={styles.count}>
-                {t('console.enrollments.roster.count', { count: roster.length })}
-              </Text>
-              {roster.map((entry) => (
-                <RosterRow key={entry.id} entry={entry} />
-              ))}
+              {/* Active students — the live roster, each removable. */}
+              {activeRoster.length === 0 ? (
+                <Text variant="body" color={colors.muted} style={styles.count}>
+                  {t('console.enrollments.roster.noneActive', {
+                    class: selectedClassName,
+                    year: year.label,
+                  })}
+                </Text>
+              ) : (
+                <>
+                  <Text variant="caption" color={colors.muted} style={styles.count}>
+                    {t('console.enrollments.roster.count', {
+                      count: activeRoster.length,
+                    })}
+                  </Text>
+                  {activeRoster.map((entry) =>
+                    removingId === entry.id ? (
+                      <RemovePanel
+                        key={entry.id}
+                        studentName={entry.student?.full_name ?? ''}
+                        status={removeStatus}
+                        onStatus={setRemoveStatus}
+                        reason={removeReason}
+                        onReason={setRemoveReason}
+                        error={removeError}
+                        saving={removeSaving}
+                        onConfirm={confirmRemove}
+                        onCancel={cancelRemove}
+                      />
+                    ) : (
+                      <ActiveRosterRow
+                        key={entry.id}
+                        entry={entry}
+                        onRemove={openRemove}
+                      />
+                    )
+                  )}
+                </>
+              )}
+
+              {/* Removed students — historical record, restorable. */}
+              {removedRoster.length > 0 ? (
+                <>
+                  <Text variant="label" style={styles.removedHeading}>
+                    {t('console.enrollments.removed.heading', {
+                      count: removedRoster.length,
+                    })}
+                  </Text>
+                  {removedRoster.map((entry) => (
+                    <RemovedRosterRow
+                      key={entry.id}
+                      entry={entry}
+                      onRestore={restore}
+                      restoring={restoringId === entry.id}
+                    />
+                  ))}
+                </>
+              ) : null}
             </>
           )}
         </>
@@ -653,4 +916,32 @@ const styles = StyleSheet.create({
   rowInfo: { flex: 1, marginEnd: spacing.md },
   rowMeta: { marginTop: spacing.xs },
   rosterMeta: { alignItems: 'flex-end' },
+  removeBtn: {
+    minHeight: 36,
+    paddingVertical: spacing.xs,
+    paddingHorizontal: spacing.sm,
+    marginTop: spacing.xs,
+  },
+  removePanel: {
+    marginTop: spacing.sm,
+    marginBottom: spacing.sm,
+    padding: spacing.md,
+    borderWidth: 1,
+    borderColor: colors.primary,
+    borderRadius: 12,
+    backgroundColor: colors.surface,
+  },
+  removeNote: { marginBottom: spacing.xs },
+  removeActions: { flexDirection: 'row', marginTop: spacing.sm },
+  removeConfirmBtn: { flex: 1, marginEnd: spacing.sm },
+  removedHeading: { marginTop: spacing.xl, marginBottom: spacing.sm },
+  removedRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+    opacity: 0.85,
+  },
 });

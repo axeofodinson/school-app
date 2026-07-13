@@ -488,6 +488,7 @@
       },
       "statuses": {
         "active": "Active",
+        "struck_off": "Struck off",
         "transferred": "Transferred",
         "graduated": "Graduated",
         "withdrawn": "Withdrawn"
@@ -495,6 +496,7 @@
       "roster": {
         "pickClass": "Class",
         "empty": "No students enrolled in %{class} for %{year} yet.",
+        "noneActive": "No active students in %{class} for %{year}.",
         "loadError": "Couldn’t load the roster. Check your connection and try again.",
         "count": {
           "one": "%{count} student",
@@ -503,6 +505,29 @@
         "roll": "Roll %{roll}",
         "noRoll": "No roll number",
         "code": "Adm# %{code}"
+      },
+      "remove": {
+        "action": "Remove",
+        "heading": "Remove %{name}",
+        "note": "This keeps all their history — grades and attendance stay on record — and signs them out of the student app.",
+        "pickReason": "Reason",
+        "reasonLabel": "Note (optional)",
+        "reasonPlaceholder": "e.g. moved to another city",
+        "confirm": "Remove student",
+        "cancel": "Cancel",
+        "working": "Removing…"
+      },
+      "restore": {
+        "action": "Restore",
+        "working": "Restoring…"
+      },
+      "removed": {
+        "heading": {
+          "one": "%{count} removed student",
+          "other": "%{count} removed students"
+        },
+        "endedOn": "ended %{date}",
+        "reason": "Reason: %{reason}"
       },
       "errors": {
         "studentRequired": "Choose a student to enroll.",
@@ -645,6 +670,12 @@
         "absent": "Absent",
         "late": "Late",
         "leave": "Leave"
+      },
+      "enrollmentStatuses": {
+        "struck_off": "Struck off",
+        "withdrawn": "Withdrawn",
+        "transferred": "Transferred",
+        "graduated": "Graduated"
       },
       "mark": {
         "date": "Date",
