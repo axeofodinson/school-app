@@ -35,7 +35,7 @@ export default function TeacherHomeScreen() {
   }
 
   return (
-    <ScreenContainer>
+    <ScreenContainer scroll>
       <View style={styles.header}>
         <Text variant="title">{t('teacher.home.title')}</Text>
         <LanguageSwitch />

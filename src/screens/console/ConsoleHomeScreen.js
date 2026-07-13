@@ -103,7 +103,7 @@ export default function ConsoleHomeScreen() {
   }
 
   return (
-    <ScreenContainer>
+    <ScreenContainer scroll>
       <View style={styles.header}>
         <Text variant="title">{t('console.home.title')}</Text>
         <LanguageSwitch />
