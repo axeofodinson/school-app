@@ -488,6 +488,7 @@
       },
       "statuses": {
         "active": "فعال",
+        "struck_off": "نام خارج",
         "transferred": "منتقل",
         "graduated": "فارغ التحصیل",
         "withdrawn": "خارج"
@@ -495,6 +496,7 @@
       "roster": {
         "pickClass": "کلاس",
         "empty": "%{year} کے لیے %{class} میں ابھی کوئی طالبِ علم داخل نہیں۔",
+        "noneActive": "%{year} کے لیے %{class} میں کوئی فعال طالبِ علم نہیں۔",
         "loadError": "فہرست لوڈ نہیں ہو سکی۔ کنکشن چیک کر کے دوبارہ کوشش کریں۔",
         "count": {
           "one": "%{count} طالبِ علم",
@@ -503,6 +505,29 @@
         "roll": "رول %{roll}",
         "noRoll": "کوئی رول نمبر نہیں",
         "code": "ایڈمشن# %{code}"
+      },
+      "remove": {
+        "action": "نکالیں",
+        "heading": "%{name} کو نکالیں",
+        "note": "اِس سے اُن کا سارا ریکارڈ محفوظ رہتا ہے — نمبر اور حاضری ریکارڈ پر رہتے ہیں — اور اُنہیں طلبہ ایپ سے لاگ آؤٹ کر دیا جاتا ہے۔",
+        "pickReason": "وجہ",
+        "reasonLabel": "نوٹ (اختیاری)",
+        "reasonPlaceholder": "مثلاً دوسرے شہر منتقل ہو گئے",
+        "confirm": "طالبِ علم کو نکالیں",
+        "cancel": "منسوخ",
+        "working": "نکالا جا رہا ہے…"
+      },
+      "restore": {
+        "action": "بحال کریں",
+        "working": "بحال ہو رہا ہے…"
+      },
+      "removed": {
+        "heading": {
+          "one": "%{count} نکالا گیا طالبِ علم",
+          "other": "%{count} نکالے گئے طلبہ"
+        },
+        "endedOn": "ختم %{date}",
+        "reason": "وجہ: %{reason}"
       },
       "errors": {
         "studentRequired": "داخل کرنے کے لیے کوئی طالبِ علم منتخب کریں۔",
@@ -645,6 +670,12 @@
         "absent": "غیر حاضر",
         "late": "لیٹ",
         "leave": "چھٹی"
+      },
+      "enrollmentStatuses": {
+        "struck_off": "نام خارج",
+        "withdrawn": "خارج",
+        "transferred": "منتقل",
+        "graduated": "فارغ التحصیل"
       },
       "mark": {
         "date": "تاریخ",

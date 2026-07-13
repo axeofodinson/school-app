@@ -167,6 +167,9 @@ function StudentPickRow({ entry, selected, onPress }) {
         </Text>
         <Text variant="caption" color={colors.muted} style={styles.rowMeta}>
           {roll}
+          {entry.status && entry.status !== 'active'
+            ? ` · ${t(`console.attendance.enrollmentStatuses.${entry.status}`)}`
+            : ''}
         </Text>
       </View>
     </Pressable>
@@ -298,11 +301,16 @@ export default function AttendanceScreen({
       setSaveError(null);
       setSavedDate(null);
 
+      // Only ACTIVE enrollments are markable — a struck-off/withdrawn student is
+      // no longer in the class, so they must not appear on the marking roster
+      // (db/009: enrollments.status). Their past attendance stays queryable in
+      // the History tab.
       const rosterRes = await supabase
         .from('enrollments')
         .select('id, roll_number, student:students(id, student_code, full_name)')
         .eq('class_id', classId)
-        .eq('year_id', year.id);
+        .eq('year_id', year.id)
+        .eq('status', 'active');
       if (rosterRes.error) {
         setRosterError(true);
         return;
@@ -399,7 +407,10 @@ export default function AttendanceScreen({
     setSavedDate(forDate);
   }, [date, roster, marks, userId]);
 
-  // History: load the chosen class's roster for the student picker.
+  // History: load the chosen class's roster for the student picker. Unlike the
+  // marking roster, this deliberately includes CLOSED enrollments (struck-off,
+  // withdrawn, …) so staff can still pull up a removed student's past attendance
+  // — historical data stays fully queryable (CLAUDE.md rule 3).
   const loadHistRoster = useCallback(
     async (classId) => {
       if (!year || !classId) return;
@@ -407,7 +418,9 @@ export default function AttendanceScreen({
       setHistRosterError(false);
       const { data, error } = await supabase
         .from('enrollments')
-        .select('id, roll_number, student:students(id, student_code, full_name)')
+        .select(
+          'id, roll_number, status, student:students(id, student_code, full_name)'
+        )
         .eq('class_id', classId)
         .eq('year_id', year.id);
       if (error) {
