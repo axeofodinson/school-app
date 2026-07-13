@@ -41,6 +41,12 @@
         "projectId": "d0d4fed8-afe4-4599-9c3e-31e5de0ec715"
       }
     },
-    "owner": "ice_010"
+    "owner": "ice_010",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/d0d4fed8-afe4-4599-9c3e-31e5de0ec715"
+    }
   }
 }
