@@ -388,15 +388,23 @@
       "needYear": "Create an academic year first — classes need a year to enroll students into.",
       "goToYears": "Go to academic years",
       "gradeLevel": "Grade level %{level}",
+      "levels": {
+        "pg": "PG"
+      },
       "loadError": "Couldn’t load classes. Check your connection and try again.",
       "retry": "Retry",
+      "edit": "Edit",
+      "editHeading": "Edit class",
+      "save": "Save",
+      "saving": "Saving…",
+      "cancel": "Cancel",
       "form": {
         "heading": "Add a class",
         "name": "Name",
         "namePlaceholder": "PG, Class 9",
         "gradeLevel": "Grade level",
         "gradePlaceholder": "9",
-        "gradeHint": "A number for ordering — PG and pre-primary can be negative, matric goes up to 10.",
+        "gradeHint": "A number for ordering — PG is 0, other pre-primary can be negative, matric goes up to 10.",
         "submit": "Create",
         "submitting": "Creating…"
       },
