@@ -271,6 +271,32 @@
         "network": "No internet. Check your connection and try again.",
         "unknown": "Something went wrong. Try again."
       }
+    },
+    "inbox": {
+      "title": "Messages",
+      "subtitle": "News from your school and teachers.",
+      "back": "Back",
+      "bell": "Open messages",
+      "bellUnread": {
+        "one": "Open messages, %{count} new",
+        "other": "Open messages, %{count} new"
+      },
+      "new": "New",
+      "empty": "No messages yet. When your school or teacher sends one, it’ll show up here.",
+      "loadError": "Couldn’t load your messages. Check your connection and try again.",
+      "retry": "Try again",
+      "permissionOff": "Notifications are off, so you won’t get a pop-up — but your messages still show up here.",
+      "scopes": {
+        "school": "School",
+        "class": "Your class",
+        "student": "For you"
+      }
+    },
+    "battery": {
+      "title": "Keep your messages coming",
+      "body": "Your phone can stop this app in the background, so you might miss messages. Let it always run to get them on time.",
+      "openSettings": "Open settings",
+      "later": "Maybe later"
     }
   },
   "console": {
@@ -284,7 +310,8 @@
       "openStudents": "Register students",
       "openEnrollments": "Manage enrollments",
       "openAssessments": "Build assessments",
-      "openAttendance": "Mark attendance"
+      "openAttendance": "Mark attendance",
+      "openMessages": "Send a message"
     },
     "students": {
       "title": "Students",
@@ -715,6 +742,52 @@
         "network": "No internet connection. Check your network and try again.",
         "unknown": "Couldn’t save. Please try again."
       }
+    },
+    "messages": {
+      "title": "Messages",
+      "back": "Back",
+      "subtitleAdmin": "Send a notification to the whole school, one class, or one student.",
+      "subtitleTeacher": "Send a notification to a class you teach or one of your students.",
+      "loadError": "Couldn’t load classes and students. Check your connection and try again.",
+      "retry": "Retry",
+      "noClasses": "You’re not assigned to any class yet. Ask an admin to add you to a class first.",
+      "noStudents": "No students to message yet.",
+      "noStudentMatches": "No students match “%{query}”.",
+      "code": "Adm# %{code}",
+      "sent": "Sent to %{audience}.",
+      "deliveryNote": "Students get a notification if they’ve allowed them — and can always read this in the app.",
+      "scopes": {
+        "school": "Whole school",
+        "class": "A class",
+        "student": "One student"
+      },
+      "audience": {
+        "school": "the whole school",
+        "class": "%{name}",
+        "student": "%{name}"
+      },
+      "form": {
+        "title": "Title",
+        "titlePlaceholder": "e.g. Holiday tomorrow",
+        "body": "Message",
+        "bodyPlaceholder": "Write the message students will see",
+        "scope": "Send to",
+        "pickClass": "Class",
+        "pickStudent": "Student",
+        "searchStudents": "Search by name or admission number",
+        "changeStudent": "Change",
+        "send": "Send",
+        "sending": "Sending…"
+      },
+      "errors": {
+        "titleRequired": "Enter a title.",
+        "bodyRequired": "Write a message.",
+        "classRequired": "Choose a class to send to.",
+        "studentRequired": "Choose a student to send to.",
+        "notAllowed": "You can only message classes and students you teach.",
+        "network": "No internet connection. Check your network and try again.",
+        "unknown": "Couldn’t send. Please try again."
+      }
     }
   },
   "teacher": {
@@ -724,7 +797,8 @@
       "placeholder": "Your classes will appear here.",
       "openQuestions": "Write questions",
       "openAssessments": "Build assessments",
-      "openAttendance": "Mark attendance"
+      "openAttendance": "Mark attendance",
+      "openMessages": "Send a message"
     },
     "questions": {
       "title": "Questions",

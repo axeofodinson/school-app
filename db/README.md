@@ -16,6 +16,7 @@ run.
 | `007_fix_provision_signature.sql` | Corrective: capture the drifted enrollment-keyed student-login functions (superseded by 008). |
 | `008_revert_login_to_admission_number.sql` | Corrective: revert student login to the admission-number design (immutable identity). |
 | `009_enrollment_status_soft_delete.sql` | Additive: enrollment lifecycle — `struck_off` status + `end_date`/`reason`, soft-remove instead of delete, and auth-layer login revocation when a student's last active enrollment closes. |
+| `010_push_notifications_messaging.sql` | Additive: `push_tokens` (per-device Expo tokens, soft-disabled when dead) + `messages` (school/class/student broadcasts) + `my_student_id()` helper + RLS. Paired with the `send-message-push` Edge Function. |
 
 ## Additive migrations (run after `setup.sql`, in order)
 
@@ -49,6 +50,18 @@ views) but their full history stays queryable by staff. A DB trigger
 enrollment closes — it **bans the Supabase auth account and kills live sessions
 without deleting credentials**, so access is restored automatically if they're
 re-enrolled (or **Restore**d).
+
+`010_push_notifications_messaging.sql` adds push + in-app messaging. `push_tokens`
+holds the Expo push token for each student device (the student app upserts it on
+launch); a token Expo reports as dead is **soft-disabled** (`disabled_at`), never
+deleted. `messages` is a broadcast to the whole school, one class, or one student
+— the durable record that backs the in-app inbox, with push as best-effort
+delivery on top. RLS scopes a student's reads to messages addressed to them
+(school-wide / their current-year active class / them by id); staff send anything,
+teachers only to classes/students they own. Delivery is done by the
+**`send-message-push` Edge Function** (`supabase/functions/send-message-push/`),
+wired to an INSERT webhook on `public.messages` — see that folder's README for the
+webhook + secrets setup.
 
 ## Run order (Supabase → SQL Editor)
 

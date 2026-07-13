@@ -32,10 +32,13 @@ import { JourneyCard } from '../../components/engagement';
 import { useAuth } from '../../auth/AuthProvider';
 import { t } from '../../i18n';
 import { quest, spacing, displayText } from '../../theme/quest';
+import InboxBell from '../../notifications/InboxBell';
+import BatteryOptimizationPrompt from '../../notifications/BatteryOptimizationPrompt';
 import StudentAssessmentsScreen from './StudentAssessmentsScreen';
 import StudentResultsScreen from './StudentResultsScreen';
 import StudentReportCardScreen from './StudentReportCardScreen';
 import StudentAttendanceScreen from './StudentAttendanceScreen';
+import InboxScreen from './InboxScreen';
 
 // The live tiles, in order, each mapping to a screen the home switches to —
 // now also carrying their quest look (sprite + tile colours).
@@ -81,7 +84,7 @@ const TILES = [
 export default function StudentHomeScreen() {
   const { profile, signOut } = useAuth();
   const name = profile?.full_name?.trim();
-  const [screen, setScreen] = useState('home'); // 'home' | 'assessments' | 'results' | 'report' | 'attendance'
+  const [screen, setScreen] = useState('home'); // 'home' | 'assessments' | 'results' | 'report' | 'attendance' | 'inbox'
 
   if (screen === 'assessments') {
     return <StudentAssessmentsScreen onBack={() => setScreen('home')} />;
@@ -95,14 +98,23 @@ export default function StudentHomeScreen() {
   if (screen === 'attendance') {
     return <StudentAttendanceScreen onBack={() => setScreen('home')} />;
   }
+  if (screen === 'inbox') {
+    return <InboxScreen onBack={() => setScreen('home')} />;
+  }
 
   return (
     <QuestScreen scroll>
+      {/* One-time nudge on OEMs that kill background apps (Xiaomi/Oppo/etc.). */}
+      <BatteryOptimizationPrompt />
+
       <View style={styles.header}>
         <Text color={quest.ink} style={[styles.headerTitle, displayText(24)]}>
           {t('student.home.title')}
         </Text>
-        <QuestLanguageSwitch />
+        <View style={styles.headerActions}>
+          <InboxBell onPress={() => setScreen('inbox')} />
+          <QuestLanguageSwitch />
+        </View>
       </View>
 
       {/* Greeting card — the sprout buddy welcomes the child by name. */}
@@ -171,6 +183,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   headerTitle: { flex: 1, marginEnd: spacing.md },
+  headerActions: { flexDirection: 'row', alignItems: 'center' },
   greetingCard: { marginTop: spacing.lg },
   greetingFace: {
     flexDirection: 'row',

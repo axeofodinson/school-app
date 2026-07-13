@@ -28,6 +28,14 @@
         "backgroundColor": "#55a049"
       }
     },
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "color": "#55a049"
+        }
+      ]
+    ],
     "extra": {
       "eas": {
         "projectId": "d0d4fed8-afe4-4599-9c3e-31e5de0ec715"

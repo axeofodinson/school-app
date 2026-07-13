@@ -66,7 +66,7 @@ export function AuthProvider({ children }) {
     try {
       const { data, error } = await supabase
         .from('profiles')
-        .select('role, full_name')
+        .select('role, full_name, student_id')
         .eq('id', userId)
         .maybeSingle();
       if (error) {
@@ -165,6 +165,9 @@ export function AuthProvider({ children }) {
     session,
     profile,
     role: profile?.role ?? null,
+    // The linked students.id for a student login (null for staff/teacher).
+    // Used to register push tokens and scope the in-app inbox to this student.
+    studentId: profile?.student_id ?? null,
     profileStatus,
     signIn,
     studentSignIn,
