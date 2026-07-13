@@ -4,14 +4,22 @@
 // establishes the reading direction so children lay out start-to-end correctly
 // in both English (LTR) and Urdu (RTL). Optionally scrolls and keeps content
 // clear of the keyboard for form screens.
+//
+// Safe area: insets come from useSafeAreaInsets() (react-native-safe-area-
+// context), the SAME source the toast layer uses — NOT the react-native
+// SafeAreaView, which is iOS-only and silently applies nothing on Android,
+// leaving headers under the notch and footers under the gesture nav bar. The
+// insets are ADDED to the design padding (not a flat replacement), so a header
+// clears the status bar/notch and the last element (e.g. sign-out) clears the
+// bottom nav bar, on every device profile.
 import {
   View,
   ScrollView,
-  SafeAreaView,
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { colors, spacing } from '../theme/colors';
 import { isRTL } from '../i18n';
@@ -25,7 +33,18 @@ export default function ScreenContainer({
   style,
   contentContainerStyle,
 }) {
+  const insets = useSafeAreaInsets();
   const direction = isRTL ? 'rtl' : 'ltr';
+
+  // Safe-area gutters reserved on every edge, on top of the design padding
+  // below. Horizontal insets cover landscape notches; top/bottom cover the
+  // status bar/notch and the gesture nav bar.
+  const safeArea = {
+    paddingTop: insets.top,
+    paddingBottom: insets.bottom,
+    paddingLeft: insets.left,
+    paddingRight: insets.right,
+  };
 
   const inner = [
     styles.content,
@@ -48,14 +67,14 @@ export default function ScreenContainer({
   );
 
   return (
-    <SafeAreaView style={[styles.safe, { backgroundColor }, style]}>
+    <View style={[styles.safe, safeArea, { backgroundColor }, style]}>
       <KeyboardAvoidingView
         style={styles.flex}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         {body}
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </View>
   );
 }
 
