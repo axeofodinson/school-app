@@ -228,11 +228,27 @@ export function NotificationsProvider({ children }) {
     return () => sub.remove();
   }, [studentId, toastMessage, refresh]);
 
-  // Source 2: Supabase Realtime on public.messages. Covers the app-open case
-  // even when push can't (permission denied, simulator, Expo Go) — and RLS
-  // decides which rows this student's subscription receives, as always.
+  // Source 2: Supabase Realtime on public.messages. This is the
+  // permission-INDEPENDENT path — it fires while the app is open no matter what
+  // the OS notification setting is, which is what makes the in-app toast work
+  // when push can't reach the device (permission denied, simulator, Expo Go).
+  //
+  // Realtime evaluates the messages RLS AS THE CONNECTED USER, so the socket
+  // must carry this student's JWT or every INSERT is filtered out and the
+  // subscription silently receives nothing. supabase-js pushes the token to the
+  // socket on SIGNED_IN / TOKEN_REFRESHED, but NOT when a session is merely
+  // restored from storage on launch (that's INITIAL_SESSION, which the auth
+  // client handles separately — see AuthProvider). Without this, a returning
+  // student's socket sits on the anon key and no toast ever arrives. Set it
+  // explicitly, and re-run when the access token changes so it stays current.
   useEffect(() => {
     if (!studentId) return undefined;
+    const token = session?.access_token;
+    if (token) {
+      // setAuth resolves to a promise in some versions; we don't need its
+      // result and must not let a rejection surface as unhandled.
+      Promise.resolve(supabase.realtime.setAuth(token)).catch(() => {});
+    }
     const channel = supabase
       .channel(`inbox-messages-${studentId}`)
       .on(
@@ -249,7 +265,7 @@ export function NotificationsProvider({ children }) {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [studentId, toastMessage, absorbMessage]);
+  }, [studentId, session?.access_token, toastMessage, absorbMessage]);
 
   // Mark everything up to now as read — call when the inbox is opened.
   const markAllRead = useCallback(async () => {
