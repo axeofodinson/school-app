@@ -11,11 +11,12 @@ import { colors, spacing } from '../../theme/colors';
 import QuestionAuthoringScreen from './QuestionAuthoringScreen';
 import AssessmentBuilderScreen from '../console/AssessmentBuilderScreen';
 import AttendanceScreen from '../console/AttendanceScreen';
+import MessagesScreen from '../console/MessagesScreen';
 
 export default function TeacherHomeScreen() {
   const { profile, session, signOut } = useAuth();
   const name = profile?.full_name || session?.user?.email || '';
-  const [screen, setScreen] = useState('home'); // 'home' | 'questions' | 'assessments' | 'attendance'
+  const [screen, setScreen] = useState('home'); // 'home' | 'questions' | 'assessments' | 'attendance' | 'messages'
 
   if (screen === 'questions') {
     return <QuestionAuthoringScreen onBack={() => setScreen('home')} />;
@@ -27,6 +28,10 @@ export default function TeacherHomeScreen() {
 
   if (screen === 'attendance') {
     return <AttendanceScreen onBack={() => setScreen('home')} />;
+  }
+
+  if (screen === 'messages') {
+    return <MessagesScreen onBack={() => setScreen('home')} />;
   }
 
   return (
@@ -54,6 +59,11 @@ export default function TeacherHomeScreen() {
       <Button
         label={t('teacher.home.openAttendance')}
         onPress={() => setScreen('attendance')}
+        style={styles.action}
+      />
+      <Button
+        label={t('teacher.home.openMessages')}
+        onPress={() => setScreen('messages')}
         style={styles.action}
       />
       <Button

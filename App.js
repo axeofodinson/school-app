@@ -6,6 +6,7 @@ import { fontAssets } from './src/theme/fonts';
 import { loadPersistedLocale } from './src/i18n';
 import { LanguageProvider } from './src/i18n/LanguageProvider';
 import { AuthProvider } from './src/auth/AuthProvider';
+import { NotificationsProvider } from './src/notifications/NotificationsProvider';
 import RootNavigator from './src/navigation/RootNavigator';
 
 export default function App() {
@@ -25,8 +26,10 @@ export default function App() {
   return (
     <LanguageProvider>
       <AuthProvider>
-        <StatusBar style="auto" />
-        <RootNavigator />
+        <NotificationsProvider>
+          <StatusBar style="auto" />
+          <RootNavigator />
+        </NotificationsProvider>
       </AuthProvider>
     </LanguageProvider>
   );

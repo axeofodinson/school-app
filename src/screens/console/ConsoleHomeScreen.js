@@ -15,6 +15,7 @@ import StudentsScreen from './StudentsScreen';
 import EnrollmentScreen from './EnrollmentScreen';
 import AssessmentBuilderScreen from './AssessmentBuilderScreen';
 import AttendanceScreen from './AttendanceScreen';
+import MessagesScreen from './MessagesScreen';
 
 export default function ConsoleHomeScreen() {
   const { profile, session, signOut } = useAuth();
@@ -79,6 +80,10 @@ export default function ConsoleHomeScreen() {
     );
   }
 
+  if (screen === 'messages') {
+    return <MessagesScreen onBack={() => setScreen('home')} />;
+  }
+
   return (
     <ScreenContainer>
       <View style={styles.header}>
@@ -124,6 +129,11 @@ export default function ConsoleHomeScreen() {
       <Button
         label={t('console.home.openAttendance')}
         onPress={() => setScreen('attendance')}
+        style={styles.action}
+      />
+      <Button
+        label={t('console.home.openMessages')}
+        onPress={() => setScreen('messages')}
         style={styles.action}
       />
       <Button
