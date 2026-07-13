@@ -6,7 +6,11 @@
     "loading": "لوڈ ہو رہا ہے…",
     "language": "زبان",
     "english": "English",
-    "urdu": "اردو"
+    "urdu": "اردو",
+    "toast": {
+      "newMessage": "نیا میسج",
+      "hint": "میسجز کھولنے کے لیے ٹیپ کرو، ہٹانے کے لیے اوپر سوائپ کرو۔"
+    }
   },
   "auth": {
     "login": {

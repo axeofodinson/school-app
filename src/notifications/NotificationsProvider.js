@@ -12,6 +12,14 @@
 // The inbox is the fallback the task calls for: if OS notification permission is
 // denied (or the push never arrived), the message is still here next app open.
 // Reads are cache-first so the bell/badge paint instantly and offline.
+//
+// Live delivery while the app is OPEN goes through the in-app toast (two
+// sources, one banner):
+//   * foreground push  — Notifications.addNotificationReceivedListener
+//   * Supabase Realtime — INSERT on public.messages (db/012 adds the table to
+//     the realtime publication; RLS still decides who receives which rows)
+// Both dispatch through useToast(); the toast queue dedupes by message id, so
+// a message that arrives on both paths shows exactly one banner.
 import {
   createContext,
   useCallback,
@@ -22,9 +30,12 @@ import {
 } from 'react';
 import { AppState } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Notifications from 'expo-notifications';
 
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../auth/AuthProvider';
+import { useToast } from './ToastProvider';
+import { t } from '../i18n';
 import {
   registerForPushNotifications,
   getNotificationPermissionStatus,
@@ -46,6 +57,7 @@ function countUnread(messages, lastReadAt) {
 
 export function NotificationsProvider({ children }) {
   const { studentId, session } = useAuth();
+  const { showToast } = useToast();
 
   const [messages, setMessages] = useState([]);
   const [lastReadAt, setLastReadAt] = useState(null);
@@ -53,6 +65,9 @@ export function NotificationsProvider({ children }) {
   const [permission, setPermission] = useState('unknown');
   const [loading, setLoading] = useState(false);
   const [loadError, setLoadError] = useState(false);
+  // Bumped when a toast is tapped; the student home watches it and opens the
+  // inbox. A counter (not a boolean) so every tap fires, even back-to-back.
+  const [inboxRequest, setInboxRequest] = useState(0);
 
   const appState = useRef(AppState.currentState);
 
@@ -141,6 +156,101 @@ export function NotificationsProvider({ children }) {
     return () => sub.remove();
   }, [studentId, refresh, syncPush]);
 
+  // ---- Live delivery → in-app toast ----
+
+  // Tap-to-navigate: the toast layer is global but screen switching is local
+  // state on the student home, so we signal instead of navigating directly.
+  const requestInbox = useCallback(() => {
+    setInboxRequest((n) => n + 1);
+  }, []);
+
+  // One dispatch for both live sources. Dedupe by message id happens inside
+  // the toast queue, so push + Realtime for the same row = one banner.
+  const toastMessage = useCallback(
+    ({ id, title, body }) => {
+      showToast({
+        id: id ? `msg:${id}` : undefined,
+        title: title || t('common.toast.newMessage'),
+        body: body || '',
+        icon: '🔔',
+        onPress: requestInbox,
+      });
+    },
+    [showToast, requestInbox]
+  );
+
+  // Drop a just-arrived row straight into the inbox state + cache, so the
+  // badge and list are already correct when the student opens them — no
+  // second network round-trip for a row we're holding.
+  const absorbMessage = useCallback(
+    (row) => {
+      if (!row?.id) return;
+      setMessages((prev) => {
+        if (prev.some((m) => m.id === row.id)) return prev;
+        const next = [
+          {
+            id: row.id,
+            scope: row.scope,
+            target_id: row.target_id ?? null,
+            title: row.title,
+            body: row.body,
+            created_at: row.created_at,
+          },
+          ...prev,
+        ];
+        AsyncStorage.setItem(messagesKey(studentId), JSON.stringify(next)).catch(
+          () => {} // cache write failure is non-fatal, state already updated
+        );
+        return next;
+      });
+    },
+    [studentId]
+  );
+
+  // Source 1: a push arriving while the app is FOREGROUNDED. This listener is
+  // what makes foreground pushes visible at all — without it they sat silently
+  // in the tray until tapped. The OS banner is suppressed for foreground
+  // (src/lib/push.js) because this toast is now that surface.
+  useEffect(() => {
+    if (!studentId) return undefined;
+    const sub = Notifications.addNotificationReceivedListener((notification) => {
+      const content = notification?.request?.content;
+      if (!content) return;
+      toastMessage({
+        id: content.data?.messageId ?? null,
+        title: content.title,
+        body: content.body,
+      });
+      // The row is already in the DB (push follows the insert) — refresh so
+      // the inbox/badge agree with the banner.
+      refresh();
+    });
+    return () => sub.remove();
+  }, [studentId, toastMessage, refresh]);
+
+  // Source 2: Supabase Realtime on public.messages. Covers the app-open case
+  // even when push can't (permission denied, simulator, Expo Go) — and RLS
+  // decides which rows this student's subscription receives, as always.
+  useEffect(() => {
+    if (!studentId) return undefined;
+    const channel = supabase
+      .channel(`inbox-messages-${studentId}`)
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'messages' },
+        (payload) => {
+          const row = payload?.new;
+          if (!row?.id) return;
+          toastMessage({ id: row.id, title: row.title, body: row.body });
+          absorbMessage(row);
+        }
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [studentId, toastMessage, absorbMessage]);
+
   // Mark everything up to now as read — call when the inbox is opened.
   const markAllRead = useCallback(async () => {
     if (!studentId) return;
@@ -163,6 +273,8 @@ export function NotificationsProvider({ children }) {
     isStudent: !!studentId,
     refresh,
     markAllRead,
+    // Toast tap → open inbox signal (see requestInbox above).
+    inboxRequest,
   };
 
   return (

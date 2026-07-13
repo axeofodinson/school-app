@@ -12,12 +12,16 @@ import Constants from 'expo-constants';
 
 import { supabase } from './supabase';
 
-// How the app treats a notification that arrives while it is FOREGROUNDED. We
-// still show it (alert + sound) so a student sees a school message even mid-use.
+// How the app treats a notification that arrives while it is FOREGROUNDED.
+// The OS banner is suppressed on purpose: the in-app themed toast
+// (src/notifications/Toast.js, fed by addNotificationReceivedListener in
+// NotificationsProvider) is the foreground surface now, and showing both
+// would double-bang the same message. Sound still plays so it's audible
+// mid-use. Background/killed delivery is untouched — that stays the OS tray.
 // Registered at module load so it's set before any notification can arrive.
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
-    shouldShowAlert: true,
+    shouldShowAlert: false,
     shouldPlaySound: true,
     shouldSetBadge: false,
   }),

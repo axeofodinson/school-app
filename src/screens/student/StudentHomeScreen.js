@@ -15,7 +15,7 @@
 // sprite, entering with a small stagger; pressing pushes it into the ground.
 // All copy is the same i18n keys as before; layout is logical start/end so the
 // whole screen mirrors under Urdu/RTL.
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 
 import { Text } from '../../components';
@@ -33,6 +33,7 @@ import { useAuth } from '../../auth/AuthProvider';
 import { t } from '../../i18n';
 import { quest, spacing, displayText } from '../../theme/quest';
 import InboxBell from '../../notifications/InboxBell';
+import { useNotifications } from '../../notifications/NotificationsProvider';
 import BatteryOptimizationPrompt from '../../notifications/BatteryOptimizationPrompt';
 import StudentAssessmentsScreen from './StudentAssessmentsScreen';
 import StudentResultsScreen from './StudentResultsScreen';
@@ -83,8 +84,15 @@ const TILES = [
 
 export default function StudentHomeScreen() {
   const { profile, signOut } = useAuth();
+  const { inboxRequest } = useNotifications();
   const name = profile?.full_name?.trim();
   const [screen, setScreen] = useState('home'); // 'home' | 'assessments' | 'results' | 'report' | 'attendance' | 'inbox'
+
+  // Tapping a notification toast (global layer) asks for the inbox by bumping
+  // this counter — screen switching is local state here, so we listen for it.
+  useEffect(() => {
+    if (inboxRequest > 0) setScreen('inbox');
+  }, [inboxRequest]);
 
   if (screen === 'assessments') {
     return <StudentAssessmentsScreen onBack={() => setScreen('home')} />;
