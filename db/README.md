@@ -17,6 +17,7 @@ run.
 | `008_revert_login_to_admission_number.sql` | Corrective: revert student login to the admission-number design (immutable identity). |
 | `009_enrollment_status_soft_delete.sql` | Additive: enrollment lifecycle — `struck_off` status + `end_date`/`reason`, soft-remove instead of delete, and auth-layer login revocation when a student's last active enrollment closes. |
 | `010_push_notifications_messaging.sql` | Additive: `push_tokens` (per-device Expo tokens, soft-disabled when dead) + `messages` (school/class/student broadcasts) + `my_student_id()` helper + RLS. Paired with the `send-message-push` Edge Function. |
+| `011_dev_role_hard_delete.sql` | Additive: `is_dev()` helper + `dev_hard_delete_student()` — a dev-only, irreversible cascade (attempts → attendance → push_tokens → enrollments → student + login). Includes a one-time block to promote a dedicated dev account. |
 
 ## Additive migrations (run after `setup.sql`, in order)
 
@@ -62,6 +63,26 @@ teachers only to classes/students they own. Delivery is done by the
 **`send-message-push` Edge Function** (`supabase/functions/send-message-push/`),
 wired to an INSERT webhook on `public.messages` — see that folder's README for the
 webhook + secrets setup.
+
+`011_dev_role_hard_delete.sql` adds the one thing the platform otherwise refuses
+to do: a **true hard delete**. Everything else is soft (rule 3) — this is the
+escape hatch for a mistaken/duplicate/erasure-request record, and it is scoped to
+the **dev role** and the **dev console** only. "dev" is the existing `developer`
+role (not a new enum value — rule 4 fixes the role set); developer already has
+full admin visibility (`is_staff()` = developer OR admin), and this gives it its
+one extra power. `dev_hard_delete_student(p_student_id)` erases, in one
+transaction (atomic — any error rolls it all back), **attempts (submissions) →
+attendance → push_tokens → enrollments → the student row**, then the student's
+login (`auth.users`, if provisioned). It **re-checks `is_dev()` itself and rejects
+a non-dev caller** — hiding the button in the admin UI is convenience only; this
+in-function check is the boundary (rule 4). It returns a jsonb summary of the row
+counts removed. The admin console never renders a hard-delete anywhere; the dev
+console (`src/screens/dev/DevConsoleScreen.js`) is reachable only from a
+developer-only entry point on the console home. **PART 3** of the migration is a
+one-time, edit-me block to promote a **dedicated dev account** (its own login,
+separate from your admin/owner account): create the auth user + set its password
+yourself (Dashboard → Authentication → Users → Add user, Auto Confirm), then set
+the email in the block and run it.
 
 ## Run order (Supabase → SQL Editor)
 

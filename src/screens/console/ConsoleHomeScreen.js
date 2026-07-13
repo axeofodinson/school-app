@@ -17,11 +17,15 @@ import AssessmentBuilderScreen from './AssessmentBuilderScreen';
 import AttendanceScreen from './AttendanceScreen';
 import OverdueAssignmentsScreen from './OverdueAssignmentsScreen';
 import MessagesScreen from './MessagesScreen';
+import DevConsoleScreen from '../dev/DevConsoleScreen';
 
 export default function ConsoleHomeScreen() {
-  const { profile, session, signOut } = useAuth();
+  const { profile, session, role, signOut } = useAuth();
   const name = profile?.full_name || session?.user?.email || '';
-  const [screen, setScreen] = useState('home'); // 'home' | 'academicYears' | 'classes' | 'subjects' | 'students' | 'enrollments' | 'assessments' | 'attendance'
+  // Only the developer role sees the dev console; admins never get an entry
+  // point to it. The hard-delete tool it fronts is dev-only (db/011).
+  const isDev = role === 'developer';
+  const [screen, setScreen] = useState('home'); // 'home' | 'academicYears' | 'classes' | 'subjects' | 'students' | 'enrollments' | 'assessments' | 'attendance' | 'dev'
 
   if (screen === 'academicYears') {
     return <AcademicYearsScreen onBack={() => setScreen('home')} />;
@@ -94,6 +98,10 @@ export default function ConsoleHomeScreen() {
     return <MessagesScreen onBack={() => setScreen('home')} />;
   }
 
+  if (screen === 'dev' && isDev) {
+    return <DevConsoleScreen onBack={() => setScreen('home')} />;
+  }
+
   return (
     <ScreenContainer>
       <View style={styles.header}>
@@ -151,6 +159,14 @@ export default function ConsoleHomeScreen() {
         onPress={() => setScreen('messages')}
         style={styles.action}
       />
+      {isDev ? (
+        <Button
+          variant="secondary"
+          label={t('console.home.openDevTools')}
+          onPress={() => setScreen('dev')}
+          style={styles.action}
+        />
+      ) : null}
       <Button
         variant="secondary"
         label={t('auth.signOut')}
