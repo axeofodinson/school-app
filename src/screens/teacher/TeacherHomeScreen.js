@@ -10,6 +10,7 @@ import { t } from '../../i18n';
 import { colors, spacing } from '../../theme/colors';
 import QuestionAuthoringScreen from './QuestionAuthoringScreen';
 import AssessmentBuilderScreen from '../console/AssessmentBuilderScreen';
+import GradingScreen from '../console/GradingScreen';
 import AttendanceScreen from '../console/AttendanceScreen';
 import MessagesScreen from '../console/MessagesScreen';
 
@@ -24,6 +25,15 @@ export default function TeacherHomeScreen() {
 
   if (screen === 'assessments') {
     return <AssessmentBuilderScreen onBack={() => setScreen('home')} />;
+  }
+
+  if (screen === 'grading') {
+    return (
+      <GradingScreen
+        onBack={() => setScreen('home')}
+        onManageAssessments={() => setScreen('assessments')}
+      />
+    );
   }
 
   if (screen === 'attendance') {
@@ -54,6 +64,11 @@ export default function TeacherHomeScreen() {
       <Button
         label={t('teacher.home.openAssessments')}
         onPress={() => setScreen('assessments')}
+        style={styles.action}
+      />
+      <Button
+        label={t('teacher.home.openGrading')}
+        onPress={() => setScreen('grading')}
         style={styles.action}
       />
       <Button
