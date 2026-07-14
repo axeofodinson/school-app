@@ -255,6 +255,7 @@ export function NotificationsProvider({ children }) {
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'messages' },
         (payload) => {
+          console.log('[Realtime] INSERT event received:', payload);
           const row = payload?.new;
           if (!row?.id) return;
           toastMessage({ id: row.id, title: row.title, body: row.body });
