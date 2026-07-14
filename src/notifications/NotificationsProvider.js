@@ -261,7 +261,9 @@ export function NotificationsProvider({ children }) {
           absorbMessage(row);
         }
       )
-      .subscribe();
+      .subscribe((status, err) => {
+        console.log('[Realtime] messages channel status:', status, err ?? '');
+      });
     return () => {
       supabase.removeChannel(channel);
     };
