@@ -130,21 +130,37 @@
       },
       "start": "Start",
       "view": "View",
+      "open": "Open",
       "retry": "Try again",
+      "worksheet": "Worksheet",
       "types": {
         "assignment": "Homework",
         "test": "Test",
         "exam": "Exam",
-        "quiz": "Quiz"
+        "quiz": "Quiz",
+        "file": "Worksheet"
       },
       "status": {
         "todo": "To do",
         "submitted": "Done",
-        "pending": "Saved"
+        "pending": "Saved",
+        "file": "Worksheet"
       },
       "errors": {
         "network": "No internet. Check your connection and try again.",
         "unknown": "Something went wrong. Try again."
+      }
+    },
+    "fileAssessment": {
+      "back": "Back",
+      "loading": "Opening…",
+      "open": "Open file",
+      "tapToOpen": "Tap the image to open it full screen.",
+      "noFile": "This worksheet has no file attached yet.",
+      "retry": "Try again",
+      "errors": {
+        "network": "No internet. Connect to open this worksheet.",
+        "unknown": "Couldn’t open this worksheet. Please try again."
       }
     },
     "attempt": {
@@ -316,8 +332,69 @@
       "openAssessments": "Build assessments",
       "openAttendance": "Mark attendance",
       "openOverdue": "Overdue assignments",
+      "openGrading": "Enter grades",
       "openMessages": "Send a message",
       "openDevTools": "Developer tools"
+    },
+    "grading": {
+      "title": "Grades",
+      "back": "Back",
+      "subtitleAdmin": "Enter and correct student grades for %{year}.",
+      "subtitleTeacher": "Enter and correct grades for your classes — %{year}.",
+      "subtitleNoYear": "No academic year yet.",
+      "loadError": "Couldn’t load. Check your connection and try again.",
+      "retry": "Retry",
+      "needYear": "Create an academic year first — grades are scoped to a year.",
+      "goToYears": "Go to academic years",
+      "needClass": "Add a class first.",
+      "goToClasses": "Go to classes",
+      "noAssignments": "You have no class assignments yet. Ask an admin to assign you.",
+      "pickClass": "Class",
+      "pickAssessment": "Assessment",
+      "noAssessments": "No assessments for this class yet.",
+      "goToAssessments": "Go to assessments",
+      "loadAssessmentsError": "Couldn’t load assessments.",
+      "rosterLoadError": "Couldn’t load the class list.",
+      "rosterEmpty": "No students enrolled in this class yet.",
+      "rosterCount": "%{count} students",
+      "states": {
+        "graded": "Graded",
+        "ungraded": "Submitted — not marked",
+        "notSubmitted": "Not submitted"
+      },
+      "score": "%{score} / %{total}",
+      "scoreNoTotal": "Score: %{score}",
+      "lastEdited": "Edited %{count}× · last %{date}",
+      "enterGrade": "Enter grade",
+      "editGrade": "Edit grade",
+      "scoreLabel": "Score",
+      "scorePlaceholder": "e.g. 15",
+      "outOf": "out of %{total}",
+      "reasonLabel": "Reason for change",
+      "reasonPlaceholder": "recount, data entry error, appeal…",
+      "reasonHint": "Required when changing an existing grade — kept in the edit history.",
+      "save": "Save grade",
+      "saving": "Saving…",
+      "cancel": "Cancel",
+      "showHistory": "Edit history",
+      "hideHistory": "Hide history",
+      "historyEmpty": "No corrections recorded.",
+      "historyLoadError": "Couldn’t load history.",
+      "historyChange": "%{prev} → %{new}",
+      "historyFirst": "First grade: %{new}",
+      "historyMeta": "%{reason} · %{date}",
+      "errors": {
+        "scoreRequired": "Enter a score.",
+        "scoreInvalid": "Score must be a number (up to two decimals).",
+        "scoreRange": "Score can’t be more than the total.",
+        "reasonRequired": "Give a reason for changing the grade.",
+        "not_authorized": "You’re not allowed to grade this class.",
+        "assessment_not_found": "That assessment no longer exists.",
+        "enrollment_class_mismatch": "That student isn’t in this class.",
+        "score_out_of_range": "Score is out of range.",
+        "network": "No internet connection. Check your network and try again.",
+        "unknown": "Couldn’t save. Please try again."
+      }
     },
     "students": {
       "title": "Students",
@@ -388,15 +465,23 @@
       "needYear": "Create an academic year first — classes need a year to enroll students into.",
       "goToYears": "Go to academic years",
       "gradeLevel": "Grade level %{level}",
+      "levels": {
+        "pg": "PG"
+      },
       "loadError": "Couldn’t load classes. Check your connection and try again.",
       "retry": "Retry",
+      "edit": "Edit",
+      "editHeading": "Edit class",
+      "save": "Save",
+      "saving": "Saving…",
+      "cancel": "Cancel",
       "form": {
         "heading": "Add a class",
         "name": "Name",
         "namePlaceholder": "PG, Class 9",
         "gradeLevel": "Grade level",
         "gradePlaceholder": "9",
-        "gradeHint": "A number for ordering — PG and pre-primary can be negative, matric goes up to 10.",
+        "gradeHint": "A number for ordering — PG is 0, other pre-primary can be negative, matric goes up to 10.",
         "submit": "Create",
         "submitting": "Creating…"
       },
@@ -618,6 +703,15 @@
           "other": "%{count} questions selected"
         },
         "totalMarks": "Total marks: %{total}",
+        "file": "Worksheet file",
+        "fileHint": "Upload an image, a markdown (.md) file, or a document. Students in the class will see it as an assessment.",
+        "pickFile": "Choose file",
+        "changeFile": "Choose a different file",
+        "fileSelected": "Selected: %{name}",
+        "fileCurrent": "Current file: %{name}",
+        "fileNone": "No file chosen yet.",
+        "fileMarks": "Total marks (optional)",
+        "fileMarksHint": "Set this if you’ll grade the worksheet; leave blank otherwise.",
         "submit": "Create assessment",
         "submitting": "Creating…",
         "updateSubmit": "Save changes",
@@ -628,7 +722,8 @@
         "assignment": "Assignment",
         "test": "Test",
         "exam": "Exam",
-        "quiz": "Quiz"
+        "quiz": "Quiz",
+        "file": "File"
       },
       "questionTypes": {
         "mcq": "Multiple choice",
@@ -676,6 +771,9 @@
         "dateInvalid": "Use the date format YYYY-MM-DD.",
         "marksInvalid": "Marks for each question must be a whole number between 1 and 100.",
         "needQuestions": "Add at least one question before publishing.",
+        "needFile": "Choose a file before publishing this worksheet.",
+        "fileMarksInvalid": "Total marks must be a whole number.",
+        "uploadFailed": "Couldn’t upload the file. Please try again.",
         "network": "No internet connection. Check your network and try again.",
         "unknown": "Couldn’t save. Please try again."
       }
@@ -870,6 +968,7 @@
       "placeholder": "Your classes will appear here.",
       "openQuestions": "Write questions",
       "openAssessments": "Build assessments",
+      "openGrading": "Enter grades",
       "openAttendance": "Mark attendance",
       "openMessages": "Send a message"
     },

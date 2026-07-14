@@ -8,22 +8,29 @@
 // hitting this query can read but never write.
 //
 // Classes are content-as-data (CLAUDE.md rule 1): adding one is an INSERT, never
-// a code change. `grade_level` drives ordering — PG/pre-primary sit below 0
-// (e.g. PG = -2) and matric tops out at 10 — so the list reads bottom-to-top like
-// the real school. A class references no academic year directly, but enrollments
-// do; with no year created yet there is nothing to enroll into, so we prompt the
-// office to set up a year first rather than let classes pile up in a vacuum.
+// a code change. `grade_level` drives ordering — PG sits at 0 (db/015) and matric
+// tops out at 10 — so the list reads bottom-to-top like the real school. The raw
+// number is shown through gradeLevelLabel so named levels (PG) read as words. A
+// class references no academic year directly, but enrollments do; with no year
+// created yet there is nothing to enroll into, so we prompt the office to set up a
+// year first rather than let classes pile up in a vacuum.
+//
+// Editing a class name is a plain metadata correction (not a historical record
+// like a grade), so a direct UPDATE is right — no versioning. The name isn't
+// denormalised anywhere (every consumer joins `classes` live), so a rename
+// reflects immediately across the app.
 import { useCallback, useEffect, useState } from 'react';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 
 import { ScreenContainer, Text, TextField, Button } from '../../components';
 import { supabase } from '../../lib/supabase';
+import { gradeLevelLabel } from '../../lib/gradeLevels';
 import { t } from '../../i18n';
 import { colors, spacing } from '../../theme/colors';
 
-// grade_level is an integer that orders the list. Pre-primary/PG can be negative
-// and matric tops out at 10; we bound the input so a typo like 900 can't sink the
-// ordering. Kept deliberately generous below zero for PG/nursery/prep variations.
+// grade_level is an integer that orders the list. Pre-primary can be negative and
+// matric tops out at 10; we bound the input so a typo like 900 can't sink the
+// ordering. Kept deliberately generous below zero for nursery/prep variations.
 const MIN_GRADE = -5;
 const MAX_GRADE = 10;
 
@@ -46,14 +53,105 @@ function classifyError(error) {
   return 'unknown';
 }
 
-function ClassRow({ cls }) {
+// A read-only class row with an Edit affordance. Editing swaps it for ClassEditRow
+// (below) so the rename form appears inline, matching how the console keeps edits
+// on the existing list rather than a separate screen.
+function ClassRow({ cls, onEdit }) {
   return (
     <View style={styles.row}>
       <View style={styles.rowInfo}>
         <Text variant="label">{cls.name}</Text>
         <Text variant="caption" color={colors.muted} style={styles.rowMeta}>
-          {t('console.classes.gradeLevel', { level: cls.grade_level })}
+          {gradeLevelLabel(cls.grade_level)}
         </Text>
+      </View>
+      <Button
+        variant="secondary"
+        label={t('console.classes.edit')}
+        onPress={() => onEdit(cls)}
+        style={styles.rowAction}
+      />
+    </View>
+  );
+}
+
+// Inline rename form for one class. Same fields + validation as the create form,
+// seeded with the class's current values. Saves a direct UPDATE (metadata, no
+// history) and reports the shared error keys.
+function ClassEditRow({ cls, onCancel, onSaved }) {
+  const [name, setName] = useState(cls.name ?? '');
+  const [grade, setGrade] = useState(String(cls.grade_level ?? ''));
+  const [error, setError] = useState(null);
+  const [saving, setSaving] = useState(false);
+
+  const save = useCallback(async () => {
+    const trimmed = name.trim();
+    const rawGrade = grade.trim();
+    if (!trimmed) return setError('nameRequired');
+    if (!rawGrade) return setError('gradeRequired');
+    const level = parseGrade(rawGrade);
+    if (level === null) return setError('gradeInvalid');
+    if (level < MIN_GRADE || level > MAX_GRADE) return setError('gradeRange');
+
+    setError(null);
+    setSaving(true);
+    const { error: upErr } = await supabase
+      .from('classes')
+      .update({ name: trimmed, grade_level: level })
+      .eq('id', cls.id);
+    setSaving(false);
+    if (upErr) {
+      setError(classifyError(upErr));
+      return;
+    }
+    onSaved();
+  }, [name, grade, cls.id, onSaved]);
+
+  return (
+    <View style={[styles.card, styles.editCard]}>
+      <Text variant="label" style={styles.formHeading}>
+        {t('console.classes.editHeading')}
+      </Text>
+      <TextField
+        label={t('console.classes.form.name')}
+        placeholder={t('console.classes.form.namePlaceholder')}
+        value={name}
+        onChangeText={setName}
+        autoCapitalize="words"
+        autoCorrect={false}
+      />
+      <TextField
+        label={t('console.classes.form.gradeLevel')}
+        placeholder={t('console.classes.form.gradePlaceholder')}
+        value={grade}
+        onChangeText={setGrade}
+        autoCapitalize="none"
+        autoCorrect={false}
+        keyboardType="numbers-and-punctuation"
+      />
+      <Text variant="caption" color={colors.muted} style={styles.hint}>
+        {t('console.classes.form.gradeHint')}
+      </Text>
+      {error ? (
+        <Text variant="caption" color={colors.danger} style={styles.formErr}>
+          {t(`console.classes.errors.${error}`)}
+        </Text>
+      ) : null}
+      <View style={styles.editActions}>
+        <Button
+          variant="secondary"
+          label={t('console.classes.cancel')}
+          onPress={onCancel}
+          disabled={saving}
+          style={styles.editBtn}
+        />
+        <Button
+          label={saving ? t('console.classes.saving') : t('console.classes.save')}
+          onPress={save}
+          loading={saving}
+          disabled={saving}
+          style={styles.editBtn}
+        />
       </View>
     </View>
   );
@@ -69,6 +167,8 @@ export default function ClassesScreen({ onBack, onManageYears }) {
 
   const [formError, setFormError] = useState(null); // i18n key under errors
   const [saving, setSaving] = useState(false);
+
+  const [editingId, setEditingId] = useState(null); // class id being renamed
 
   const load = useCallback(async () => {
     setLoadError(false);
@@ -121,6 +221,13 @@ export default function ClassesScreen({ onBack, onManageYears }) {
     setGrade('');
     load();
   }, [name, grade, load]);
+
+  // After a rename lands: close the editor and re-read so the ordering (which may
+  // have moved if the grade level changed) comes straight from the DB.
+  const onEditSaved = useCallback(() => {
+    setEditingId(null);
+    load();
+  }, [load]);
 
   const loading = classes === null && !loadError;
 
@@ -224,7 +331,18 @@ export default function ClassesScreen({ onBack, onManageYears }) {
               </Text>
             </View>
           ) : (
-            classes.map((cls) => <ClassRow key={cls.id} cls={cls} />)
+            classes.map((cls) =>
+              editingId === cls.id ? (
+                <ClassEditRow
+                  key={cls.id}
+                  cls={cls}
+                  onCancel={() => setEditingId(null)}
+                  onSaved={onEditSaved}
+                />
+              ) : (
+                <ClassRow key={cls.id} cls={cls} onEdit={(c) => setEditingId(c.id)} />
+              )
+            )
           )}
         </>
       )}
@@ -248,10 +366,13 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     backgroundColor: colors.surface,
   },
+  editCard: { marginTop: spacing.md },
   formHeading: { marginBottom: spacing.sm },
   hint: { marginTop: -spacing.xs, marginBottom: spacing.sm },
   formErr: { marginBottom: spacing.sm },
   submit: { marginTop: spacing.xs },
+  editActions: { flexDirection: 'row', justifyContent: 'flex-end' },
+  editBtn: { minHeight: 40, paddingVertical: spacing.xs, marginStart: spacing.sm },
   loading: { marginTop: spacing.xl },
   stateBox: { marginTop: spacing.xl, alignItems: 'center' },
   retry: { marginTop: spacing.md },
@@ -265,4 +386,5 @@ const styles = StyleSheet.create({
   },
   rowInfo: { flex: 1, marginEnd: spacing.md },
   rowMeta: { marginTop: spacing.xs },
+  rowAction: { minHeight: 40, paddingVertical: spacing.xs },
 });

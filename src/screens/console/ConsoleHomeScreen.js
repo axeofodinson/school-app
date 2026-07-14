@@ -14,6 +14,7 @@ import SubjectsScreen from './SubjectsScreen';
 import StudentsScreen from './StudentsScreen';
 import EnrollmentScreen from './EnrollmentScreen';
 import AssessmentBuilderScreen from './AssessmentBuilderScreen';
+import GradingScreen from './GradingScreen';
 import AttendanceScreen from './AttendanceScreen';
 import OverdueAssignmentsScreen from './OverdueAssignmentsScreen';
 import MessagesScreen from './MessagesScreen';
@@ -70,6 +71,17 @@ export default function ConsoleHomeScreen() {
         onBack={() => setScreen('home')}
         onManageYears={() => setScreen('academicYears')}
         onManageClasses={() => setScreen('classes')}
+      />
+    );
+  }
+
+  if (screen === 'grading') {
+    return (
+      <GradingScreen
+        onBack={() => setScreen('home')}
+        onManageYears={() => setScreen('academicYears')}
+        onManageClasses={() => setScreen('classes')}
+        onManageAssessments={() => setScreen('assessments')}
       />
     );
   }
@@ -142,6 +154,11 @@ export default function ConsoleHomeScreen() {
       <Button
         label={t('console.home.openAssessments')}
         onPress={() => setScreen('assessments')}
+        style={styles.action}
+      />
+      <Button
+        label={t('console.home.openGrading')}
+        onPress={() => setScreen('grading')}
         style={styles.action}
       />
       <Button
