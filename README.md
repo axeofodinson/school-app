@@ -93,6 +93,7 @@ npm start        # then press i / a, or scan the QR with Expo Go
 The Urdu-capable **Noto Nastaliq Urdu** font is **bundled** into the app
 (`assets/fonts/*.ttf`, loaded via `expo-font`) — never fetched from a CDN, since
 the target network blocks some. It is licensed under the SIL Open Font License
-(`assets/fonts/OFL.txt`). Layout direction is set at startup via
-`applyLayoutDirection()` in `src/i18n/index.js`, which drives React Native's
-`I18nManager` so the whole UI flips LTR/RTL with the active locale.
+(`assets/fonts/OFL.txt`). Layout direction is derived from the active locale in
+JS (`isRTL` in `src/i18n/index.js`) rather than React Native's `I18nManager` —
+`Text` and `ScreenContainer` read it at render time so the whole UI flips
+LTR/RTL immediately with the active locale, with no native reload.

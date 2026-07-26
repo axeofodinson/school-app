@@ -36,6 +36,7 @@ import { supabase } from '../lib/supabase';
 import { useAuth } from '../auth/AuthProvider';
 import { useToast } from './ToastProvider';
 import { t } from '../i18n';
+import { debugLog } from '../lib/debugLog';
 import {
   registerForPushNotifications,
   getNotificationPermissionStatus,
@@ -233,42 +234,66 @@ export function NotificationsProvider({ children }) {
   // the OS notification setting is, which is what makes the in-app toast work
   // when push can't reach the device (permission denied, simulator, Expo Go).
   //
-  // Realtime evaluates the messages RLS AS THE CONNECTED USER, so the socket
-  // must carry this student's JWT or every INSERT is filtered out and the
-  // subscription silently receives nothing. supabase-js pushes the token to the
-  // socket on SIGNED_IN / TOKEN_REFRESHED, but NOT when a session is merely
-  // restored from storage on launch (that's INITIAL_SESSION, which the auth
-  // client handles separately — see AuthProvider). Without this, a returning
-  // student's socket sits on the anon key and no toast ever arrives. Set it
-  // explicitly, and re-run when the access token changes so it stays current.
+  // Realtime evaluates the messages RLS AS THE CONNECTED USER, using ONLY the
+  // JWT attached to the socket — so setAuth() must resolve BEFORE .subscribe()
+  // runs, or the socket opens without a token, my_student_id() reads null
+  // under RLS, and every row is filtered out while the channel still reports
+  // SUBSCRIBED. Gate on the session actually existing (not just studentId) and
+  // await setAuth ahead of subscribe; ordering is the entire fix.
   useEffect(() => {
-    if (!studentId) return undefined;
-    const token = session?.access_token;
-    if (token) {
-      // setAuth resolves to a promise in some versions; we don't need its
-      // result and must not let a rejection surface as unhandled.
-      Promise.resolve(supabase.realtime.setAuth(token)).catch(() => {});
-    }
-    const channel = supabase
-      .channel(`inbox-messages-${studentId}`)
-      .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'messages' },
-        (payload) => {
-          console.log('[Realtime] INSERT event received:', payload);
-          const row = payload?.new;
-          if (!row?.id) return;
-          toastMessage({ id: row.id, title: row.title, body: row.body });
-          absorbMessage(row);
-        }
-      )
-      .subscribe((status, err) => {
-        console.log('[Realtime] messages channel status:', status, err ?? '');
-      });
+    if (!studentId || !session?.access_token) return undefined;
+    let cancelled = false;
+    let channel;
+
+    (async () => {
+      const token = session.access_token;
+      await debugLog('realtime:before_setauth', { hasToken: !!token }, studentId);
+      try {
+        await supabase.realtime.setAuth(token);
+      } catch (e) {
+        // Swallowed — subscribing still proceeds; without a fresh token RLS
+        // filters rows exactly as before this fix, no worse off.
+      }
+      if (cancelled) return;
+
+      channel = supabase
+        .channel(`inbox-messages-${studentId}`)
+        .on(
+          'postgres_changes',
+          { event: 'INSERT', schema: 'public', table: 'messages' },
+          (payload) => {
+            debugLog('realtime:payload', payload, studentId);
+            const row = payload?.new;
+            if (!row?.id) return;
+            debugLog('realtime:toast_shown', { id: row.id }, studentId);
+            toastMessage({ id: row.id, title: row.title, body: row.body });
+            absorbMessage(row);
+          }
+        )
+        .subscribe((status, err) => {
+          debugLog('realtime:status', { status, err: err?.message }, studentId);
+        });
+    })();
+
     return () => {
-      supabase.removeChannel(channel);
+      cancelled = true;
+      if (channel) supabase.removeChannel(channel);
     };
   }, [studentId, session?.access_token, toastMessage, absorbMessage]);
+
+  // supabase-js pushes the token to the socket on SIGNED_IN / TOKEN_REFRESHED
+  // automatically, but the channel above is keyed off React state (session
+  // from AuthProvider) which can lag a tick behind the client's own auth
+  // events. Re-assert the token straight from this listener too, so the
+  // socket never sits on a stale one between a refresh and the next render.
+  useEffect(() => {
+    const { data: sub } = supabase.auth.onAuthStateChange((event, s) => {
+      if (event === 'TOKEN_REFRESHED' && s?.access_token) {
+        Promise.resolve(supabase.realtime.setAuth(s.access_token)).catch(() => {});
+      }
+    });
+    return () => sub.subscription.unsubscribe();
+  }, []);
 
   // Mark everything up to now as read — call when the inbox is opened.
   const markAllRead = useCallback(async () => {

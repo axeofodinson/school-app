@@ -1,7 +1,6 @@
 // i18n plumbing. All user-facing strings live in locales/en.json + locales/ur.json.
 // No hardcoded strings in screens. Every English key must have an Urdu counterpart
 // (mark not-yet-translated Urdu with a "// TODO: ur" note in the JSON value).
-import { I18nManager } from 'react-native';
 import { I18n } from 'i18n-js';
 import { getLocales } from 'expo-localization';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -32,30 +31,22 @@ export const localeIsRTL = (locale) => RTL_LOCALES.includes(locale);
 // Urdu is RTL — screens must use logical (start/end) layout props, not left/right.
 // Mutable: it tracks the active locale so a runtime switch flips layout on the
 // next render. Screens read this at render time (via re-render), not once.
+//
+// Direction is derived from this JS state alone — NOT from the native
+// I18nManager flag. I18nManager.forceRTL persists across restarts and OTA
+// updates, so a stuck flag used to force the whole app RTL even with English
+// selected. Text sets textAlign/writingDirection off `isRTL`, and
+// ScreenContainer sets the `direction` style (Yoga mirrors flex children under
+// `direction: 'rtl'`), so the switch is visible immediately with no native
+// flag and no reload required. App.js clears any stuck native flag once at
+// startup; nothing here should call forceRTL again.
 export let isRTL = localeIsRTL(i18n.locale);
 
-// Align the native layout direction with the active locale.
-//
-// I18nManager.forceRTL flips the whole layout (flex, start/end, text align) at
-// the native level, but the change only takes full effect after the JS bundle
-// reloads. We return whether a reload is needed so the caller can decide. The
-// app also mirrors at the JS level (ScreenContainer sets the `direction` style,
-// Text sets textAlign/writingDirection off `isRTL`), so the switch is visible
-// immediately; forceRTL keeps the native side consistent on the next launch.
-// Returns true if the direction changed and a reload is required to apply it.
-export function applyLayoutDirection(rtl = isRTL) {
-  I18nManager.allowRTL(true);
-  if (I18nManager.isRTL === rtl) return false;
-  I18nManager.forceRTL(rtl);
-  return true;
-}
-
-// Point the app at a locale in memory: i18n strings + the RTL flag + native
-// layout direction. Does not persist — callers that persist use setLocale.
+// Point the app at a locale in memory: i18n strings + the RTL flag. Does not
+// persist — callers that persist use setLocale.
 function activateLocale(locale) {
   i18n.locale = locale;
   isRTL = localeIsRTL(locale);
-  applyLayoutDirection(isRTL);
 }
 
 // Load the saved locale (if any) and apply it. Call once at boot, before the
@@ -70,7 +61,6 @@ export async function loadPersistedLocale() {
   } catch (e) {
     // No stored choice / storage unavailable — fall back to the device locale.
   }
-  applyLayoutDirection(isRTL);
   return i18n.locale;
 }
 

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { I18nManager } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useFonts } from 'expo-font';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -16,6 +17,12 @@ export default function App() {
   const [localeLoaded, setLocaleLoaded] = useState(false);
 
   useEffect(() => {
+    // One-time reset: forceRTL used to be called on every locale switch (see
+    // src/i18n/index.js) and persists natively across restarts/OTA updates —
+    // once flipped true it got stuck, forcing the whole app RTL even with
+    // English selected. Direction is now derived purely from JS locale state,
+    // so this just clears any leftover flag from a prior build.
+    I18nManager.forceRTL(false);
     // Restore the saved language/direction before the first render, so the app
     // opens in the language the user last chose.
     loadPersistedLocale().finally(() => setLocaleLoaded(true));
