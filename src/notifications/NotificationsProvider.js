@@ -71,6 +71,10 @@ export function NotificationsProvider({ children }) {
   const [inboxRequest, setInboxRequest] = useState(0);
 
   const appState = useRef(AppState.currentState);
+  // Diagnostics for the Realtime channel-setup effect below: a monotonic
+  // counter and a snapshot of the last-seen dependency values.
+  const channelEffectRunRef = useRef(0);
+  const prevChannelDepsRef = useRef({});
 
   // ---- Cache-first load of this student's messages ----
   const loadFromCache = useCallback(async (sid) => {
@@ -245,9 +249,36 @@ export function NotificationsProvider({ children }) {
     let cancelled = false;
     let channel;
 
+    // Diagnostic: which run is this, and which dependency changed since the
+    // last one — pins down whether teardown/rebuild is driven by a genuinely
+    // new token or by an unstable studentId/toastMessage/absorbMessage
+    // reference.
+    const runId = ++channelEffectRunRef.current;
+    const prev = prevChannelDepsRef.current;
+    const token = session.access_token;
+    debugLog(
+      'realtime:effect_run',
+      {
+        runId,
+        changed: {
+          studentId: prev.studentId !== studentId,
+          accessToken: prev.accessToken !== token,
+          toastMessage: prev.toastMessage !== toastMessage,
+          absorbMessage: prev.absorbMessage !== absorbMessage,
+        },
+        tokenTail: token.slice(-8),
+      },
+      studentId
+    );
+    prevChannelDepsRef.current = { studentId, accessToken: token, toastMessage, absorbMessage };
+
     (async () => {
-      const token = session.access_token;
-      await debugLog('realtime:before_setauth', { hasToken: !!token }, studentId);
+      // Fire-and-forget: this is diagnostic only, and awaiting it here would
+      // add a network round-trip before setAuth()/subscribe() on every
+      // rebuild — widening the window where this channel is gone and the
+      // realtime client has zero channels open (which schedules its own
+      // deferred socket disconnect).
+      debugLog('realtime:before_setauth', { hasToken: !!token }, studentId);
       try {
         await supabase.realtime.setAuth(token);
       } catch (e) {
@@ -277,6 +308,7 @@ export function NotificationsProvider({ children }) {
 
     return () => {
       cancelled = true;
+      debugLog('realtime:effect_cleanup', { runId }, studentId);
       if (channel) supabase.removeChannel(channel);
     };
   }, [studentId, session?.access_token, toastMessage, absorbMessage]);
@@ -288,6 +320,9 @@ export function NotificationsProvider({ children }) {
   // socket never sits on a stale one between a refresh and the next render.
   useEffect(() => {
     const { data: sub } = supabase.auth.onAuthStateChange((event, s) => {
+      // Diagnostic: confirm this only acts on TOKEN_REFRESHED, and see how
+      // often each event type actually arrives.
+      debugLog('realtime:auth_event', { event }, s?.user?.id ?? null);
       if (event === 'TOKEN_REFRESHED' && s?.access_token) {
         Promise.resolve(supabase.realtime.setAuth(s.access_token)).catch(() => {});
       }

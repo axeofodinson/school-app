@@ -17,10 +17,12 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from 'react';
 
 import { supabase } from '../lib/supabase';
+import { debugLog } from '../lib/debugLog';
 
 const AuthContext = createContext(null);
 
@@ -94,6 +96,10 @@ export function AuthProvider({ children }) {
 
     // React to sign-in / sign-out after launch.
     const { data: sub } = supabase.auth.onAuthStateChange((event, s) => {
+      // Diagnostic: how often does this actually fire, and with what event —
+      // this is the listener that drives `session`, which the Realtime
+      // channel effect in NotificationsProvider keys off of.
+      debugLog('auth:state_change', { event }, s?.user?.id ?? null);
       if (event === 'INITIAL_SESSION') return; // already handled by getSession
       setSession(s);
       if (s?.user) {
@@ -160,20 +166,26 @@ export function AuthProvider({ children }) {
     if (session?.user) loadProfile(session.user.id);
   }, [session, loadProfile]);
 
-  const value = {
-    initializing,
-    session,
-    profile,
-    role: profile?.role ?? null,
-    // The linked students.id for a student login (null for staff/teacher).
-    // Used to register push tokens and scope the in-app inbox to this student.
-    studentId: profile?.student_id ?? null,
-    profileStatus,
-    signIn,
-    studentSignIn,
-    signOut,
-    retryProfile,
-  };
+  // Memoized so consumers (NotificationsProvider's Realtime channel effect in
+  // particular) see a stable reference whenever the underlying fields haven't
+  // actually changed, instead of a new object on every AuthProvider render.
+  const value = useMemo(
+    () => ({
+      initializing,
+      session,
+      profile,
+      role: profile?.role ?? null,
+      // The linked students.id for a student login (null for staff/teacher).
+      // Used to register push tokens and scope the in-app inbox to this student.
+      studentId: profile?.student_id ?? null,
+      profileStatus,
+      signIn,
+      studentSignIn,
+      signOut,
+      retryProfile,
+    }),
+    [initializing, session, profile, profileStatus, signIn, studentSignIn, signOut, retryProfile]
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
