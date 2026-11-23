@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "build": "node build.mjs",
-    "render": "node build.mjs && node render.mjs",
+    "render": "node build.mjs && node render.mjs && node mix.mjs",
+    "mix": "node mix.mjs",
     "preview": "node build.mjs && npx --yes http-server -p 8080 . || python3 -m http.server 8080"
   },
   "dependencies": {

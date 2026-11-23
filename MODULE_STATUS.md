@@ -31,7 +31,7 @@ prompts: `prompts/README.md`.
 | Dashboards | 8 | ⏳ | [80](prompts/80-dashboards.md) | |
 | Parents, iOS | — | ⏸ deferred | [81](prompts/81-parents.md) [82](prompts/82-ios-release.md) | DECISIONS #24, #25 |
 | Animated explainers, in-app AI | 9 | ⏳ | [90](prompts/90-animated-explainers.md) [91](prompts/91-ai-drafting.md) | |
-| Marketing teaser (M1) | — | ✅ rendered (9:16, 16:9, 1:1 loop), Urdu approved | [M1](prompts/M1-teaser-trailer.md) | Hassan: check in WhatsApp on Android; optional `music.mp3` + `--music`; re-skin after 00 |
+| Marketing teaser (M1) | — | ✅ rendered (9:16, 16:9, 1:1 loop), Urdu approved | [M1](prompts/M1-teaser-trailer.md) | Hassan: check in WhatsApp on Android; optional voice lines (`audio/vo-*.mp3`, then `npm run mix`); re-skin after 00 |
 | E1–E4 extensions | 10 | ⏳ | [E1](prompts/E1-teacher-training.md) [E2](prompts/E2-challenge-tier.md) [E3](prompts/E3-sdg-tags.md) [E4](prompts/E4-coding-evidence.md) | |
 
 **Old app (`src/`):** frozen; its code and data may be removed via OPS-remove-legacy (DECISIONS #22).

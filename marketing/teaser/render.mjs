@@ -3,11 +3,11 @@
 //   node render.mjs                       all three formats (9x16, 16x9, 1x1 loop)
 //   node render.mjs --format 9x16         one format
 //   node render.mjs --urdu draft          use Claude's Urdu drafts (preview only, never final)
-//   node render.mjs --music               mux music.mp3 (royalty-free, provided by Hassan) with a fade-out
 //   node render.mjs --hash                also write a SHA-256 per frame to out/hashes-<format>.txt
 //   node render.mjs --at 9.6,33          full-size PNG stills at those seconds
 //   node render.mjs --stills              storyboard frame strip(s) only: out/storyboard-<format>.png
 //
+// Videos are silent; mix.mjs adds the soundtrack (music + effects + optional voice).
 // Uses the pre-installed Playwright Chromium and /usr/bin/ffmpeg. Output goes to out/ (git-ignored).
 import { createRequire } from "node:module";
 import { spawn } from "node:child_process";
@@ -27,7 +27,6 @@ const flag = (n) => args.includes("--" + n);
 const opt = (n, d) => { const i = args.indexOf("--" + n); return i >= 0 ? args[i + 1] : d; };
 const FPS = Number(opt("fps", 30));
 const URDU = opt("urdu", "placeholder");
-const MUSIC = flag("music") ? resolve(here, opt("music-file", "music.mp3")) : null;
 
 // CSS viewport × deviceScaleFactor 2 = output pixels. Same layout maths as on a phone.
 const FORMATS = {
@@ -38,7 +37,6 @@ const FORMATS = {
 const which = opt("format", "all");
 const list = which === "all" ? Object.keys(FORMATS) : which.split(",");
 
-if (MUSIC && !existsSync(MUSIC)) { console.error(`--music: ${MUSIC} not found`); process.exit(1); }
 mkdirSync(OUT, { recursive: true });
 const pageUrl = pathToFileURL(resolve(here, "dist/teaser.html")).href + `?urdu=${encodeURIComponent(URDU)}`;
 if (!existsSync(resolve(here, "dist/teaser.html"))) { console.error("Run `node build.mjs` first (npm run render does both)."); process.exit(1); }
@@ -85,12 +83,10 @@ try {
     if (f.loop) vf.unshift(`fade=t=in:st=0:d=0.25:color=0x0b1220,fade=t=out:st=${(dur - 0.35).toFixed(3)}:d=0.35:color=0x0b1220`);
     const ff = [
       "-y", "-loglevel", "error", "-f", "image2pipe", "-framerate", String(FPS), "-i", "-",
-      ...(MUSIC ? ["-i", MUSIC] : []),
       "-vf", vf.join(","),
       "-c:v", "libx264", "-preset", "slow", "-crf", "20", "-pix_fmt", "yuv420p", "-profile:v", "high", "-level", "4.1",
       "-r", String(FPS), "-movflags", "+faststart",
-      ...(MUSIC ? ["-map", "0:v", "-map", "1:a", "-c:a", "aac", "-b:a", "160k",
-        "-af", `afade=t=out:st=${Math.max(0, dur - 2.5).toFixed(2)}:d=2.5`, "-t", dur.toFixed(3)] : ["-an"]),
+      "-an",
       outFile,
     ];
     const proc = spawn(FFMPEG, ff, { stdio: ["pipe", "inherit", "inherit"] });

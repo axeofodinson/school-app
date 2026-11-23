@@ -15,8 +15,10 @@ until the school gives its crest.
 | `copy.json` | **All on-screen text** (`en`, `ur`, `ur_draft` per line) |
 | `index.html` / `style.css` / `teaser.js` | the scenes, the layout for every aspect ratio, the timeline |
 | `build.mjs` | inlines fonts, GSAP, CSS, copy and JS into `dist/teaser.html` (one file, no network) |
-| `render.mjs` | Playwright + ffmpeg: seeks the timeline at 30 fps and encodes the MP4s |
-| `player.html` | preview page with play/scrub, format and Urdu toggles (published as the Artifact) |
+| `render.mjs` | Playwright + ffmpeg: seeks the timeline at 30 fps and encodes the (silent) MP4s |
+| `mix.mjs` | builds the soundtrack (music + synthesised effects + optional voice) and muxes it in |
+| `audio/music.mp3` | 30 s music track Hassan generated with ElevenLabs for this teaser |
+| `player.html` | preview page with play/scrub and a format toggle (published as the Artifact) |
 | `out/` | rendered videos and stills (git-ignored) |
 
 ## Render
@@ -26,13 +28,23 @@ npm install
 npm run render
 ```
 That writes `out/teaser-9x16.mp4` (1080×1920), `out/teaser-16x9.mp4` (1920×1080) and
-`out/teaser-loop-1x1.mp4` (1080×1080, hook + close, ~7.5 s). H.264, yuv420p, CRF 20,
-`+faststart`, silent. Takes a few minutes.
+`out/teaser-loop-1x1.mp4` (1080×1080, hook + close, ~7.5 s), silent, plus a `-sound.mp4`
+version of each with the soundtrack. H.264, yuv420p, CRF 20, `+faststart`; AAC 160 kbps,
+-16 LUFS. Takes about 8 minutes. After a text-only change you still need the full render;
+after an audio-only change `node mix.mjs` is enough (seconds).
+
+### Sound
+- **Music:** `audio/music.mp3` (30 s) is stretched to 38 s by repeating two 4.8 s phrases
+  mid-track (`CUT`/`REPEAT` in `mix.mjs`), so its fade-out sits under the close card.
+- **Effects:** synthesised with ffmpeg in `mix.mjs` (taps, a soft "wrong" cue, a "mastered"
+  chime, offline/synced blips, a paper whoosh), timed to the animation. `--no-sfx` turns them off.
+- **Voice (optional):** drop `audio/vo-1.mp3` … `vo-6.mp3` in and run `node mix.mjs`; each line
+  starts at its scene (`VO` in `mix.mjs`) and the music ducks under it.
+- Only use audio you own or generated yourself. Commercial use of ElevenLabs output needs a paid plan.
 
 Options (after `node build.mjs`):
 ```bash
 node render.mjs --format 9x16             # one format (9x16, 16x9, 1x1, or a comma list)
-node render.mjs --music                   # mux music.mp3 (royalty-free only) with a 2.5 s fade-out
 node render.mjs --urdu draft              # Claude's Urdu drafts: preview only, never publish
 node render.mjs --stills                  # storyboard strips: out/storyboard-<format>.png
 node render.mjs --at 9.6,33               # full-size PNG stills at those seconds
@@ -48,8 +60,7 @@ Preview in a browser: `node build.mjs`, then open `dist/teaser.html#autoplay=1`
 3. `npm run render`.
 
 Timing lives in `teaser.js` (`BEATS` and the absolute times in `build()`); the 1:1 loop
-segments are `LOOP`. Music: put a royalty-free `music.mp3` here (not committed) and add
-`--music`. Never download copyrighted music.
+segments are `LOOP`. If you move an animation, move its effect in `SFX` (`mix.mjs`) too.
 
 ## Rules this piece follows
 - Everything is "coming soon"; only features in `LMS_AUDIT.md` / `prompts/README.md` are shown.
