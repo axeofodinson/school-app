@@ -22,7 +22,9 @@ Skills: `frontend-design`, `expo:expo-animation`, `design:accessibility-review`,
 A joyful, accessible tap-the-picture question experience for children who can't read yet.
 
 ## Do
-- Big targets, audio prompt (recorded audio preferred, speech fallback), immediate gentle feedback using motion tokens, celebration in full tier only.
+- Big targets, audio prompt, immediate gentle feedback using motion tokens, celebration in full tier only.
+- Read-aloud order (DESIGN_SYSTEM.md §3.1): `body.audio` clip → device speech (English; Urdu only where the voice test passes) → hidden.
+- ElevenLabs audio for junior maths questions: a server-side generation step (Edge Function or a script run with the key as an environment secret; never in the app or in chat) that makes en + ur clips once per item version, stores them in a Storage bucket (new additive migration for the bucket + RLS, dry-run per DB-1), and writes `body.audio`. Start with ten PG–5 maths questions; report Urdu pronunciation quality, clip size and cost per clip. Teachers hear the clip in the review queue before approval.
 - Same questions table/body shape (one question table rule).
 
 ## Don't

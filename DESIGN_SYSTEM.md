@@ -11,17 +11,15 @@ Constraints that shaped everything: 4 GB school Chromebooks and cheap phones,
 unreliable internet, English + Urdu (RTL), ages 4 to 16, no CDN, no
 decorative motion, exams are monitored not locked.
 
-## 0. Things Hassan should decide (open questions)
+## 0. Decisions from Hassan (answered 2026-11-23)
 
-| # | Question | My default (used in this spec) |
+| # | Question | Answer |
 |---|---|---|
-| Q1 | Is v0.2 "Mosaic" right: ink + indigo, bright subject colours, Lahore-tile patterns, chunky sticker buttons, Baloo 2 headings? Fun but not childish? | Yes |
-| Q2 | Digits in Urdu screens: Western `0–9` (matches textbooks and maths) or Eastern `۰–۹`? | Western everywhere |
-| Q3 | Primary band (PG–5) gets a **read-aloud speaker** on prompts. Urdu voices on ChromeOS/Windows are unverified (LMS_AUDIT §1.1). OK to ship it English-first and Urdu only where the voice test passes? | Yes |
-| Q4 | Mastery shown as **tiles filling a subject mosaic** (replaces the v0.1 ring, and removes the only motion exception). OK? | Yes (DECISIONS #33) |
-| Q5 | Lottie celebrations: one burst asset (≈ 15 KB) bundled. Fine for the pilot, or none until later? | One asset |
-
-Nothing below is blocked on these; they change small details.
+| Q1 | v0.2 "Mosaic" look (ink + indigo, subject colours, tile patterns, sticker buttons, Baloo 2)? | **Yes** ("I like this much") |
+| Q2 | Digits in Urdu screens? | **Western 0–9 everywhere** |
+| Q3 | Read-aloud for PG–5? | **Device speech English-first, Urdu only where the voice test passes. Plus ElevenLabs audio** made once per item for junior maths questions, for natural pronunciation (§3.1) |
+| Q4 | Mastery as tiles filling a subject mosaic? | **Yes, tiles** (no ring, no percentage) |
+| Q5 | Celebration animation? | **Yes, one bundled burst** (~15 KB, chapter complete, full tier only) |
 
 ## 1. Identity: "Mosaic"
 
@@ -138,13 +136,21 @@ Picked from `classes.grade_level` of the active enrollment (`presentationForGrad
 | Radius, gutter | +4, 20 | base, 16 | base, 24 |
 | Icons | 32 dp, **always with a label** | 24 dp | 20 dp |
 | Copy | ≤ 8 words per line; one idea per screen; encouraging voice | ≤ 16 words; plain, study-focused | ≤ 24 words; terse |
-| Prompts | **speaker button** reads the question aloud (Q3) | none | none |
+| Prompts | **speaker button** reads the question aloud (§3.1) | none | none |
 | Options | one per row, large, option letters hidden | one per row, A/B/C/D | compact |
 | Illustration | large (160 dp), on most empty states | medium (96 dp) | small or icon only |
 | Colour | full: hue backgrounds, pattern behind practice | hue headers and cards | hue accents only (class card top band) |
 | Celebration | big (bouncy spring, Lottie burst) | small (scale + tick) | none or toast |
 | Default motion tier | auto | auto | **lite** |
 | Density | airy | comfortable | dense, tables and two-pane |
+
+### 3.1 Read-aloud audio (kid presentation)
+The speaker button plays, in order of preference:
+1. **Pre-made audio** stored with the item (`body.audio`, DATABASE_DESIGN §4): ElevenLabs voices, generated **once** when the question is imported or approved, for junior (PG–5) maths questions first. Natural pronunciation of numbers and maths words in Urdu and English.
+2. **Device speech** (expo-speech / Web SpeechSynthesis): English everywhere; Urdu only on devices where the Urdu voice test passes.
+3. Nothing (button hidden) if neither exists.
+
+Rules: the ElevenLabs key never ships in the app; audio is made server-side (an Edge Function or a generation script in a session, with the key saved as an environment secret) and stored as small Opus/MP3 files (≈ 10–30 KB each) that go into offline packs. A teacher hears the clip in the review queue before the item is approved (it is part of the item version). Urdu voice quality and cost per clip are **unverified**: test with ten junior maths questions first (prompt 16).
 
 Tone examples (en; Urdu TODO with teachers): kid correct → "Yes! Well done."; student correct → "Correct."; kid wrong → "Not quite. Let's look."; student wrong → "Not quite. Here's why."
 

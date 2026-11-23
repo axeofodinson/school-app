@@ -51,7 +51,9 @@ Re-check with `EXPLAIN ANALYZE` on seeded data (TEST_PLAN §S-3).
 ```json
 body:   {"stem": {"en": "...", "ur": "..."},
          "options": [{"key": "A", "text": {"en": "...", "ur": "..."}}],
-         "math_svg": {"stem": "<svg…>"}, "diagram": "storage/path.svg"}
+         "math_svg": {"stem": "<svg…>"}, "diagram": "storage/path.svg",
+         "audio": {"en": "storage/path.opus", "ur": "storage/path.opus",
+                   "source": "elevenlabs|recorded|none", "voice": "voice id"}}
 answer: {"correct": "B"}
 explanation: {"en": "...", "ur": "...", "why_wrong": {"A": {"en": "...", "ur": "..."}}}
 ```
@@ -98,6 +100,9 @@ sanitised and within `visualBudget` (≤ 60 KB, ≤ 400 elements). No schema cha
  "transcript": {"en": "", "ur": ""}, "offline_fallback_block": 3}
 ```
 Exam items may contain only static `figure`/`chart` (no scene, widget, video).
+`body.audio` (read-aloud, mainly PG–5): files are generated once (ElevenLabs) or
+recorded, stored in Storage, part of the item version (new audio = new version),
+and included in offline packs. Bucket and generation step: prompt 16.
 
 **Import file (one per topic):**
 ```json
