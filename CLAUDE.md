@@ -1,120 +1,176 @@
 # CLAUDE.md — project rules for Claude Code
 
-Read this fully before writing any code. These rules are non-negotiable; when a
-request conflicts with them, follow these and say so.
+Read this fully before doing anything. These rules are non-negotiable; when a
+request conflicts with them, follow these and say so. Then read the session
+prompt you were given (from `prompts/`) and `MODULE_STATUS.md`.
 
 ## What this is
-A bilingual (English + Urdu) school platform for a matric-level school (classes
-PG–10). **Two surfaces, one Supabase backend:**
-- **Student app** — the product. Students take assessments, see scores/attendance.
-- **Admin/teacher console** — the office and teachers run the school from here.
+**Al-Syed High School app + LMS**: a bilingual (English + Urdu) school
+platform for a small private school in Punjab, Pakistan (classes PG–10,
+~656 students, Punjab Textbook Board). One Supabase backend, one app with
+three surfaces:
+- **Student app**: Learn → Practice → Diagnose → Follow-ups, exams, worksheets,
+  assignments, results. The product.
+- **Teacher / admin console**: classes, content, review, exams, grading.
+- **Parent view** (later).
 
-Students are the root users; this app will eventually ship to the Play Store and
-App Store.
+The app is being **remade from scratch** (new code, new UI). The backend and its
+data are **kept and extended**. The old app in `src/` + `App.js` is frozen.
+Only critical fixes go there, until each flow is cut over to `apps/mobile`.
+
+Devices: students use school **Chromebooks** (unmanaged, Play Store allowed,
+Wi-Fi in the lab only) and their own Android phones; teachers use **Windows**
+PCs. Internet is unreliable. Expect up to 40 students in one live exam.
 
 ## Stack
-- **Backend:** Supabase (Postgres + Auth + Row-Level Security + Storage).
-- **Frontend:** Expo (React Native), one JS codebase for iOS + Android.
-- **DB source of truth:** `db/setup.sql` — the one-shot Postgres/Supabase script
-  actually run against the project (reset → schema → RLS → seed → promote
-  developer). Never invent a new schema — build on this. `setup.sql` is
-  from-empty bootstrapping and its Part 0 reset is destructive; once real data
-  exists, do NOT re-run or edit it. Further schema changes go through new additive
-  migration files (`db/002_*.sql`, `db/003_*.sql`, …), never by editing applied
-  ones. The tables are summarized below so you don't have to open the file to know
-  the shape; open it only when you need exact column types.
-- **No CDN dependencies for critical libs** — the target network blocks some CDNs.
-  Bundle/vendor what the app needs.
+- **Backend:** Supabase **free tier** (Postgres + Auth + RLS + Storage +
+  Realtime + Edge Functions). Staying free is a requirement.
+- **App:** Expo (latest stable SDK) + **TypeScript** + **expo-router**. One
+  codebase → Android (phones + Chromebooks via Play Store), iOS (later), and
+  **web/PWA** (Windows teachers, Chromebook fallback).
+- **Motion:** Reanimated 3 + Moti (see Motion rules below).
+- **No CDN dependencies.** The school network blocks some. Bundle fonts, math,
+  Lottie files, everything.
 
-## Data model (summary)
-Full definitions in `db/setup.sql`; this is the shape you need day to day.
+## Repo map
+```
+apps/mobile/        new app (expo-router): app/ routes, features/<module>/, ui/
+packages/core/      pure TS logic (scoring, mastery, gates, sync queue, importer
+                    validation): no React, unit-tested in Node
+db/                 setup.sql (bootstrap, NEVER re-run) + additive NNN_*.sql
+db/test/            local dry-run harness: supabase_stubs.sql + *_smoke.sql
+supabase/functions/ Edge Functions
+prompts/            ready-to-paste session prompts (index: prompts/README.md)
+src/, App.js        OLD app (frozen)
+```
 
-- **profiles** — one row per login account; `role` drives all access
-  (developer / admin / teacher / student / parent / pending). New signups default
-  to `pending` (no access) until promoted.
-- **academic_years** — the time dimension everything is scoped to (`is_current`).
-- **classes → subjects → chapters → questions** — the syllabus tree (content as
-  data). `questions` carries `type`, `cognitive_level`, and jsonb `body` + `answer`.
-- **students** — identity + admission record. **No class column** — class lives in
-  enrollment.
-- **enrollments** — links a student to a class for a given academic year. Scores
-  and attendance attach here, not to the student.
-- **teacher_assignments** — which teacher owns which class/subject/year; drives
-  teacher-scoped RLS.
-- **assessments** — a test/assignment/exam for a class+subject+year, with
-  `weightage` toward the annual aggregate and a status.
-- **assessment_questions** — join linking questions into an assessment, with marks.
-- **submissions** — one score per student per assessment; keeps raw `responses`
-  (jsonb), not just the score.
-- **attendance** — one row per enrollment per day.
+## Docs: what each is for (keep them current)
+| Doc | Use | Update when |
+|---|---|---|
+| `LMS_PLAN.md` | Hassan's original brief | never (history) |
+| `LMS_AUDIT.md` | feasibility, design proposals, build order, open questions | an open question is answered or a design changes |
+| `ARCHITECTURE.md` | module boundaries, security, exams, offline, motion | a module's shape changes |
+| `DATABASE_DESIGN.md` | tables, constraints, JSON shapes, migration plan | any schema change |
+| `DECISIONS.md` | decisions + reasons, newest first | any non-trivial choice |
+| `MODULE_STATUS.md` | progress per module | **end of every session** |
+| `TEST_PLAN.md` | how things are verified | new test or harness |
+| `STEMP21_COMPARISON.md` | vendor comparison (no integration planned) | Hassan shares more |
+| `prompts/README.md` | session order + status | **end of every session** |
 
 ## Non-negotiable architecture rules
-1. **Content is data, not code.** Syllabus (classes → subjects → chapters →
-   questions) lives in the database. Adding academic content is INSERTs, never a
-   code change. Never hardcode subjects, questions, or class lists.
-2. **Time is modeled.** A student's class lives in `enrollments`, scoped to an
-   `academic_year` — never as a column on `students`. Scores and attendance attach
-   to the enrollment.
+1. **Content is data, not code.** Curriculum (classes → subjects → chapters →
+   topics → concepts → questions/lessons) lives in the database. Adding content
+   means INSERTs or imports, never a code change. Never hardcode subjects,
+   questions or class lists.
+2. **Time is modeled.** A student's class lives in `enrollments` scoped to an
+   `academic_year`, never as a column on `students`. Scores and attendance
+   attach to the enrollment.
 3. **Never hard-delete anything with consequences.** Use status flags
-   (`archived`, `withdrawn`, etc.) and soft-deletes. `submissions` keeps raw
-   responses, not just the score, so results can be recomputed. Keep an audit
-   trail (who changed a grade/fee, when) for anything involving money or marks.
-4. **Roles enforced by the DB, not app code.** developer / admin / teacher /
-   student / parent / pending. RLS is the security boundary; app-side checks are
-   convenience only. A teacher must be unable to read a class they don't teach even
-   if the UI is wrong.
-5. **One question table, all ages.** `questions.body` is jsonb: a Class 9 text MCQ
-   and a PG tap-image question share the table. Never split by age with new tables.
-6. **Cognitive level is always tagged.** Every question carries
-   `cognitive_level` (recall/understand/apply/analyze). Never insert a question
-   without it.
+   (`retired`, `withdrawn`, `void`…). Keep raw responses, not only scores. Audit
+   anything touching marks or money (`record_grade()` is the only grade
+   write path).
+4. **RLS is the security boundary.** Roles: developer / admin / teacher /
+   student / parent / pending. App-side checks are convenience only. A teacher
+   must be unable to read a class they don't teach even if the UI is wrong.
+5. **One question table, all ages.** `questions.body` is jsonb; never split by
+   age with new tables.
+6. **Every question has `cognitive_level` and `concept_id`.** No inferred topics.
+7. **History is never rewritten.** Questions and lessons are versioned
+   (`question_versions`, `learning_content_versions`, append-only). Attempts and
+   exams point at an exact version.
+8. **Learner identity = `profiles.id`.** Learning tables key on `learner_id`
+   so Play Store users with no class work the same. Exams additionally
+   require an active enrollment.
+9. **The server runs exams.** Start, deadline, acceptance and grading happen in
+   RPCs. The client timer is display only. **Answer keys never reach students**
+   for exam items.
+10. **Live within the free tier.** One compact `practice_attempts` row per
+    attempt (no per-answer table for practice). Dashboards read rollups, never
+    raw attempts. Cache content. Video stays on YouTube (unlisted). Subscribe to
+    Realtime only on screens that need it.
+
+## Database rules
+- **Never edit or run `db/setup.sql`** (Part 0 is a destructive reset). Never
+  edit a migration that has been applied.
+- Schema changes go in a **new additive, idempotent** `db/NNN_name.sql`
+  (`if not exists`, drop-then-create policies). Drafts say `DRAFT — NOT YET RUN`
+  in the header. `017` and `022` are drafts.
+- Every new table: RLS enabled + policies + indexes in the same file.
+- **Dry-run every migration locally** with the harness in `TEST_PLAN.md` DB-1:
+  stubs → setup.sql → all migrations → the new one twice → smoke test. Run
+  Postgres as the `postgres` user in `/var/lib/postgresql/smoke` (the Claude
+  scratchpad's permissions get reset) and delete it afterwards.
+- **Claude never runs SQL against the Supabase project.** Hassan runs it in the
+  SQL Editor. Say exactly which file to run and in what order. Update
+  `db/README.md` when adding a migration.
+- Tests and seeds use **synthetic data only** (`is_test_data = true`), on a dev
+  project or local Postgres, never production.
 
 ## Frontend conventions
-- **No hardcoded user-facing text.** All strings live in i18n files
-  (`locales/en.json`, `locales/ur.json`). A string added in English must have an
-  Urdu key too (leave a clear TODO if the Urdu isn't written yet).
+- **No hardcoded user-facing text.** All strings in i18n files (en + ur). A new
+  English key gets an Urdu key too, or `// TODO: ur`.
 - **Urdu is casual and human-written.** Never machine-translate Urdu strings.
-  Casual, kid-friendly register; keep common English loanwords kids use
-  ("homework", "test", "class"). Mark untranslated keys with `// TODO: ur` — do
-  not auto-fill them.
-- **RTL from day one.** Layout must flip correctly for Urdu (right-to-left). Use
-  logical layout props (start/end, not left/right). Test every screen in both
-  directions. Use an Urdu-capable font (e.g. Noto Nastaliq Urdu).
-- **Every screen has a real empty state.** The app starts with empty tables.
-  "No students yet — add one", never a blank screen or a crash. Empty states are
-  part of "done", not a follow-up.
-- **Offline tolerance for core student flows.** Assume patchy mobile data. Cache
-  what you can; sync when the connection returns; never freeze on a dropped request.
-- **Student auth is school-issued.** Students log in with a school identity (roll
-  number + PIN or parent-managed) — never a child creating an email/password
-  account. Keep this flow separate from the teacher/admin flow.
+  Use a kid-friendly register and keep loanwords kids use ("homework", "test").
+- **RTL from day one.** Use logical props (start/end). Direction comes from JS
+  locale state; never use sticky `I18nManager.forceRTL` (see old `App.js`).
+  Nastaliq font bundled (WOFF2 subset on web), with generous line-height.
+- **Every screen has a real empty state** and handles a missing prerequisite
+  (e.g. "No classes yet. Add one first").
+- **Offline tolerance.** Never freeze on a dropped request; queue writes in the
+  `packages/core` sync queue; show sync status.
+- **Student auth is school-issued:** admission number + PIN (or QR card that
+  fills the admission number; the PIN is always typed). Never let a child create an
+  email/password account. Staff use email/password. Shared Chromebooks: fast
+  "switch student", per-user storage namespaces, nothing leaks between students.
+- Responsive from day one: phone, Chromebook window (resizable, landscape,
+  keyboard + mouse), desktop browser. No `orientation: portrait` lock.
+- Math is pre-rendered to SVG at import; no runtime KaTeX WebViews.
 
-## From-empty build order (dependencies)
-Nothing works until its prerequisites exist. Build setup screens in this order:
-**academic year → classes → subjects → chapters → students → enrollments →
-questions → assessments → submissions/attendance.**
-Each screen must handle its prerequisite being missing (prompt to create it first).
+## Motion rules
+- **Reanimated 3 + Moti** everywhere. Motion (motion.dev) only in web-only
+  teacher screens (`*.web.tsx`) when Moti can't do it. **No anime.js.** Lottie only
+  for a few bundled celebrations/empty states.
+- Use only the tokens in `apps/mobile/ui/motion.ts` (durations and spring
+  presets). Animate **transform and opacity only**.
+- Three tiers, auto-picked and user-overridable: **full / lite / off**. Lite is
+  the default on low-memory devices; off when the OS "reduce motion" is on.
+- **Exams: nothing moves except the timer and save indicator.**
+- Motion must mean something (feedback, progress, hierarchy, sync), and slide
+  directions flip for RTL.
 
-## Working style
-- **Small, verifiable slices.** One screen/feature per task. After each, it must
-  run and be checkable before moving on. Prefer finishing one thing fully over
-  starting three.
-- **Verify math.** For anything computing scores, aggregates, or fees, write a
-  check (test or script) proving the numbers before calling it done.
-- **Commit early and often.** Assume the machine can be wiped; nothing precious
-  should live only on disk.
+## Performance budget (cheap 4 GB Chromebook)
+Cold start < 5 s · question switch < 150 ms · no dropped frames on screen
+transitions in lite tier · virtualised long lists · images ≤ 100 KB WebP.
+
+## Session protocol (every session)
+1. Read this file, the session prompt, `MODULE_STATUS.md`, and the docs the
+   prompt names. Inspect existing code before changing it; reuse before writing.
+2. Do **one slice** from the prompt. If it is too big, finish a coherent part
+   and say what's left.
+3. Verify: `packages/core` tests, type-check, lint, the done-when checks in the
+   prompt, and the DB harness for any SQL. Mark anything not verifiable as
+   **unverified** and name the test that would verify it.
+4. Update `MODULE_STATUS.md`, `prompts/README.md` (tick + notes), and
+   `DECISIONS.md`/`TEST_PLAN.md`/`DATABASE_DESIGN.md` as needed. If you discover
+   the prompt itself is wrong or outdated, fix the prompt file too.
+5. Commit with clear messages and push to the session's branch. Don't open a
+   PR unless asked.
+6. End with a short report: what was done, how it was verified, anything Hassan
+   must do (e.g. run a migration), and the next prompt.
+
+## Model split
+- **Fable:** visual identity, motion choreography, the young-kid question UX,
+  engagement design, pedagogical content design (prompts marked *Model: Fable*).
+- **Opus:** everything deterministic: schema, RLS, RPCs, CRUD, queries,
+  aggregates, sync, i18n/RTL plumbing, empty states, tests, bug fixes.
 
 ## Do NOT
-- Do not hardcode content, subjects, questions, or UI text.
-- Do not put a student's class on the `students` table.
-- Do not hard-delete records with grades, money, or history attached.
-- Do not machine-translate Urdu.
-- Do not rely on app-side role checks for security.
-- Do not build a screen without its empty state.
-
-## Model note
-Deterministic engineering (schema, RLS, CRUD, queries, aggregates, i18n/RTL
-plumbing, empty states, bug fixes) runs on **Opus**. Reserve **Fable** for the
-open-ended, taste-heavy work: the student app's visual identity and game-feel, the
-young-kid conceptual question UX, engagement design, and pedagogical content
-design. See `build-guide.md` for the per-task split.
+- Hardcode content, subjects, questions or UI text.
+- Put a student's class on `students`.
+- Hard-delete records with grades, money or history.
+- Machine-translate Urdu.
+- Rely on app-side role checks for security.
+- Build a screen without its empty state.
+- Run SQL on the Supabase project, or edit `setup.sql` / applied migrations.
+- Use real student data in development or tests.
+- Promise exam "lockdown". Integrity on unmanaged Chromebooks is monitoring only.

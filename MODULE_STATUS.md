@@ -1,33 +1,33 @@
 # MODULE_STATUS.md
 
-Last updated: 2026-11-23. Update at the end of every session.
+Last updated: 2026-11-23. Update at the end of every session. Session order and
+prompts: `prompts/README.md`.
 
-| Module | Phase | Status | Depends on | Next step |
+| Module | Phase | Status | Prompt(s) | Next step |
 |---|---|---|---|---|
-| Planning / audit | — | ✅ done | — | Hassan answers `LMS_AUDIT.md` §7 |
-| DB foundation (017) | 2 | 📝 draft, dry-run verified | — | Review; run at Phase 2 start |
-| App scaffold (`apps/mobile`, `packages/core`) | 0 | ⏳ not started | — | Expo + TS + router + web build on Windows |
-| Design system (light/dark, RTL, Nastaliq web) | 0 | ⏳ | scaffold | Tokens + primitives |
-| Auth (PIN + QR, shared mode) | 0 | ⏳ | scaffold | Port `db/004/008` flow |
-| Seed script (656 students) | 0 | ⏳ | 017 on dev project | Open question §7.7 |
-| Parity: assessments / files / grading | 1 | ⏳ | auth | |
-| Close answer-key hole (018) | 1 | ⏳ | parity cut-over | |
-| Curriculum + bank editors | 2 | ⏳ | 017 | |
-| Importer + Review | 2 | ⏳ | 017 | |
-| Learn renderer + offline packs | 3 | ⏳ | bank | |
-| Practice engine | 3 | ⏳ | bank | |
-| Mastery / follow-ups / gates / revision | 4 | ⏳ | practice | |
-| Online exams + live view | 5 | 🟡 RPCs drafted in 017 | auth, bank | |
-| Offline exams + sync hardening | 6 | ⏳ | exams | |
-| Worksheets + assignments | 7 | ⏳ | bank | |
-| STEM projects (rubrics, teams, evidence) | 7 | 📝 `db/022` draft, dry-run verified | assessments, 017 concepts | STEMP21 licence answer (`LMS_AUDIT.md` §7.9) |
-| Dashboards, parents, iOS | 8 | ⏳ | mastery, exams | |
-| Animated explainers, in-app AI | 9 | ⏳ | — | |
-| Motion system (tokens, tiers, Reanimated + Moti) | 0 | ⏳ | scaffold | Fable design session for visual identity |
-| E1 Teacher training track | 10 | ⏳ | Learn, mastery | |
-| E2 Challenge tier after mastery | 10 | ⏳ | mastery | |
-| E3 Real-world / SDG tags | 10 | ⏳ | Learn | |
-| E4 Coding & project evidence in assignments | 10 | ⏳ | assignments, `db/022` | |
+| Planning / audit / prompt library | — | ✅ done | [OPS update](prompts/OPS-update-prompts.md) | Hassan answers `LMS_AUDIT.md` §7; merge planning branch to `main` |
+| Backups | — | ⏳ | [OPS backup](prompts/OPS-backup.md) | Needs §7 Q5 |
+| Visual identity + motion choreography | 0 | ⏳ | [00](prompts/00-design-identity.md) (Fable) | **Start here** |
+| App scaffold (`apps/mobile`, `packages/core`) | 0 | ⏳ | [01](prompts/01-scaffold.md) | |
+| Design system + motion tiers | 0 | ⏳ | [02](prompts/02-design-system-motion.md) | |
+| Auth (PIN + QR, shared mode) | 0 | ⏳ | [03](prompts/03-auth.md) | |
+| Seed script (656 students) | 0 | ⏳ | [04](prompts/04-seed-dev-data.md) | Dev project: §7 Q7 |
+| Parity: assessments, attempts, files, grading | 1 | ⏳ | [10](prompts/10-assessment-builder.md) [11](prompts/11-student-attempts-offline.md) [12](prompts/12-file-assessments-grading.md) | |
+| Cut-over + close answer-key hole (018) | 1 | ⏳ | [13](prompts/13-cutover-close-answer-keys.md) | |
+| DB foundation (017) | 2 | 📝 draft, dry-run verified | [20](prompts/20-curriculum-run-017.md) | Hassan runs it at Phase 2 start |
+| Curriculum editors | 2 | ⏳ | [20](prompts/20-curriculum-run-017.md) | |
+| Importer + review queue | 2 | ⏳ | [21](prompts/21-importer.md) [22](prompts/22-review-queue.md) | |
+| Content (pilot: Class 9 Math/Science) | 2+ | ⏳ | [C1](prompts/C1-generate-topic-content.md) [C2](prompts/C2-review-urdu.md) | |
+| Learn renderer + offline packs | 3 | ⏳ | [30](prompts/30-learn-renderer.md) [32](prompts/32-offline-learn-packs.md) | |
+| Practice engine | 3 | ⏳ | [31](prompts/31-practice-engine.md) | |
+| Mastery / follow-ups / gates / revision | 4 | ⏳ | [40](prompts/40-mastery-rpcs.md) [41](prompts/41-followups-gates-prepare.md) [42](prompts/42-spaced-revision.md) | |
+| Online exams + live view | 5 | 🟡 RPCs drafted in 017 | [50](prompts/50-exam-launch-and-take.md) [51](prompts/51-live-view-results.md) | |
+| Offline exams, sync + shared devices, load tests | 6 | ⏳ | [60](prompts/60-offline-exams.md) [61](prompts/61-sync-shared-devices.md) [62](prompts/62-load-tests.md) | |
+| Worksheets + assignments | 7 | ⏳ | [70](prompts/70-worksheets.md) [71](prompts/71-assignments.md) | |
+| STEM projects (rubrics, teams, evidence) | 7 | 📝 `db/022` draft, dry-run verified | [72](prompts/72-stem-projects.md) | |
+| Dashboards, parents, iOS | 8 | ⏳ | [80](prompts/80-dashboards.md) [81](prompts/81-parents.md) [82](prompts/82-ios-release.md) | |
+| Animated explainers, in-app AI | 9 | ⏳ | [90](prompts/90-animated-explainers.md) [91](prompts/91-ai-drafting.md) | |
+| E1–E4 extensions | 10 | ⏳ | [E1](prompts/E1-teacher-training.md) [E2](prompts/E2-challenge-tier.md) [E3](prompts/E3-sdg-tags.md) [E4](prompts/E4-coding-evidence.md) | |
 
 **Old app (`src/`) flows not yet scheduled for the remake:** attendance,
-messaging/push, PG pre-reader — see `LMS_AUDIT.md` §7.1.
+messaging/push, PG pre-reader. See `LMS_AUDIT.md` §7 Q1.

@@ -1,5 +1,7 @@
 # School App
 
+> **Working on this repo with Claude?** Rules: [`CLAUDE.md`](./CLAUDE.md). Session prompts in build order: [`prompts/README.md`](./prompts/README.md). Progress: [`MODULE_STATUS.md`](./MODULE_STATUS.md).
+
 Bilingual (English + Urdu) school platform for a matric-level school (classes
 PG–10). Two surfaces, one Supabase backend:
 
