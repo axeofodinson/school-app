@@ -28,7 +28,7 @@ PCs. Internet is unreliable. Expect up to 40 students in one live exam.
 - **App:** Expo (latest stable SDK) + **TypeScript** + **expo-router**. One
   codebase → **Android** (phones + Chromebooks via Play Store) and **web/PWA**
   (Windows teachers, Chromebook fallback). **No iOS for now** (DECISIONS #24).
-- **Motion:** Reanimated (v4 on SDK 58) + Moti, Moti under review (DECISIONS #38; see Motion rules below).
+- **Motion:** Reanimated 4 (SDK 58) through the moments in `apps/mobile/ui/motion.ts`; Moti dropped (DECISIONS #41; see Motion rules below).
 - **No CDN dependencies.** The school network blocks some. Bundle fonts, math,
   Lottie files, everything.
 
@@ -53,7 +53,7 @@ src/, App.js        OLD app (frozen)
 | `DATABASE_DESIGN.md` | tables, constraints, JSON shapes, migration plan | any schema change |
 | `DECISIONS.md` | decisions + reasons, newest first | any non-trivial choice |
 | `MODULE_STATUS.md` | progress per module | **end of every session** |
-| `DESIGN_SYSTEM.md` | look, type (EN + Urdu), presentations, components, motion choreography, wireframes; draft tokens in `docs/design/tokens.draft.ts` | a visual or motion choice changes |
+| `DESIGN_SYSTEM.md` | look, type (EN + Urdu), presentations, components, motion choreography, wireframes; tokens in `packages/core/src/design/` (read via `apps/mobile/ui/tokens.ts`) | a visual or motion choice changes |
 | `TEST_PLAN.md` | how things are verified | new test or harness |
 | `STEMP21_COMPARISON.md` | vendor comparison (no integration planned) | Hassan shares more |
 | `GUIDE.md` | Hassan's step-by-step guide: setup, skills, MCPs, workflow | tooling or workflow changes |
@@ -138,13 +138,15 @@ src/, App.js        OLD app (frozen)
 - Math is pre-rendered to SVG at import; no runtime KaTeX WebViews.
 
 ## Motion rules
-- **Reanimated (v4) + Moti** everywhere (Moti under review, DECISIONS #38). Motion (motion.dev) only in web-only
-  teacher screens (`*.web.tsx`) when Moti can't do it. **No anime.js.** Lottie only
+- **Reanimated 4** everywhere, through the moment hooks in `apps/mobile/ui/motion.ts`
+  (`useEnterStyle`, `usePressMotion`, `usePulse`); no Moti (DECISIONS #41). Motion (motion.dev) only in web-only
+  teacher screens (`*.web.tsx`) when Reanimated can't do it. **No anime.js.** Lottie only
   for a few bundled celebrations/empty states.
-- Use only the tokens in `apps/mobile/ui/motion.ts` (durations and spring
-  presets). Animate **transform and opacity only**.
+- Use only the tokens in `apps/mobile/ui/motion.ts` (durations, spring
+  presets, and the `moments` table: name a moment, never pass your own numbers). Animate **transform and opacity only**.
 - Three tiers, auto-picked and user-overridable: **full / lite / off**. Lite is
   the default on low-memory devices; off when the OS "reduce motion" is on.
+  Components read it with `useMotion()` / `useMoment()`; exam screens wrap in `<ExamMode>`.
 - **Exams: nothing moves except the timer and save indicator.**
 - Motion must mean something (feedback, progress, hierarchy, sync), and slide
   directions flip for RTL.

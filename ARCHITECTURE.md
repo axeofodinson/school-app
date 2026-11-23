@@ -82,8 +82,8 @@ unit-tested in Node, the same habit as today's `scripts/verify-*.mjs`.
 Goal: a distinctly polished, alive UI that stays fast on 4 GB Chromebooks.
 
 **Libraries**
-- **Reanimated 3 + Moti** for everything in the app. They run on Android, iOS and web, and animations run on the UI thread, not the JS thread. Reanimated is already a dependency (`react-native-reanimated ~3.10.1`). Gestures use `react-native-gesture-handler`.
-- **Motion (motion.dev)**: allowed **only** in web-only teacher/admin screens (`*.web.tsx`), and only if Moti can't do the job.
+- **Reanimated 4** (Expo SDK 58) for everything in the app, through the moment hooks in `apps/mobile/ui/motion.ts`; Moti was dropped in session 02 (DECISIONS #41). They run on Android, iOS and web, and animations run on the UI thread, not the JS thread. The old app still pins Reanimated 3; the new app uses 4.x. Gestures use `react-native-gesture-handler`.
+- **Motion (motion.dev)**: allowed **only** in web-only teacher/admin screens (`*.web.tsx`), and only if Reanimated can't do the job.
 - **anime.js: not used.** It is DOM-only and duplicates Motion.
 - **Lottie** (bundled JSON, no CDN) only for a few celebration and empty-state illustrations.
 

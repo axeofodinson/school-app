@@ -9,7 +9,7 @@ prompts: `prompts/README.md`.
 | Backups | — | ⏳ | [OPS backup](prompts/OPS-backup.md) | Ready: private GitHub repo |
 | Visual identity + motion choreography | 0 | ✅ done: v0.2 "Mosaic" approved, §0 answered (DECISIONS #37) | [00](prompts/00-design-identity.md) | — |
 | App scaffold (`apps/mobile`, `packages/core`) | 0 | ✅ done: SDK 58 + expo-router, workspaces, core (grading port, i18n), typed Supabase client, typed `t()` + RTL, CI. Web export verified EN + UR; Android dev build **unverified** | [01](prompts/01-scaffold.md) | Hassan: first CI run green on GitHub; `eas build -p android --profile development` from `apps/mobile`. 5 `shell.*` Urdu strings are `// TODO: ur` (teacher review) |
-| Design system + motion tiers | 0 | ⏳ | [02](prompts/02-design-system-motion.md) | |
+| Design system + motion tiers | 0 | ✅ done: tokens in `packages/core/src/design` (tested), Theme/Motion/Exam/Toast providers, 20 primitives in `apps/mobile/ui`, tier detection (OS reduce-motion, RAM, setting), `/dev/gallery`. Web verified (en/ur, light/dark, full/lite/off, kid/student/staff, exam); **Android unverified** | [02](prompts/02-design-system-motion.md) | Hassan: open `/dev/gallery` in an Android dev build; T-1 Urdu specimen on phone + Chromebook. ~60 new `ui.*`/`dev.gallery.*` Urdu strings are `// TODO: ur` (teacher review). Left for later: haptics (31), frame-drop sampler (62), Lottie burst, WOFF2 font subsets |
 | Auth (PIN + QR, shared mode) | 0 | ⏳ | [03](prompts/03-auth.md) | |
 | Seed script (656 students) | 0 | ⏳ | [04](prompts/04-seed-dev-data.md) | Hassan creates the dev Supabase project |
 | Google sign-in + prep-only tier | 0 | ⏳ | [05](prompts/05-google-signin-prep-access.md) | Before the paid Play release |

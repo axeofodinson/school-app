@@ -11,7 +11,7 @@ You are continuing the Al-Syed school app remake. This session is prompt **02** 
 ## Read first
 - `CLAUDE.md` (rules + session protocol)
 - `MODULE_STATUS.md`
-- DESIGN_SYSTEM.md (incl. §0 answers from Hassan) and `docs/design/tokens.draft.ts`
+- DESIGN_SYSTEM.md (incl. §0 answers from Hassan) and the tokens (were `docs/design/tokens.draft.ts`; now `packages/core/src/design/`)
 - ARCHITECTURE.md §6b
 - CLAUDE.md Motion rules
 

@@ -24,7 +24,7 @@ Create the new app skeleton that builds for Android and web, beside the old app,
 
 ## Do
 - Set up an npm workspaces monorepo: root package.json with workspaces `apps/*`, `packages/*`. The old app must still run (move it later; for now keep root scripts working, or move the old app to `apps/legacy/` only if that's trivial and tested).
-- Create `apps/mobile` with the latest stable Expo SDK, TypeScript strict, expo-router, react-native-web, react-dom, @expo/metro-runtime, Reanimated, Moti, gesture-handler, safe-area-context.
+- Create `apps/mobile` with the latest stable Expo SDK, TypeScript strict, expo-router, react-native-web, react-dom, @expo/metro-runtime, Reanimated, gesture-handler, safe-area-context.
 - Reuse the same Android package (`com.school.app`) and EAS project id as the old app so the Play Store listing is updated, not duplicated. Set `orientation: default`. Note: the cut-over build replaces the old app, so don't publish until Phase 1 parity is done.
 - Route groups: `(auth)`, `(student)`, `(teacher)`, `(admin)`, placeholder screens with real empty states.
 - Create `packages/core` (pure TS, vitest or node:test) with one sample test. Port one pure module as proof (e.g. `src/reporting/grading.js` → `packages/core/grading.ts` with its existing `scripts/verify-grading.mjs` cases as tests).

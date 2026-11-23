@@ -1,9 +1,7 @@
 import { Link } from 'expo-router';
 
 import { useI18n } from '../i18n';
-import { AppText } from '../ui/AppText';
-import { EmptyState } from '../ui/EmptyState';
-import { Screen } from '../ui/Screen';
+import { EmptyState, Screen, Text } from '../ui';
 
 export default function NotFound() {
   const { t } = useI18n();
@@ -13,7 +11,7 @@ export default function NotFound() {
         title={t('shell.notFound.title')}
         action={
           <Link href="/login">
-            <AppText>{t('auth.login.studentLink')}</AppText>
+            <Text>{t('auth.login.studentLink')}</Text>
           </Link>
         }
       />

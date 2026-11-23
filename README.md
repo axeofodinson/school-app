@@ -101,6 +101,11 @@ The new app reads `EXPO_PUBLIC_SUPABASE_URL` / `EXPO_PUBLIC_SUPABASE_ANON_KEY`
 too: copy `apps/mobile/.env.example` to `apps/mobile/.env` (point it at the **dev**
 project, DECISIONS #27). Without them it still runs and says so on the sign-in screen.
 
+**Component gallery:** every design-system component in en/ur, light/dark,
+full/lite/off motion, kid/student/staff and exam mode. Open `/dev/gallery` in any dev
+build (e.g. `http://localhost:8081/dev/gallery` after `npm run mobile:web`). It is
+hidden in production builds unless exported with `EXPO_PUBLIC_DEV_GALLERY=1`.
+
 Android development build (once, on a PC with the Expo account logged in):
 
 ```bash

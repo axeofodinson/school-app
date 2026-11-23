@@ -1,13 +1,13 @@
 /**
- * DRAFT design tokens for the Al-Syed app remake (session 00, v0.2 "Mosaic").
- * Spec and reasons: DESIGN_SYSTEM.md. Session 02 moves this to
- * apps/mobile/ui/tokens.ts (+ ui/motion.ts) and wires it to React.
+ * Design tokens for the Al-Syed app (v0.2 "Mosaic", DESIGN_SYSTEM.md).
+ * Moved here from docs/design/tokens.draft.ts in session 02. The app reads them
+ * through apps/mobile/ui/tokens.ts; nothing else may define a colour, size or radius.
  *
  * Rules baked in:
  *  - Pure data + pure functions. No React, no react-native imports, so it runs
- *    in Node and can move to packages/core if useful.
+ *    in Node and is unit-tested (packages/core/test/design-*.test.ts).
  *  - Colours are semantic roles with a light and a dark value. Every text/background
- *    pair is checked for WCAG AA by scripts/verify-design-tokens.mjs.
+ *    pair is checked for WCAG AA by test/design-tokens.test.ts.
  *  - Motion animates transform + opacity only. No exceptions (the mastery ring became mosaic tiles in v0.2).
  *  - Urdu strings here are type SPECIMENS only, not product copy.
  */
@@ -144,7 +144,7 @@ export function hueForSubject(subjectId: string, colourKey?: string | null): Sub
   if (colourKey && (keys as string[]).includes(colourKey)) return colourKey as SubjectHue;
   let h = 0;
   for (let i = 0; i < subjectId.length; i++) h = (h * 31 + subjectId.charCodeAt(i)) >>> 0;
-  return keys[h % keys.length];
+  return keys[h % keys.length] ?? keys[0]!;
 }
 
 /**
@@ -171,7 +171,10 @@ export const diagram = {
   wrongIdea: '#C2412D', // misconception panels
   guide: '#77729A', // axes, guides, grid labels
   grid: '#DDD8EC', // faint grid lines (decorative)
-  labelFont: { latin: { family: 'Nunito-Bold', size: 14 }, urdu: { family: 'NotoNastaliqUrdu-Regular', size: 16 } },
+  labelFont: {
+    latin: { family: 'Nunito-Bold', size: 14 },
+    urdu: { family: 'NotoNastaliqUrdu-Regular', size: 16 },
+  },
   stageAspect: { wide: 16 / 10, square: 1 },
   stageMaxViewportShare: 0.6,
 } as const;
@@ -189,25 +192,54 @@ export const visualBudget = {
 } as const;
 
 /** Lesson visual block types (§7b.1) and the widget catalogue v1. Exam items may use only `examSafeVisuals`. */
-export const visualBlockTypes = ['figure', 'scene', 'chart', 'widget', 'compare', 'video', 'lottie'] as const;
-export const widgetCatalogue = ['number_line', 'fraction_bars', 'function_graph', 'geometry_shape', 'angle', 'balance', 'probability', 'motion_graph', 'circuit'] as const;
-export const examSafeVisuals: ReadonlyArray<(typeof visualBlockTypes)[number]> = ['figure', 'chart'];
+export const visualBlockTypes = [
+  'figure',
+  'scene',
+  'chart',
+  'widget',
+  'compare',
+  'video',
+  'lottie',
+] as const;
+export const widgetCatalogue = [
+  'number_line',
+  'fraction_bars',
+  'function_graph',
+  'geometry_shape',
+  'angle',
+  'balance',
+  'probability',
+  'motion_graph',
+  'circuit',
+] as const;
+export const examSafeVisuals: ReadonlyArray<(typeof visualBlockTypes)[number]> = [
+  'figure',
+  'chart',
+];
 
 export type MasteryBand = 'learning' | 'weak' | 'mastered';
 
 /** Which colour roles draw a mastery band. Shape + label are mandatory too (DESIGN_SYSTEM.md §2.4). */
-export const masteryRoles: Record<MasteryBand, { fill: keyof ColourRoles; soft: keyof ColourRoles; onSoft: keyof ColourRoles }> = {
+export const masteryRoles: Record<
+  MasteryBand,
+  { fill: keyof ColourRoles; soft: keyof ColourRoles; onSoft: keyof ColourRoles }
+> = {
   learning: { fill: 'learning', soft: 'learningSoft', onSoft: 'onLearningSoft' },
   weak: { fill: 'weak', soft: 'weakSoft', onSoft: 'onWeakSoft' },
   mastered: { fill: 'correct', soft: 'correctSoft', onSoft: 'onCorrectSoft' },
 };
 
 /**
- * Text/background pairs that MUST meet WCAG AA. Checked by scripts/verify-design-tokens.mjs.
+ * Text/background pairs that MUST meet WCAG AA. Checked by test/design-tokens.test.ts.
  * min 4.5 = normal text, 3 = large text (≥ 24 sp, or ≥ 18.66 sp bold) or non-text UI.
  * Subject hues are checked separately: `ink` on every hue ≥ 4.5 in both themes.
  */
-export const contrastPairs: ReadonlyArray<{ fg: keyof ColourRoles; bg: keyof ColourRoles; min: 3 | 4.5; why: string }> = [
+export const contrastPairs: ReadonlyArray<{
+  fg: keyof ColourRoles;
+  bg: keyof ColourRoles;
+  min: 3 | 4.5;
+  why: string;
+}> = [
   { fg: 'text', bg: 'bg', min: 4.5, why: 'body on canvas' },
   { fg: 'text', bg: 'surface', min: 4.5, why: 'body on card' },
   { fg: 'text', bg: 'surfaceAlt', min: 4.5, why: 'body on quiet fill' },
@@ -217,11 +249,14 @@ export const contrastPairs: ReadonlyArray<{ fg: keyof ColourRoles; bg: keyof Col
   { fg: 'primary', bg: 'bg', min: 4.5, why: 'link / text button on canvas' },
   { fg: 'primary', bg: 'surface', min: 4.5, why: 'link / text button on card' },
   { fg: 'onPrimary', bg: 'primary', min: 4.5, why: 'primary button label' },
+  { fg: 'onPrimary', bg: 'wrong', min: 4.5, why: 'danger button label' },
   { fg: 'onPrimarySoft', bg: 'primarySoft', min: 4.5, why: 'selected chip / tab' },
   { fg: 'onAccent', bg: 'accent', min: 4.5, why: 'label on accent fill' },
   { fg: 'onAccentSoft', bg: 'accentSoft', min: 4.5, why: 'highlight banner' },
   { fg: 'onCorrectSoft', bg: 'correctSoft', min: 4.5, why: 'correct feedback text' },
   { fg: 'onWrongSoft', bg: 'wrongSoft', min: 4.5, why: 'why-wrong feedback text' },
+  { fg: 'onWrongSoft', bg: 'bg', min: 4.5, why: 'field error text on canvas' },
+  { fg: 'onWrongSoft', bg: 'surface', min: 4.5, why: 'field error text on card' },
   { fg: 'onLearningSoft', bg: 'learningSoft', min: 4.5, why: 'learning band label' },
   { fg: 'onWeakSoft', bg: 'weakSoft', min: 4.5, why: 'weak band label' },
   // non-text (1.4.11)
@@ -280,12 +315,21 @@ export const strokeWidth = { hairline: 1, control: 2, sticker: 2 } as const;
 export const fontFamily = {
   display: { semibold: 'Baloo2-SemiBold', bold: 'Baloo2-Bold', extrabold: 'Baloo2-ExtraBold' },
   latin: { regular: 'Nunito-Regular', semibold: 'Nunito-SemiBold', bold: 'Nunito-Bold' },
-  urdu: { regular: 'NotoNastaliqUrdu-Regular', semibold: 'NotoNastaliqUrdu-Bold', bold: 'NotoNastaliqUrdu-Bold' },
+  urdu: {
+    regular: 'NotoNastaliqUrdu-Regular',
+    semibold: 'NotoNastaliqUrdu-Bold',
+    bold: 'NotoNastaliqUrdu-Bold',
+  },
 } as const;
 
 export type TypeStep = 'display' | 'title' | 'heading' | 'body' | 'bodySm' | 'caption' | 'label';
 export type Script = 'latin' | 'urdu';
-export type TextMetrics = { size: number; lineHeight: number; weight: 'regular' | 'semibold' | 'bold' | 'extrabold'; family?: 'display' | 'body' };
+export type TextMetrics = {
+  size: number;
+  lineHeight: number;
+  weight: 'regular' | 'semibold' | 'bold' | 'extrabold';
+  family?: 'display' | 'body';
+};
 
 /**
  * Sizes in sp at presentation "student". The "kid" and "staff" presentations scale these (see `presentations`).
@@ -333,9 +377,17 @@ export const urduTextRules = {
 /** Type specimens for the gallery (NOT product copy; Hassan/teachers write real Urdu, CLAUDE.md). */
 export const urduSpecimens = [
   { id: 'joins', text: 'پڑھائی کا وقت', note: 'common joins, ڑ, ھ' },
-  { id: 'diacritics', text: 'اُستاد نے سَبَق سمجھایا', note: 'zabar / zer / pesh: tallest stacks, check clipping' },
+  {
+    id: 'diacritics',
+    text: 'اُستاد نے سَبَق سمجھایا',
+    note: 'zabar / zer / pesh: tallest stacks, check clipping',
+  },
   { id: 'mixed', text: 'ٹیسٹ میں 8/10 نمبر', note: 'Latin digits + loanword, LTR isolation' },
-  { id: 'long', text: 'آج ہم کسر کی پہچان اور ان کا آپس میں موازنہ سیکھیں گے۔', note: 'wrapping across 2–3 lines at body size' },
+  {
+    id: 'long',
+    text: 'آج ہم کسر کی پہچان اور ان کا آپس میں موازنہ سیکھیں گے۔',
+    note: 'wrapping across 2–3 lines at body size',
+  },
 ] as const;
 
 // ───────────────────────────── 4. Presentations (age + surface) ─────────────────────────────
@@ -363,9 +415,45 @@ export const presentations: Record<
     density: 'airy' | 'comfortable' | 'dense';
   }
 > = {
-  kid: { fontScale: 1.15, minTarget: 56, controlHeight: 60, radiusBoost: 4, gutter: 20, iconSize: 32, labelWithIcon: true, maxCopyWords: 8, readAloud: true, celebration: 'big', density: 'airy' },
-  student: { fontScale: 1, minTarget: 48, controlHeight: 52, radiusBoost: 0, gutter: 16, iconSize: 24, labelWithIcon: false, maxCopyWords: 16, readAloud: false, celebration: 'small', density: 'comfortable' },
-  staff: { fontScale: 1, minTarget: 44, controlHeight: 40, radiusBoost: 0, gutter: 24, iconSize: 20, labelWithIcon: false, maxCopyWords: 24, readAloud: false, celebration: 'small', density: 'dense' },
+  kid: {
+    fontScale: 1.15,
+    minTarget: 56,
+    controlHeight: 60,
+    radiusBoost: 4,
+    gutter: 20,
+    iconSize: 32,
+    labelWithIcon: true,
+    maxCopyWords: 8,
+    readAloud: true,
+    celebration: 'big',
+    density: 'airy',
+  },
+  student: {
+    fontScale: 1,
+    minTarget: 48,
+    controlHeight: 52,
+    radiusBoost: 0,
+    gutter: 16,
+    iconSize: 24,
+    labelWithIcon: false,
+    maxCopyWords: 16,
+    readAloud: false,
+    celebration: 'small',
+    density: 'comfortable',
+  },
+  staff: {
+    fontScale: 1,
+    minTarget: 44,
+    controlHeight: 40,
+    radiusBoost: 0,
+    gutter: 24,
+    iconSize: 20,
+    labelWithIcon: false,
+    maxCopyWords: 24,
+    readAloud: false,
+    celebration: 'small',
+    density: 'dense',
+  },
 };
 
 export function presentationForGrade(gradeLevel: number | null | undefined): PresentationId {
@@ -373,138 +461,128 @@ export function presentationForGrade(gradeLevel: number | null | undefined): Pre
   return gradeLevel <= 5 ? 'kid' : 'student';
 }
 
-/** Layout breakpoints (dp / CSS px). Two-pane from `tablet`. */
+/** Layout breakpoints (dp / CSS px). Two-pane from `desktop` (DESIGN_SYSTEM.md §5). */
 export const breakpoints = { phone: 0, tablet: 600, desktop: 900, wide: 1280 } as const;
 
-// ───────────────────────────── 5. Motion ─────────────────────────────
-
-export type MotionTier = 'full' | 'lite' | 'off';
-
-/** ARCHITECTURE §6b durations. */
-export const duration = { instant: 0, fast: 120, base: 220, slow: 360 } as const;
-
-/**
- * Spring presets in the classic damping/stiffness/mass form, which works in Reanimated 3 and 4.
- * (Reanimated 4's duration/dampingRatio form may replace these in session 02 if the SDK ships v4.)
- */
-export const spring = {
-  gentle: { damping: 22, stiffness: 170, mass: 1 }, // settle, no overshoot
-  snappy: { damping: 18, stiffness: 320, mass: 0.9 }, // small overshoot, quick
-  bouncy: { damping: 11, stiffness: 260, mass: 0.9 }, // visible bounce: celebration, kid band only
+/** Gutter and content width per breakpoint (DESIGN_SYSTEM.md §2.2, §5). */
+export const layout = {
+  gutter: { phone: 16, tablet: 24, desktop: 24, wide: 24 },
+  maxContentWidth: { phone: 600, tablet: 680, desktop: 1120, wide: 1120 },
+  /** List pane of `TwoPane` on desktop: 360–420 wide. */
+  listPane: { min: 360, max: 420 },
 } as const;
 
-/** Easing curves as cubic-bezier control points; build with Easing.bezier(...) in the app. */
-export const easing = {
-  out: [0.23, 1, 0.32, 1],
-  inOut: [0.77, 0, 0.175, 1],
-  linear: [0, 0, 1, 1],
-} as const;
+// ───────────────────────────── 5. Pure helpers ─────────────────────────────
 
-export type SpringName = keyof typeof spring;
-export type DurationName = keyof typeof duration;
-export type AnimProp = 'opacity' | 'translateX' | 'translateY' | 'scale' | 'rotate';
+export type Breakpoint = keyof typeof breakpoints;
 
-/** What one tier does for one moment. `none` = state changes instantly (colour/icon still change). */
-export type Behaviour =
-  | { kind: 'none' }
-  | { kind: 'timing'; duration: DurationName; ease: keyof typeof easing; props: AnimProp[] }
-  | { kind: 'spring'; spring: SpringName; props: AnimProp[] }
-  | { kind: 'lottie'; asset: string; maxMs: number };
-
-export type Moment = {
-  purpose: 'feedback' | 'state' | 'hierarchy' | 'progress' | 'sync' | 'explanation' | 'delight';
-  frequency: 'often' | 'occasional' | 'rare';
-  haptic?: 'selection' | 'light' | 'success' | 'none';
-  /** Whether the moment runs inside an exam. Only the two exam moments do. */
-  examSafe?: boolean;
-  /** Slide moments mirror under RTL (translateX sign flips). */
-  rtlFlip?: boolean;
-  full: Behaviour;
-  lite: Behaviour;
-  off: Behaviour;
-};
-
-const none: Behaviour = { kind: 'none' };
-const fade = (d: DurationName): Behaviour => ({ kind: 'timing', duration: d, ease: 'out', props: ['opacity'] });
-
-/**
- * Every motion moment in the app. If a moment is not in this table it does not animate.
- * Table with rationale: DESIGN_SYSTEM.md §6.
- */
-export const moments = {
-  // Navigation: native stack does the work; we only choose fade vs platform slide.
-  screenPush: { purpose: 'hierarchy', frequency: 'often', rtlFlip: true, full: { kind: 'timing', duration: 'slow', ease: 'inOut', props: ['translateX', 'opacity'] }, lite: fade('fast'), off: none },
-  tabSwitch: { purpose: 'hierarchy', frequency: 'often', full: none, lite: none, off: none }, // tabs are peers: never slide
-  sheetPresent: { purpose: 'hierarchy', frequency: 'occasional', full: { kind: 'spring', spring: 'gentle', props: ['translateY', 'opacity'] }, lite: fade('fast'), off: none },
-  press: { purpose: 'feedback', frequency: 'often', haptic: 'none', full: { kind: 'timing', duration: 'fast', ease: 'out', props: ['translateY'] }, lite: fade('fast'), off: none }, // sticker sinks into its shadow (stickerPressDepth)
-  selectionChange: { purpose: 'state', frequency: 'often', haptic: 'selection', full: fade('fast'), lite: fade('fast'), off: none },
-
-  // Answer feedback (practice, diagnostic, follow-up). Not used in exams.
-  answerCorrect: { purpose: 'feedback', frequency: 'often', haptic: 'success', full: { kind: 'spring', spring: 'snappy', props: ['scale', 'opacity'] }, lite: fade('fast'), off: none },
-  answerWrong: { purpose: 'feedback', frequency: 'often', haptic: 'light', full: fade('base'), lite: fade('fast'), off: none }, // no shake: wrong is information, not a penalty
-  whyWrongReveal: { purpose: 'explanation', frequency: 'often', full: { kind: 'spring', spring: 'gentle', props: ['translateY', 'opacity'] }, lite: fade('base'), off: none },
-
-  // Progress
-  mosaicTileSet: { purpose: 'progress', frequency: 'occasional', haptic: 'light', full: { kind: 'spring', spring: 'snappy', props: ['scale', 'opacity'] }, lite: fade('base'), off: none }, // a mastered concept's tile drops into the subject mosaic
-  masteryBandUp: { purpose: 'progress', frequency: 'rare', haptic: 'light', full: { kind: 'spring', spring: 'snappy', props: ['scale'] }, lite: fade('base'), off: none },
-  progressBar: { purpose: 'progress', frequency: 'often', full: { kind: 'timing', duration: 'base', ease: 'out', props: ['translateX'] }, lite: fade('fast'), off: none }, // fill slides inside an overflow-hidden track
-  followUpCleared: { purpose: 'progress', frequency: 'occasional', haptic: 'success', full: { kind: 'spring', spring: 'snappy', props: ['scale', 'opacity', 'translateX'] }, lite: fade('base'), off: none },
-  gateUnlocked: { purpose: 'progress', frequency: 'rare', haptic: 'success', full: { kind: 'spring', spring: 'gentle', props: ['scale', 'opacity'] }, lite: fade('base'), off: none },
-
-  // System state
-  syncSyncing: { purpose: 'sync', frequency: 'often', full: { kind: 'timing', duration: 'slow', ease: 'linear', props: ['opacity'] }, lite: none, off: none }, // slow pulse, max 10 s, only while syncing
-  syncDone: { purpose: 'sync', frequency: 'often', full: fade('fast'), lite: fade('fast'), off: none },
-  bannerEnter: { purpose: 'sync', frequency: 'occasional', rtlFlip: false, full: { kind: 'spring', spring: 'gentle', props: ['translateY', 'opacity'] }, lite: fade('fast'), off: none },
-  toast: { purpose: 'feedback', frequency: 'occasional', full: { kind: 'spring', spring: 'gentle', props: ['translateY', 'opacity'] }, lite: fade('fast'), off: none },
-  emptyState: { purpose: 'state', frequency: 'occasional', full: { kind: 'timing', duration: 'base', ease: 'out', props: ['translateY', 'opacity'] }, lite: fade('base'), off: none },
-  skeleton: { purpose: 'state', frequency: 'often', full: { kind: 'timing', duration: 'slow', ease: 'linear', props: ['opacity'] }, lite: none, off: none },
-
-  // Lesson visuals (content motion, §7b.4). Layers move by transform + opacity only; never in exams.
-  sceneStep: { purpose: 'explanation', frequency: 'often', full: { kind: 'timing', duration: 'slow', ease: 'inOut', props: ['translateX', 'translateY', 'scale', 'rotate', 'opacity'] }, lite: fade('fast'), off: none }, // author may set ms ≤ visualBudget.stepMaxMs
-  chartReveal: { purpose: 'explanation', frequency: 'occasional', full: { kind: 'timing', duration: 'slow', ease: 'out', props: ['scale', 'opacity'] }, lite: fade('base'), off: none },
-  hotspotReveal: { purpose: 'explanation', frequency: 'often', full: { kind: 'spring', spring: 'snappy', props: ['scale', 'opacity'] }, lite: fade('fast'), off: none },
-  predictReveal: { purpose: 'feedback', frequency: 'occasional', full: fade('base'), lite: fade('fast'), off: none },
-
-  // Delight (rare tier only)
-  celebrationMastery: { purpose: 'delight', frequency: 'rare', haptic: 'success', full: { kind: 'lottie', asset: 'celebrate-burst', maxMs: 1500 }, lite: { kind: 'spring', spring: 'gentle', props: ['scale', 'opacity'] }, off: none },
-  celebrationKid: { purpose: 'delight', frequency: 'rare', haptic: 'success', full: { kind: 'spring', spring: 'bouncy', props: ['scale', 'opacity'] }, lite: fade('base'), off: none },
-
-  // Exam: identical in every tier. Nothing else moves.
-  examTimerTick: { purpose: 'state', frequency: 'often', examSafe: true, full: none, lite: none, off: none }, // digits change; no tween
-  examSaveIndicator: { purpose: 'sync', frequency: 'often', examSafe: true, full: fade('fast'), lite: fade('fast'), off: none }, // dot/check cross-fade
-
-  // Teacher live view (web, staff presentation: lite default)
-  liveTileStatus: { purpose: 'state', frequency: 'often', full: fade('fast'), lite: fade('fast'), off: none },
-  liveEventRow: { purpose: 'state', frequency: 'often', full: fade('base'), lite: fade('fast'), off: none },
-} as const satisfies Record<string, Moment>;
-
-export type MomentName = keyof typeof moments;
-
-/** Moments allowed while an exam screen is mounted. Everything else resolves to `none`. */
-export const examAllowedMoments: ReadonlyArray<MomentName> = ['examTimerTick', 'examSaveIndicator'];
-
-/**
- * Pick the tier. Pure, so it can be unit-tested in packages/core (session 02).
- * User choice wins over auto-detect, except OS reduce-motion always forces `off`.
- */
-export function pickMotionTier(input: {
-  osReduceMotion: boolean;
-  userChoice?: MotionTier | 'auto';
-  deviceMemoryGb?: number; // navigator.deviceMemory on web; native RAM via expo-device
-  isLowEndGpuOrDroppingFrames?: boolean; // from a frame-drop sampler
-  surface?: 'student' | 'staff';
-}): MotionTier {
-  if (input.osReduceMotion) return 'off';
-  if (input.userChoice && input.userChoice !== 'auto') return input.userChoice;
-  if (input.isLowEndGpuOrDroppingFrames) return 'lite';
-  if (input.deviceMemoryGb !== undefined && input.deviceMemoryGb <= 4) return 'lite';
-  if (input.surface === 'staff') return 'lite';
-  return 'full';
+/** Which breakpoint a window width falls in. */
+export function breakpointFor(width: number): Breakpoint {
+  if (width >= breakpoints.wide) return 'wide';
+  if (width >= breakpoints.desktop) return 'desktop';
+  if (width >= breakpoints.tablet) return 'tablet';
+  return 'phone';
 }
 
-/** What a component should actually do right now. */
-export function resolveMoment(name: MomentName, tier: MotionTier, ctx: { inExam?: boolean } = {}): Behaviour {
-  if (ctx.inExam && !examAllowedMoments.includes(name)) return { kind: 'none' };
-  const m: Moment = moments[name];
-  return m[tier];
+/** Layout decisions for a window width + presentation. Kid gutter wins on phone (20). */
+export function layoutFor(width: number, presentation: PresentationId) {
+  const bp = breakpointFor(width);
+  const gutter = bp === 'phone' ? presentations[presentation].gutter : layout.gutter[bp];
+  return {
+    breakpoint: bp,
+    gutter,
+    maxContentWidth: layout.maxContentWidth[bp],
+    twoPane: bp === 'desktop' || bp === 'wide',
+    /** Tabs: bottom bar below desktop, side rail from desktop. */
+    navigation: bp === 'desktop' || bp === 'wide' ? ('rail' as const) : ('bar' as const),
+  };
+}
+
+// Arabic-script blocks (Urdu lives here). Built from code points so the source has no
+// invisible characters and no \p{} escapes (Hermes support varies).
+const ARABIC_RANGES: ReadonlyArray<[number, number]> = [
+  [0x0600, 0x06ff],
+  [0x0750, 0x077f],
+  [0x08a0, 0x08ff],
+  [0xfb50, 0xfdff],
+  [0xfe70, 0xfefc],
+];
+const ARABIC_SCRIPT = new RegExp(
+  `[${ARABIC_RANGES.map(([a, b]) => `${String.fromCharCode(a)}-${String.fromCharCode(b)}`).join('')}]`,
+);
+
+/** 'urdu' if the text contains any Arabic-script letter, else 'latin'. */
+export function scriptOf(text: string): Script {
+  return ARABIC_SCRIPT.test(text) ? 'urdu' : 'latin';
+}
+
+const LRI = String.fromCharCode(0x2066); // LEFT-TO-RIGHT ISOLATE
+const PDI = String.fromCharCode(0x2069); // POP DIRECTIONAL ISOLATE
+/**
+ * A Latin/number run: starts with a Latin letter or Western digit (optionally after a
+ * minus sign, opening bracket or decimal point); may continue over
+ * maths symbols, slashes, dots and single spaces, and ends on a letter, digit, ², ³, % or ).
+ * So "8/10", "x + 2 = 5" and "5 cm" stay one LTR unit inside Urdu.
+ */
+const LTR_RUN =
+  /(?:[-−(.](?=[A-Za-z0-9]))?[A-Za-z0-9](?:[A-Za-z0-9²³%+\-−=×÷^/.,:()<>≤≥ ]*[A-Za-z0-9²³%)])?/g;
+
+/** Wrap Latin/number runs inside Urdu text in Unicode isolates so they never reorder. */
+/** Unicode isolate marks used by isolateLtrRuns. */
+export const BIDI = { LRI, PDI } as const;
+
+export function isolateLtrRuns(text: string): string {
+  if (!urduTextRules.isolateLtrRuns || text.includes(LRI) || scriptOf(text) === 'latin')
+    return text;
+  return text.replace(LTR_RUN, (run) => `${LRI}${run}${PDI}`);
+}
+
+export type ResolvedText = {
+  fontFamily: string;
+  fontSize: number;
+  lineHeight: number;
+};
+
+/**
+ * Concrete font, size and line-height for a step, script and presentation.
+ * Presentation scale multiplies size AND line-height, so Urdu keeps its ratio.
+ */
+export function textMetrics(
+  step: TypeStep,
+  script: Script,
+  presentation: PresentationId,
+): ResolvedText {
+  const m = typeScale[script][step];
+  const scale = presentations[presentation].fontScale;
+  const family =
+    script === 'urdu'
+      ? fontFamily.urdu[m.weight === 'regular' ? 'regular' : 'bold']
+      : m.family === 'display'
+        ? fontFamily.display[m.weight === 'regular' ? 'semibold' : m.weight]
+        : fontFamily.latin[m.weight === 'extrabold' ? 'bold' : m.weight];
+  return {
+    fontFamily: family,
+    fontSize: Math.round(m.size * scale),
+    lineHeight: Math.round(m.lineHeight * scale),
+  };
+}
+
+/** WCAG 2.1 contrast ratio of two #RRGGBB colours. */
+export function contrastRatio(a: string, b: string): number {
+  const lin = (c: number) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
+  const lum = (hex: string) => {
+    const n = parseInt(hex.slice(1, 7), 16);
+    return (
+      0.2126 * lin((n >> 16) / 255) +
+      0.7152 * lin(((n >> 8) & 255) / 255) +
+      0.0722 * lin((n & 255) / 255)
+    );
+  };
+  const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p) as [number, number];
+  return (x + 0.05) / (y + 0.05);
+}
+
+/** Radius for a presentation (kid adds +4 to every non-capsule radius). */
+export function radiusFor(name: keyof typeof radius, presentation: PresentationId): number {
+  return name === 'full' ? radius.full : radius[name] + presentations[presentation].radiusBoost;
 }

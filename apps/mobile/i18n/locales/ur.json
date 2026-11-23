@@ -1072,5 +1072,93 @@
     "config": {
       "missing": "Server not configured: set EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY. // TODO: ur"
     }
+  },
+  "ui": {
+    "close": "Close // TODO: ur",
+    "dismiss": "Dismiss // TODO: ur",
+    "mastery": {
+      "learning": "Learning // TODO: ur",
+      "weak": "Needs work // TODO: ur",
+      "mastered": "Got it // TODO: ur"
+    },
+    "mosaic": {
+      "label": "%{subject}: %{count} of %{total} concepts mastered // TODO: ur",
+      "count": "%{count} of %{total} tiles set // TODO: ur"
+    },
+    "sync": {
+      "idle": "محفوظ",
+      "syncing": "Syncing… // TODO: ur",
+      "saved": "محفوظ",
+      "offline": "Offline: saved on this device // TODO: ur",
+      "error": "Not synced yet. Tap to try again // TODO: ur",
+      "pending": {
+        "one": "1 change waiting // TODO: ur",
+        "other": "%{count} changes waiting // TODO: ur"
+      }
+    },
+    "pin": {
+      "entered": "%{count} of %{total} digits typed // TODO: ur",
+      "delete": "Delete // TODO: ur"
+    },
+    "motion": {
+      "auto": "Auto // TODO: ur",
+      "full": "Full // TODO: ur",
+      "lite": "Lite // TODO: ur",
+      "off": "Off // TODO: ur"
+    },
+    "theme": {
+      "light": "Light // TODO: ur",
+      "dark": "Dark // TODO: ur"
+    },
+    "presentation": {
+      "kid": "Kid // TODO: ur",
+      "student": "Student // TODO: ur",
+      "staff": "Staff // TODO: ur"
+    }
+  },
+  "dev": {
+    "gallery": {
+      "title": "Component gallery // TODO: ur",
+      "intro": "Every component in the current language, theme, presentation and motion tier. Hidden route for developers. // TODO: ur",
+      "language": "Language // TODO: ur",
+      "theme": "Theme // TODO: ur",
+      "presentation": "Presentation // TODO: ur",
+      "motion": "Motion tier // TODO: ur",
+      "exam": "Exam mode // TODO: ur",
+      "examOn": "On // TODO: ur",
+      "examOff": "Off // TODO: ur",
+      "osReduce": "The device asks for reduced motion, so motion is off whatever you pick. // TODO: ur",
+      "tierNow": "Tier now: %{tier}. Device memory: %{memory}. // TODO: ur",
+      "unknown": "unknown // TODO: ur",
+      "replay": "Replay entrances // TODO: ur",
+      "sections": {
+        "type": "Type // TODO: ur",
+        "colours": "Colours // TODO: ur",
+        "buttons": "Buttons // TODO: ur",
+        "badges": "Badges and mastery // TODO: ur",
+        "cards": "Cards and list rows // TODO: ur",
+        "inputs": "Fields // TODO: ur",
+        "mosaic": "Mosaic, pattern band, subject card // TODO: ur",
+        "feedback": "Feedback: empty state, skeleton, toast, sync // TODO: ur",
+        "navigation": "Tabs and sheet // TODO: ur",
+        "layout": "Layout: two-pane // TODO: ur",
+        "motion": "Motion moments (resolved) // TODO: ur"
+      },
+      "sample": {
+        "subject": "ریاضی",
+        "subject2": "سائنس",
+        "subject3": "اردو",
+        "list": "List pane // TODO: ur",
+        "detail": "Detail pane // TODO: ur",
+        "toast": "Show a toast // TODO: ur",
+        "toastBody": "Your answers are saved. // TODO: ur",
+        "sheet": "Open the sheet // TODO: ur",
+        "sheetTitle": "A sheet // TODO: ur",
+        "sheetBody": "Sheets close with the close button, the back button or Esc. // TODO: ur",
+        "loading": "Toggle loading // TODO: ur"
+      },
+      "examHint": "Only the exam timer and save dot may move. // TODO: ur",
+      "memoryGb": "%{count} GB // TODO: ur"
+    }
   }
 }

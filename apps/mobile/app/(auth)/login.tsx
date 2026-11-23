@@ -3,10 +3,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { useI18n, type TKey } from '../../i18n';
 import { isSupabaseConfigured } from '../../lib/supabase';
-import { AppText } from '../../ui/AppText';
-import { EmptyState } from '../../ui/EmptyState';
-import { LanguageToggle } from '../../ui/LanguageToggle';
-import { Screen } from '../../ui/Screen';
+import { EmptyState, LanguageToggle, Screen, Text } from '../../ui';
 
 // Placeholder only: the real student (admission no + PIN, QR) and staff sign-in
 // is session 03. The preview links exist so the route groups can be checked.
@@ -22,14 +19,12 @@ export default function Login() {
     <Screen>
       <LanguageToggle />
       <View style={styles.header}>
-        <AppText variant="title" accessibilityRole="header">
+        <Text variant="title" accessibilityRole="header">
           {t('auth.student.title')}
-        </AppText>
-        <AppText>{t('auth.student.subtitle')}</AppText>
+        </Text>
+        <Text>{t('auth.student.subtitle')}</Text>
       </View>
-      {isSupabaseConfigured ? null : (
-        <AppText variant="caption">{t('shell.config.missing')}</AppText>
-      )}
+      {isSupabaseConfigured ? null : <Text variant="caption">{t('shell.config.missing')}</Text>}
       <EmptyState
         title={t('shell.login.previewTitle')}
         body={t('shell.login.notReady')}
@@ -37,7 +32,7 @@ export default function Login() {
           <View style={styles.links}>
             {previews.map((p) => (
               <Link key={p.label} href={p.href} style={styles.link}>
-                <AppText>{t(p.label)}</AppText>
+                <Text>{t(p.label)}</Text>
               </Link>
             ))}
           </View>

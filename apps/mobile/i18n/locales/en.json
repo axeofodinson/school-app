@@ -1072,5 +1072,93 @@
     "config": {
       "missing": "Server not configured: set EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY."
     }
+  },
+  "ui": {
+    "close": "Close",
+    "dismiss": "Dismiss",
+    "mastery": {
+      "learning": "Learning",
+      "weak": "Needs work",
+      "mastered": "Got it"
+    },
+    "mosaic": {
+      "label": "%{subject}: %{count} of %{total} concepts mastered",
+      "count": "%{count} of %{total} tiles set"
+    },
+    "sync": {
+      "idle": "Saved",
+      "syncing": "Syncing…",
+      "saved": "Saved",
+      "offline": "Offline: saved on this device",
+      "error": "Not synced yet. Tap to try again",
+      "pending": {
+        "one": "1 change waiting",
+        "other": "%{count} changes waiting"
+      }
+    },
+    "pin": {
+      "entered": "%{count} of %{total} digits typed",
+      "delete": "Delete"
+    },
+    "motion": {
+      "auto": "Auto",
+      "full": "Full",
+      "lite": "Lite",
+      "off": "Off"
+    },
+    "theme": {
+      "light": "Light",
+      "dark": "Dark"
+    },
+    "presentation": {
+      "kid": "Kid",
+      "student": "Student",
+      "staff": "Staff"
+    }
+  },
+  "dev": {
+    "gallery": {
+      "title": "Component gallery",
+      "intro": "Every component in the current language, theme, presentation and motion tier. Hidden route for developers.",
+      "language": "Language",
+      "theme": "Theme",
+      "presentation": "Presentation",
+      "motion": "Motion tier",
+      "exam": "Exam mode",
+      "examOn": "On",
+      "examOff": "Off",
+      "osReduce": "The device asks for reduced motion, so motion is off whatever you pick.",
+      "tierNow": "Tier now: %{tier}. Device memory: %{memory}.",
+      "unknown": "unknown",
+      "replay": "Replay entrances",
+      "sections": {
+        "type": "Type",
+        "colours": "Colours",
+        "buttons": "Buttons",
+        "badges": "Badges and mastery",
+        "cards": "Cards and list rows",
+        "inputs": "Fields",
+        "mosaic": "Mosaic, pattern band, subject card",
+        "feedback": "Feedback: empty state, skeleton, toast, sync",
+        "navigation": "Tabs and sheet",
+        "layout": "Layout: two-pane",
+        "motion": "Motion moments (resolved)"
+      },
+      "sample": {
+        "subject": "Mathematics",
+        "subject2": "Science",
+        "subject3": "Urdu",
+        "list": "List pane",
+        "detail": "Detail pane",
+        "toast": "Show a toast",
+        "toastBody": "Your answers are saved.",
+        "sheet": "Open the sheet",
+        "sheetTitle": "A sheet",
+        "sheetBody": "Sheets close with the close button, the back button or Esc.",
+        "loading": "Toggle loading"
+      },
+      "examHint": "Only the exam timer and save dot may move.",
+      "memoryGb": "%{count} GB"
+    }
   }
 }

@@ -5,7 +5,7 @@
     "noUncheckedIndexedAccess": true,
     "resolveJsonModule": true,
     // The old app at the repo root pins React 18 / RN 0.74 / Reanimated 3, and
-    // packages hoisted to the root (e.g. moti) would type-check against those.
+    // packages hoisted to the root (e.g. react-native-svg) would type-check against those.
     // Pin the shared singletons to this app's copies (metro.config.js does the
     // same at runtime). Remove once the old app leaves the root.
     "paths": {

@@ -3,7 +3,7 @@
 // deps hoist to the root. Normal (hierarchical) lookup stays on so packages with
 // their own nested node_modules get the version they asked for; only the
 // singletons below are forced to this app's copy, so there is exactly one React,
-// one React Native, etc. in the bundle even when a hoisted package (e.g. moti)
+// one React Native, etc. in the bundle even when a hoisted package (e.g. react-native-svg)
 // imports them from the root.
 const path = require('path');
 const { getDefaultConfig } = require('expo/metro-config');
