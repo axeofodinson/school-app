@@ -4,6 +4,8 @@ Newest first. Each: decision — reason — who/when.
 
 ## 2026-11-23 — STEMP21 offer
 
+19. **No STEMP21 integration planned; original build order stands.** STEMP21's software appears to be teacher-facing (Training LMS + project grading), with Scratch-based content; it does not overlap the student LMS. `db/022` stays as an optional Phase 7 module for the school's own projects. Revisit if Hassan shares more (demo, contract terms).
+
 18. **Absorb STEM projects into our own LMS; use STEMP21 for content, kits and training.** One student platform keeps logins, grades and data in one place; STEMP21 is Grades 1–8 STEM only (per public material), while our LMS covers PG–10 and every subject. Projects are a generic module; STEMP21 content is loaded only with written permission (DB enforces `licence_note`). Rubric scores live in their own table (not `submissions.responses`) so per-criterion and concept analysis is a plain query; totals still go through `record_grade()`. See `STEMP21_COMPARISON.md`.
 
 ## 2026-11-23 — planning session (Hassan + Claude Code)
