@@ -15,6 +15,9 @@ You are continuing the Al-Syed school app remake. This session is prompt **20** 
 - DATABASE_DESIGN.md §1–4
 - TEST_PLAN DB-1/DB-2
 
+## Skills and MCPs to use
+Skills: `supabase`, `supabase-postgres-best-practices`. MCP: Supabase (dev project: apply and test there first). Finish with `/security-review`. Invoke skills by name (e.g. "use the frontend-design skill"); see `GUIDE.md` §3.
+
 ## Goal
 Finalise and apply the LMS foundation migration, then let staff manage curriculum versions, topics, concepts and prerequisites.
 

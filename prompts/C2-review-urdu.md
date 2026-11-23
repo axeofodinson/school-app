@@ -2,7 +2,7 @@
 
 **Use in:** a Claude chat, before or alongside the teacher's review. It never
 replaces the human translation check (CLAUDE.md: Urdu is human-written and
-human-reviewed). **Model:** Fable.
+human-reviewed). **Model:** Opus.
 
 Paste everything below the line, then attach or paste the topic JSON.
 

@@ -15,6 +15,9 @@ You are continuing the Al-Syed school app remake. This session is prompt **21** 
 - LMS_AUDIT §1.2 rows for 5.2
 - prompts/C1-generate-topic-content.md (the producer of import files)
 
+## Skills and MCPs to use
+Skills: `engineering:testing-strategy`. Finish with `/code-review`. Invoke skills by name (e.g. "use the frontend-design skill"); see `GUIDE.md` §3.
+
 ## Goal
 Hassan (or a teacher) uploads one topic JSON file and gets a clear report; valid items land as drafts.
 

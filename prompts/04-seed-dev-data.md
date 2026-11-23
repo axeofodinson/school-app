@@ -15,6 +15,9 @@ You are continuing the Al-Syed school app remake. This session is prompt **04** 
 - DATABASE_DESIGN.md
 - db/test/ harness
 
+## Skills and MCPs to use
+Skills: `supabase`, `supabase-postgres-best-practices`. MCP: Supabase (dev project only). Invoke skills by name (e.g. "use the frontend-design skill"); see `GUIDE.md` §3.
+
 ## Goal
 A repeatable, removable fake dataset so every later phase is built and tested at real scale without real student data.
 

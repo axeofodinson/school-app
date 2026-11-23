@@ -14,6 +14,9 @@ You are continuing the Al-Syed school app remake. This session is prompt **91** 
 - LMS_AUDIT §1.2 5.2 in-app AI row
 - CLAUDE.md (no keys in app)
 
+## Skills and MCPs to use
+Skills: `claude-api` (model ids, pricing, caching), `supabase`. Finish with `/security-review`. Invoke skills by name (e.g. "use the frontend-design skill"); see `GUIDE.md` §3.
+
 ## Goal
 Teachers request drafts (questions, explanations, alternatives) inside the app; drafts go to review as usual.
 

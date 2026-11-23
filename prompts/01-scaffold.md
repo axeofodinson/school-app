@@ -16,6 +16,9 @@ You are continuing the Al-Syed school app remake. This session is prompt **01** 
 - package.json and app.json of the old app (for EAS project id, package name, update URL)
 - docs/environment.md (EAS + network)
 
+## Skills and MCPs to use
+Skills: `expo:expo-overview`, `expo:expo-project-structure`, `expo:expo-router`, `expo:expo-upgrade`. MCP: Context7 for current Expo/Supabase docs. Finish with `/code-review`. Invoke skills by name (e.g. "use the frontend-design skill"); see `GUIDE.md` §3.
+
 ## Goal
 Create the new app skeleton that builds for Android and web, beside the old app, without breaking it.
 

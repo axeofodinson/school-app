@@ -13,6 +13,9 @@ You are continuing the Al-Syed school app remake. This session is prompt **E2** 
 - `MODULE_STATUS.md`
 - LMS_AUDIT §10 E2
 
+## Skills and MCPs to use
+Skills: `engineering:testing-strategy`. Invoke skills by name (e.g. "use the frontend-design skill"); see `GUIDE.md` §3.
+
 ## Goal
 Optional harder 'apply it' items unlocked after mastering a concept; never blocks anyone.
 

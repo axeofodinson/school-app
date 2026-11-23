@@ -1,6 +1,6 @@
 # 80 — Dashboards: student, teacher, admin
 
-**Model:** Opus (Fable for student dashboard feel) · **Phase:** 8 · **Depends on:** 42, 51 · **Blocked by:** —
+**Model:** Opus · **Phase:** 8 · **Depends on:** 42, 51 · **Blocked by:** —
 
 Paste everything below the line into a new Claude Code session on the `school-app` repo.
 
@@ -13,6 +13,9 @@ You are continuing the Al-Syed school app remake. This session is prompt **80** 
 - `MODULE_STATUS.md`
 - LMS_AUDIT §5.12 metrics, principle 10
 - DATABASE_DESIGN.md (021 rollups)
+
+## Skills and MCPs to use
+Skills: `dataviz`, `frontend-design`, `supabase-postgres-best-practices`. Invoke skills by name (e.g. "use the frontend-design skill"); see `GUIDE.md` §3.
 
 ## Goal
 Show learning, not activity: mastery bands, weak concepts, retention, students needing help.

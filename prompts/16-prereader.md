@@ -1,6 +1,6 @@
 # 16 — Rebuild: pre-reader tap-image questions (PG / young kids)
 
-**Model:** Fable (UX) + Opus · **Phase:** 1b · **Depends on:** 11 · **Blocked by:** —
+**Model:** Opus · **Phase:** 1b · **Depends on:** 11 · **Blocked by:** —
 
 Paste everything below the line into a new Claude Code session on the `school-app` repo.
 
@@ -14,6 +14,9 @@ You are continuing the Al-Syed school app remake. This session is prompt **16** 
 - db/006_prereader_tap_image_content.sql (body shape)
 - old src/components/prereader/*, src/prereader/*
 - DESIGN_SYSTEM.md (primary presentation)
+
+## Skills and MCPs to use
+Skills: `frontend-design`, `expo:expo-animation`, `design:accessibility-review`, `run`. Invoke skills by name (e.g. "use the frontend-design skill"); see `GUIDE.md` §3.
 
 ## Goal
 A joyful, accessible tap-the-picture question experience for children who can't read yet.

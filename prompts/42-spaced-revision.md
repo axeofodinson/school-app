@@ -13,6 +13,9 @@ You are continuing the Al-Syed school app remake. This session is prompt **42** 
 - `MODULE_STATUS.md`
 - DATABASE_DESIGN.md concept_mastery.next_review_at
 
+## Skills and MCPs to use
+Skills: `engineering:testing-strategy`. Invoke skills by name (e.g. "use the frontend-design skill"); see `GUIDE.md` §3.
+
 ## Goal
 Mastered concepts come back for retention checks and feed the learning-outcome measures.
 

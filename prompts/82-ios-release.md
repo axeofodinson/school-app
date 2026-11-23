@@ -13,6 +13,9 @@ You are continuing the Al-Syed school app remake. This session is prompt **82** 
 - `MODULE_STATUS.md`
 - eas.json, docs/environment.md
 
+## Skills and MCPs to use
+(deferred) Invoke skills by name (e.g. "use the frontend-design skill"); see `GUIDE.md` §3.
+
 ## Goal
 Ship the app on the App Store.
 

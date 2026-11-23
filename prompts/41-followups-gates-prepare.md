@@ -15,6 +15,9 @@ You are continuing the Al-Syed school app remake. This session is prompt **41** 
 - ARCHITECTURE.md Mastery row
 - DESIGN_SYSTEM.md Prepare wireframe
 
+## Skills and MCPs to use
+Skills: `frontend-design`, `design:ux-copy`, `run`. Finish with `/code-review`. Invoke skills by name (e.g. "use the frontend-design skill"); see `GUIDE.md` §3.
+
 ## Goal
 The core loop: Prepare shows follow-ups first, gates hold within a subject, nobody gets trapped.
 

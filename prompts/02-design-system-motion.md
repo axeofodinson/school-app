@@ -15,6 +15,9 @@ You are continuing the Al-Syed school app remake. This session is prompt **02** 
 - ARCHITECTURE.md §6b
 - CLAUDE.md Motion rules
 
+## Skills and MCPs to use
+Skills: `frontend-design`, `expo:expo-design-system`, `expo:expo-animation`, `expo:expo-ui`, `design:accessibility-review`, `run` (screenshot the gallery). Finish with `/code-review`. Invoke skills by name (e.g. "use the frontend-design skill"); see `GUIDE.md` §3.
+
 ## Goal
 Turn the design spec into reusable, RTL-safe, themed components and the motion tier system.
 

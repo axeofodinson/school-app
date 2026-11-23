@@ -15,6 +15,9 @@ You are continuing the Al-Syed school app remake. This session is prompt **13** 
 - db/017_lms_foundation.sql Part 10
 - DATABASE_DESIGN.md §5
 
+## Skills and MCPs to use
+Skills: `engineering:deploy-checklist`, `expo:eas-workflows`, `expo:eas-update`, `supabase`. Finish with `/security-review`. Invoke skills by name (e.g. "use the frontend-design skill"); see `GUIDE.md` §3.
+
 ## Goal
 Ship the new app for parity flows and stop students reading answer keys.
 

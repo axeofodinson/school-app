@@ -1,6 +1,6 @@
 # 30 — Learn: lesson reader
 
-**Model:** Opus (Fable for the reading experience polish) · **Phase:** 3 · **Depends on:** 22 · **Blocked by:** —
+**Model:** Opus · **Phase:** 3 · **Depends on:** 22 · **Blocked by:** —
 
 Paste everything below the line into a new Claude Code session on the `school-app` repo.
 
@@ -14,6 +14,9 @@ You are continuing the Al-Syed school app remake. This session is prompt **30** 
 - DATABASE_DESIGN.md §4 lesson blocks
 - DESIGN_SYSTEM.md
 - ARCHITECTURE.md §6
+
+## Skills and MCPs to use
+Skills: `frontend-design`, `expo:expo-ui`, `expo:expo-dom` (only if a web-only renderer is needed), `run`. Invoke skills by name (e.g. "use the frontend-design skill"); see `GUIDE.md` §3.
 
 ## Goal
 Students read a topic's lesson in English or Urdu with diagrams, math, video and quick checks.

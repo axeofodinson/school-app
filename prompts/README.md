@@ -11,7 +11,7 @@ remake. Each file is one session: a small, verifiable slice with its own
 2. Pick the **next unticked prompt** below whose dependencies are ticked and whose
    blocker is cleared.
 3. Start a new Claude Code session on this repo with the **model** the prompt
-   names (Fable for design/pedagogy, Opus for engineering).
+   names (Opus for all build sessions; session 90 runs in Claude Code on your PC). Read  first.
 4. Open the prompt file and paste everything **below the line**.
 5. At the end the session ticks its box here, updates `MODULE_STATUS.md`, and
    pushes to its own branch. **Merge that branch into `main`** before starting
@@ -44,7 +44,7 @@ Deferred: parents (81) and iOS (82).
 
 | ✓ | Prompt | Model | Depends on | Blocked by | Notes |
 |---|---|---|---|---|---|
-| [ ] | [00 Visual identity and motion choreography](00-design-identity.md) | Fable | — | — | |
+| [ ] | [00 Visual identity and motion choreography](00-design-identity.md) | Opus | — | — | |
 | [ ] | [01 App scaffold: Expo + TypeScript + expo-router + web](01-scaffold.md) | Opus | 00 (tokens can follow later) | — | |
 | [ ] | [02 Design system and motion foundation](02-design-system-motion.md) | Opus | 00, 01 | — | |
 | [ ] | [03 Login: students (admission no + PIN, QR) and staff](03-auth.md) | Opus | 01, 02 | — | |
@@ -66,7 +66,7 @@ Deferred: parents (81) and iOS (82).
 |---|---|---|---|---|---|
 | [ ] | [14 Rebuild: attendance](14-attendance.md) | Opus | 13 | — | |
 | [ ] | [15 Rebuild: messaging and push notifications](15-messaging-push.md) | Opus | 13 | — | |
-| [ ] | [16 Rebuild: pre-reader tap-image questions (PG / young kids)](16-prereader.md) | Fable (UX) + Opus | 11 | — | |
+| [ ] | [16 Rebuild: pre-reader tap-image questions (PG / young kids)](16-prereader.md) | Opus | 11 | — | |
 
 ### Phase 2 — Curriculum and question bank
 
@@ -80,7 +80,7 @@ Deferred: parents (81) and iOS (82).
 
 | ✓ | Prompt | Model | Depends on | Blocked by | Notes |
 |---|---|---|---|---|---|
-| [ ] | [30 Learn: lesson reader](30-learn-renderer.md) | Opus (Fable for the reading experience polish) | 22 | — | |
+| [ ] | [30 Learn: lesson reader](30-learn-renderer.md) | Opus | 22 | — | |
 | [ ] | [31 Practice engine (port prep.html ideas)](31-practice-engine.md) | Opus | 22 | — | |
 | [ ] | [32 Offline Learn and question packs](32-offline-learn-packs.md) | Opus | 30, 31 | — | |
 
@@ -119,7 +119,7 @@ Deferred: parents (81) and iOS (82).
 
 | ✓ | Prompt | Model | Depends on | Blocked by | Notes |
 |---|---|---|---|---|---|
-| [ ] | [80 Dashboards: student, teacher, admin](80-dashboards.md) | Opus (Fable for student dashboard feel) | 42, 51 | — | |
+| [ ] | [80 Dashboards: student, teacher, admin](80-dashboards.md) | Opus | 42, 51 | — | |
 | [ ] | [81 Parent role](81-parents.md) | Opus | 80 | DEFERRED: parent features will be redesigned later (DECISIONS #25) | |
 | [ ] | [82 iOS release](82-ios-release.md) | Opus | 13 | DEFERRED: no iOS for now (DECISIONS #24) | |
 
@@ -127,25 +127,27 @@ Deferred: parents (81) and iOS (82).
 
 | ✓ | Prompt | Model | Depends on | Blocked by | Notes |
 |---|---|---|---|---|---|
-| [ ] | [90 Animated explainer pipeline (Remotion / Manim)](90-animated-explainers.md) | Fable (pedagogy) + Opus (pipeline) | 30 | — | |
+| [ ] | [90 Animated explainer pipeline (Blender)](90-animated-explainers.md) | Opus (local session with Blender MCP) | 30 | Must run in Claude Code on Hassan's PC with Blender + Blender MCP (GUIDE.md §2) | |
 | [ ] | [91 In-app AI drafting (optional)](91-ai-drafting.md) | Opus | 21, 22 | Hassan's budget approval | |
 
 ### Phase 10 — Extensions (last)
 
 | ✓ | Prompt | Model | Depends on | Blocked by | Notes |
 |---|---|---|---|---|---|
-| [ ] | [E1 Extension: teacher training track](E1-teacher-training.md) | Opus (Fable for lesson content) | 30, 31, 41 | — | |
+| [ ] | [E1 Extension: teacher training track](E1-teacher-training.md) | Opus | 30, 31, 41 | — | |
 | [ ] | [E2 Extension: challenge tier after mastery](E2-challenge-tier.md) | Opus | 41 | — | |
 | [ ] | [E3 Extension: real-world / SDG tags](E3-sdg-tags.md) | Opus | 30 | — | |
 | [ ] | [E4 Extension: coding and project evidence in assignments](E4-coding-evidence.md) | Opus | 71 | — | |
+
 ### Anytime
 
 | ✓ | Prompt | Model | When |
 |---|---|---|---|
 | [ ] | [OPS backup](OPS-backup.md) | Opus | Before real LMS data (Phase 0–1) |
 | — | [OPS remove legacy](OPS-remove-legacy.md) | Opus | Whenever old code/data gets in the way (repeatable) |
-| — | [C1 Generate topic content](C1-generate-topic-content.md) | Fable/Opus (chat) | From Phase 2 on, one topic at a time (pilot: Class 9 Math/Science) |
+| — | [C1 Generate topic content](C1-generate-topic-content.md) | Opus (claude.ai chat) | From Phase 2 on, one topic at a time (pilot: Class 9 Math/Science) |
 
 ## Changelog
+- 2026-11-23: Fable dropped (all Opus). Every prompt now lists the skills/MCPs to use. 90 switched to Blender via the Blender MCP (local). Added GUIDE.md.
 - 2026-11-23: library created (35 build prompts + C1, C2, OPS-backup, OPS-update-prompts) from LMS_AUDIT build order + Phase 10 extensions + motion system.
 - 2026-11-23: open questions answered (DECISIONS #22–29). Added 05 Google sign-in/prep-only tier, Phase 1b (14 attendance, 15 messaging + push, 16 pre-reader), OPS-remove-legacy; OPS-backup → private GitHub repo; 22/40/62 unblocked; 81 parents and 82 iOS deferred.

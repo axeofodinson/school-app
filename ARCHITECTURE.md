@@ -94,7 +94,7 @@ Goal: a distinctly polished, alive UI that stays fast on 4 GB Chromebooks.
 6. **RTL-aware.** Slide directions flip with the language.
 7. **Budget:** 60 fps on a mid-range phone, no dropped frames during screen transitions on the reference Chromebook in lite tier (TEST_PLAN P-4/P-6).
 
-**Who does what:** the visual identity and motion choreography (how things look and feel) is taste-heavy work. CLAUDE.md assigns that to **Fable** in a dedicated design session at the start of Phase 0. The tokens, tiers and performance plumbing are engineering work.
+**Who does what:** the visual identity and motion choreography (how things look and feel) is taste-heavy work. It runs on Opus with design skills (`frontend-design`, `design:*`, `expo:expo-design-system`, `expo:expo-animation`) in a dedicated design session at the start of Phase 0 (prompt 00). The tokens, tiers and performance plumbing are engineering work.
 
 ## 7. Free-tier guardrails
 Compact attempts, rollups for dashboards, cached content, Realtime only on screens that need it, upload size caps, scheduled `pg_dump` backup, yearly archive of raw attempts. Numbers in `LMS_AUDIT.md` §6b.

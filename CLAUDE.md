@@ -55,6 +55,7 @@ src/, App.js        OLD app (frozen)
 | `MODULE_STATUS.md` | progress per module | **end of every session** |
 | `TEST_PLAN.md` | how things are verified | new test or harness |
 | `STEMP21_COMPARISON.md` | vendor comparison (no integration planned) | Hassan shares more |
+| `GUIDE.md` | Hassan's step-by-step guide: setup, skills, MCPs, workflow | tooling or workflow changes |
 | `docs/environment.md` | cloud env, network, EAS, dev Supabase project | env changes |
 | `prompts/README.md` | session order + status | **end of every session** |
 
@@ -104,8 +105,10 @@ src/, App.js        OLD app (frozen)
   stubs → setup.sql → all migrations → the new one twice → smoke test. Run
   Postgres as the `postgres` user in `/var/lib/postgresql/smoke` (the Claude
   scratchpad's permissions get reset) and delete it afterwards.
-- **Claude never runs SQL against the Supabase project.** Hassan runs it in the
-  SQL Editor. Say exactly which file to run and in what order. Update
+- **Claude never runs SQL against the production Supabase project.** Hassan runs
+  it in the SQL Editor. The Supabase MCP may be connected to the **dev project
+  only** (full access there); never connect it to production, or only with
+  `--read-only` if Hassan explicitly sets that up. Say exactly which file to run and in what order. Update
   `db/README.md` when adding a migration.
 - Tests and seeds use **synthetic data only** (`is_test_data = true`), on a dev
   project or local Postgres, never production.
@@ -166,10 +169,13 @@ transitions in lite tier · virtualised long lists · images ≤ 100 KB WebP.
    must do (e.g. run a migration), and the next prompt.
 
 ## Model split
-- **Fable:** visual identity, motion choreography, the young-kid question UX,
-  engagement design, pedagogical content design (prompts marked *Model: Fable*).
-- **Opus:** everything deterministic: schema, RLS, RPCs, CRUD, queries,
-  aggregates, sync, i18n/RTL plumbing, empty states, tests, bug fixes.
+- **All sessions use Opus.** Taste-heavy work (visual identity, motion, kid UX,
+  lesson design) uses design skills instead of a different model:
+  `frontend-design`, `design:*`, `expo:expo-design-system`,
+  `expo:expo-animation`, plus the Figma MCP if enabled. Each prompt lists its
+  skills and MCPs; `GUIDE.md` explains them.
+- Animated explainer videos run in a **local** Claude Code session on Hassan's
+  PC with Blender + the Blender MCP (prompt 90).
 
 ## Do NOT
 - Hardcode content, subjects, questions or UI text.

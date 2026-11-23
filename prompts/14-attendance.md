@@ -15,6 +15,9 @@ You are continuing the Al-Syed school app remake. This session is prompt **14** 
 - db/setup.sql attendance table
 - DECISIONS.md #22 (legacy may be removed)
 
+## Skills and MCPs to use
+Skills: `frontend-design`, `run`. Finish with `/code-review`. Invoke skills by name (e.g. "use the frontend-design skill"); see `GUIDE.md` §3.
+
 ## Goal
 Fast daily attendance for teachers and a clear attendance view for students, rebuilt properly.
 

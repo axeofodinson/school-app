@@ -13,6 +13,9 @@ You are continuing the Al-Syed school app remake. This session is prompt **E3** 
 - `MODULE_STATUS.md`
 - LMS_AUDIT §10 E3
 
+## Skills and MCPs to use
+Skills: `supabase`. Invoke skills by name (e.g. "use the frontend-design skill"); see `GUIDE.md` §3.
+
 ## Goal
 Tag lessons and projects with real-world/SDG themes and let teachers browse by theme.
 

@@ -16,6 +16,9 @@ You are continuing the Al-Syed school app remake. This session is prompt **12** 
 - old GradingScreen.js, FileAssessmentScreen.js, OverdueAssignmentsScreen.js
 - src/reporting/*
 
+## Skills and MCPs to use
+Skills: `supabase`, `engineering:testing-strategy`. Finish with `/code-review`. Invoke skills by name (e.g. "use the frontend-design skill"); see `GUIDE.md` §3.
+
 ## Goal
 Teachers grade (and correct grades with a reason), file-upload assessments work, and report-card aggregates match the old app.
 

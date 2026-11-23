@@ -14,6 +14,9 @@ You are continuing the Al-Syed school app remake. This session is prompt **32** 
 - ARCHITECTURE.md §5
 - LMS_AUDIT §3.3
 
+## Skills and MCPs to use
+Skills: `expo:expo-data-fetching`, `engineering:testing-strategy`. Invoke skills by name (e.g. "use the frontend-design skill"); see `GUIDE.md` §3.
+
 ## Goal
 Download a chapter (lessons + approved practice items + images) to use without internet.
 

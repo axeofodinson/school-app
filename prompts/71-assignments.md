@@ -14,6 +14,9 @@ You are continuing the Al-Syed school app remake. This session is prompt **71** 
 - db/014
 - LMS_PLAN §5.7
 
+## Skills and MCPs to use
+Skills: `frontend-design`, `run`. Invoke skills by name (e.g. "use the frontend-design skill"); see `GUIDE.md` §3.
+
 ## Goal
 Per-topic or teacher-made assignments with typed answers, file upload or photo of paper work; teacher marks with comments.
 

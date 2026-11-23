@@ -14,6 +14,9 @@ You are continuing the Al-Syed school app remake. This session is prompt **22** 
 - DATABASE_DESIGN.md (item_approvals, item_reviews)
 - LMS_AUDIT §3 / principle 8
 
+## Skills and MCPs to use
+Skills: `frontend-design`, `design:ux-copy`, `run`. Finish with `/code-review`. Invoke skills by name (e.g. "use the frontend-design skill"); see `GUIDE.md` §3.
+
 ## Goal
 A fast review screen so teachers can clear hundreds of AI drafts accurately.
 

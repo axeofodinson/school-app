@@ -14,6 +14,9 @@ You are continuing the Al-Syed school app remake. This session is prompt **40** 
 - DATABASE_DESIGN.md §5 (019)
 - LMS_AUDIT §1.2 5.4 rows, §3.5
 
+## Skills and MCPs to use
+Skills: `supabase`, `supabase-postgres-best-practices`, `engineering:testing-strategy`. MCP: Supabase (dev). Invoke skills by name (e.g. "use the frontend-design skill"); see `GUIDE.md` §3.
+
 ## Goal
 Server-side, explainable mastery: record an attempt → update concept_mastery → create/merge follow-ups.
 

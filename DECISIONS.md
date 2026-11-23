@@ -2,6 +2,11 @@
 
 Newest first. Each: decision — reason — who/when.
 
+## 2026-11-23 — tooling
+
+30. **No Fable; every session runs on Opus with skills and MCPs.** Design work uses `frontend-design`, `design:*` and the Expo skills (`expo-design-system`, `expo-animation`), with Figma optional. The Supabase MCP is connected to the **dev project only**. Context7 is used for current library docs. Workflow and setup: `GUIDE.md`.
+31. **Animated explainers are made with Blender** through the Blender MCP in a local Claude Code session on Hassan's PC (replacing Remotion/Manim in #9-era plans). Blender doesn't shape Urdu text correctly, so Urdu captions are rendered as images with a real text engine (Chromium + bundled Nastaliq) and imported, or overlaid with ffmpeg. Verify on day one.
+
 ## 2026-11-23 — answers to the open questions (LMS_AUDIT §7)
 
 22. **Old features are rebuilt right after parity (Phase 1b: attendance, messaging + push, pre-reader), and new features have priority. Legacy code AND legacy data may be hard-deleted** whenever they cause trouble. This is a scoped exception to rule 3. It applies only to old-app code and to data created by the old app. It goes through an explicit migration (prompt OPS-remove-legacy), only after a same-day verified backup, logged here. Data written by the new app keeps the no-hard-delete rule.
@@ -16,7 +21,7 @@ Newest first. Each: decision — reason — who/when.
 ## 2026-11-23 — extensions and motion
 
 20. **Four extensions adopted, built last (Phase 10):** teacher training track, challenge tier after mastery, real-world/SDG tags, coding and project evidence in assignments. They reuse existing modules, so the core rebuild comes first. Details: `LMS_AUDIT.md` §10.
-21. **High-polish, motion-rich UI** (this replaces the "light gamification / no decorative animation" part of decision 3). It uses **Reanimated 3 + Moti** because they work on Android, iOS and web. Motion and anime.js are DOM-only, so they can't animate the Android app that students use on Chromebooks. Motion is allowed only in web-only teacher screens, and anime.js is not used. The cheap-Chromebook budget is protected by full/lite/off motion tiers and minimal motion in exams. Spec: `ARCHITECTURE.md` §6b. Visual identity design runs on Fable, as CLAUDE.md requires.
+21. **High-polish, motion-rich UI** (this replaces the "light gamification / no decorative animation" part of decision 3). It uses **Reanimated 3 + Moti** because they work on Android, iOS and web. Motion and anime.js are DOM-only, so they can't animate the Android app that students use on Chromebooks. Motion is allowed only in web-only teacher screens, and anime.js is not used. The cheap-Chromebook budget is protected by full/lite/off motion tiers and minimal motion in exams. Spec: `ARCHITECTURE.md` §6b. Visual identity design runs in prompt 00 (see #30).
 
 ## 2026-11-23 — STEMP21 offer
 

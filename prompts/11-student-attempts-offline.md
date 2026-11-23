@@ -16,6 +16,9 @@ You are continuing the Al-Syed school app remake. This session is prompt **11** 
 - db/005 (student attempts RLS)
 - LMS_AUDIT §3.3
 
+## Skills and MCPs to use
+Skills: `engineering:testing-strategy`, `run`. Finish with `/code-review`. Invoke skills by name (e.g. "use the frontend-design skill"); see `GUIDE.md` §3.
+
 ## Goal
 Students see their published assessments and submit attempts that survive dropped connections.
 

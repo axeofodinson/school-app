@@ -14,6 +14,9 @@ You are continuing the Al-Syed school app remake. This session is prompt **70** 
 - LMS_AUDIT §3.7
 - DESIGN_SYSTEM.md print styles
 
+## Skills and MCPs to use
+Skills: `frontend-design`, `anthropic-skills:pdf` (check A4 output). Invoke skills by name (e.g. "use the frontend-design skill"); see `GUIDE.md` §3.
+
 ## Goal
 Teachers make worksheets from approved items, print sets A/B with a key, or assign them in-app.
 

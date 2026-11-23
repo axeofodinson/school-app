@@ -15,6 +15,9 @@ You are continuing the Al-Syed school app remake. This session is prompt **15** 
 - supabase/functions/send-message-push/
 - old src/notifications/*
 
+## Skills and MCPs to use
+Skills: `supabase`, `expo:expo-dev-client`. MCP: Supabase (dev). Finish with `/code-review`. Invoke skills by name (e.g. "use the frontend-design skill"); see `GUIDE.md` §3.
+
 ## Goal
 School/class/student announcements with push on Android and in-app toasts everywhere (web included).
 

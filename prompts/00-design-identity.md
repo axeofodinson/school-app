@@ -1,6 +1,6 @@
 # 00 — Visual identity and motion choreography
 
-**Model:** Fable · **Phase:** 0 · **Depends on:** — · **Blocked by:** —
+**Model:** Opus · **Phase:** 0 · **Depends on:** — · **Blocked by:** —
 
 Paste everything below the line into a new Claude Code session on the `school-app` repo.
 
@@ -14,6 +14,9 @@ You are continuing the Al-Syed school app remake. This session is prompt **00** 
 - ARCHITECTURE.md §6b (motion system)
 - LMS_AUDIT.md §3–4 (principles)
 - old app screens in src/screens/ (what exists, not the style)
+
+## Skills and MCPs to use
+Skills: `frontend-design`, `design:design-system`, `design:ux-copy`, `design:accessibility-review`, `expo:expo-design-system`, `expo:expo-animation`, `artifact-design` (to publish the mockups for Hassan). MCP: Figma (optional). Invoke skills by name (e.g. "use the frontend-design skill"); see `GUIDE.md` §3.
 
 ## Goal
 Design the new look and feel of the whole app (student, teacher, admin), so later sessions build to a spec instead of improvising.
@@ -37,7 +40,7 @@ Design the new look and feel of the whole app (student, teacher, admin), so late
 ## Done when
 - [ ] Every motion moment has a token and a full/lite/off behaviour.
 - [ ] Urdu type sample with line-heights is specified.
-- [ ] Hassan has reviewed the wireframes (ask him to look before you finish).
+- [ ] Hassan has reviewed the wireframes: publish them as a private Artifact (or Figma file if the Figma plugin is on) and ask him to look before you finish.
 - [ ] Type-check, lint and `packages/core` tests pass (once they exist).
 
 ## Finish

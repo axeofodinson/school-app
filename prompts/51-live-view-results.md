@@ -14,6 +14,9 @@ You are continuing the Al-Syed school app remake. This session is prompt **51** 
 - ARCHITECTURE.md §4
 - db/013 record_grade
 
+## Skills and MCPs to use
+Skills: `dataviz` (item-analysis charts), `supabase`. Finish with `/code-review`. Invoke skills by name (e.g. "use the frontend-design skill"); see `GUIDE.md` §3.
+
 ## Goal
 Teachers watch the exam live, see item analysis, and push confirmed results into grades.
 

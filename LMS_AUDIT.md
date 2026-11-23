@@ -70,7 +70,7 @@ Legend: ✅ works as planned · ⚠️ works with changes · ❌ won't work as w
 | 5.2 Separate translation review | ✅ | `item_reviews.translation_ok`; `language_complete` ≠ reviewed. |
 | 5.3 Learn pages, 10-part structure | ✅ | Block types map 1:1 to the 10 parts; optional per subject. |
 | 5.3 Video lectures (YouTube) | ⚠️ | See YouTube row above; online only. |
-| 5.3 Animated explainers | ⚠️ later | **Remotion** (React → MP4, Chrome text shaping, so Nastaliq renders correctly) for most; **Manim** only for heavy math animation (Urdu via Pango text — **unverified**). Render locally (free CPU), upload to YouTube unlisted, 720p ≈ 2–4 MB/min. Phase 9; never a dependency of the core loop. |
+| 5.3 Animated explainers | ⚠️ later | **Blender** driven through the Blender MCP in a local Claude Code session (DECISIONS #31). Blender does not shape Urdu/Nastaliq text, so Urdu captions are rendered as images by Chromium with the bundled font and imported as planes, or overlaid with ffmpeg; **verify first**. Render locally (free), upload to YouTube unlisted, 720p ≈ 2–4 MB/min. Phase 9; never a dependency of the core loop. |
 | 5.3 Alternative explanations | ✅ | `learning_content.kind='alternative'` with `concept_id`. |
 | 5.3 Bulk content format | ✅ | One JSON file per topic: `{topic, concepts[], blocks[], questions[]}` validated by the same Importer schema (DATABASE_DESIGN.md §4). |
 | 5.4 Diagnostic ~30 Q | ✅ | `topics.diagnostic_size` override; engine default 30, capped by available approved items. |

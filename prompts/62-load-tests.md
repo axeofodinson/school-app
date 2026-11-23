@@ -14,6 +14,9 @@ You are continuing the Al-Syed school app remake. This session is prompt **62** 
 - TEST_PLAN L-1…L-3, S-3
 - LMS_AUDIT §6b
 
+## Skills and MCPs to use
+Skills: `engineering:testing-strategy`, `supabase-postgres-best-practices`. MCP: Supabase (dev). Invoke skills by name (e.g. "use the frontend-design skill"); see `GUIDE.md` §3.
+
 ## Goal
 Prove the system holds at school scale within the free tier.
 

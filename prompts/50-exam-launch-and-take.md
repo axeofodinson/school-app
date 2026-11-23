@@ -15,6 +15,9 @@ You are continuing the Al-Syed school app remake. This session is prompt **50** 
 - ARCHITECTURE.md §4
 - LMS_AUDIT §3.2
 
+## Skills and MCPs to use
+Skills: `supabase`, `frontend-design`, `engineering:system-design`. MCP: Supabase (dev). Finish with `/security-review`. Invoke skills by name (e.g. "use the frontend-design skill"); see `GUIDE.md` §3.
+
 ## Goal
 A teacher launches an exam in ≤3 taps from a saved blueprint; students take it with server-owned timing.
 

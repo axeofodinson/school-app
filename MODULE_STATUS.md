@@ -7,7 +7,7 @@ prompts: `prompts/README.md`.
 |---|---|---|---|---|
 | Planning / audit / prompt library | — | ✅ done (all open questions answered) | [OPS update](prompts/OPS-update-prompts.md) | Merge planning branch to `main`; create dev Supabase project |
 | Backups | — | ⏳ | [OPS backup](prompts/OPS-backup.md) | Ready: private GitHub repo |
-| Visual identity + motion choreography | 0 | ⏳ | [00](prompts/00-design-identity.md) (Fable) | **Start here** |
+| Visual identity + motion choreography | 0 | ⏳ | [00](prompts/00-design-identity.md) | **Start here** |
 | App scaffold (`apps/mobile`, `packages/core`) | 0 | ⏳ | [01](prompts/01-scaffold.md) | |
 | Design system + motion tiers | 0 | ⏳ | [02](prompts/02-design-system-motion.md) | |
 | Auth (PIN + QR, shared mode) | 0 | ⏳ | [03](prompts/03-auth.md) | |

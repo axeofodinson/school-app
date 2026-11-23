@@ -1,8 +1,7 @@
 # C1 — Generate topic content from a textbook chapter (import JSON)
 
 **Use in:** a Claude chat (claude.ai), not Claude Code. Attach the chapter
-(PDF pages or photos). One topic per run works best. **Model:** Fable for
-pedagogy-heavy topics, Opus is fine for bulk MCQs.
+(PDF pages or photos). One topic per run works best. **Model:** Opus.
 
 Output goes into the app's Importer (prompt 21), lands as **draft**, and is
 reviewed by a teacher before any student sees it.

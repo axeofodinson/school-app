@@ -15,6 +15,9 @@ You are continuing the Al-Syed school app remake. This session is prompt **72** 
 - STEMP21_COMPARISON.md §5
 - DATABASE_DESIGN.md §6
 
+## Skills and MCPs to use
+Skills: `supabase`, `frontend-design`. MCP: Supabase (dev). Invoke skills by name (e.g. "use the frontend-design skill"); see `GUIDE.md` §3.
+
 ## Goal
 Teachers run hands-on projects with rubrics, teams and evidence, graded into the normal grade book.
 

@@ -14,6 +14,9 @@ You are continuing the Al-Syed school app remake. This session is prompt **61** 
 - LMS_AUDIT §3.3–3.4
 - TEST_PLAN O-1…O-6, S-1
 
+## Skills and MCPs to use
+Skills: `engineering:testing-strategy`, `security-review`. Invoke skills by name (e.g. "use the frontend-design skill"); see `GUIDE.md` §3.
+
 ## Goal
 Every offline case in the plan works and no data leaks between students on a shared Chromebook.
 

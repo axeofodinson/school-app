@@ -15,6 +15,9 @@ You are continuing the Al-Syed school app remake. This session is prompt **31** 
 - DATABASE_DESIGN.md (practice_attempts.items shape)
 - DESIGN_SYSTEM.md feedback motion
 
+## Skills and MCPs to use
+Skills: `engineering:testing-strategy`, `expo:expo-animation`. Finish with `/code-review`. Invoke skills by name (e.g. "use the frontend-design skill"); see `GUIDE.md` §3.
+
 ## Goal
 One engine powering practice, topic drill, smart review and retry-wrong, with explanations of why an answer is right and why the chosen one is wrong.
 

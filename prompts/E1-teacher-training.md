@@ -1,6 +1,6 @@
 # E1 — Extension: teacher training track
 
-**Model:** Opus (Fable for lesson content) · **Phase:** 10 · **Depends on:** 30, 31, 41 · **Blocked by:** —
+**Model:** Opus · **Phase:** 10 · **Depends on:** 30, 31, 41 · **Blocked by:** —
 
 Paste everything below the line into a new Claude Code session on the `school-app` repo.
 
@@ -12,6 +12,9 @@ You are continuing the Al-Syed school app remake. This session is prompt **E1** 
 - `CLAUDE.md` (rules + session protocol)
 - `MODULE_STATUS.md`
 - LMS_AUDIT §10 E1
+
+## Skills and MCPs to use
+Skills: `frontend-design`, `design:ux-copy`. Invoke skills by name (e.g. "use the frontend-design skill"); see `GUIDE.md` §3.
 
 ## Goal
 Teachers learn to run the LMS inside the app and earn a 'ready to run exams' badge.

@@ -14,6 +14,9 @@ You are continuing the Al-Syed school app remake. This session is prompt **E4** 
 - LMS_AUDIT §10 E4
 - db/022 evidence bucket
 
+## Skills and MCPs to use
+Skills: `frontend-design`. Invoke skills by name (e.g. "use the frontend-design skill"); see `GUIDE.md` §3.
+
 ## Goal
 Students submit Scratch `.sb3` files or screenshots plus a short reflection.
 

@@ -15,6 +15,9 @@ You are continuing the Al-Syed school app remake. This session is prompt **03** 
 - old src/auth/AuthProvider.js and src/screens/auth/*
 - LMS_AUDIT.md §3.4 (shared devices)
 
+## Skills and MCPs to use
+Skills: `supabase`, `expo:expo-router`. MCP: Supabase (dev project). Finish with `/security-review` and `/code-review`. Invoke skills by name (e.g. "use the frontend-design skill"); see `GUIDE.md` §3.
+
 ## Goal
 Rebuild login on the new app, reusing the existing backend login design unchanged.
 

@@ -13,6 +13,9 @@ You are continuing the Al-Syed school app remake. This session is prompt **60** 
 - `MODULE_STATUS.md`
 - LMS_AUDIT §3.3 offline exam protocol
 
+## Skills and MCPs to use
+Skills: `engineering:testing-strategy`, `supabase`. Finish with `/security-review`. Invoke skills by name (e.g. "use the frontend-design skill"); see `GUIDE.md` §3.
+
 ## Goal
 Exams that can be taken without a connection, with honest lower integrity.
 

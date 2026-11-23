@@ -15,6 +15,9 @@ You are continuing the Al-Syed school app remake. This session is prompt **05** 
 - CLAUDE.md auth rules
 - LMS_AUDIT §3.5 (relief rules for no-class users)
 
+## Skills and MCPs to use
+Skills: `supabase`. MCP: Supabase (dev project). Finish with `/security-review`. Invoke skills by name (e.g. "use the frontend-design skill"); see `GUIDE.md` §3.
+
 ## Goal
 Play Store buyers sign in with Google and get Preparation only; school logins (admission no + PIN) get everything.
 
