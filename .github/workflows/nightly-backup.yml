@@ -1,0 +1,69 @@
+name: Nightly DB backup
+
+on:
+  schedule:
+    - cron: "30 21 * * *"   # 02:30 Pakistan time (UTC+5), off-peak
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nightly-backup
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      # Match the Supabase server's major version (Dashboard > Settings > Infrastructure).
+      # Override with a repo variable PG_MAJOR if it changes.
+      PG_MAJOR: ${{ vars.PG_MAJOR || '17' }}
+      BACKUP_REPO: ${{ vars.BACKUP_REPO || format('{0}/school-app-backups', github.repository_owner) }}
+      GH_TOKEN: ${{ secrets.BACKUP_REPO_TOKEN }}
+      DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check secrets exist
+        run: |
+          for v in DATABASE_URL GH_TOKEN; do
+            [ -n "${!v}" ] || { echo "::error::secret for $v is missing (see docs/backup-restore.md)"; exit 1; }
+          done
+          echo "::add-mask::$DATABASE_URL"
+
+      - name: Install matching Postgres client + age
+        run: |
+          sudo install -d /usr/share/postgresql-common/pgdg
+          sudo curl -fsSL -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc https://www.postgresql.org/media/keys/ACCC4CF8.asc
+          echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list >/dev/null
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq "postgresql-client-${PG_MAJOR}" age
+          echo "/usr/lib/postgresql/${PG_MAJOR}/bin" >> "$GITHUB_PATH"
+
+      - name: Dump + encrypt
+        run: |
+          set +x
+          echo "STAMP=$(TZ=Asia/Karachi date +%Y%m%d-%H%M)" >> "$GITHUB_ENV"
+          echo "DAY=$(TZ=Asia/Karachi date +%F)" >> "$GITHUB_ENV"
+          echo "DOW=$(TZ=Asia/Karachi date +%u)" >> "$GITHUB_ENV"
+          STAMP="$(TZ=Asia/Karachi date +%Y%m%d-%H%M)" OUT_DIR=out scripts/backup/dump.sh
+
+      - name: Upload as release in backup repo
+        run: |
+          set -euo pipefail
+          file="$(ls out/*.tar.age)"
+          # Daily release (re-runs on the same day replace it).
+          gh release delete "daily-$DAY" --repo "$BACKUP_REPO" --cleanup-tag --yes 2>/dev/null || true
+          gh release create "daily-$DAY" "$file" --repo "$BACKUP_REPO" \
+            --title "Daily backup $DAY" --notes "Encrypted pg_dump (age). See docs/backup-restore.md in the app repo."
+          # Sunday (Pakistan time) also becomes the weekly copy.
+          if [ "$DOW" = "7" ]; then
+            gh release delete "weekly-$DAY" --repo "$BACKUP_REPO" --cleanup-tag --yes 2>/dev/null || true
+            gh release create "weekly-$DAY" "$file" --repo "$BACKUP_REPO" \
+              --title "Weekly backup $DAY" --notes "Weekly copy of the Sunday backup."
+          fi
+
+      - name: Prune (14 daily + 8 weekly)
+        run: scripts/backup/prune.sh

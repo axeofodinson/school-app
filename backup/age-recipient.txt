@@ -1,0 +1,4 @@
+# PLACEHOLDER — replace with Hassan's age PUBLIC key (starts with "age1...").
+# Generate on an offline machine:  age-keygen -o school-backup.key
+# Commit ONLY the "Public key:" line's value. The private key file never
+# goes in git, GitHub, or cloud storage. See docs/backup-restore.md.

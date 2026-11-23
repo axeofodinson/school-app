@@ -65,3 +65,6 @@ Thumbs.db
 .idea/
 .vscode/*
 !.vscode/extensions.json
+
+# Backup scratch output
+out/
