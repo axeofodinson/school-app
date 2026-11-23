@@ -324,7 +324,7 @@ export const urduTextRules = {
   controlsUseMinHeight: true,
   /** Android: avoid top/bottom clipping of tall glyphs. */
   androidIncludeFontPadding: false,
-  /** Digits: Western 0–9 in both languages (maths consistency with textbooks). Open question #Q2. */
+  /** Digits: Western 0–9 in both languages (maths consistency with textbooks). Decided by Hassan (DECISIONS #37). */
   digits: 'western',
   /** Maths, numbers with units and Latin runs are isolated LTR inside RTL text (U+2066 … U+2069). */
   isolateLtrRuns: true,
