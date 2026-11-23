@@ -233,6 +233,7 @@ Each phase = several small Claude sessions; each session ends runnable + verifie
 | 7 | Worksheets (print + interactive), assignments | M | A/B worksheet + key printed on A4 |
 | 8 | Dashboards (student/teacher/admin), parent role, iOS release | M | |
 | 9 | Animated explainers, in-app AI drafting, advanced analytics | L | |
+| 10 | Extensions (added 2026-11-23): teacher training track, challenge tier, real-world/SDG tags, coding & project evidence in assignments | M | See §10 |
 
 Changes vs §8 of the plan: parity phase inserted; seed moved into Phase 0 with the scaffold; offline/sync is designed in Phase 0 (queue in `packages/core`) and only hardened in 6; worksheets after exams.
 
@@ -312,3 +313,16 @@ Scale tests: 40 concurrent exam sessions (k6/node script calling the RPCs with r
 ## 9. STEMP21 Pakistan (added 2026-11-23)
 
 STEMP21 offered a Grades 1–8 STEM curriculum, a lab and kits, teacher training and a project-assessment app. Public material describes a teacher/admin project-assessment app, not a full student LMS, so their LMS features are unconfirmed. **Decision:** take their content, kits and training; run STEM projects inside our LMS through a generic projects module (`db/022_stem_projects.sql`, Phase 7, dry-run verified). Full comparison, verdict and demo checklist: `STEMP21_COMPARISON.md`.
+
+---
+
+## 10. Extensions (decided 2026-11-23, built last)
+
+Built after the core rebuild (Phases 0–9). Each reuses existing modules; none needs a new engine.
+
+| # | Extension | Reuses | Schema (future migration `023_extensions.sql`) |
+|---|---|---|---|
+| E1 | **Teacher training track.** 2–3 min bilingual lessons on running the LMS (surprise exam, review queue, weak-topics view), quick checks, and a "ready to run exams" badge; admin sees who has completed it | Learn renderer, practice engine, `concept_mastery` (teachers are learners too: learner_id = profiles.id) | `learning_content.audience` (`student`/`teacher`); a staff-only "LMS training" curriculum subtree |
+| E2 | **Challenge tier after mastery.** Optional harder "apply it" questions or mini-tasks unlocked once a concept is mastered; never affects gates; counts as evidence of applying knowledge in unfamiliar contexts (§5.12 measure 4) | Question bank, practice engine, mastery evidence | `questions.tier` (`core`/`challenge`); `practice_attempts.kind` gains `challenge` |
+| E3 | **Real-world / SDG tags** on lessons and projects, so teachers find cross-subject links and plan projects | Learn blocks, projects (`db/022` already has `sdg_theme`) | `topics.sdg_themes smallint[]`, `learning_content` block field `sdg` |
+| E4 | **Coding and project evidence in assignments.** Accept a Scratch `.sb3` file or screenshot plus a short reflection ("what did you build, what went wrong") | File-upload assignments (`db/014`), project evidence bucket (`db/022`) | allow `.sb3` MIME in upload checks; reflection in `submissions.responses` |

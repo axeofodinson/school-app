@@ -71,5 +71,29 @@ unit-tested in Node, the same habit as today's `scripts/verify-*.mjs`.
 - Video: YouTube unlisted (iframe on web, WebView on native). Online only.
 - Print: HTML → A4 (web print / `expo-print`).
 
+## 6b. Motion system (decided 2026-11-23)
+
+Goal: a distinctly polished, alive UI that stays fast on 4 GB Chromebooks.
+
+**Libraries**
+- **Reanimated 3 + Moti** for everything in the app. They run on Android, iOS and web, and animations run on the UI thread, not the JS thread. Reanimated is already a dependency (`react-native-reanimated ~3.10.1`). Gestures use `react-native-gesture-handler`.
+- **Motion (motion.dev)**: allowed **only** in web-only teacher/admin screens (`*.web.tsx`), and only if Moti can't do the job.
+- **anime.js: not used.** It is DOM-only and duplicates Motion.
+- **Lottie** (bundled JSON, no CDN) only for a few celebration and empty-state illustrations.
+
+**Rules**
+1. **Tokens, not ad-hoc values.** A `ui/motion.ts` file defines durations (fast 120 ms / base 220 ms / slow 360 ms) and spring presets (gentle, snappy, bouncy). Components use only these.
+2. **Animate only transform and opacity.** Never animate layout properties (width, height, top, margin) on lists.
+3. **Three motion tiers,** chosen automatically from device RAM and frame-drop sampling, overridable in settings:
+   - **full:** springs, shared-element transitions, parallax, mastery-ring fills, confetti.
+   - **lite:** short fades and slides only. This is the default on low-memory devices.
+   - **off:** for users whose system has "reduce motion" switched on.
+4. **Exams use minimal motion in every tier.** Nothing moves while a student is answering, apart from the timer and save indicator.
+5. **Motion carries meaning.** Correct and incorrect feedback, mastery progress, follow-up cleared, sync status, screen hierarchy. No decorative loops on study screens.
+6. **RTL-aware.** Slide directions flip with the language.
+7. **Budget:** 60 fps on a mid-range phone, no dropped frames during screen transitions on the reference Chromebook in lite tier (TEST_PLAN P-4/P-6).
+
+**Who does what:** the visual identity and motion choreography (how things look and feel) is taste-heavy work. CLAUDE.md assigns that to **Fable** in a dedicated design session at the start of Phase 0. The tokens, tiers and performance plumbing are engineering work.
+
 ## 7. Free-tier guardrails
 Compact attempts, rollups for dashboards, cached content, Realtime only on screens that need it, upload size caps, scheduled `pg_dump` backup, yearly archive of raw attempts. Numbers in `LMS_AUDIT.md` §6b.

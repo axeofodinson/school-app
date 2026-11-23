@@ -2,6 +2,11 @@
 
 Newest first. Each: decision — reason — who/when.
 
+## 2026-11-23 — extensions and motion
+
+20. **Four extensions adopted, built last (Phase 10):** teacher training track, challenge tier after mastery, real-world/SDG tags, coding and project evidence in assignments. They reuse existing modules, so the core rebuild comes first. Details: `LMS_AUDIT.md` §10.
+21. **High-polish, motion-rich UI** (this replaces the "light gamification / no decorative animation" part of decision 3). It uses **Reanimated 3 + Moti** because they work on Android, iOS and web. Motion and anime.js are DOM-only, so they can't animate the Android app that students use on Chromebooks. Motion is allowed only in web-only teacher screens, and anime.js is not used. The cheap-Chromebook budget is protected by full/lite/off motion tiers and minimal motion in exams. Spec: `ARCHITECTURE.md` §6b. Visual identity design runs on Fable, as CLAUDE.md requires.
+
 ## 2026-11-23 — STEMP21 offer
 
 19. **No STEMP21 integration planned; original build order stands.** STEMP21's software appears to be teacher-facing (Training LMS + project grading), with Scratch-based content; it does not overlap the student LMS. `db/022` stays as an optional Phase 7 module for the school's own projects. Revisit if Hassan shares more (demo, contract terms).
@@ -12,7 +17,7 @@ Newest first. Each: decision — reason — who/when.
 
 1. **Full remake of app and UI; backend kept.** Existing data, RLS, student login and grade audit are sound and hold real school records; the UI/navigation are phone-only and untyped.
 2. **One Expo + TypeScript + expo-router codebase** for Android, iOS, web/PWA. Least duplicated work; Android APK covers Chromebooks (Play Store allowed), web covers Windows teachers.
-3. **Clean calm UI, light gamification; quest/pixel style dropped.** Cheap Chromebooks and "measure learning, not activity".
+3. **Clean calm UI, light gamification; quest/pixel style dropped.** *(Motion part superseded by #21.)* Cheap Chromebooks and "measure learning, not activity".
 4. **Parity first (assessments, file uploads, grading), then LMS.** Lets the old app be retired flow by flow.
 5. **New code in `apps/mobile` + `packages/core` in this repo.** Keeps migration history; old `src/` until cut-over.
 6. **Supabase free tier.** Drives compact attempts, rollups, caching, YouTube for video, scheduled `pg_dump` backups.

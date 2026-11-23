@@ -23,6 +23,11 @@ Last updated: 2026-11-23. Update at the end of every session.
 | STEM projects (rubrics, teams, evidence) | 7 | 📝 `db/022` draft, dry-run verified | assessments, 017 concepts | STEMP21 licence answer (`LMS_AUDIT.md` §7.9) |
 | Dashboards, parents, iOS | 8 | ⏳ | mastery, exams | |
 | Animated explainers, in-app AI | 9 | ⏳ | — | |
+| Motion system (tokens, tiers, Reanimated + Moti) | 0 | ⏳ | scaffold | Fable design session for visual identity |
+| E1 Teacher training track | 10 | ⏳ | Learn, mastery | |
+| E2 Challenge tier after mastery | 10 | ⏳ | mastery | |
+| E3 Real-world / SDG tags | 10 | ⏳ | Learn | |
+| E4 Coding & project evidence in assignments | 10 | ⏳ | assignments, `db/022` | |
 
 **Old app (`src/`) flows not yet scheduled for the remake:** attendance,
 messaging/push, PG pre-reader — see `LMS_AUDIT.md` §7.1.

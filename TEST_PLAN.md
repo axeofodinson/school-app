@@ -39,6 +39,7 @@ O-1 … O-6 = the six cases in `LMS_AUDIT.md` §3.3, each scripted: airplane-mod
 - P-2 Chromebook (APK): window resize, landscape, keyboard Tab/Enter, mouse, file picker, push, Urdu rendering.
 - P-3 Windows Chrome/Edge (web): login, teacher console, print A4.
 - P-4 Performance on cheapest Chromebook: cold start < 5 s, question switch < 150 ms, Urdu screen scroll without jank.
+- P-6 Motion: each tier (full/lite/off) on reference phone and Chromebook. Record frame drops during screen transitions and mastery animations (Perf Monitor / Chrome performance panel). The OS "reduce motion" setting forces the off tier. Exam screens show no animation apart from the timer and save indicator. Slide directions flip in Urdu.
 - P-5 YouTube unlisted embed on lab Wi-Fi: Android, Chromebook, Windows.
 
 ## Security
