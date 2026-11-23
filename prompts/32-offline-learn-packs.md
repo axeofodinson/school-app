@@ -1,6 +1,6 @@
 # 32 — Offline Learn and question packs
 
-**Model:** Opus · **Phase:** 3 · **Depends on:** 30, 31 · **Blocked by:** —
+**Model:** Opus · **Phase:** 3 · **Depends on:** 30, 31, 33 · **Blocked by:** —
 
 Paste everything below the line into a new Claude Code session on the `school-app` repo.
 
@@ -18,7 +18,7 @@ You are continuing the Al-Syed school app remake. This session is prompt **32** 
 Skills: `expo:expo-data-fetching`, `engineering:testing-strategy`. Invoke skills by name (e.g. "use the frontend-design skill"); see `GUIDE.md` §3.
 
 ## Goal
-Download a chapter (lessons + approved practice items + images) to use without internet.
+Download a chapter (lessons including all visual blocks: scenes, charts, widgets, figures; approved practice items; images) to use without internet. Video stays online-only; its scene fallback is in the pack. Measure and report pack size per chapter.
 
 ## Do
 - Pack builder RPC/endpoint returning versioned content for a chapter; client cache (FileSystem native / IndexedDB web) keyed by (id, version); delta refresh by updated_at; storage usage + delete pack UI.

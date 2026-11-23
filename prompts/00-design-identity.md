@@ -35,7 +35,7 @@ Design the new look and feel of the whole app (student, teacher, admin), so late
 
 ## Deliverables
 - `DESIGN_SYSTEM.md` (identity, components list, screen wireframes, motion choreography table)
-- `apps/mobile/ui/tokens.draft.ts` (or inside DESIGN_SYSTEM.md if the app folder doesn't exist yet)
+- `apps/mobile/ui/tokens.draft.ts` (if the app folder doesn't exist yet: `docs/design/tokens.draft.ts`, checked by `scripts/verify-design-tokens.mjs`; done this way on 2026-11-23)
 
 ## Done when
 - [ ] Every motion moment has a token and a full/lite/off behaviour.

@@ -18,11 +18,17 @@ You are writing learning content for Al-Syed High School (Punjab, Pakistan; Punj
 Split the topic into 3–6 **concepts**, the smallest teachable ideas a student can be weak at (e.g. "Solving a linear equation with variables on both sides"). Give each a key (`c1`, `c2`…), an English and an Urdu title, and list prerequisite concept keys (inside this topic or described in words for earlier chapters).
 
 ### Step 2: lesson blocks
-Write the lesson as blocks. Use these types and skip any that don't fit the subject: `objectives, intro, simple, detailed, visual, worked_example, misconception, quick_check, application, summary`. Each block has `concept_id` = a concept key (or null), and `en` and `ur` text in Markdown.
+Write the lesson **visual-first**: every concept gets at least one visual block, and text explains the visual rather than the other way round. Text block types: `objectives, intro, simple, detailed, worked_example, misconception, quick_check, application, summary`, each with `concept_id` = a concept key (or null), and `en` and `ur` text in Markdown. Visual block types (exact shapes in DATABASE_DESIGN.md §4, style in DESIGN_SYSTEM.md §7b.3):
+- `scene`: a step-through animation. Write one SVG (viewBox, ≤ 400 elements) with a `<g id="…">` per moving part, then 2–8 steps that set each layer's x, y, scale, rotate, opacity, with a short caption per step in both languages. Use this for anything that *changes*: motion, processes, carrying digits, a reaction.
+- `chart`: data for a bar/line/pie/scatter chart or table (real numbers from the book).
+- `widget`: pick one from `number_line, fraction_bars, function_graph, geometry_shape, angle, balance, probability, motion_graph, circuit` and give its params and a task ("Make the line steeper. What changed?").
+- `figure`: a labelled SVG with hotspots. `compare`: wrong idea vs right idea side by side.
+- Add a `predict` question (a normal MCQ) before at least one scene or widget per topic.
+- Diagram style: 2 px strokes in ink `#1B1A3A`; indigo `#4434D4` = the quantity in focus, saffron `#FFB627` = highlight (fill with ink outline), green `#11865B` = result, clay `#C2412D` = wrong idea, grey `#77729A` = axes and guides. Every label is its own `<text id="…">` (no text in images). No scripts, no external links, no embedded images.
+- Every visual block has `alt` in `en` and `ur`.
 - `simple` = explain like to a 12-year-old; `detailed` = board-exam depth.
 - At least 2 `worked_example` blocks with every step shown and the reason for each step.
 - At least 2 `misconception` blocks: the common wrong idea, why it feels right, and why it's wrong.
-- `visual`: describe the diagram precisely, or give simple SVG.
 - One `alternative` explanation per concept (different angle: analogy, visual, or step-by-step walkthrough of the common mistake).
 - Math in LaTeX between `$…$`.
 

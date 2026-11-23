@@ -53,6 +53,7 @@ src/, App.js        OLD app (frozen)
 | `DATABASE_DESIGN.md` | tables, constraints, JSON shapes, migration plan | any schema change |
 | `DECISIONS.md` | decisions + reasons, newest first | any non-trivial choice |
 | `MODULE_STATUS.md` | progress per module | **end of every session** |
+| `DESIGN_SYSTEM.md` | look, type (EN + Urdu), presentations, components, motion choreography, wireframes; draft tokens in `docs/design/tokens.draft.ts` | a visual or motion choice changes |
 | `TEST_PLAN.md` | how things are verified | new test or harness |
 | `STEMP21_COMPARISON.md` | vendor comparison (no integration planned) | Hassan shares more |
 | `GUIDE.md` | Hassan's step-by-step guide: setup, skills, MCPs, workflow | tooling or workflow changes |

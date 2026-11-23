@@ -44,7 +44,7 @@ Deferred: parents (81) and iOS (82).
 
 | ✓ | Prompt | Model | Depends on | Blocked by | Notes |
 |---|---|---|---|---|---|
-| [ ] | [00 Visual identity and motion choreography](00-design-identity.md) | Opus | — | — | |
+| [x] | [00 Visual identity and motion choreography](00-design-identity.md) | Opus | — | — | 2026-11-23: DESIGN_SYSTEM.md v0.2 "Mosaic" + docs/design/tokens.draft.ts (AA-verified); wireframe canvas redrawn after Hassan found v0.1 plain; **Hassan's review + Q1–Q5 still open** |
 | [ ] | [01 App scaffold: Expo + TypeScript + expo-router + web](01-scaffold.md) | Opus | 00 (tokens can follow later) | — | |
 | [ ] | [02 Design system and motion foundation](02-design-system-motion.md) | Opus | 00, 01 | — | |
 | [ ] | [03 Login: students (admission no + PIN, QR) and staff](03-auth.md) | Opus | 01, 02 | — | |
@@ -82,7 +82,8 @@ Deferred: parents (81) and iOS (82).
 |---|---|---|---|---|---|
 | [ ] | [30 Learn: lesson reader](30-learn-renderer.md) | Opus | 22 | — | |
 | [ ] | [31 Practice engine (port prep.html ideas)](31-practice-engine.md) | Opus | 22 | — | |
-| [ ] | [32 Offline Learn and question packs](32-offline-learn-packs.md) | Opus | 30, 31 | — | |
+| [ ] | [33 Visual blocks: scenes, charts, widgets](33-visual-blocks.md) | Opus | 30 | — | Visual-first lessons (DECISIONS #36) |
+| [ ] | [32 Offline Learn and question packs](32-offline-learn-packs.md) | Opus | 30, 31, 33 | — | |
 
 ### Phase 4 — Mastery loop
 
@@ -148,6 +149,8 @@ Deferred: parents (81) and iOS (82).
 | — | [C1 Generate topic content](C1-generate-topic-content.md) | Opus (claude.ai chat) | From Phase 2 on, one topic at a time (pilot: Class 9 Math/Science) |
 
 ## Changelog
+- 2026-11-23: visual-first lessons (DECISIONS #36): new prompt 33 (scenes, charts, widgets); 30, 32, 21, C1, 90 updated to the visual block format.
+- 2026-11-23: 00 done (pending review). 02 now reads tokens from `docs/design/tokens.draft.ts` and ports `scripts/verify-design-tokens.mjs` checks into `packages/core` tests.
 - 2026-11-23: Fable dropped (all Opus). Every prompt now lists the skills/MCPs to use. 90 switched to Blender via the Blender MCP (local). Added GUIDE.md.
 - 2026-11-23: library created (35 build prompts + C1, C2, OPS-backup, OPS-update-prompts) from LMS_AUDIT build order + Phase 10 extensions + motion system.
 - 2026-11-23: open questions answered (DECISIONS #22–29). Added 05 Google sign-in/prep-only tier, Phase 1b (14 attendance, 15 messaging + push, 16 pre-reader), OPS-remove-legacy; OPS-backup → private GitHub repo; 22/40/62 unblocked; 81 parents and 82 iOS deferred.

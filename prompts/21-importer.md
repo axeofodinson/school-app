@@ -22,7 +22,7 @@ Skills: `engineering:testing-strategy`. Finish with `/code-review`. Invoke skill
 Hassan (or a teacher) uploads one topic JSON file and gets a clear report; valid items land as drafts.
 
 ## Do
-- `packages/core/importer`: schema validation (zod), exactly one correct key present in options, cognitive_level + concept present, en+ur presence (warning, not pass), difficulty 1–3, duplicate detection (normalised stem hash + trigram similarity against the bank), LaTeX → SVG pre-render (bundled MathJax/KaTeX in Node or in the browser).
+- `packages/core/importer`: schema validation (zod), exactly one correct key present in options, cognitive_level + concept present, en+ur presence (warning, not pass), difficulty 1–3, duplicate detection (normalised stem hash + trigram similarity against the bank), LaTeX → SVG pre-render (bundled MathJax/KaTeX in Node or in the browser), and the visual-block checks in DATABASE_DESIGN.md §4 (alt + captions required, SVG sanitised and within `visualBudget`, scene layer ids exist, widget in catalogue). Reuse `packages/core/visuals` if prompt 33 has built it; otherwise build the sanitiser here and 33 reuses it.
 - Upload screen (web): drop a file → dry-run report (errors, warnings, duplicates) → confirm import → `import_batches` row + drafts (origin=ai or human).
 - Retire a whole batch.
 

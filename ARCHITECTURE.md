@@ -30,7 +30,7 @@ Targets from one codebase:
 | Identity & Roster | auth, shared-device mode | session namespace | profiles, students, enrollments, teacher_assignments |
 | Curriculum | editors | tree utils | curricula, chapters, topics, concepts, concept_prerequisites |
 | Question Bank + Review | importer UI, review queue | importer validator, dedupe | questions, question_versions, item_approvals, item_reviews, import_batches |
-| Learning | lesson reader | block schema | learning_content(+_versions) |
+| Learning | lesson reader, visual blocks (scene, chart, widget, figure, compare, video) | block schema, SVG sanitiser, safe maths parser (`packages/core/visuals`) | learning_content(+_versions) |
 | Practice | practice/diagnostic screens | item selection, scoring | practice_attempts |
 | Mastery | Prepare tab, follow-ups | mastery rule, relief rule, revision schedule | concept_mastery, follow_ups, gate_overrides |
 | Examinations | teacher launch, live view, student exam | paper/shuffle, timer display | assessments, exam_sessions, exam_session_answers, exam_events |
@@ -86,7 +86,7 @@ Goal: a distinctly polished, alive UI that stays fast on 4 GB Chromebooks.
 1. **Tokens, not ad-hoc values.** A `ui/motion.ts` file defines durations (fast 120 ms / base 220 ms / slow 360 ms) and spring presets (gentle, snappy, bouncy). Components use only these.
 2. **Animate only transform and opacity.** Never animate layout properties (width, height, top, margin) on lists.
 3. **Three motion tiers,** chosen automatically from device RAM and frame-drop sampling, overridable in settings:
-   - **full:** springs, shared-element transitions, parallax, mastery-ring fills, confetti.
+   - **full:** springs, sticker presses, mosaic tiles setting, one celebration burst. (Parallax and shared-element transitions are not used: DECISIONS #33. The per-moment choreography is `DESIGN_SYSTEM.md` §6.)
    - **lite:** short fades and slides only. This is the default on low-memory devices.
    - **off:** for users whose system has "reduce motion" switched on.
 4. **Exams use minimal motion in every tier.** Nothing moves while a student is answering, apart from the timer and save indicator.

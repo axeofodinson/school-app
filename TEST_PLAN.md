@@ -23,6 +23,14 @@ Result on 2026-11-23: all pass (see `LMS_AUDIT.md` §5.3).
 
 **DB-3 Answer-key leak.** As a student: `select answer from questions` must return 0 rows after 018; exam paper from `start_exam_session` must not contain `correct`.
 
+## Design system (session 00 on)
+- **DS-1 Token checks** (runs now, no app needed): `node --experimental-strip-types scripts/verify-design-tokens.mjs`. WCAG AA for every declared colour pair in light and dark, every motion moment has full/lite/off with `off` = no motion, lite = fades only, exam mode resolves everything except timer + save indicator to none, tier picker and presentation rules, Urdu line-height ratio ≥ 1.9. Also: ink text on all 8 subject hues ≥ 4.5 in both themes, `hueForSubject` stable. Result 2026-11-23 (v0.2): 48/48 pairs pass, 8/8 hues pass, all checks pass. Session 02 ports these into `packages/core` tests.
+- **T-1 Urdu type specimen** (unverified): render `urduSpecimens` at every type step on an Android phone, a school Chromebook (APK) and Chrome on Windows. Pass = no clipped marks in buttons, tabs, chips, timer bar; wraps cleanly. Fix line-heights in tokens only.
+- **T-2 Tabular digits**: exam timer digits don't shift width in Nunito on Android and web.
+- **T-3 Text at 200 %**: system font size 200 % on Android and browser zoom 200 %: no clipped text, no horizontal scroll, Urdu included.
+- **V-1 Lesson visuals** (prompt 33): sample scene, chart and widget on the reference Chromebook (APK) and Chrome: 60 fps in full tier (Chrome performance panel / Perf Monitor), lite cross-fades only, off has no autoplay; offline pack plays all but video; "Text version" reads every caption; Urdu captions don't clip; SVG sanitiser rejects `<script>`, event attributes, `foreignObject`, external `href`.
+- **A-1 Screen readers**: TalkBack (Android/ChromeOS) and NVDA (web): login, practice question + feedback, exam question + timer + submit, mastery ring label.
+
 ## Functional (per phase, `packages/core` unit tests in Node)
 - F-1 Scoring per item type; mastery rule; relief rule (N rounds, exhausted pool); revision scheduling (7/30 d).
 - F-2 Follow-up merge: repeated wrong answers and stacked exams → one open follow-up per concept/kind.
