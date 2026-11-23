@@ -1,6 +1,6 @@
 # 81 — Parent role
 
-**Model:** Opus · **Phase:** 8 · **Depends on:** 80 · **Blocked by:** LMS_AUDIT §7 Q4 (who issues parent logins, what they see)
+**Model:** Opus · **Phase:** 8 · **Depends on:** 80 · **Blocked by:** DEFERRED: parent features will be redesigned later (DECISIONS #25)
 
 Paste everything below the line into a new Claude Code session on the `school-app` repo.
 

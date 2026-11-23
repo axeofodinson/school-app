@@ -23,6 +23,7 @@ Rebuild login on the new app, reusing the existing backend login design unchange
 - QR card login: scanning fills the admission number only (camera on Android, webcam on web if available, manual entry fallback). Add a printable QR card generator for admins (A4 sheet, name + admission no + QR, no PIN).
 - Shared-device mode (admin toggle per device): no remembered session, 10-min idle logout, big 'Switch student' button, per-user storage namespace in packages/core; logout wipes the namespace except unsynced queue (keep the namespace isolated).
 - Session storage: SecureStore on native, localStorage on web.
+- Leave a clear extension point for prompt 05 (Google sign-in, prep-only tier); don't build it here.
 
 ## Don't
 - Don't change the auth backend or create email accounts for students.

@@ -1,6 +1,6 @@
 # 04 — Synthetic data at school scale (656 students)
 
-**Model:** Opus · **Phase:** 0 · **Depends on:** 01 · **Blocked by:** LMS_AUDIT §7 Q7 (dev Supabase project). Without it, seed the local harness DB only.
+**Model:** Opus · **Phase:** 0 · **Depends on:** 01 · **Blocked by:** Hassan creating the dev Supabase project + adding its URL/anon/service keys to the environment (decided: DECISIONS #27). Until then, seed the local harness DB only.
 
 Paste everything below the line into a new Claude Code session on the `school-app` repo.
 

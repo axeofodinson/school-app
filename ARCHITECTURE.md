@@ -20,7 +20,7 @@ school-app/
 
 Targets from one codebase:
 - **Android APK/AAB** → phones and Chromebooks (Play Store).
-- **iOS** → later (Phase 8).
+- **iOS** → not planned for now (DECISIONS #24).
 - **Web/PWA** → Windows teachers/admin, Chromebook fallback.
 
 ## 2. Modules (folders, not services)
@@ -45,6 +45,7 @@ decides anything (score, mastery, gate, relief) lives in `packages/core` and is
 unit-tested in Node, the same habit as today's `scripts/verify-*.mjs`.
 
 ## 3. Security
+- **Access tiers** (`profiles.access_tier`): `school` (admission no + PIN, or staff) gets everything their role allows; `prep_only` (Google sign-in, Play Store buyers) gets Preparation only. RLS enforces it; the UI hides the rest.
 - RLS is the boundary (CLAUDE.md rule 4). Every new table has RLS on.
 - Students never read answer keys for exam items: exam papers come from
   `start_exam_session()` (security definer, strips answers). Practice items are

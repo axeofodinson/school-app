@@ -1,6 +1,6 @@
 # 82 — iOS release
 
-**Model:** Opus · **Phase:** 8 · **Depends on:** 13 · **Blocked by:** LMS_AUDIT §7 Q3 (Apple account, pricing)
+**Model:** Opus · **Phase:** 8 · **Depends on:** 13 · **Blocked by:** DEFERRED: no iOS for now (DECISIONS #24)
 
 Paste everything below the line into a new Claude Code session on the `school-app` repo.
 

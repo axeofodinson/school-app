@@ -1,6 +1,6 @@
 # 62 — Scale and free-tier tests
 
-**Model:** Opus · **Phase:** 6 · **Depends on:** 04, 50 · **Blocked by:** Dev project (LMS_AUDIT §7 Q7)
+**Model:** Opus · **Phase:** 6 · **Depends on:** 04, 50 · **Blocked by:** Dev Supabase project created by Hassan (DECISIONS #27)
 
 Paste everything below the line into a new Claude Code session on the `school-app` repo.
 

@@ -178,7 +178,7 @@ Printable (A4, sets A/B, key) + interactive (same item renderer), both from appr
 6. **Bad internet is normal.** Nothing a student does is lost; sync status is always visible.
 7. **Paper is a first-class output.**
 8. **Only teacher-approved content in exams,** approval per use and per version.
-9. **Fast on a 4 GB Chromebook.** One calm design, no decorative animation.
+9. **Fast on a 4 GB Chromebook.** One polished design; motion is purposeful and tiered (full/lite/off), never on exam screens.
 10. **Measure learning, not activity.** Show mastery bands and retention, not raw counts or false precision.
 11. **History is never rewritten.** Attempts, exams and grades reference immutable versions; corrections are audited.
 12. **The server decides exams.** Clocks, acceptance and grades are server-side; the client timer is display only.
@@ -225,13 +225,14 @@ Each phase = several small Claude sessions; each session ends runnable + verifie
 |---|---|---|---|
 | 0 | Foundations: `apps/mobile` (Expo latest, TS, expo-router, web/PWA), `packages/core`, design system (light/dark, RTL, Nastaliq web), auth (PIN + QR, shared mode), generated DB types, CI running core tests, seed script | M | Login works on Android, Chromebook (APK), Windows (web) |
 | 1 | Parity: assessments, attempts, file uploads, grading with audit; close the answer-key hole; retire those flows in the old app | M | Teachers use new console on Windows; old app not needed for these |
+| 1b | Rebuild attendance, messaging + push, pre-reader; Google sign-in prep-only tier (prompt 05) before the paid release | M | Old app can be retired completely |
 | 2 | Curriculum + bank: run 017, topic/concept editors, Importer (JSON → draft, validation report), Review screen with keyboard shortcuts, approvals | L | 1 Class 9 Math chapter imported and approved |
 | 3 | Learn renderer (blocks, SVG math, diagrams, YouTube), basic practice, offline Learn packs | L | Pilot chapter learnable offline on a Chromebook |
 | 4 | Diagnose → follow-ups → mastery → gates + relief → spaced revision | L | Full loop on pilot chapter with seed data |
 | 5 | Online teacher exams, live view, item analysis, exam follow-ups, confirm-to-grades | L | 40-student simulated exam passes |
 | 6 | Offline exams, sync hardening, shared-device hardening, load tests | M | All §3.3 cases pass in TEST_PLAN |
 | 7 | Worksheets (print + interactive), assignments | M | A/B worksheet + key printed on A4 |
-| 8 | Dashboards (student/teacher/admin), parent role, iOS release | M | |
+| 8 | Dashboards (student/teacher/admin). Parent role and iOS deferred (#24, #25) | M | |
 | 9 | Animated explainers, in-app AI drafting, advanced analytics | L | |
 | 10 | Extensions (added 2026-11-23): teacher training track, challenge tier, real-world/SDG tags, coding & project evidence in assignments | M | See §10 |
 
@@ -259,19 +260,19 @@ Scale tests: 40 concurrent exam sessions (k6/node script calling the RPCs with r
 
 ---
 
-## 7. Open questions (only Hassan can answer)
+## 7. Open questions: all answered 2026-11-23 (see DECISIONS #22–29)
 
-1. **Attendance, messaging/push, PG pre-reader** were not chosen as parity. Keep the old app running for them, or rebuild them, and in which phase?
-2. **Play Store (non-enrolled) users' login:** CLAUDE.md forbids children creating email/password accounts. How should a Rs 150 buyer sign in — Google sign-in, a code issued at purchase, or anonymous + device-bound? Who is the "school" for them (no teacher, no class)?
-3. **iOS:** Apple Developer account ($99/yr) — who holds it? Paid apps on iOS need Apple's in-app purchase rules; decide if iOS is free/enrolled-only.
-4. **Parents:** who issues parent logins, and what may they see (attendance, grades, mastery, exams)?
-5. **Backups:** OK to add a GitHub Action `pg_dump` to a private location? Where?
-6. **Pilot thresholds:** mastery rule (proposed 80 % over last 5 distinct incl. a hard + unseen item) and relief N (proposed 3 rounds) — accept as starting values?
-7. **Dev Supabase project:** may we create a second free project for seed/scale tests (free tier allows 2)?
-8. **Who reviews Urdu?** Named teachers per subject for translation review.
-9. **STEMP21** (see `STEMP21_COMPARISON.md`): written licence to load their projects/rubrics into our app? Do they require their own app for the benefits? Score export (CSV/API)? Student-data sharing terms? Demo logins for a teacher and a student?
-
----
+| Q | Question | Answer |
+|---|---|---|
+| 1 | Attendance, messaging, pre-reader | Rebuilt right after parity (Phase 1b, prompts 14–16). Legacy code **and** data may be hard-deleted when they get in the way (#22). |
+| 2 | Play Store buyers' login | Google sign-in = Preparation only; school login = everything (#23, prompt 05). |
+| 3 | iOS | Not for now; Android + Windows/ChromeOS first (#24). |
+| 4 | Parents | Deferred; redesigned later (#25). |
+| 5 | Backups | Encrypted nightly dumps in a private GitHub repo (#29). |
+| 6 | Mastery thresholds | 80 % / last 5 distinct / ≥1 hard + ≥1 unseen / relief after 3 rounds; tune later (#26). |
+| 7 | Dev Supabase project | Yes, Hassan creates it (#27). |
+| 8 | Urdu reviewers | Each subject's teachers (#28). |
+| 9 | STEMP21 licence/data | Not applicable: no integration (#19). |
 
 ## 8. Verdict on the merged refinements
 

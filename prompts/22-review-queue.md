@@ -1,6 +1,6 @@
 # 22 — Teacher review queue: approve / edit / reject
 
-**Model:** Opus · **Phase:** 2 · **Depends on:** 21 · **Blocked by:** LMS_AUDIT §7 Q8 (who reviews Urdu)
+**Model:** Opus · **Phase:** 2 · **Depends on:** 21 · **Blocked by:** —  (decided: each subject's teachers review Urdu, DECISIONS #28)
 
 Paste everything below the line into a new Claude Code session on the `school-app` repo.
 

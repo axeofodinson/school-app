@@ -12,7 +12,7 @@ three surfaces:
 - **Student app**: Learn → Practice → Diagnose → Follow-ups, exams, worksheets,
   assignments, results. The product.
 - **Teacher / admin console**: classes, content, review, exams, grading.
-- **Parent view** (later).
+- **Parent view** (deferred; to be redesigned later).
 
 The app is being **remade from scratch** (new code, new UI). The backend and its
 data are **kept and extended**. The old app in `src/` + `App.js` is frozen.
@@ -26,8 +26,8 @@ PCs. Internet is unreliable. Expect up to 40 students in one live exam.
 - **Backend:** Supabase **free tier** (Postgres + Auth + RLS + Storage +
   Realtime + Edge Functions). Staying free is a requirement.
 - **App:** Expo (latest stable SDK) + **TypeScript** + **expo-router**. One
-  codebase → Android (phones + Chromebooks via Play Store), iOS (later), and
-  **web/PWA** (Windows teachers, Chromebook fallback).
+  codebase → **Android** (phones + Chromebooks via Play Store) and **web/PWA**
+  (Windows teachers, Chromebook fallback). **No iOS for now** (DECISIONS #24).
 - **Motion:** Reanimated 3 + Moti (see Motion rules below).
 - **No CDN dependencies.** The school network blocks some. Bundle fonts, math,
   Lottie files, everything.
@@ -55,6 +55,7 @@ src/, App.js        OLD app (frozen)
 | `MODULE_STATUS.md` | progress per module | **end of every session** |
 | `TEST_PLAN.md` | how things are verified | new test or harness |
 | `STEMP21_COMPARISON.md` | vendor comparison (no integration planned) | Hassan shares more |
+| `docs/environment.md` | cloud env, network, EAS, dev Supabase project | env changes |
 | `prompts/README.md` | session order + status | **end of every session** |
 
 ## Non-negotiable architecture rules
@@ -68,7 +69,10 @@ src/, App.js        OLD app (frozen)
 3. **Never hard-delete anything with consequences.** Use status flags
    (`retired`, `withdrawn`, `void`…). Keep raw responses, not only scores. Audit
    anything touching marks or money (`record_grade()` is the only grade
-   write path).
+   write path). **Legacy exception (DECISIONS #22):** old-app code and data
+   created by the old app may be hard-deleted, but only through prompt
+   `OPS-remove-legacy`: an explicit migration Hassan runs after a same-day
+   verified backup, logged in DECISIONS. Never for data the new app writes.
 4. **RLS is the security boundary.** Roles: developer / admin / teacher /
    student / parent / pending. App-side checks are convenience only. A teacher
    must be unable to read a class they don't teach even if the UI is wrong.
@@ -118,9 +122,12 @@ src/, App.js        OLD app (frozen)
   (e.g. "No classes yet. Add one first").
 - **Offline tolerance.** Never freeze on a dropped request; queue writes in the
   `packages/core` sync queue; show sync status.
-- **Student auth is school-issued:** admission number + PIN (or QR card that
-  fills the admission number; the PIN is always typed). Never let a child create an
-  email/password account. Staff use email/password. Shared Chromebooks: fast
+- **Two access tiers (DECISIONS #23).** *School* tier: students log in with
+  admission number + PIN (or a QR card that fills the admission number; the PIN
+  is always typed); staff use email/password. It unlocks everything. *Prep-only*
+  tier: **Google sign-in** (Play Store buyers) unlocks Preparation only, with
+  RLS enforcing it via `profiles.access_tier`. Never let a child create an
+  email/password account. Shared Chromebooks: fast
   "switch student", per-user storage namespaces, nothing leaks between students.
 - Responsive from day one: phone, Chromebook window (resizable, landscape,
   keyboard + mouse), desktop browser. No `orientation: portrait` lock.
@@ -167,7 +174,8 @@ transitions in lite tier · virtualised long lists · images ≤ 100 KB WebP.
 ## Do NOT
 - Hardcode content, subjects, questions or UI text.
 - Put a student's class on `students`.
-- Hard-delete records with grades, money or history.
+- Hard-delete records with grades, money or history (only exception: legacy
+  old-app code/data via `OPS-remove-legacy`, after a backup).
 - Machine-translate Urdu.
 - Rely on app-side role checks for security.
 - Build a screen without its empty state.

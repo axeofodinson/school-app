@@ -1,6 +1,6 @@
 # OPS — Scheduled database backup (free tier has none)
 
-**Model:** Opus · **When:** before real LMS data goes in (ideally during Phase 0–1) · **Blocked by:** LMS_AUDIT §7 Q5 (where backups go)
+**Model:** Opus · **When:** before real LMS data goes in (ideally during Phase 0–1) · **Blocked by:** — (decided: encrypted dumps in a private GitHub repo, DECISIONS #29)
 
 Paste everything below the line into a new Claude Code session.
 
@@ -13,7 +13,7 @@ A nightly logical backup of the Supabase Postgres database that Hassan can resto
 
 ## Do
 - GitHub Actions workflow on a schedule (nightly, off-peak Pakistan time) running `pg_dump` (Postgres client matching the server version) against the project's **session pooler / direct connection string** stored as a GitHub **secret** (Hassan adds it; never commit it).
-- Encrypt the dump (e.g. `age` with a public key in the repo; Hassan keeps the private key offline) and store it where Hassan decided (private repo release asset, Google Drive via rclone, or Supabase Storage in a *separate* free project). Keep 14 daily + 8 weekly.
+- Encrypt the dump with `age` (public key committed; Hassan keeps the private key offline, e.g. printed + on a USB stick) and upload it as a **release asset in a separate private GitHub repo** (e.g. `school-app-backups`), using a fine-grained token stored as a secret. Keep 14 daily + 8 weekly releases; prune older ones. Asset size stays well under GitHub's 2 GB release-asset limit.
 - A weekly keep-alive request so the project doesn't pause during holidays (if Hassan wants that).
 - `docs/backup-restore.md`: how to restore into a fresh project, step by step, plus a quarterly restore drill.
 

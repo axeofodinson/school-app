@@ -1,6 +1,6 @@
 # 40 — Mastery, diagnostics and follow-up RPCs (migration 019)
 
-**Model:** Opus · **Phase:** 4 · **Depends on:** 31 · **Blocked by:** LMS_AUDIT §7 Q6 (thresholds) – use proposed defaults if unanswered
+**Model:** Opus · **Phase:** 4 · **Depends on:** 31 · **Blocked by:** — (thresholds decided: DECISIONS #26)
 
 Paste everything below the line into a new Claude Code session on the `school-app` repo.
 

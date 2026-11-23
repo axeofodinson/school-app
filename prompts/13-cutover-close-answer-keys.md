@@ -21,7 +21,7 @@ Ship the new app for parity flows and stop students reading answer keys.
 ## Do
 - Write `db/018_close_answer_key_read.sql`: students lose direct `questions` read; provide a security-definer RPC (or view) returning question bodies WITHOUT answers for published assessments of the student's class; grade attempts server-side (RPC) for auto-gradable types. Update the new app to use it.
 - Dry-run with the harness; add a smoke test proving a student cannot select `answer`.
-- Release checklist: EAS preview build, test on phone + Chromebook + Windows web, then production build with a version bump. Old app attendance/messaging/pre-reader: follow LMS_AUDIT §7 Q1 answer (if unanswered, keep them reachable and say so).
+- Release checklist: EAS preview build, test on phone + Chromebook + Windows web, then production build with a version bump. Attendance, messaging and pre-reader are rebuilt next (prompts 14–16); until then they may be unavailable in the new app — that is accepted (DECISIONS #22).
 
 ## Don't
 - Don't run the SQL on Supabase; hand Hassan the exact steps.
