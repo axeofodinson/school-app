@@ -81,7 +81,8 @@ if (voFiles.length) {
     labels.push(`[v${idx}]`); idx++;
   }
   parts.push(`${labels.join("")}amix=inputs=${labels.length}:normalize=0,apad,atrim=0:${DUR},asplit=2[vo][vokey]`);
-  parts.push(`[music][vokey]sidechaincompress=threshold=0.03:ratio=6:attack=40:release=450:makeup=1[bed]`);
+  // with a voice the bed sits 4 dB lower and ducks to ~12 dB under the voice (measured: voice -18, bed -30 LUFS)
+  parts.push(`[music]volume=0.63[mq];[mq][vokey]sidechaincompress=threshold=0.05:ratio=4:attack=30:release=500:makeup=1[bed]`);
   layers.push("[bed]", "[vo]");
 } else {
   layers.push("[music]");

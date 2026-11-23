@@ -38,8 +38,9 @@ after an audio-only change `node mix.mjs` is enough (seconds).
   mid-track (`CUT`/`REPEAT` in `mix.mjs`), so its fade-out sits under the close card.
 - **Effects:** synthesised with ffmpeg in `mix.mjs` (taps, a soft "wrong" cue, a "mastered"
   chime, offline/synced blips, a paper whoosh), timed to the animation. `--no-sfx` turns them off.
-- **Voice (optional):** drop `audio/vo-1.mp3` … `vo-6.mp3` in and run `node mix.mjs`; each line
-  starts at its scene (`VO` in `mix.mjs`) and the music ducks under it.
+- **Voice:** `audio/vo-1.mp3` … `vo-6.mp3` (ElevenLabs "Roger", cut from one take); each line
+  starts at its scene (`VO` in `mix.mjs`) and the music ducks ~12 dB under it. To re-voice,
+  replace those six files (or delete them for a music-only mix) and run `npm run mix`.
 - Only use audio you own or generated yourself. Commercial use of ElevenLabs output needs a paid plan.
 
 Options (after `node build.mjs`):
