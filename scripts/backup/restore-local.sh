@@ -13,9 +13,11 @@ esac
 w="$(mktemp -d)"; trap 'rm -rf "$w"' EXIT
 age -d -i "$KEY" "$BK" | tar -C "$w" -xf -
 cat "$w/INFO.txt"
-# Public schema: schema + data. auth/storage: data only (the fresh project already has those tables).
+# 1) Logins first (public.profiles -> auth.users FK). Only users + identities: a fresh
+#    project already has the other auth tables (schema_migrations etc.) populated.
+pg_restore -d "$TARGET_URL" --no-owner --no-privileges --data-only --exit-on-error -n auth -t users -t identities "$w/db.dump"
+# 2) App schema + data (triggers are created after data load, so handle_new_user won't fire).
 pg_restore -d "$TARGET_URL" --no-owner --no-privileges --exit-on-error --schema=public "$w/db.dump"
-pg_restore -d "$TARGET_URL" --no-owner --no-privileges --data-only --disable-triggers --schema=auth "$w/db.dump"
 # Compare row counts with the manifest taken at dump time.
 psql "$TARGET_URL" -X -A -t -q -F ' ' -v ON_ERROR_STOP=1 <<'SQL' > "$w/after.txt"
 select 'public.' || relname,

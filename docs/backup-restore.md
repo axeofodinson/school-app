@@ -55,13 +55,14 @@ Do this on a laptop with `postgresql-client` (≥ server major), `age`, `tar`.
    ```bash
    export TARGET_URL='postgresql://postgres.<ref>:<password>@<pooler-host>:5432/postgres'
    ```
-4. Restore app schema + data (the fresh project's `public` is empty):
+4. Restore logins **first** (app tables reference them; the fresh project already
+   has the `auth` tables, so data only, and only users + identities):
+   ```bash
+   pg_restore -d "$TARGET_URL" --no-owner --no-privileges --data-only --exit-on-error -n auth -t users -t identities db.dump
+   ```
+5. Restore app schema + data (the fresh project's `public` is empty):
    ```bash
    pg_restore -d "$TARGET_URL" --no-owner --no-privileges --exit-on-error --schema=public db.dump
-   ```
-5. Restore logins (the project already has the `auth` tables, so data only):
-   ```bash
-   pg_restore -d "$TARGET_URL" --no-owner --no-privileges --data-only --disable-triggers --schema=auth db.dump
    ```
 6. Re-apply things that live outside `public`: any Realtime publication / storage
    bucket/policy statements from the numbered migrations (`db/012_*`, `db/014_*`),
@@ -73,14 +74,18 @@ Do this on a laptop with `postgresql-client` (≥ server major), `age`, `tar`.
    psql "$TARGET_URL" -Atc "select count(*) from public.profiles"   # etc., vs manifest.txt
    ```
 
+> **Unverified:** the restore has been proven against the local DB-1 harness (Postgres 16 +
+> stubs), not yet against a real fresh Supabase project. The first quarterly drill
+> should include one real restore into a throwaway free project.
+
 ## Quarterly restore drill (calendar: Jan/Apr/Jul/Oct, 1st week)
 
 Prove the backups work **without touching production**:
 
 1. Fetch the latest release; decrypt with the offline key (proves the key still works).
-2. Start a local throwaway Postgres (version = server's) and give it the Supabase stub:
+2. Start a throwaway Postgres as in TEST_PLAN DB-1 and give an empty database the stubs:
    ```bash
-   createdb restore_test && psql -d restore_test -f scripts/backup/supabase-stub.sql
+   createdb restore_test && psql -d restore_test -f db/test/supabase_stubs.sql
    ```
 3. Run the drill script, which restores and diffs row counts against the manifest:
    ```bash

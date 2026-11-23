@@ -143,11 +143,12 @@ Deferred: parents (81) and iOS (82).
 
 | ✓ | Prompt | Model | When |
 |---|---|---|---|
-| [ ] | [OPS backup](OPS-backup.md) | Opus | Before real LMS data (Phase 0–1) |
+| [x] | [OPS backup](OPS-backup.md) | Opus | Before real LMS data (Phase 0–1). Built + restore-verified locally (DB-1 harness, 41 tables match); the Actions run itself is **unverified** until Hassan adds secrets and runs it once |
 | — | [OPS remove legacy](OPS-remove-legacy.md) | Opus | Whenever old code/data gets in the way (repeatable) |
 | — | [C1 Generate topic content](C1-generate-topic-content.md) | Opus (claude.ai chat) | From Phase 2 on, one topic at a time (pilot: Class 9 Math/Science) |
 
 ## Changelog
+- 2026-11-23: OPS-backup built (`nightly-backup.yml`, `keep-alive.yml`, `scripts/backup/`, `docs/backup-restore.md`).
 - 2026-11-23: Fable dropped (all Opus). Every prompt now lists the skills/MCPs to use. 90 switched to Blender via the Blender MCP (local). Added GUIDE.md.
 - 2026-11-23: library created (35 build prompts + C1, C2, OPS-backup, OPS-update-prompts) from LMS_AUDIT build order + Phase 10 extensions + motion system.
 - 2026-11-23: open questions answered (DECISIONS #22–29). Added 05 Google sign-in/prep-only tier, Phase 1b (14 attendance, 15 messaging + push, 16 pre-reader), OPS-remove-legacy; OPS-backup → private GitHub repo; 22/40/62 unblocked; 81 parents and 82 iOS deferred.

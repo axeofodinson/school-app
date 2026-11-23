@@ -6,7 +6,7 @@ prompts: `prompts/README.md`.
 | Module | Phase | Status | Prompt(s) | Next step |
 |---|---|---|---|---|
 | Planning / audit / prompt library | — | ✅ done (all open questions answered) | [OPS update](prompts/OPS-update-prompts.md) | Merge planning branch to `main`; create dev Supabase project |
-| Backups | — | ⏳ | [OPS backup](prompts/OPS-backup.md) | Ready: private GitHub repo |
+| Backups | — | 🟡 built, workflow unverified | [OPS backup](prompts/OPS-backup.md) | Hassan: make age key, private `school-app-backups` repo, token, secrets, put public key in `backup/age-recipient.txt`, run workflow once ([docs/backup-restore.md](docs/backup-restore.md)) |
 | Visual identity + motion choreography | 0 | ⏳ | [00](prompts/00-design-identity.md) | **Start here** |
 | App scaffold (`apps/mobile`, `packages/core`) | 0 | ⏳ | [01](prompts/01-scaffold.md) | |
 | Design system + motion tiers | 0 | ⏳ | [02](prompts/02-design-system-motion.md) | |
