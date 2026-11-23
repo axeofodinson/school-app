@@ -28,7 +28,7 @@ PCs. Internet is unreliable. Expect up to 40 students in one live exam.
 - **App:** Expo (latest stable SDK) + **TypeScript** + **expo-router**. One
   codebase → **Android** (phones + Chromebooks via Play Store) and **web/PWA**
   (Windows teachers, Chromebook fallback). **No iOS for now** (DECISIONS #24).
-- **Motion:** Reanimated 3 + Moti (see Motion rules below).
+- **Motion:** Reanimated (v4 on SDK 58) + Moti, Moti under review (DECISIONS #38; see Motion rules below).
 - **No CDN dependencies.** The school network blocks some. Bundle fonts, math,
   Lottie files, everything.
 
@@ -138,7 +138,7 @@ src/, App.js        OLD app (frozen)
 - Math is pre-rendered to SVG at import; no runtime KaTeX WebViews.
 
 ## Motion rules
-- **Reanimated 3 + Moti** everywhere. Motion (motion.dev) only in web-only
+- **Reanimated (v4) + Moti** everywhere (Moti under review, DECISIONS #38). Motion (motion.dev) only in web-only
   teacher screens (`*.web.tsx`) when Moti can't do it. **No anime.js.** Lottie only
   for a few bundled celebrations/empty states.
 - Use only the tokens in `apps/mobile/ui/motion.ts` (durations and spring

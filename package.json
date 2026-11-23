@@ -15,7 +15,15 @@
     "verify:overdue": "node scripts/verify-overdue.mjs",
     "verify:prereader": "node scripts/verify-prereader.mjs",
     "verify:engagement": "node scripts/verify-engagement.mjs",
-    "verify:toast-queue": "node scripts/verify-toast-queue.mjs"
+    "verify:toast-queue": "node scripts/verify-toast-queue.mjs",
+    "mobile:start": "npm run start -w @school/mobile",
+    "mobile:web": "npm run web -w @school/mobile",
+    "mobile:android": "npm run android -w @school/mobile",
+    "mobile:export:web": "npm run export:web -w @school/mobile",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "format": "prettier --write apps packages",
+    "test": "npm run test --workspaces --if-present"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "1.23.1",
@@ -43,5 +51,9 @@
   },
   "devDependencies": {
     "@babel/core": "^7.24.0"
-  }
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
 }

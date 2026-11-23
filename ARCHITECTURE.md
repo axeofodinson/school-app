@@ -18,6 +18,11 @@ school-app/
 └── src/, App.js         # OLD app — kept until each flow is cut over, then archived
 ```
 
+npm workspaces (`apps/*`, `packages/*`); the old app stays at the root so its
+scripts and builds are unchanged (DECISIONS #39). Routes in `apps/mobile/app/`:
+`(auth)/login`, `(student)/learn`, `(teacher)/classes`, `(admin)/school` (placeholders,
+session 01). `packages/core/src/db-types.ts` holds the generated Supabase types.
+
 Targets from one codebase:
 - **Android APK/AAB** → phones and Chromebooks (Play Store).
 - **iOS** → not planned for now (DECISIONS #24).

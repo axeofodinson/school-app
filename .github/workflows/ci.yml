@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  # Every branch push (session branches included). Not also on pull_request:
+  # same-repo PRs would run the job twice.
+  push:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Type-check (apps/mobile, packages/core)
+        run: npm run typecheck
+      - name: Lint (eslint + prettier)
+        run: npm run lint
+      - name: Core tests
+        run: npm test
+      - name: Old app checks still pass
+        run: npm run verify:grading
+      - name: Web export builds
+        run: npm run mobile:export:web

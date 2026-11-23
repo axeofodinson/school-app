@@ -79,9 +79,43 @@ disk and nothing sensitive is ever committed.
 
 ### 4. Run
 
+The repo is an npm workspaces monorepo: the **old app** stays at the root
+(frozen), the **new app** is `apps/mobile`, shared pure logic is `packages/core`.
+One `npm install` at the root installs everything.
+
+**Old app (root, Expo SDK 51)**
+
 ```bash
-npm start        # then press i / a, or scan the QR with Expo Go
+npm start        # then press a, or scan the QR with Expo Go
 ```
+
+**New app (`apps/mobile`, Expo SDK 58, expo-router, TypeScript)**
+
+```bash
+npm run mobile:web          # web in the browser (teachers on Windows)
+npm run mobile:android      # Android: needs a development build, not Expo Go (see below)
+npm run mobile:export:web   # static web build into apps/mobile/dist
+```
+
+The new app reads `EXPO_PUBLIC_SUPABASE_URL` / `EXPO_PUBLIC_SUPABASE_ANON_KEY`
+too: copy `apps/mobile/.env.example` to `apps/mobile/.env` (point it at the **dev**
+project, DECISIONS #27). Without them it still runs and says so on the sign-in screen.
+
+Android development build (once, on a PC with the Expo account logged in):
+
+```bash
+cd apps/mobile && npx eas-cli build -p android --profile development
+```
+
+**Checks** (the same ones CI runs on every push, `.github/workflows/ci.yml`):
+
+```bash
+npm run typecheck   # tsc, strict, both workspaces
+npm run lint        # eslint + prettier
+npm test            # packages/core unit tests (vitest)
+```
+
+`npm run format` fixes formatting.
 
 ## Conventions (see CLAUDE.md)
 

@@ -52,7 +52,9 @@ eas env:create --environment preview --name EXPO_PUBLIC_SUPABASE_URL --value <ur
 eas env:create --environment preview --name EXPO_PUBLIC_SUPABASE_ANON_KEY --value <key> --visibility plaintext
 ```
 
-Then `eas build -p android --profile preview` (see `eas.json`; preview outputs an
+Run EAS commands for the **new** app from `apps/mobile/` (it has its own `eas.json`
+and `app.json` with the same project id; DECISIONS #40). From the repo root they build
+the old app. Then `eas build -p android --profile preview` (see `eas.json`; preview outputs an
 installable APK).
 
 ## Note

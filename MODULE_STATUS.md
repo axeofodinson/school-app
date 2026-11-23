@@ -8,7 +8,7 @@ prompts: `prompts/README.md`.
 | Planning / audit / prompt library | — | ✅ done (all open questions answered) | [OPS update](prompts/OPS-update-prompts.md) | Merge planning branch to `main`; create dev Supabase project |
 | Backups | — | ⏳ | [OPS backup](prompts/OPS-backup.md) | Ready: private GitHub repo |
 | Visual identity + motion choreography | 0 | ✅ done: v0.2 "Mosaic" approved, §0 answered (DECISIONS #37) | [00](prompts/00-design-identity.md) | — |
-| App scaffold (`apps/mobile`, `packages/core`) | 0 | ⏳ | [01](prompts/01-scaffold.md) | |
+| App scaffold (`apps/mobile`, `packages/core`) | 0 | ✅ done: SDK 58 + expo-router, workspaces, core (grading port, i18n), typed Supabase client, typed `t()` + RTL, CI. Web export verified EN + UR; Android dev build **unverified** | [01](prompts/01-scaffold.md) | Hassan: first CI run green on GitHub; `eas build -p android --profile development` from `apps/mobile`. 5 `shell.*` Urdu strings are `// TODO: ur` (teacher review) |
 | Design system + motion tiers | 0 | ⏳ | [02](prompts/02-design-system-motion.md) | |
 | Auth (PIN + QR, shared mode) | 0 | ⏳ | [03](prompts/03-auth.md) | |
 | Seed script (656 students) | 0 | ⏳ | [04](prompts/04-seed-dev-data.md) | Hassan creates the dev Supabase project |

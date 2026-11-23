@@ -49,6 +49,9 @@ O-1 … O-6 = the six cases in `LMS_AUDIT.md` §3.3, each scripted: airplane-mod
 - P-4 Performance on cheapest Chromebook: cold start < 5 s, question switch < 150 ms, Urdu screen scroll without jank.
 - P-6 Motion: each tier (full/lite/off) on reference phone and Chromebook. Record frame drops during screen transitions and mastery animations (Perf Monitor / Chrome performance panel). The OS "reduce motion" setting forces the off tier. Exam screens show no animation apart from the timer and save indicator. Slide directions flip in Urdu.
 - P-5 YouTube unlisted embed on lab Wi-Fi: Android, Chromebook, Windows.
+- P-7 **CI on every push** (`.github/workflows/ci.yml`): `npm ci`, type-check (strict, both workspaces), eslint + prettier, `packages/core` vitest, the old `verify:grading`, and `expo export -p web`. Locally: the same `npm run` scripts (README §4).
+- P-8 **Web shell smoke** (session 01, manual Playwright script, result 2026-11-23: pass): serve `apps/mobile/dist`, `/` redirects to `/login`; English is LTR; choosing اردو sets `<html dir="rtl" lang="ur">`, Urdu renders in the bundled Nastaliq; the choice survives a reload; `/learn`, `/classes`, `/school` and an unknown path show their empty states; no console errors, no request leaves localhost (no CDN). Becomes an automated Playwright test when session 02/03 adds e2e tooling.
+- P-9 **Android dev build** (unverified): `cd apps/mobile && npx eas-cli build -p android --profile development`, install, run `npm run mobile:start`: login placeholder in EN and UR, layout mirrors in Urdu.
 
 ## Security
 S-1 Shared device: no previous-student data visible after switch. S-2 No secrets in bundle (`grep` built JS for keys). S-3 `EXPLAIN ANALYZE` of RLS-heavy teacher queries on seeded data, p95 < 1 s.
