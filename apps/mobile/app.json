@@ -1,0 +1,53 @@
+{
+  "expo": {
+    "name": "School App",
+    "slug": "school-app",
+    "owner": "ice_010",
+    "version": "2.0.0",
+    "orientation": "default",
+    "icon": "./assets/icon.png",
+    "scheme": "schoolapp",
+    "userInterfaceStyle": "light",
+    "android": {
+      "package": "com.school.app",
+      "versionCode": 2,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#55a049"
+      }
+    },
+    "web": {
+      "output": "single",
+      "bundler": "metro",
+      "lang": "en"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      "expo-localization",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#fbf0d9"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "tsconfigPaths": false
+    },
+    "extra": {
+      "eas": {
+        "projectId": "d0d4fed8-afe4-4599-9c3e-31e5de0ec715"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/d0d4fed8-afe4-4599-9c3e-31e5de0ec715"
+    }
+  }
+}

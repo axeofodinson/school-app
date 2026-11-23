@@ -1,0 +1,6 @@
+node_modules
+dist
+.expo
+**/locales/*.json
+**/db-types.ts
+expo-env.d.ts

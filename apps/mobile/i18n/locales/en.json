@@ -1,0 +1,1164 @@
+{
+  "app": {
+    "name": "School App"
+  },
+  "common": {
+    "loading": "Loading…",
+    "language": "Language",
+    "english": "English",
+    "urdu": "اردو",
+    "toast": {
+      "newMessage": "New message",
+      "hint": "Tap to open your messages. Swipe up to dismiss."
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Staff sign in",
+      "subtitle": "For admins and teachers",
+      "email": "Email",
+      "emailPlaceholder": "you@school.edu",
+      "password": "Password",
+      "passwordPlaceholder": "Your password",
+      "submit": "Sign in",
+      "submitting": "Signing in…",
+      "studentNote": "Students: use the student app to sign in with your roll number.",
+      "studentLink": "Student sign in"
+    },
+    "student": {
+      "title": "Student sign in",
+      "subtitle": "Enter your admission number and PIN",
+      "admissionNumber": "Admission number",
+      "admissionNumberPlaceholder": "e.g. 2025-041",
+      "pin": "PIN",
+      "pinPlaceholder": "Your secret PIN",
+      "submit": "Go",
+      "submitting": "Signing in…",
+      "staffLink": "Teacher or admin?",
+      "staffLinkAction": "Staff sign in"
+    },
+    "studentErrors": {
+      "missingCode": "Type your admission number.",
+      "missingPin": "Type your PIN.",
+      "notFound": "We couldn’t find that admission number. Check with your teacher.",
+      "wrongPin": "That PIN isn’t right. Try again.",
+      "network": "No internet. Check your connection and try again.",
+      "unknown": "Something went wrong. Try again."
+    },
+    "errors": {
+      "missingFields": "Enter your email and password.",
+      "invalidCredentials": "Email or password is incorrect.",
+      "network": "No internet connection. Check your network and try again.",
+      "unknown": "Something went wrong. Please try again."
+    },
+    "pending": {
+      "title": "Awaiting access",
+      "body": "Your account isn’t active yet. An admin needs to approve it before you can use the console.",
+      "signedInAs": "Signed in as %{email}"
+    },
+    "profileError": {
+      "title": "Couldn’t load your account",
+      "body": "We couldn’t reach the server. Check your connection and try again.",
+      "retry": "Retry"
+    },
+    "signOut": "Sign out"
+  },
+  "student": {
+    "home": {
+      "title": "Home",
+      "greeting": "Hi, %{name}!",
+      "welcome": "Welcome back!",
+      "placeholder": "Tap to see your tests, scores, and attendance.",
+      "assessments": "My tests",
+      "assessmentsNote": "See your tests and start one",
+      "scores": "My scores",
+      "scoresNote": "See how you did on your tests",
+      "report": "My report card",
+      "reportNote": "Your results rolled up for the year",
+      "attendance": "My attendance",
+      "attendanceNote": "See the days you were present",
+      "signOut": "Sign out"
+    },
+    "journey": {
+      "title": "My journey",
+      "invite": "Finish your first test to start your journey — there's a medal waiting!",
+      "tests": {
+        "one": "%{count} test finished this year",
+        "other": "%{count} tests finished this year"
+      },
+      "next": {
+        "one": "Next medal: %{name} — %{count} test to go",
+        "other": "Next medal: %{name} — %{count} tests to go"
+      },
+      "allDone": "You've earned every medal this year. Amazing!",
+      "streak": {
+        "one": "%{count} school day in a row!",
+        "other": "%{count} school days in a row!"
+      },
+      "bestStreak": "Your best run: %{count} school days in a row",
+      "milestones": {
+        "first": "First step",
+        "three": "Good start",
+        "five": "Five star",
+        "ten": "Test master",
+        "twenty": "Champion",
+        "thirty": "Star collector",
+        "fifty": "Legend"
+      }
+    },
+    "celebrate": {
+      "testCount": {
+        "one": "That's your first test finished this year!",
+        "other": "That's %{count} tests finished this year!"
+      },
+      "newMedal": "New medal: %{name}!"
+    },
+    "assessments": {
+      "title": "My tests",
+      "back": "Back",
+      "subtitle": "Tests your teachers have set for your class.",
+      "noYear": "No school year is set up yet. Check back later.",
+      "noEnrollment": "You’re not in a class yet. Your teacher will add you.",
+      "empty": "No tests yet. When your teacher sets one, it’ll show up here.",
+      "todoCount": {
+        "one": "%{count} test to do",
+        "other": "%{count} tests to do"
+      },
+      "questionCount": {
+        "one": "%{count} question",
+        "other": "%{count} questions"
+      },
+      "start": "Start",
+      "view": "View",
+      "open": "Open",
+      "retry": "Try again",
+      "worksheet": "Worksheet",
+      "types": {
+        "assignment": "Homework",
+        "test": "Test",
+        "exam": "Exam",
+        "quiz": "Quiz",
+        "file": "Worksheet"
+      },
+      "status": {
+        "todo": "To do",
+        "submitted": "Done",
+        "pending": "Saved",
+        "file": "Worksheet"
+      },
+      "errors": {
+        "network": "No internet. Check your connection and try again.",
+        "unknown": "Something went wrong. Try again."
+      }
+    },
+    "fileAssessment": {
+      "back": "Back",
+      "loading": "Opening…",
+      "open": "Open file",
+      "tapToOpen": "Tap the image to open it full screen.",
+      "noFile": "This worksheet has no file attached yet.",
+      "retry": "Try again",
+      "errors": {
+        "network": "No internet. Connect to open this worksheet.",
+        "unknown": "Couldn’t open this worksheet. Please try again."
+      }
+    },
+    "attempt": {
+      "back": "Back",
+      "context": "%{type} · %{subject}",
+      "questionNumber": "Question %{number}",
+      "marks": {
+        "one": "%{count} mark",
+        "other": "%{count} marks"
+      },
+      "true": "True",
+      "false": "False",
+      "numericPlaceholder": "Type your answer",
+      "answeredSummary": "%{answered} of %{total} answered",
+      "submit": "Submit test",
+      "submitting": "Submitting…",
+      "submitted": "Done! Your answers are saved.",
+      "queued": "No internet — your answers are saved and will send when you’re back online.",
+      "alreadyDone": "You’ve already done this test.",
+      "doneBack": "Back to my tests",
+      "loadError": "Couldn’t load this test. Check your connection and try again.",
+      "retry": "Try again",
+      "noQuestions": "This test has no questions yet.",
+      "offlineBanner": "You’re offline — showing your saved copy of this test.",
+      "errors": {
+        "network": "No internet. Your answers are saved — try again when you’re back online.",
+        "unknown": "Couldn’t submit. Please try again."
+      }
+    },
+    "prereader": {
+      "listen": "Hear the question",
+      "tapFallback": "Tap the right picture!",
+      "next": "Next question",
+      "finish": "Finish my test",
+      "choiceFallback": "Picture %{number}",
+      "offline": "Offline — using your saved test",
+      "celebrate": {
+        "title": "You did it!",
+        "saved": "Your stars are saved!"
+      }
+    },
+    "results": {
+      "title": "My scores",
+      "back": "Back",
+      "subtitle": "Your scores for the tests you’ve done.",
+      "noYear": "No school year is set up yet. Check back later.",
+      "noEnrollment": "You’re not in a class yet. Your teacher will add you.",
+      "empty": "No scores yet. When you finish a test and your teacher marks it, your score shows up here.",
+      "overall": "Overall: %{percent}%",
+      "markedCount": {
+        "one": "From %{count} marked test",
+        "other": "From %{count} marked tests"
+      },
+      "noneMarked": "Your tests aren’t marked yet. Your scores will show once your teacher marks them.",
+      "score": "%{score} / %{total}",
+      "percent": "%{percent}%",
+      "waiting": "Not marked yet",
+      "retry": "Try again",
+      "errors": {
+        "network": "No internet. Check your connection and try again.",
+        "unknown": "Something went wrong. Try again."
+      }
+    },
+    "report": {
+      "title": "My report card",
+      "back": "Back",
+      "subtitle": "Your whole year, rolled up: %{year}.",
+      "subtitleNoYear": "Your results, rolled up across your tests.",
+      "noYear": "No school year is set up yet. Check back later.",
+      "noEnrollment": "You’re not in a class yet. Your teacher will add you.",
+      "empty": "No report yet. When you finish tests and your teacher marks them, your report shows up here.",
+      "overall": "Overall",
+      "overallPercent": "%{percent}%",
+      "fromMarked": {
+        "one": "From %{count} marked test",
+        "other": "From %{count} marked tests"
+      },
+      "noneMarked": "None of your tests are marked yet. Your report fills in as your teacher marks them.",
+      "unweightedNote": "This is a simple average — your teacher hasn’t set how much each test counts yet.",
+      "waiting": {
+        "one": "%{count} test still to be marked",
+        "other": "%{count} tests still to be marked"
+      },
+      "bySubject": "By subject",
+      "subjectPercent": "%{percent}%",
+      "subjectWaiting": "Not marked yet",
+      "subjectMarked": {
+        "one": "%{count} marked test",
+        "other": "%{count} marked tests"
+      },
+      "cognitive": {
+        "heading": "What your tests checked",
+        "hint": "How much of your tests was remembering facts versus thinking things through.",
+        "recall": "Remembering",
+        "conceptual": "Thinking",
+        "levels": {
+          "recall": "Recall",
+          "understand": "Understand",
+          "apply": "Apply",
+          "analyze": "Analyze"
+        },
+        "levelDetail": "%{share}% · %{marks} marks",
+        "share": "%{share}%"
+      },
+      "retry": "Try again",
+      "errors": {
+        "network": "No internet. Check your connection and try again.",
+        "unknown": "Something went wrong. Try again."
+      }
+    },
+    "attendance": {
+      "title": "My attendance",
+      "back": "Back",
+      "subtitle": "The days your teacher marked you this year.",
+      "noYear": "No school year is set up yet. Check back later.",
+      "noEnrollment": "You’re not in a class yet. Your teacher will add you.",
+      "empty": "No attendance yet. It’ll show up here once your teacher marks it.",
+      "presentRate": "You were present on %{rate}% of your days",
+      "summary": "%{present} present · %{absent} absent · %{late} late · %{leave} leave",
+      "statuses": {
+        "present": "Present",
+        "absent": "Absent",
+        "late": "Late",
+        "leave": "Leave"
+      },
+      "retry": "Try again",
+      "errors": {
+        "network": "No internet. Check your connection and try again.",
+        "unknown": "Something went wrong. Try again."
+      }
+    },
+    "inbox": {
+      "title": "Messages",
+      "subtitle": "News from your school and teachers.",
+      "back": "Back",
+      "bell": "Open messages",
+      "bellUnread": {
+        "one": "Open messages, %{count} new",
+        "other": "Open messages, %{count} new"
+      },
+      "new": "New",
+      "empty": "No messages yet. When your school or teacher sends one, it’ll show up here.",
+      "loadError": "Couldn’t load your messages. Check your connection and try again.",
+      "retry": "Try again",
+      "permissionOff": "Notifications are off, so you won’t get a pop-up — but your messages still show up here.",
+      "scopes": {
+        "school": "School",
+        "class": "Your class",
+        "student": "For you"
+      }
+    },
+    "battery": {
+      "title": "Keep your messages coming",
+      "body": "Your phone can stop this app in the background, so you might miss messages. Let it always run to get them on time.",
+      "openSettings": "Open settings",
+      "later": "Maybe later"
+    }
+  },
+  "console": {
+    "home": {
+      "title": "Console",
+      "welcome": "Welcome, %{name}",
+      "placeholder": "Admin console — setup screens are coming next.",
+      "openAcademicYears": "Manage academic years",
+      "openClasses": "Manage classes",
+      "openSubjects": "Manage subjects",
+      "openStudents": "Register students",
+      "openEnrollments": "Manage enrollments",
+      "openAssessments": "Build assessments",
+      "openAttendance": "Mark attendance",
+      "openOverdue": "Overdue assignments",
+      "openGrading": "Enter grades",
+      "openMessages": "Send a message",
+      "openDevTools": "Developer tools"
+    },
+    "grading": {
+      "title": "Grades",
+      "back": "Back",
+      "subtitleAdmin": "Enter and correct student grades for %{year}.",
+      "subtitleTeacher": "Enter and correct grades for your classes — %{year}.",
+      "subtitleNoYear": "No academic year yet.",
+      "loadError": "Couldn’t load. Check your connection and try again.",
+      "retry": "Retry",
+      "needYear": "Create an academic year first — grades are scoped to a year.",
+      "goToYears": "Go to academic years",
+      "needClass": "Add a class first.",
+      "goToClasses": "Go to classes",
+      "noAssignments": "You have no class assignments yet. Ask an admin to assign you.",
+      "pickClass": "Class",
+      "pickAssessment": "Assessment",
+      "noAssessments": "No assessments for this class yet.",
+      "goToAssessments": "Go to assessments",
+      "loadAssessmentsError": "Couldn’t load assessments.",
+      "rosterLoadError": "Couldn’t load the class list.",
+      "rosterEmpty": "No students enrolled in this class yet.",
+      "rosterCount": "%{count} students",
+      "states": {
+        "graded": "Graded",
+        "ungraded": "Submitted — not marked",
+        "notSubmitted": "Not submitted"
+      },
+      "score": "%{score} / %{total}",
+      "scoreNoTotal": "Score: %{score}",
+      "lastEdited": "Edited %{count}× · last %{date}",
+      "enterGrade": "Enter grade",
+      "editGrade": "Edit grade",
+      "scoreLabel": "Score",
+      "scorePlaceholder": "e.g. 15",
+      "outOf": "out of %{total}",
+      "reasonLabel": "Reason for change",
+      "reasonPlaceholder": "recount, data entry error, appeal…",
+      "reasonHint": "Required when changing an existing grade — kept in the edit history.",
+      "save": "Save grade",
+      "saving": "Saving…",
+      "cancel": "Cancel",
+      "showHistory": "Edit history",
+      "hideHistory": "Hide history",
+      "historyEmpty": "No corrections recorded.",
+      "historyLoadError": "Couldn’t load history.",
+      "historyChange": "%{prev} → %{new}",
+      "historyFirst": "First grade: %{new}",
+      "historyMeta": "%{reason} · %{date}",
+      "errors": {
+        "scoreRequired": "Enter a score.",
+        "scoreInvalid": "Score must be a number (up to two decimals).",
+        "scoreRange": "Score can’t be more than the total.",
+        "reasonRequired": "Give a reason for changing the grade.",
+        "not_authorized": "You’re not allowed to grade this class.",
+        "assessment_not_found": "That assessment no longer exists.",
+        "enrollment_class_mismatch": "That student isn’t in this class.",
+        "score_out_of_range": "Score is out of range.",
+        "network": "No internet connection. Check your network and try again.",
+        "unknown": "Couldn’t save. Please try again."
+      }
+    },
+    "students": {
+      "title": "Students",
+      "back": "Back",
+      "subtitle": "Register students and search the ones already admitted. A student's class is added later through enrollment.",
+      "empty": "No students yet — register your first.",
+      "code": "Adm# %{code}",
+      "guardianBoth": "%{name} · %{phone}",
+      "loadError": "Couldn’t load students. Check your connection and try again.",
+      "retry": "Retry",
+      "count": {
+        "one": "%{count} student",
+        "other": "%{count} students"
+      },
+      "noMatches": "No students match “%{query}”.",
+      "search": {
+        "label": "Search",
+        "placeholder": "Name, admission number, or guardian"
+      },
+      "form": {
+        "heading": "Register a student",
+        "studentCode": "Admission number",
+        "studentCodePlaceholder": "e.g. 2025-041",
+        "fullName": "Full name",
+        "fullNamePlaceholder": "Student’s full name",
+        "dob": "Date of birth",
+        "admissionDate": "Admission date",
+        "datePlaceholder": "YYYY-MM-DD",
+        "guardianName": "Guardian name",
+        "guardianNamePlaceholder": "Parent or guardian",
+        "guardianPhone": "Guardian phone",
+        "guardianPhonePlaceholder": "03xx-xxxxxxx",
+        "submit": "Register",
+        "submitting": "Registering…"
+      },
+      "errors": {
+        "codeRequired": "Enter an admission number.",
+        "codeExists": "A student with this admission number already exists.",
+        "nameRequired": "Enter the student’s full name.",
+        "dobInvalid": "Use the date format YYYY-MM-DD.",
+        "admissionRequired": "Enter an admission date.",
+        "admissionInvalid": "Use the date format YYYY-MM-DD.",
+        "network": "No internet connection. Check your network and try again.",
+        "unknown": "Couldn’t save. Please try again."
+      },
+      "provision": {
+        "action": "Give login / set PIN",
+        "hint": "Set a PIN so this student can sign in to the student app with their admission number.",
+        "pinLabel": "PIN",
+        "pinPlaceholder": "4–8 digits",
+        "save": "Save PIN",
+        "saving": "Saving…",
+        "cancel": "Cancel",
+        "success": "Login ready. The student signs in with admission number %{code} and this PIN.",
+        "errors": {
+          "pinInvalid": "PIN must be 4–8 digits.",
+          "notStaff": "Only admins can set a student PIN.",
+          "network": "No internet connection. Check your network and try again.",
+          "unknown": "Couldn’t set the PIN. Please try again."
+        }
+      }
+    },
+    "classes": {
+      "title": "Classes",
+      "back": "Back",
+      "subtitle": "Set up the classes students are enrolled into, from PG to Class 10.",
+      "empty": "No classes yet — add your first.",
+      "needYear": "Create an academic year first — classes need a year to enroll students into.",
+      "goToYears": "Go to academic years",
+      "gradeLevel": "Grade level %{level}",
+      "levels": {
+        "pg": "PG"
+      },
+      "loadError": "Couldn’t load classes. Check your connection and try again.",
+      "retry": "Retry",
+      "edit": "Edit",
+      "editHeading": "Edit class",
+      "save": "Save",
+      "saving": "Saving…",
+      "cancel": "Cancel",
+      "form": {
+        "heading": "Add a class",
+        "name": "Name",
+        "namePlaceholder": "PG, Class 9",
+        "gradeLevel": "Grade level",
+        "gradePlaceholder": "9",
+        "gradeHint": "A number for ordering — PG is 0, other pre-primary can be negative, matric goes up to 10.",
+        "submit": "Create",
+        "submitting": "Creating…"
+      },
+      "errors": {
+        "nameRequired": "Enter a name, e.g. Class 9.",
+        "nameExists": "A class with this name already exists.",
+        "gradeRequired": "Enter a grade level.",
+        "gradeInvalid": "Grade level must be a whole number.",
+        "gradeRange": "Grade level must be between -5 and 10.",
+        "network": "No internet connection. Check your network and try again.",
+        "unknown": "Couldn’t save. Please try again."
+      }
+    },
+    "subjects": {
+      "title": "Subjects",
+      "back": "Back",
+      "subtitle": "Add the subjects taught in each class.",
+      "pickClass": "Class",
+      "needClass": "Create a class first — subjects belong to a class.",
+      "goToClasses": "Go to classes",
+      "openChapters": "Chapters",
+      "empty": "No subjects in this class yet — add the first.",
+      "loadError": "Couldn’t load subjects. Check your connection and try again.",
+      "retry": "Retry",
+      "form": {
+        "heading": "Add a subject",
+        "name": "Name",
+        "namePlaceholder": "Mathematics, Urdu, Science",
+        "submit": "Create",
+        "submitting": "Creating…"
+      },
+      "errors": {
+        "nameRequired": "Enter a subject name.",
+        "nameExists": "This class already has a subject with that name.",
+        "network": "No internet connection. Check your network and try again.",
+        "unknown": "Couldn’t save. Please try again."
+      }
+    },
+    "chapters": {
+      "title": "Chapters",
+      "back": "Back",
+      "subtitle": "Chapters in %{subject}. Use the arrows to reorder them.",
+      "empty": "No chapters in this subject yet — add the first.",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "loadError": "Couldn’t load chapters. Check your connection and try again.",
+      "retry": "Retry",
+      "form": {
+        "heading": "Add a chapter",
+        "title": "Title",
+        "titlePlaceholder": "Motion, Fractions, Verbs",
+        "submit": "Create",
+        "submitting": "Creating…"
+      },
+      "errors": {
+        "titleRequired": "Enter a chapter title.",
+        "network": "No internet connection. Check your network and try again.",
+        "unknown": "Couldn’t save. Please try again."
+      }
+    },
+    "academicYears": {
+      "title": "Academic years",
+      "back": "Back",
+      "subtitle": "Set up the school years everything else is scoped to.",
+      "empty": "No academic year yet — create one to begin.",
+      "current": "Current",
+      "setCurrent": "Set current",
+      "dateRange": "%{start} – %{end}",
+      "noDates": "No dates set",
+      "loadError": "Couldn’t load academic years. Check your connection and try again.",
+      "retry": "Retry",
+      "form": {
+        "heading": "Add an academic year",
+        "label": "Label",
+        "labelPlaceholder": "2025-26",
+        "startsOn": "Start date",
+        "endsOn": "End date",
+        "datePlaceholder": "YYYY-MM-DD",
+        "isCurrent": "Make this the current year",
+        "submit": "Create",
+        "submitting": "Creating…"
+      },
+      "errors": {
+        "labelRequired": "Enter a label, e.g. 2025-26.",
+        "labelExists": "An academic year with this label already exists.",
+        "invalidDate": "Use the date format YYYY-MM-DD.",
+        "dateOrder": "The end date must be after the start date.",
+        "network": "No internet connection. Check your network and try again.",
+        "unknown": "Couldn’t save. Please try again."
+      }
+    },
+    "enrollments": {
+      "title": "Enrollment",
+      "back": "Back",
+      "subtitle": "Enroll students into a class for %{year}, and see who’s in each class.",
+      "subtitleNoYear": "Enroll students into a class and see each class roster.",
+      "loadError": "Couldn’t load enrollment data. Check your connection and try again.",
+      "retry": "Retry",
+      "needYear": "Set a current academic year first — enrollments are scoped to a year.",
+      "goToYears": "Go to academic years",
+      "needClass": "Create a class first — students are enrolled into a class.",
+      "goToClasses": "Go to classes",
+      "needStudent": "Register a student first — there’s no one to enroll yet.",
+      "goToStudents": "Go to students",
+      "tabs": {
+        "enroll": "Enroll",
+        "roster": "Class roster"
+      },
+      "enroll": {
+        "heading": "Enroll a student",
+        "searchStudents": "Student",
+        "searchPlaceholder": "Search by name or admission number",
+        "noStudentMatches": "No students match “%{query}”.",
+        "code": "Adm# %{code}",
+        "pickClass": "Class",
+        "rollNumber": "Roll number",
+        "rollNumberPlaceholder": "Optional, e.g. 12",
+        "status": "Status",
+        "submit": "Enroll",
+        "submitting": "Enrolling…",
+        "success": "Enrolled %{name} in %{class}."
+      },
+      "statuses": {
+        "active": "Active",
+        "struck_off": "Struck off",
+        "transferred": "Transferred",
+        "graduated": "Graduated",
+        "withdrawn": "Withdrawn"
+      },
+      "roster": {
+        "pickClass": "Class",
+        "empty": "No students enrolled in %{class} for %{year} yet.",
+        "noneActive": "No active students in %{class} for %{year}.",
+        "loadError": "Couldn’t load the roster. Check your connection and try again.",
+        "count": {
+          "one": "%{count} student",
+          "other": "%{count} students"
+        },
+        "roll": "Roll %{roll}",
+        "noRoll": "No roll number",
+        "code": "Adm# %{code}"
+      },
+      "remove": {
+        "action": "Remove",
+        "heading": "Remove %{name}",
+        "note": "This keeps all their history — grades and attendance stay on record — and signs them out of the student app.",
+        "pickReason": "Reason",
+        "reasonLabel": "Note (optional)",
+        "reasonPlaceholder": "e.g. moved to another city",
+        "confirm": "Remove student",
+        "cancel": "Cancel",
+        "working": "Removing…"
+      },
+      "restore": {
+        "action": "Restore",
+        "working": "Restoring…"
+      },
+      "removed": {
+        "heading": {
+          "one": "%{count} removed student",
+          "other": "%{count} removed students"
+        },
+        "endedOn": "ended %{date}",
+        "reason": "Reason: %{reason}"
+      },
+      "errors": {
+        "studentRequired": "Choose a student to enroll.",
+        "classRequired": "Choose a class.",
+        "rollInvalid": "Roll number must be a positive whole number.",
+        "alreadyEnrolled": "This student is already enrolled this year.",
+        "network": "No internet connection. Check your network and try again.",
+        "unknown": "Couldn’t save. Please try again."
+      }
+    },
+    "assessments": {
+      "title": "Assessments",
+      "back": "Back",
+      "subtitleAdmin": "Build tests, quizzes, and exams for a class and subject in %{year}.",
+      "subtitleTeacher": "Build assessments for the classes you teach in %{year}.",
+      "subtitleNoYear": "Build assessments for a class and subject.",
+      "loadError": "Couldn’t load assessment data. Check your connection and try again.",
+      "retry": "Retry",
+      "needYear": "Set a current academic year first — assessments are scoped to a year.",
+      "goToYears": "Go to academic years",
+      "needClass": "Create a class first — an assessment belongs to a class.",
+      "goToClasses": "Go to classes",
+      "noAssignments": "You’re not assigned to any class yet. Ask an admin to add you to a class first.",
+      "tabs": {
+        "build": "Build",
+        "list": "Assessments"
+      },
+      "build": {
+        "heading": "Build an assessment",
+        "editHeading": "Edit assessment",
+        "cancelEdit": "Cancel",
+        "pickClass": "Class",
+        "pickSubject": "Subject",
+        "context": "%{subject} · %{class}",
+        "needSubjects": "This class has no subjects yet. Set up the syllabus first.",
+        "needSubjectsTeacher": "This class has no subjects yet. Ask an admin to set up the syllabus first.",
+        "loadSubjectsError": "Couldn’t load subjects.",
+        "title": "Title",
+        "titlePlaceholder": "e.g. Chapter 1 Test",
+        "type": "Type",
+        "weightage": "Weightage (%)",
+        "weightagePlaceholder": "e.g. 10",
+        "weightageHint": "How much this counts toward the yearly total, as a percent.",
+        "scheduledOn": "Scheduled date",
+        "datePlaceholder": "YYYY-MM-DD",
+        "status": "Status",
+        "questions": "Questions",
+        "questionsHint": "Pick questions from the bank and set the marks for each.",
+        "loadQuestionsError": "Couldn’t load the question bank.",
+        "noQuestions": "No questions in this subject’s chapters yet. Add questions to the bank first.",
+        "noQuestionsTeacher": "No questions in this subject’s chapters yet. Write some questions first.",
+        "marks": "Marks",
+        "selectedCount": {
+          "one": "%{count} question selected",
+          "other": "%{count} questions selected"
+        },
+        "totalMarks": "Total marks: %{total}",
+        "file": "Worksheet file",
+        "fileHint": "Upload an image, a markdown (.md) file, or a document. Students in the class will see it as an assessment.",
+        "pickFile": "Choose file",
+        "changeFile": "Choose a different file",
+        "fileSelected": "Selected: %{name}",
+        "fileCurrent": "Current file: %{name}",
+        "fileNone": "No file chosen yet.",
+        "fileMarks": "Total marks (optional)",
+        "fileMarksHint": "Set this if you’ll grade the worksheet; leave blank otherwise.",
+        "submit": "Create assessment",
+        "submitting": "Creating…",
+        "updateSubmit": "Save changes",
+        "updating": "Saving…",
+        "success": "Assessment “%{title}” saved."
+      },
+      "types": {
+        "assignment": "Assignment",
+        "test": "Test",
+        "exam": "Exam",
+        "quiz": "Quiz",
+        "file": "File"
+      },
+      "questionTypes": {
+        "mcq": "Multiple choice",
+        "multi_select": "Multi-select",
+        "numeric": "Numeric",
+        "short_text": "Short text",
+        "true_false": "True / false",
+        "tap_image": "Tap image",
+        "match": "Match"
+      },
+      "cognitive": {
+        "recall": "Recall",
+        "understand": "Understand",
+        "apply": "Apply",
+        "analyze": "Analyze"
+      },
+      "statuses": {
+        "draft": "Draft",
+        "published": "Published",
+        "closed": "Closed"
+      },
+      "list": {
+        "empty": "No assessments yet — build your first.",
+        "loadError": "Couldn’t load assessments. Check your connection and try again.",
+        "count": {
+          "one": "%{count} assessment",
+          "other": "%{count} assessments"
+        },
+        "meta": "%{subject} · %{class}",
+        "questionCount": {
+          "one": "%{count} question",
+          "other": "%{count} questions"
+        },
+        "marks": "%{total} marks",
+        "weightage": "%{weightage}% weight",
+        "scheduled": "Scheduled %{date}",
+        "notScheduled": "No date set",
+        "edit": "Edit"
+      },
+      "errors": {
+        "titleRequired": "Enter a title for the assessment.",
+        "classRequired": "Choose a class.",
+        "subjectRequired": "Choose a subject.",
+        "weightageInvalid": "Weightage must be a number between 0 and 100.",
+        "dateInvalid": "Use the date format YYYY-MM-DD.",
+        "marksInvalid": "Marks for each question must be a whole number between 1 and 100.",
+        "needQuestions": "Add at least one question before publishing.",
+        "needFile": "Choose a file before publishing this worksheet.",
+        "fileMarksInvalid": "Total marks must be a whole number.",
+        "uploadFailed": "Couldn’t upload the file. Please try again.",
+        "network": "No internet connection. Check your network and try again.",
+        "unknown": "Couldn’t save. Please try again."
+      }
+    },
+    "attendance": {
+      "title": "Attendance",
+      "back": "Back",
+      "subtitleAdmin": "Mark daily attendance for any class in %{year}.",
+      "subtitleTeacher": "Mark daily attendance for the classes you teach in %{year}.",
+      "subtitleNoYear": "Mark daily attendance for a class.",
+      "loadError": "Couldn’t load attendance data. Check your connection and try again.",
+      "retry": "Retry",
+      "needYear": "Set a current academic year first — attendance is scoped to a year.",
+      "goToYears": "Go to academic years",
+      "needClass": "Create a class first — attendance is marked per class.",
+      "goToClasses": "Go to classes",
+      "noAssignments": "You’re not assigned to any class yet. Ask an admin to add you to a class first.",
+      "pickClass": "Class",
+      "tabs": {
+        "mark": "Mark",
+        "history": "History"
+      },
+      "statuses": {
+        "present": "Present",
+        "absent": "Absent",
+        "late": "Late",
+        "leave": "Leave"
+      },
+      "enrollmentStatuses": {
+        "struck_off": "Struck off",
+        "withdrawn": "Withdrawn",
+        "transferred": "Transferred",
+        "graduated": "Graduated"
+      },
+      "mark": {
+        "date": "Date",
+        "datePlaceholder": "YYYY-MM-DD",
+        "today": "Today",
+        "fixDate": "Fix the date to load the class.",
+        "loadRosterError": "Couldn’t load the roster. Check your connection and try again.",
+        "empty": "No students enrolled in %{class} for %{year} yet.",
+        "goToEnrollments": "Go to enrollment",
+        "markAllPresent": "Mark all present",
+        "count": {
+          "one": "%{count} student",
+          "other": "%{count} students"
+        },
+        "roll": "Roll %{roll}",
+        "noRoll": "No roll number",
+        "code": "Adm# %{code}",
+        "summary": "%{present} present · %{absent} absent · %{late} late · %{leave} leave",
+        "save": "Save attendance",
+        "saving": "Saving…",
+        "success": "Attendance saved for %{date}."
+      },
+      "history": {
+        "pickStudent": "Student",
+        "loadRosterError": "Couldn’t load the roster. Check your connection and try again.",
+        "rosterEmpty": "No students enrolled in %{class} for %{year} yet.",
+        "loadError": "Couldn’t load attendance history. Check your connection and try again.",
+        "empty": "No attendance marked for %{name} yet.",
+        "presentRate": "Present on %{rate}% of %{total} marked days",
+        "summary": "%{present} present · %{absent} absent · %{late} late · %{leave} leave"
+      },
+      "errors": {
+        "dateRequired": "Enter a date.",
+        "dateInvalid": "Use the date format YYYY-MM-DD.",
+        "dateFuture": "You can’t mark attendance for a future date.",
+        "noStudents": "There are no students to mark.",
+        "network": "No internet connection. Check your network and try again.",
+        "unknown": "Couldn’t save. Please try again."
+      }
+    },
+    "overdue": {
+      "title": "Overdue assignments",
+      "back": "Back",
+      "subtitle": "Active assignments past due by %{days}+ days, and the enrolled students with no submission, in %{year}.",
+      "subtitleNoYear": "Active assignments past due by %{days}+ days, and the enrolled students with no submission.",
+      "loadError": "Couldn’t load the overdue dashboard. Check your connection and try again.",
+      "retry": "Retry",
+      "needYear": "Set a current academic year first — assignments are scoped to a year.",
+      "goToYears": "Go to academic years",
+      "filterLabel": "Class",
+      "filterAll": "All classes",
+      "empty": "Nothing is overdue by %{days}+ days. Every active assignment is either recent or fully submitted.",
+      "summary": {
+        "one": "%{count} overdue assignment · %{students} missing submission",
+        "other": "%{count} overdue assignments · %{students} missing submissions"
+      },
+      "card": {
+        "meta": "%{class} · %{subject}",
+        "due": "Due %{date}",
+        "daysOverdue": {
+          "one": "%{count} day overdue",
+          "other": "%{count} days overdue"
+        },
+        "missing": "%{count} of %{total} not submitted",
+        "allSubmitted": "All %{total} students submitted.",
+        "noRoster": "No active students enrolled in this class."
+      },
+      "student": {
+        "roll": "Roll %{roll}",
+        "noRoll": "No roll"
+      }
+    },
+    "messages": {
+      "title": "Messages",
+      "back": "Back",
+      "subtitleAdmin": "Send a notification to the whole school, one class, or one student.",
+      "subtitleTeacher": "Send a notification to a class you teach or one of your students.",
+      "loadError": "Couldn’t load classes and students. Check your connection and try again.",
+      "retry": "Retry",
+      "noClasses": "You’re not assigned to any class yet. Ask an admin to add you to a class first.",
+      "noStudents": "No students to message yet.",
+      "noStudentMatches": "No students match “%{query}”.",
+      "code": "Adm# %{code}",
+      "sent": "Sent to %{audience}.",
+      "deliveryNote": "Students get a notification if they’ve allowed them — and can always read this in the app.",
+      "scopes": {
+        "school": "Whole school",
+        "class": "A class",
+        "student": "One student"
+      },
+      "audience": {
+        "school": "the whole school",
+        "class": "%{name}",
+        "student": "%{name}"
+      },
+      "form": {
+        "title": "Title",
+        "titlePlaceholder": "e.g. Holiday tomorrow",
+        "body": "Message",
+        "bodyPlaceholder": "Write the message students will see",
+        "scope": "Send to",
+        "pickClass": "Class",
+        "pickStudent": "Student",
+        "searchStudents": "Search by name or admission number",
+        "changeStudent": "Change",
+        "send": "Send",
+        "sending": "Sending…"
+      },
+      "errors": {
+        "titleRequired": "Enter a title.",
+        "bodyRequired": "Write a message.",
+        "classRequired": "Choose a class to send to.",
+        "studentRequired": "Choose a student to send to.",
+        "notAllowed": "You can only message classes and students you teach.",
+        "network": "No internet connection. Check your network and try again.",
+        "unknown": "Couldn’t send. Please try again."
+      }
+    },
+    "dev": {
+      "title": "Developer tools",
+      "back": "Back",
+      "subtitle": "Dev-only tools. These bypass the usual soft-delete safeguards — use with care.",
+      "hardDelete": {
+        "heading": "Hard-delete a student",
+        "warning": "Permanently erases a student and ALL their history — attempts, attendance, push tokens, enrollments, and their login. This cannot be undone. Admins never see this; it lives here on purpose.",
+        "searchLabel": "Find the student",
+        "searchPlaceholder": "Name or admission number",
+        "empty": "No students to delete.",
+        "noMatches": "No students match “%{query}”.",
+        "loadError": "Couldn’t load students. Check your connection and try again.",
+        "retry": "Retry",
+        "count": {
+          "one": "%{count} student",
+          "other": "%{count} students"
+        },
+        "select": "Delete…",
+        "confirmHeading": "Delete %{name}?",
+        "confirmBody": "This erases everything for admission number %{code} and cannot be undone. Type the admission number to confirm.",
+        "confirmLabel": "Type %{code} to confirm",
+        "confirmPlaceholder": "Admission number",
+        "confirmDelete": "Permanently delete",
+        "deleting": "Deleting…",
+        "cancel": "Cancel",
+        "success": "Deleted %{name}. Removed %{attempts} attempt(s), %{attendance} attendance record(s), %{tokens} push token(s), %{enrollments} enrollment(s).",
+        "errors": {
+          "mismatch": "That doesn’t match the admission number.",
+          "notDev": "Only the dev role can hard-delete a student.",
+          "notFound": "That student no longer exists.",
+          "network": "No internet connection. Check your network and try again.",
+          "unknown": "Couldn’t delete. Please try again."
+        }
+      }
+    }
+  },
+  "teacher": {
+    "home": {
+      "title": "Teacher home",
+      "welcome": "Welcome, %{name}",
+      "placeholder": "Your classes will appear here.",
+      "openQuestions": "Write questions",
+      "openAssessments": "Build assessments",
+      "openGrading": "Enter grades",
+      "openAttendance": "Mark attendance",
+      "openMessages": "Send a message"
+    },
+    "questions": {
+      "title": "Questions",
+      "back": "Back",
+      "subtitle": "Write questions for the chapters in the classes you teach.",
+      "loadError": "Couldn’t load your classes. Check your connection and try again.",
+      "retry": "Retry",
+      "needYear": "There’s no active school year yet. An admin needs to set one up before questions can be added.",
+      "noAssignments": "You’re not assigned to any class yet. Ask an admin to add you to a class first.",
+      "tabs": {
+        "create": "New question",
+        "mine": "My questions"
+      },
+      "create": {
+        "heading": "Write a question",
+        "editHeading": "Edit question",
+        "cancelEdit": "Cancel",
+        "pickClass": "Class",
+        "pickSubject": "Subject",
+        "pickChapter": "Chapter",
+        "needSyllabus": "This class has no subjects yet. Ask an admin to set up the syllabus first.",
+        "needChapters": "This subject has no chapters yet. Ask an admin to add chapters first.",
+        "loadSubjectsError": "Couldn’t load subjects.",
+        "loadChaptersError": "Couldn’t load chapters.",
+        "chapterContext": "%{chapter} · %{subject} · %{class}",
+        "type": "Question type",
+        "cognitive": "Thinking level",
+        "cognitiveHint": "Required — pick the kind of thinking this question needs.",
+        "stem": "Question",
+        "stemPlaceholder": "Type the question here",
+        "options": "Options",
+        "optionsHint": "Tap the letter to mark the correct option.",
+        "optionPlaceholder": "Option %{letter}",
+        "markCorrect": "Mark correct",
+        "removeOption": "Remove option",
+        "addOption": "Add option",
+        "numericAnswer": "Correct answer",
+        "numericPlaceholder": "e.g. 42",
+        "tfAnswer": "Correct answer",
+        "marks": "Marks",
+        "marksPlaceholder": "1",
+        "submit": "Save question",
+        "submitting": "Saving…",
+        "updateSubmit": "Update question",
+        "updating": "Updating…",
+        "success": "Question saved."
+      },
+      "types": {
+        "mcq": "Multiple choice",
+        "numeric": "Numeric",
+        "true_false": "True / false"
+      },
+      "cognitive": {
+        "recall": "Recall",
+        "understand": "Understand",
+        "apply": "Apply",
+        "analyze": "Analyze"
+      },
+      "tf": {
+        "true": "True",
+        "false": "False"
+      },
+      "mine": {
+        "empty": "You haven’t written any questions yet.",
+        "loadError": "Couldn’t load your questions. Check your connection and try again.",
+        "context": "%{chapter} · %{subject} · %{class}",
+        "edit": "Edit",
+        "count": {
+          "one": "%{count} question",
+          "other": "%{count} questions"
+        }
+      },
+      "errors": {
+        "chapterRequired": "Pick a chapter first.",
+        "cognitiveRequired": "Pick a thinking level — a question can’t be saved without one.",
+        "stemRequired": "Type the question.",
+        "optionTextRequired": "Fill in every option, or remove the empty ones.",
+        "correctRequired": "Mark which option is correct.",
+        "numericRequired": "Enter the correct answer.",
+        "numericInvalid": "The answer must be a number.",
+        "tfRequired": "Choose True or False.",
+        "marksInvalid": "Marks must be a whole number between 1 and 100.",
+        "network": "No internet connection. Check your network and try again.",
+        "unknown": "Couldn’t save. Please try again."
+      }
+    }
+  },
+  "shell": {
+    "login": {
+      "notReady": "Sign-in arrives in the next update. Until then you can preview the empty screens.",
+      "previewTitle": "Preview"
+    },
+    "teacher": {
+      "empty": "No classes assigned to you yet. Ask the office to add you to a class."
+    },
+    "notFound": {
+      "title": "This page doesn’t exist."
+    },
+    "config": {
+      "missing": "Server not configured: set EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY."
+    }
+  },
+  "ui": {
+    "close": "Close",
+    "dismiss": "Dismiss",
+    "mastery": {
+      "learning": "Learning",
+      "weak": "Needs work",
+      "mastered": "Got it"
+    },
+    "mosaic": {
+      "label": "%{subject}: %{count} of %{total} concepts mastered",
+      "count": "%{count} of %{total} tiles set"
+    },
+    "sync": {
+      "idle": "Saved",
+      "syncing": "Syncing…",
+      "saved": "Saved",
+      "offline": "Offline: saved on this device",
+      "error": "Not synced yet. Tap to try again",
+      "pending": {
+        "one": "1 change waiting",
+        "other": "%{count} changes waiting"
+      }
+    },
+    "pin": {
+      "entered": "%{count} of %{total} digits typed",
+      "delete": "Delete"
+    },
+    "motion": {
+      "auto": "Auto",
+      "full": "Full",
+      "lite": "Lite",
+      "off": "Off"
+    },
+    "theme": {
+      "light": "Light",
+      "dark": "Dark"
+    },
+    "presentation": {
+      "kid": "Kid",
+      "student": "Student",
+      "staff": "Staff"
+    }
+  },
+  "dev": {
+    "gallery": {
+      "title": "Component gallery",
+      "intro": "Every component in the current language, theme, presentation and motion tier. Hidden route for developers.",
+      "language": "Language",
+      "theme": "Theme",
+      "presentation": "Presentation",
+      "motion": "Motion tier",
+      "exam": "Exam mode",
+      "examOn": "On",
+      "examOff": "Off",
+      "osReduce": "The device asks for reduced motion, so motion is off whatever you pick.",
+      "tierNow": "Tier now: %{tier}. Device memory: %{memory}.",
+      "unknown": "unknown",
+      "replay": "Replay entrances",
+      "sections": {
+        "type": "Type",
+        "colours": "Colours",
+        "buttons": "Buttons",
+        "badges": "Badges and mastery",
+        "cards": "Cards and list rows",
+        "inputs": "Fields",
+        "mosaic": "Mosaic, pattern band, subject card",
+        "feedback": "Feedback: empty state, skeleton, toast, sync",
+        "navigation": "Tabs and sheet",
+        "layout": "Layout: two-pane",
+        "motion": "Motion moments (resolved)"
+      },
+      "sample": {
+        "subject": "Mathematics",
+        "subject2": "Science",
+        "subject3": "Urdu",
+        "list": "List pane",
+        "detail": "Detail pane",
+        "toast": "Show a toast",
+        "toastBody": "Your answers are saved.",
+        "sheet": "Open the sheet",
+        "sheetTitle": "A sheet",
+        "sheetBody": "Sheets close with the close button, the back button or Esc.",
+        "loading": "Toggle loading"
+      },
+      "examHint": "Only the exam timer and save dot may move.",
+      "memoryGb": "%{count} GB"
+    }
+  }
+}

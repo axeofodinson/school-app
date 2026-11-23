@@ -1,10 +1,9 @@
 # DESIGN_SYSTEM.md — Al-Syed app: look, feel, motion
 
 Status: **spec v0.2 "Mosaic" (session 00, 2026-11-23)**. v0.1 (calm paper + teal) was reviewed as too plain; v0.2 keeps the structure and rules but changes the look. Later sessions build to this
-instead of improvising. Tokens: [`docs/design/tokens.draft.ts`](docs/design/tokens.draft.ts)
-(session 02 moves them to `apps/mobile/ui/`). Checked by
-`node --experimental-strip-types scripts/verify-design-tokens.mjs` (contrast,
-motion table, exam lock-down, tier picker). Interactive wireframes (all screens in §7 plus a foundations board) are a
+instead of improvising. Tokens: [`packages/core/src/design/`](packages/core/src/design/) (`tokens.ts`, `motion.ts`; the app imports them
+from `apps/mobile/ui/tokens.ts`). Checked by `npm test` (`packages/core/test/design-*.test.ts`: contrast,
+motion table, exam lock-down, tier picker). Components: `apps/mobile/ui/`; live gallery: `/dev/gallery`. Interactive wireframes (all screens in §7 plus a foundations board) are a
 private Design canvas for Hassan's review: https://claude.ai/artifact/5ziYMyoKToGFB761ASkGjN
 
 Constraints that shaped everything: 4 GB school Chromebooks and cheap phones,
@@ -47,8 +46,8 @@ Principles (these decide arguments):
 
 ### 1.1 Iconography
 - 24 px grid, 2 px stroke, round caps and joins, **outline by default, filled when selected**. Corner radius matches `radius.sm`.
-- Library suggestion: **Lucide** (ISC licence) via `lucide-react-native` + `react-native-svg`, bundled, so no CDN. Session 02 confirms it builds for Android + web; otherwise we draw ~40 icons ourselves.
-- **RTL:** directional icons (chevron, arrow, back, send, list-bullet-with-indent) mirror; neutral icons (check, clock, cloud, book, pencil, lightbulb) do not. The `Icon` primitive takes `directional` as a prop.
+- **Lucide** (ISC licence) path data copied into `apps/mobile/ui/icons.data.ts` and drawn with `react-native-svg` (session 02, DECISIONS #43). Not `lucide-react-native`: its barrel import would bundle ~1,900 icons. Add icons by copying their elements into that table.
+- **RTL:** directional icons (chevron, arrow, back, send, list-bullet-with-indent) mirror; neutral icons (check, clock, cloud, book, pencil, lightbulb) do not. Directional icons are listed in `directionalIcons` and the `Icon` primitive mirrors them.
 - Mastery band shapes (so colour-blind users can tell them apart): **learning = half-filled circle**, **weak = triangle with a dot** ("needs work"), **mastered = filled circle with a tick**.
 
 ### 1.2 Illustration (empty states, onboarding, result)
@@ -186,7 +185,7 @@ Libraries and tier model: ARCHITECTURE §6b, CLAUDE.md Motion rules. This sectio
 
 **Gate every moment must pass** (from `expo-animation`): *How often?* (often → near-imperceptible or nothing). *What is its one-word purpose?* (feedback, state, hierarchy, progress, sync, explanation, delight; no purpose, no motion.) If it fails, the table says `none`.
 
-**Durations:** `fast 120 · base 220 · slow 360` ms. **Springs** (classic form, work in Reanimated 3 and 4): `gentle` {damping 22, stiffness 170} no overshoot · `snappy` {18, 320, mass 0.9} tiny overshoot · `bouncy` {11, 260, mass 0.9} visible bounce (kid celebration only). **Easing:** out `(0.23,1,0.32,1)`, in-out `(0.77,0,0.175,1)`; never ease-in. Animate **transform + opacity only**; slide directions mirror in RTL.
+**Durations:** `fast 120 · base 220 · slow 360` ms. **Springs** (classic damping/stiffness/mass form, accepted by Reanimated 4): `gentle` {damping 22, stiffness 170} no overshoot · `snappy` {18, 320, mass 0.9} tiny overshoot · `bouncy` {11, 260, mass 0.9} visible bounce (kid celebration only). **Easing:** out `(0.23,1,0.32,1)`, in-out `(0.77,0,0.175,1)`; never ease-in. Animate **transform + opacity only**; slide directions mirror in RTL.
 
 **Tiers.** *full:* the table's full column. *lite:* opacity fades only, ≤ `base`, no springs, no movement (default on ≤ 4 GB RAM, on measured frame drops, and on staff screens). *off:* nothing moves; state still changes instantly (colour, icon, text), so nothing is lost. OS "reduce motion" forces **off** and cannot be overridden in-app. User can pick full/lite/off/auto in Settings.
 
@@ -540,6 +539,6 @@ Urdu column is intentionally empty: teachers write it (DECISIONS #28), assisted 
 | Screen reader | **Unverified**: TalkBack on Android/ChromeOS and NVDA on web. Test: A-1 in `TEST_PLAN.md` |
 
 ## 10. How later sessions use this
-- **02:** move tokens to `apps/mobile/ui/`, add React providers, primitives, tier detection, `/dev/gallery` (en/ur × light/dark × 3 tiers × 3 presentations), unit-test `pickMotionTier`/`resolveMoment` in `packages/core` (copy the checks from `scripts/verify-design-tokens.mjs`). Confirm Moti + Reanimated versions match the SDK (Moti's support for Reanimated 4 is unverified) and that Lucide builds; else draw icons.
+- **02 (done):** tokens in `packages/core/src/design/`, providers (`ThemeProvider`, `MotionProvider`, `ExamMode`, `ToastProvider`), primitives in `apps/mobile/ui/`, `/dev/gallery` (en/ur × light/dark × full/lite/off/auto × kid/student/staff × exam). Moti dropped, Lucide icons copied (DECISIONS #41–#45).
 - **01:** `app.json` needs no orientation lock; fonts: `@expo-google-fonts/nunito` + existing Nastaliq files.
 - **All screens:** build from §7, add the empty/offline state, take screenshots in en + ur, light + dark, kid + student.

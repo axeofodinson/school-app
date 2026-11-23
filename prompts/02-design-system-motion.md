@@ -11,7 +11,7 @@ You are continuing the Al-Syed school app remake. This session is prompt **02** 
 ## Read first
 - `CLAUDE.md` (rules + session protocol)
 - `MODULE_STATUS.md`
-- DESIGN_SYSTEM.md (incl. §0 answers from Hassan) and `docs/design/tokens.draft.ts`
+- DESIGN_SYSTEM.md (incl. §0 answers from Hassan) and the tokens (were `docs/design/tokens.draft.ts`; now `packages/core/src/design/`)
 - ARCHITECTURE.md §6b
 - CLAUDE.md Motion rules
 
@@ -25,6 +25,7 @@ Turn the design spec into reusable, RTL-safe, themed components and the motion t
 - `apps/mobile/ui/tokens.ts` and `ui/motion.ts` (durations, springs, the `moments` table) moved from `docs/design/tokens.draft.ts`; delete the draft once moved. Keep `pickMotionTier`/`resolveMoment`/`presentationForGrade` pure and port the checks in `scripts/verify-design-tokens.mjs` into `packages/core` tests.
 - Theme provider: light/dark, presentation (`kid` / `student` / `staff`, DESIGN_SYSTEM.md §3).
 - Primitives: Text (auto Nastaliq for Urdu), Button, IconButton, Card, ListItem, TextField, PinField, Badge, MosaicTiles + PatternBand + SubjectCard (mastery, DESIGN_SYSTEM.md §1), EmptyState, Skeleton, Toast, Sheet/Modal, Tabs, SyncStatusPill.
+- **Moti vs Reanimated 4 (DECISIONS #38):** SDK 58 means Reanimated 4. Moti 0.30 is installed but its `transition` types fail against Reanimated 4. Check whether Moti animates correctly on Android and web; keep it with a small type shim, or remove it and use Reanimated 4 directly. Record the outcome in DECISIONS and CLAUDE.md.
 - Motion tiers: detect full/lite/off (OS reduce-motion, device memory where available, user setting), a `useMotion()` hook so components read the tier; exam-mode context that forces off.
 - Responsive layout helpers: breakpoints for phone / tablet-Chromebook / desktop, a two-pane layout.
 - A hidden `/dev/gallery` route showing every component in both languages, both themes and all three tiers.
