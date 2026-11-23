@@ -64,3 +64,18 @@ that matters for work in the container, and it's on by default.
 
 Env vars (`EXPO_PUBLIC_SUPABASE_URL`, `EXPO_PUBLIC_SUPABASE_ANON_KEY`) are set in
 the same environment editor — see the root `README.md`.
+
+## Dev Supabase project (DECISIONS #27)
+
+All seeding, load tests and feature testing use a **second, free Supabase
+project**, never the production one.
+
+1. Create a new project in the Supabase dashboard (e.g. `school-app-dev`, same region).
+2. In its SQL Editor run `db/setup.sql`, then every `db/0NN_*.sql` in order. This is
+   the one place running `setup.sql` is fine: the project is empty and disposable.
+3. Add its host to the cloud environment's allowed domains (like the production
+   entry above).
+4. Add environment variables for sessions: `DEV_SUPABASE_URL`,
+   `DEV_SUPABASE_ANON_KEY`, and (seed scripts only) `DEV_SUPABASE_SERVICE_ROLE_KEY`.
+   Never put the service-role key in the app or in `EXPO_PUBLIC_*` variables.
+5. For dev builds of the app, point `EXPO_PUBLIC_SUPABASE_URL/ANON_KEY` at the dev project.
