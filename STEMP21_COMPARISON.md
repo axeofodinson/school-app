@@ -18,10 +18,20 @@ Written 2026-11-23 after Hassan's meeting with STEMP21 Pakistan.
 | Structured teacher training + STEM certification; unique ID per teacher | Public claim | [stemp21.com](https://stemp21.com/home-modified/) |
 | App: role-based (Teacher / Admin / Sub-admin); assign projects by grade; assess projects; personalised remarks; communication and record-keeping | Public claim | [Play Store: com.stamp.stemp](https://play.google.com/store/apps/details?id=com.stamp.stemp) |
 | Project framework organised by UN SDG themes ("six projects per SDG theme") | Third-party school | [SZABIST ZAB-ed](https://szabistzabed.org/stemp21/) |
-| **Full student LMS** (student logins, lessons, quizzes) | Reported in meeting; **unconfirmed** in public material | — |
+| Curriculum is mainly **Scratch programming books**: each book has 20 guided Scratch projects + 20 "STEMP challenges", with SLOs and SDG alignment | Public claim | [stemp21.com](https://stemp21.com/) |
+| Computer lab ratio **1 laptop per 30 students** (collaborative programming) | Public claim | [stemp21.com/stemp-lab](https://stemp21.com/stemp-lab/) |
+| "**Training LMS**" listed as a working area (no feature details published) | Public claim | [stemp21.com](https://stemp21.com/) |
+| District-scale teacher STEM certification (Attock, public schools, Mar 2025) + robotics kits to schools | News | [Dawn](https://www.dawn.com/news/1899213), [Minute Mirror](https://minutemirror.com.pk/attock-becomes-pakistans-first-district-to-certify-public-school-teachers-in-stem-education-through-stemp21-372009/) |
+| Lab installations in Punjab schools (e.g. a school in Phalia) | Video title | [YouTube](https://www.youtube.com/watch?v=NoN8uuve_s4) |
+| Product intro video: curriculum, computer lab, teacher training | Video listing (contents not viewable from here) | [YouTube](https://www.youtube.com/watch?v=WJN1ZxzJhgk), [YouTube](https://www.youtube.com/watch?v=gP6q3ZVh7wI) |
+| **Full student LMS** (student logins, lessons, quizzes) | Reported in meeting; **unconfirmed**. Public material names only a *Training* LMS, which suggests it is for **teacher training**, not students | — |
 | Urdu, offline, Punjab board / matric, exams, parent access, data export/API, pricing after free period | **Unconfirmed** | — |
 
-The public app description mentions only **teacher/admin roles** and **project assessment**. It says nothing about students using the app themselves, which is the core of an LMS. Confirm this in a demo.
+The public app description mentions only **teacher/admin roles** and **project assessment**, and the website's LMS is a "**Training LMS**". Together these suggest STEMP21's software is for **teachers** (training, certification, and grading student projects), not a student learning platform. Confirm this in a demo.
+
+**What this means for Al-Syed:**
+- STEMP21's content is mostly **Scratch coding projects**, so students need a Scratch environment. Scratch 3 runs in Chrome on Chromebooks; an offline Scratch editor exists for Windows. Our LMS should **link out** to the Scratch project and collect the `.sb3` file or a screenshot as evidence (the `project-evidence` bucket in `db/022`), rather than embedding Scratch.
+- One laptop per 30 students works only for group work. On the school's Chromebooks, students can work in pairs or alone, so the team feature in `db/022` should allow any team size the teacher chooses.
 
 ## 2. Feature comparison
 
@@ -92,7 +102,8 @@ Draft migration verified on a throwaway local Postgres (`db/test/022_smoke.sql`)
 ## 6. Demo checklist (ask STEMP21)
 
 **Their LMS**
-1. Can **students** log in themselves, or is the app teacher/admin only?
+1. Can **students** log in themselves, or is the app teacher/admin only? Is the "Training LMS" for teachers only?
+1a. Do students do the Scratch projects in Scratch Online or the offline editor? Can project files (`.sb3`) be submitted into our app?
 2. Which subjects beyond STEM? Any Punjab board / matric (Class 9–10) content?
 3. Is there an Urdu interface? Can it show Urdu (Nastaleeq) content?
 4. Does it work **offline** or on weak Wi-Fi? On Chromebooks? On Windows browsers?
