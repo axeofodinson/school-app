@@ -1,0 +1,17 @@
+{
+  "name": "al-syed-teaser",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Coded marketing teaser for the Al-Syed app + LMS (web-only, rendered to MP4).",
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "render": "node build.mjs && node render.mjs",
+    "preview": "node build.mjs && npx --yes http-server -p 8080 . || python3 -m http.server 8080"
+  },
+  "dependencies": {
+    "gsap": "3.15.1",
+    "@fontsource-variable/fraunces": "5.3.0",
+    "@fontsource/inter": "5.3.0"
+  }
+}

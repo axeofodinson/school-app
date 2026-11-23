@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Al-Syed Teaser</title>
+<!-- build.mjs inlines style.css, fonts, gsap, copy.json and teaser.js into dist/teaser.html -->
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="stage" aria-label="Al-Syed High School app teaser">
+
+  <!-- ambient background: two slow orbs and a fine grain, all driven by the timeline -->
+  <div class="bg">
+    <div class="orb orb-a"></div>
+    <div class="orb orb-b"></div>
+    <div class="grain"></div>
+  </div>
+
+  <!-- 1 · HOOK -->
+  <section class="scene center" id="s-hook">
+    <div class="hook-stack">
+      <h1 class="hl hook-line" data-en="hook"></h1>
+      <p class="ur ur-hook" data-ur="hook"></p>
+      <div class="brand">
+        <svg class="mark" viewBox="0 0 120 120" aria-hidden="true">
+          <rect class="mark-tile" x="6" y="6" width="108" height="108" rx="30"/>
+          <path class="mark-book" d="M22 82 C38 74 50 74 60 82 C70 74 82 74 98 82 M22 82 V50 C38 42 50 42 60 50 C70 42 82 42 98 50 V82 M60 50 V82" pathLength="1"/>
+          <path class="mark-star" d="M60 18 L64.4 28.2 L75.4 29 L67 36.2 L69.6 47 L60 41.2 L50.4 47 L53 36.2 L44.6 29 L55.6 28.2 Z" pathLength="1"/>
+        </svg>
+        <div class="brand-text">
+          <div class="brand-name" data-en="school"></div>
+          <div class="brand-sub" data-en="presents"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 · LEARN -->
+  <section class="scene split" id="s-learn">
+    <div class="cap">
+      <h2 class="hl" data-en="learn_title"></h2>
+      <p class="ur" data-ur="learn_title"></p>
+      <p class="sub" data-en="learn_sub"></p>
+    </div>
+    <div class="vis">
+      <div class="phone">
+        <div class="screen paper">
+          <div class="appbar">
+            <span class="chip" data-en="lesson_chip"></span>
+            <span class="lang"><b class="lang-en">EN</b><b class="lang-ur">اردو</b><i class="lang-knob"></i></span>
+          </div>
+          <div class="lesson">
+            <div class="lesson-en">
+              <h3 data-en="lesson_title"></h3>
+              <p data-en="lesson_body"></p>
+            </div>
+            <div class="lesson-ur" dir="rtl" lang="ur">
+              <h3 class="ur" data-ur="lesson_title" data-ph="long"></h3>
+              <p class="ur" data-ur="lesson_body" data-ph="long"></p>
+            </div>
+          </div>
+          <svg class="diagram" viewBox="0 0 200 150" aria-hidden="true">
+            <path class="tri" d="M30 125 H150 V35 Z" pathLength="1"/>
+            <path class="right" d="M138 125 V113 H150" pathLength="1"/>
+            <path class="hyp" d="M30 125 L150 35" pathLength="1"/>
+            <text class="lbl la" x="88" y="143">a</text>
+            <text class="lbl lb" x="160" y="84">b</text>
+            <text class="lbl lc" x="76" y="70">c</text>
+          </svg>
+          <div class="formula" aria-label="a squared plus b squared equals c squared">
+            <span>a<sup>2</sup></span><span class="op">+</span><span>b<sup>2</sup></span><span class="op">=</span><span class="fc">c<sup>2</sup></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 · UNDERSTAND -->
+  <section class="scene split" id="s-understand">
+    <div class="cap">
+      <h2 class="hl" data-en="understand_title"></h2>
+      <p class="ur" data-ur="understand_title"></p>
+      <p class="sub" data-en="understand_sub"></p>
+    </div>
+    <div class="vis">
+      <div class="phone">
+        <div class="screen paper">
+          <div class="appbar"><span class="chip" data-en="concept"></span><span class="dots3"><i></i><i></i><i class="on"></i></span></div>
+          <div class="q" data-en="q_prompt"></div>
+          <div class="opts">
+            <div class="opt" id="opt-a"><b>A</b> 7</div>
+            <div class="opt" id="opt-b"><b>B</b> 14</div>
+            <div class="opt" id="opt-c"><b>C</b> 25</div>
+            <div class="opt" id="opt-d"><b>D</b> 49<i class="ripple"></i><span class="x">✕</span></div>
+          </div>
+          <div class="why">
+            <div class="why-h"><span class="why-dot"></span><span data-en="why_label"></span></div>
+            <p data-en="why_body"></p>
+          </div>
+          <div class="follow">
+            <div><small data-en="followup_label"></small><div data-en="followup_body"></div></div>
+            <span class="arrow">→</span>
+          </div>
+          <div class="mastery">
+            <svg viewBox="0 0 100 100" class="ring" aria-hidden="true">
+              <circle cx="50" cy="50" r="40" class="ring-bg"/>
+              <circle cx="50" cy="50" r="40" class="ring-fg" pathLength="1"/>
+            </svg>
+            <div class="ring-label"><span class="ring-check">✓</span><span data-en="mastered"></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 · SURPRISE EXAMS -->
+  <section class="scene split" id="s-exam">
+    <div class="cap">
+      <h2 class="hl" data-en="exam_title"></h2>
+      <p class="ur" data-ur="exam_title"></p>
+      <p class="sub" data-en="exam_sub"></p>
+    </div>
+    <div class="vis">
+      <div class="panel">
+        <div class="panel-bar"><i></i><i></i><i></i></div>
+        <div class="panel-body">
+          <div class="steps">
+            <div class="step" id="st-1"><em>1</em><span data-en="exam_class"></span><i class="ripple"></i></div>
+            <div class="step-arrow">→</div>
+            <div class="step" id="st-2"><em>2</em><span data-en="exam_topic"></span><i class="ripple"></i></div>
+            <div class="step-arrow">→</div>
+            <div class="step go" id="st-3"><em>3</em><span data-en="exam_start"></span><i class="ripple"></i></div>
+          </div>
+          <div class="blueprint"><span class="bp-icon"></span><span data-en="exam_blueprint"></span></div>
+          <div class="live">
+            <div class="live-h"><span class="live-dot"></span><span class="live-txt" data-en="live_label"></span></div>
+            <div class="seats" id="seats"></div>
+          </div>
+          <div class="results">
+            <div class="res-h"><span class="res-dot"></span><span data-en="ended_label"></span></div>
+            <div class="bars" id="bars"></div>
+            <div class="weak" data-en="weak_label"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 · WORKS WHERE YOU ARE -->
+  <section class="scene split" id="s-where">
+    <div class="cap">
+      <h2 class="hl" data-en="where_title"></h2>
+      <p class="ur" data-ur="where_title"></p>
+      <p class="sub" data-en="where_sub"></p>
+    </div>
+    <div class="vis">
+      <div class="devices">
+        <figure class="dev laptop">
+          <div class="d-screen"><div class="mini"><i></i><i></i><i></i></div></div>
+          <div class="d-base"></div>
+          <figcaption data-en="dev_lab"></figcaption>
+        </figure>
+        <figure class="dev monitor">
+          <div class="d-screen"><div class="mini"><i></i><i></i><i></i></div></div>
+          <div class="d-stand"></div>
+          <figcaption data-en="dev_pc"></figcaption>
+        </figure>
+        <figure class="dev handset">
+          <div class="d-screen">
+            <svg class="wifi" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 9a15 15 0 0 1 20 0M5.5 12.5a10 10 0 0 1 13 0M9 16a5 5 0 0 1 6 0"/><circle cx="12" cy="19.5" r="1.4"/><path class="wifi-x" d="M4 4 L20 20" pathLength="1"/></svg>
+            <div class="mini"><i></i><i></i><i></i></div>
+          </div>
+          <figcaption data-en="dev_phone"></figcaption>
+        </figure>
+      </div>
+      <div class="pill offline"><span class="pill-dot"></span><span data-en="offline_pill"></span><b class="pill-n">✓</b></div>
+      <div class="pill synced"><span class="pill-dot"></span><span data-en="synced_pill"></span></div>
+      <div class="a4">
+        <div class="a4-h"><b data-en="worksheet_head"></b><span>Name: ____________</span></div>
+        <ol>
+          <li>3² + 4² = ____</li>
+          <li>5² + 12² = ____</li>
+          <li>Is (2 + 3)² = 2² + 3²? ____</li>
+          <li>Draw a right-angled triangle and label c.</li>
+        </ol>
+        <div class="a4-box"></div>
+      </div>
+      <p class="a4-cap sub" data-en="worksheet_cap"></p>
+    </div>
+  </section>
+
+  <!-- 6 · CLOSE -->
+  <section class="scene center" id="s-close">
+    <div class="close-stack">
+      <svg class="mark mark-sm" viewBox="0 0 120 120" aria-hidden="true">
+        <rect class="mark-tile" x="6" y="6" width="108" height="108" rx="30"/>
+        <path class="mark-book on" d="M22 82 C38 74 50 74 60 82 C70 74 82 74 98 82 M22 82 V50 C38 42 50 42 60 50 C70 42 82 42 98 50 V82 M60 50 V82"/>
+        <path class="mark-star on" d="M60 18 L64.4 28.2 L75.4 29 L67 36.2 L69.6 47 L60 41.2 L50.4 47 L53 36.2 L44.6 29 L55.6 28.2 Z"/>
+      </svg>
+      <h1 class="hl soon" data-en="soon"></h1>
+      <p class="ur ur-soon" data-ur="soon"></p>
+      <div class="close-school" data-en="school"></div>
+      <p class="ur ur-school" data-ur="school"></p>
+      <div class="platforms" data-en="platforms"></div>
+      <div class="store" data-en="store"></div>
+    </div>
+  </section>
+
+  <div class="draft-flag">URDU DRAFT · NOT APPROVED</div>
+</div>
+
+<script src="node_modules/gsap/dist/gsap.min.js"></script>
+<script>window.__COPY_URL__ = "copy.json";</script>
+<script src="teaser.js"></script>
+</body>
+</html>

@@ -2,6 +2,10 @@
 
 Newest first. Each: decision — reason — who/when.
 
+## 2026-11-23 — marketing
+
+32. **The teaser trailer (prompt M1) is a coded web page animated with GSAP, rendered to MP4 with Playwright + ffmpeg.** GSAP is bundled from npm and inlined (no CDN). This is a web-only marketing exception: the app itself still uses only Reanimated 3 + Moti (#21). One seekable timeline gives every aspect ratio and deterministic re-renders when text changes. Urdu lines stay `[UR]` placeholders until Hassan writes or approves them.
+
 ## 2026-11-23 — tooling
 
 30. **No Fable; every session runs on Opus with skills and MCPs.** Design work uses `frontend-design`, `design:*` and the Expo skills (`expo-design-system`, `expo-animation`), with Figma optional. The Supabase MCP is connected to the **dev project only**. Context7 is used for current library docs. Workflow and setup: `GUIDE.md`.

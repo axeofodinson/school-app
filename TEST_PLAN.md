@@ -55,3 +55,8 @@ S-1 Shared device: no previous-student data visible after switch. S-2 No secrets
 - L-1 40 concurrent exam sessions (node script with 40 real JWTs: start → 20 saves each at random intervals → submit). Pass: 0 lost answers, p95 save < 500 ms, all results visible to teacher < 5 s after end.
 - L-2 Worst case 5 classes × 40 simultaneously.
 - L-3 DB size after seed + 1 simulated year < 300 MB.
+
+## Marketing (M1 teaser)
+- **MK-1 Deterministic render:** `node render.mjs --hash` twice; `out/hashes-<format>.txt` must match frame for frame (and the MP4s byte for byte).
+- **MK-2 Urdu check:** `node render.mjs --at <seconds>` on every Urdu frame in 9:16 and 16:9; Nastaliq connected, nothing clipped.
+- **MK-3 Budget:** 9:16 and 16:9 ≤ 15 MB each; plays in WhatsApp on an Android phone (manual, Hassan).

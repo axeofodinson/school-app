@@ -65,3 +65,10 @@ Thumbs.db
 .idea/
 .vscode/*
 !.vscode/extensions.json
+
+# ------------------------------------------------------------------
+# Marketing teaser: rendered videos, frames and the built single file
+# ------------------------------------------------------------------
+marketing/teaser/out/
+marketing/teaser/dist/
+marketing/teaser/music.mp3
