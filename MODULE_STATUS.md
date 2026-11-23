@@ -21,7 +21,7 @@ prompts: `prompts/README.md`.
 | Curriculum editors | 2 | ⏳ | [20](prompts/20-curriculum-run-017.md) | |
 | Importer + review queue | 2 | ⏳ | [21](prompts/21-importer.md) [22](prompts/22-review-queue.md) | |
 | Content (pilot: Class 9 Math/Science) | 2+ | ⏳ | [C1](prompts/C1-generate-topic-content.md) [C2](prompts/C2-review-urdu.md) | |
-| Learn renderer + offline packs | 3 | ⏳ | [30](prompts/30-learn-renderer.md) [32](prompts/32-offline-learn-packs.md) | |
+| Learn renderer + visual blocks + offline packs | 3 | ⏳ (visual block format specced in session 00) | [30](prompts/30-learn-renderer.md) [33](prompts/33-visual-blocks.md) [32](prompts/32-offline-learn-packs.md) | |
 | Practice engine | 3 | ⏳ | [31](prompts/31-practice-engine.md) | |
 | Mastery / follow-ups / gates / revision | 4 | ⏳ | [40](prompts/40-mastery-rpcs.md) [41](prompts/41-followups-gates-prepare.md) [42](prompts/42-spaced-revision.md) | |
 | Online exams + live view | 5 | 🟡 RPCs drafted in 017 | [50](prompts/50-exam-launch-and-take.md) [51](prompts/51-live-view-results.md) | |

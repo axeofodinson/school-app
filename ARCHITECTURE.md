@@ -30,7 +30,7 @@ Targets from one codebase:
 | Identity & Roster | auth, shared-device mode | session namespace | profiles, students, enrollments, teacher_assignments |
 | Curriculum | editors | tree utils | curricula, chapters, topics, concepts, concept_prerequisites |
 | Question Bank + Review | importer UI, review queue | importer validator, dedupe | questions, question_versions, item_approvals, item_reviews, import_batches |
-| Learning | lesson reader | block schema | learning_content(+_versions) |
+| Learning | lesson reader, visual blocks (scene, chart, widget, figure, compare, video) | block schema, SVG sanitiser, safe maths parser (`packages/core/visuals`) | learning_content(+_versions) |
 | Practice | practice/diagnostic screens | item selection, scoring | practice_attempts |
 | Mastery | Prepare tab, follow-ups | mastery rule, relief rule, revision schedule | concept_mastery, follow_ups, gate_overrides |
 | Examinations | teacher launch, live view, student exam | paper/shuffle, timer display | assessments, exam_sessions, exam_session_answers, exam_events |

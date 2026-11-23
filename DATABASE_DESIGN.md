@@ -58,11 +58,46 @@ explanation: {"en": "...", "ur": "...", "why_wrong": {"A": {"en": "...", "ur": "
 
 **Lesson blocks** (`learning_content_versions.blocks`):
 ```json
-[{"type": "objectives|intro|simple|detailed|visual|worked_example|misconception|quick_check|application|summary|video",
+[{"type": "objectives|intro|simple|detailed|worked_example|misconception|quick_check|application|summary",
   "concept_id": "uuid|null", "en": "markdown", "ur": "markdown",
-  "media": {"svg": "...", "image": "path", "youtube_id": "..."},
   "question_id": "uuid (quick_check only)"}]
 ```
+
+**Visual blocks** (same array; visual-first lessons, DESIGN_SYSTEM.md §7b). Every
+visual block requires `alt` {en, ur}; captions are {en, ur}; SVG is inline,
+sanitised and within `visualBudget` (≤ 60 KB, ≤ 400 elements). No schema change:
+`blocks` is jsonb. (Older drafts that used `visual` + `media` are read as `figure`.)
+```json
+{"type": "figure", "concept_id": "…", "alt": {"en": "", "ur": ""},
+ "svg": "<svg…>" , "image": "storage path (WebP ≤ 100 KB, optional instead of svg)",
+ "hotspots": [{"x": 0.42, "y": 0.30, "label": {"en": "", "ur": ""}}]}
+
+{"type": "scene", "concept_id": "…", "alt": {…}, "svg": "<svg> with <g id=\"car\">… layers",
+ "layers": ["car", "arrow", "graph_line"],
+ "steps": [{"caption": {"en": "", "ur": ""}, "ms": 900,
+            "set": {"car": {"x": 120, "y": 0, "scale": 1, "rotate": 0, "opacity": 1},
+                    "arrow": {"opacity": 0}}}],
+ "predict_question_id": "uuid|null"}
+
+{"type": "chart", "concept_id": "…", "alt": {…}, "kind": "bar|line|pie|scatter|table",
+ "x": {"label": {"en": "", "ur": ""}, "unit": "s", "values": [0, 1, 2, 3]},
+ "y": {"label": {"en": "", "ur": ""}, "unit": "m"},
+ "series": [{"name": {"en": "", "ur": ""}, "values": [0, 5, 10, 15], "role": "focus|highlight|result"}],
+ "reveal": "none|series|points"}
+
+{"type": "widget", "concept_id": "…", "alt": {…},
+ "widget": "number_line|fraction_bars|function_graph|geometry_shape|angle|balance|probability|motion_graph|circuit",
+ "params": {"expr": "m*x + c", "sliders": {"m": [-5, 5, 1, 1], "c": [-10, 10, 1, 2]}, "x": [-10, 10]},
+ "task": {"en": "", "ur": ""}, "predict_question_id": "uuid|null"}
+
+{"type": "compare", "concept_id": "…", "alt": {…},
+ "left":  {"title": {"en": "", "ur": ""}, "svg": "…", "text": {"en": "", "ur": ""}, "tone": "wrong_idea"},
+ "right": {"title": {…}, "svg": "…", "text": {…}, "tone": "result"}}
+
+{"type": "video", "concept_id": "…", "alt": {…}, "youtube_id": "…", "poster": "storage path",
+ "transcript": {"en": "", "ur": ""}, "offline_fallback_block": 3}
+```
+Exam items may contain only static `figure`/`chart` (no scene, widget, video).
 
 **Import file (one per topic):**
 ```json
@@ -77,6 +112,10 @@ explanation: {"en": "...", "ur": "...", "why_wrong": {"A": {"en": "...", "ur": "
 Importer checks: schema, exactly one correct key present in options, en+ur
 non-empty (flags, not passes, translation), concept keys resolve, duplicate
 stems (normalised hash + trigram similarity), cognitive_level present (CLAUDE.md rule 6).
+Visual blocks: `alt` + per-step captions present (error), SVG sanitised (no script,
+event attributes, foreignObject, external href), within `visualBudget`, scene
+layer ids exist in the SVG, widget name in the catalogue, `expr` parses with the
+safe maths parser.
 
 **practice_attempts.items:** `[{"q": uuid, "v": 3, "a": "B", "c": true, "ms": 8200}]`.
 

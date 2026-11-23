@@ -44,6 +44,16 @@ assert.equal(t.hueForSubject('abc', 'coral'), 'coral');
 assert.ok(Object.keys(t.subjectHues).includes(t.hueForSubject('xyz', 'not-a-hue')));
 console.log(`subject hues: ${Object.keys(t.subjectHues).length} × 2 themes carry ink text at AA`);
 
+// Diagram meaning colours are visible strokes on white (≥ 3:1, WCAG 1.4.11).
+for (const k of ['ink', 'focus', 'result', 'wrongIdea', 'guide']) {
+  const r = ratio(t.diagram[k], '#FFFFFF');
+  assert.ok(r >= 3, `diagram.${k} on white = ${r.toFixed(2)}`);
+}
+// Exams allow only static visuals; budgets are sane.
+assert.deepEqual([...t.examSafeVisuals].sort(), ['chart', 'figure']);
+assert.ok(t.visualBudget.stepMaxMs < t.visualBudget.pauseRequiredAfterMs);
+console.log('lesson visuals: diagram colours, exam-safe set and budgets ok');
+
 // Light and dark define the same roles.
 assert.deepEqual(Object.keys(t.colours.light).sort(), Object.keys(t.colours.dark).sort());
 

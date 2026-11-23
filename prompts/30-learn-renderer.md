@@ -9,6 +9,7 @@ Paste everything below the line into a new Claude Code session on the `school-ap
 You are continuing the Al-Syed school app remake. This session is prompt **30** from `prompts/`.
 
 ## Read first
+- DESIGN_SYSTEM.md §7.3 and §7b (visual learning)
 - `CLAUDE.md` (rules + session protocol)
 - `MODULE_STATUS.md`
 - DATABASE_DESIGN.md §4 lesson blocks
@@ -22,7 +23,8 @@ Skills: `frontend-design`, `expo:expo-ui`, `expo:expo-dom` (only if a web-only r
 Students read a topic's lesson in English or Urdu with diagrams, math, video and quick checks.
 
 ## Do
-- Block renderer for all block types; per-block language toggle; SVG math and diagrams via react-native-svg; YouTube embed (iframe web / WebView native) with an offline placeholder; quick-check blocks use the practice item component.
+- Visual-first reader (DESIGN_SYSTEM.md §7.3, §7b): `Stage` + `StageControls` + `StepCaption`, two-pane ≥ 900, "Text version" toggle, keyboard (←/→, Space, F).
+- Renderers for text blocks, `figure` (hotspots, zoom), `compare`, `video` (YouTube iframe web / WebView native, poster + transcript, offline fallback to a scene) and quick checks (practice item component). SVG math and diagrams via react-native-svg. `scene`, `chart`, `widget` come in prompt 33: render a placeholder card for them here.
 - Topic page: objectives, sections nav, 'alternative explanation' entry point (kind=alternative).
 - Teacher preview of drafts.
 

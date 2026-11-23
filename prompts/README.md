@@ -82,7 +82,8 @@ Deferred: parents (81) and iOS (82).
 |---|---|---|---|---|---|
 | [ ] | [30 Learn: lesson reader](30-learn-renderer.md) | Opus | 22 | — | |
 | [ ] | [31 Practice engine (port prep.html ideas)](31-practice-engine.md) | Opus | 22 | — | |
-| [ ] | [32 Offline Learn and question packs](32-offline-learn-packs.md) | Opus | 30, 31 | — | |
+| [ ] | [33 Visual blocks: scenes, charts, widgets](33-visual-blocks.md) | Opus | 30 | — | Visual-first lessons (DECISIONS #36) |
+| [ ] | [32 Offline Learn and question packs](32-offline-learn-packs.md) | Opus | 30, 31, 33 | — | |
 
 ### Phase 4 — Mastery loop
 
@@ -148,6 +149,7 @@ Deferred: parents (81) and iOS (82).
 | — | [C1 Generate topic content](C1-generate-topic-content.md) | Opus (claude.ai chat) | From Phase 2 on, one topic at a time (pilot: Class 9 Math/Science) |
 
 ## Changelog
+- 2026-11-23: visual-first lessons (DECISIONS #36): new prompt 33 (scenes, charts, widgets); 30, 32, 21, C1, 90 updated to the visual block format.
 - 2026-11-23: 00 done (pending review). 02 now reads tokens from `docs/design/tokens.draft.ts` and ports `scripts/verify-design-tokens.mjs` checks into `packages/core` tests.
 - 2026-11-23: Fable dropped (all Opus). Every prompt now lists the skills/MCPs to use. 90 switched to Blender via the Blender MCP (local). Added GUIDE.md.
 - 2026-11-23: library created (35 build prompts + C1, C2, OPS-backup, OPS-update-prompts) from LMS_AUDIT build order + Phase 10 extensions + motion system.

@@ -158,6 +158,41 @@ export const patterns = {
   chevron: { tile: 32, opacity: { light: 0.18, dark: 0.14 } },
 } as const;
 
+/**
+ * Diagram style for lesson visuals (DESIGN_SYSTEM.md §7b.3). C1, teachers and the importer use these,
+ * so every figure, scene, chart and widget looks like one app. Strokes must be ≥ 3:1 on white (checked).
+ */
+export const diagram = {
+  strokeWidth: 2,
+  ink: '#1B1A3A',
+  focus: '#4434D4', // the quantity in focus
+  highlight: '#FFB627', // fill only, always with an ink outline
+  result: '#11865B', // correct / result
+  wrongIdea: '#C2412D', // misconception panels
+  guide: '#77729A', // axes, guides, grid labels
+  grid: '#DDD8EC', // faint grid lines (decorative)
+  labelFont: { latin: { family: 'Nunito-Bold', size: 14 }, urdu: { family: 'NotoNastaliqUrdu-Regular', size: 16 } },
+  stageAspect: { wide: 16 / 10, square: 1 },
+  stageMaxViewportShare: 0.6,
+} as const;
+
+/** Size/complexity budgets for lesson visuals (§7b.5). The importer enforces them. */
+export const visualBudget = {
+  svgMaxKb: 60,
+  svgMaxElements: 400,
+  maxMovingLayers: 12,
+  imageMaxKb: 100,
+  lottieMaxKb: 150,
+  maxSceneSteps: 8,
+  stepMaxMs: 4000,
+  pauseRequiredAfterMs: 5000, // WCAG 2.2.2
+} as const;
+
+/** Lesson visual block types (§7b.1) and the widget catalogue v1. Exam items may use only `examSafeVisuals`. */
+export const visualBlockTypes = ['figure', 'scene', 'chart', 'widget', 'compare', 'video', 'lottie'] as const;
+export const widgetCatalogue = ['number_line', 'fraction_bars', 'function_graph', 'geometry_shape', 'angle', 'balance', 'probability', 'motion_graph', 'circuit'] as const;
+export const examSafeVisuals: ReadonlyArray<(typeof visualBlockTypes)[number]> = ['figure', 'chart'];
+
 export type MasteryBand = 'learning' | 'weak' | 'mastered';
 
 /** Which colour roles draw a mastery band. Shape + label are mandatory too (DESIGN_SYSTEM.md §2.4). */
@@ -423,6 +458,12 @@ export const moments = {
   toast: { purpose: 'feedback', frequency: 'occasional', full: { kind: 'spring', spring: 'gentle', props: ['translateY', 'opacity'] }, lite: fade('fast'), off: none },
   emptyState: { purpose: 'state', frequency: 'occasional', full: { kind: 'timing', duration: 'base', ease: 'out', props: ['translateY', 'opacity'] }, lite: fade('base'), off: none },
   skeleton: { purpose: 'state', frequency: 'often', full: { kind: 'timing', duration: 'slow', ease: 'linear', props: ['opacity'] }, lite: none, off: none },
+
+  // Lesson visuals (content motion, §7b.4). Layers move by transform + opacity only; never in exams.
+  sceneStep: { purpose: 'explanation', frequency: 'often', full: { kind: 'timing', duration: 'slow', ease: 'inOut', props: ['translateX', 'translateY', 'scale', 'rotate', 'opacity'] }, lite: fade('fast'), off: none }, // author may set ms ≤ visualBudget.stepMaxMs
+  chartReveal: { purpose: 'explanation', frequency: 'occasional', full: { kind: 'timing', duration: 'slow', ease: 'out', props: ['scale', 'opacity'] }, lite: fade('base'), off: none },
+  hotspotReveal: { purpose: 'explanation', frequency: 'often', full: { kind: 'spring', spring: 'snappy', props: ['scale', 'opacity'] }, lite: fade('fast'), off: none },
+  predictReveal: { purpose: 'feedback', frequency: 'occasional', full: fade('base'), lite: fade('fast'), off: none },
 
   // Delight (rare tier only)
   celebrationMastery: { purpose: 'delight', frequency: 'rare', haptic: 'success', full: { kind: 'lottie', asset: 'celebrate-burst', maxMs: 1500 }, lite: { kind: 'spring', spring: 'gentle', props: ['scale', 'opacity'] }, off: none },

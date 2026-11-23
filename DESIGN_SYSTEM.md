@@ -158,6 +158,7 @@ All take `style` (merged last), read tokens, honour presentation + motion tier, 
 | Input | `TextField`, `PinField` (typed PIN, masked, big keys on kid), `SegmentedControl`, `Checkbox/Radio/Switch` (native where possible), `LanguageSwitch` | admission number field accepts QR scan prefill; PIN always typed |
 | Feedback | `Toast`, `Banner` (info / success / warn / offline), `SyncStatusPill`, `Skeleton`, `EmptyState` (art + title + hint + one action), `ErrorState` (what, why, retry) | |
 | Navigation | `Tabs` (bottom bar phone, side rail ≥ 900), `TopBar`, `Sheet/Modal`, `TwoPane` | tabs never slide |
+| Visual learning | `Stage`, `StageControls`, `StepCaption`, `FigureBlock` (hotspots), `SceneBlock`, `ChartBlock`, `WidgetHost` + catalogue widgets, `CompareBlock`, `VideoBlock`, `PredictCard`, `TextVersionToggle` | §7b; renderers built in prompts 30 and 33 |
 | Learning | `MosaicTiles`, `PatternBand`, `SubjectCard`, `ProgressBar`, `MasteryChip`, `ConceptCard`, `FollowUpRow`, `QuestionCard`, `OptionButton`, `FeedbackPanel` (correct / not quite + why), `LessonBlock` renderers | `OptionButton` states: idle, selected, correct, wrong, disabled |
 | Exam | `ExamTimer`, `SaveIndicator`, `QuestionNavigator`, `SubmitBar` | the only exam-safe motion (§6) |
 | Staff | `DataTable` (virtualised), `StudentTile`, `EventFeed`, `ReviewPane`, `StatTile` | web-first (`*.web.tsx` allowed) |
@@ -278,22 +279,29 @@ Empty (nothing due): art + "All caught up. Pick a topic to keep learning."
 Gate relieved automatically after 3 rounds: note "We unlocked this for you."
 ```
 
-### 7.3 Lesson reader
+### 7.3 Lesson reader (visual-first, all ages)
 ```
-┌────────────────────────────────┐
-│ ‹  Fractions: adding   3 / 8 ▬▬│  progress bar (blocks read)
-├────────────────────────────────┤
-│ ▒ Heading block                 │
-│ ▒ Text block (body, 18 line)    │
-│ ▒ Worked example card           │
-│ ▒ Diagram (SVG, pinch zoom)     │
-│ ▒ [▶ Video, online only]        │  offline: "Video needs internet"
-│ ▒ Check yourself (1 question)   │
-│ [ ‹ Back ]          [ Next › ]  │  or "Try practice" on last block
+Phone                                    Chromebook / desktop ≥ 900 (two-pane)
+┌────────────────────────────────┐      ┌─────────────────────────┬──────────────────┐
+│ ‹ Physics · Motion   ▬▬▬░░░ 3/8│      │ STAGE (sticky, 60 %)    │ Step 2 of 4       │
+├────────────────────────────────┤      │  scene / chart / widget │ caption (en|ur)   │
+│ ┌────────────────────────────┐ │      │  ◀ ● ● ○ ○ ▶  ▶︎ play   │ text for the step │
+│ │ STAGE: scene, chart, widget│ │      │                         │ [Explain more]    │
+│ │ (subject-hue tint)         │ │      │                         │ Predict / Check   │
+│ └────────────────────────────┘ │      └─────────────────────────┴──────────────────┘
+│ ◀  ● ● ○ ○  ▶     ▶︎ Play  ⤢   │  step dots, play/pause, fullscreen
+│ Step 2: speed stays the same,  │  caption = text equivalent of the step
+│ so the distance grows evenly.  │
+│ [ Explain more ▾ ]             │  detailed text collapsed by default
+│ ┌ Predict ────────────────────┐│  predict → observe → explain
+│ │ What happens to the graph? ││
+│ └────────────────────────────┘│
+│ [ Back ]              [ Next ] │
 └────────────────────────────────┘
-Desktop: outline of blocks in a left pane, reader right.
-Empty: "No lesson here yet. Practice is open." 
+Keys: ← → steps · Space play/pause · F fullscreen. "Text version" toggle shows all captions + alt text.
+Empty: "No lesson here yet. Practice is open." Offline: scenes, charts, widgets work; video shows "needs internet" + its step scene fallback.
 ```
+Full spec of the visual blocks: §7b.
 
 ### 7.4 Practice question
 ```
@@ -420,6 +428,68 @@ Empty: "Nothing to review. Import questions to get started."
 └──────────┴───────────────────────────────────────────────┘
 Empty (day one): checklist is the screen; every row has its own "Add the first …" action.
 ```
+
+## 7b. Visual learning
+
+Lessons for every age are **visual-first**: each lesson section is a visual on a
+"stage" with a short caption, and the longer text sits under an *Explain more*
+toggle. Visuals are **data** (blocks in `learning_content_versions.blocks`,
+DATABASE_DESIGN §4). Adding a lesson never needs code, and every visual works
+offline except video. One renderer per block type, built in prompts 30 and 33.
+
+### 7b.1 Visual block types
+
+| Block | What it is | Example | Works offline | Made by |
+|---|---|---|---|---|
+| `figure` | SVG or WebP with numbered **hotspots** (tap to show a label), pinch/scroll zoom | parts of a plant cell; a circuit | yes | C1 (SVG), teacher upload (WebP) |
+| `scene` | **Step-through animation**: one SVG with named layers, plus steps that move/fade layers (transform + opacity) with a caption each. Tap through, or Play (auto-advance, pausable) | a car speeding up; water evaporating; carrying in addition | yes | C1 writes SVG + steps as JSON |
+| `chart` | Bar, line, pie, scatter or table drawn natively from inline data; tap a point for its value; series can reveal one by one | distance–time graph; rainfall by month | yes | C1 / teacher |
+| `widget` | Interactive **simulation** from a fixed catalogue, configured by params | slide *m* and *c* in y = mx + c; drag a triangle's corner and watch the area | yes | C1 picks a widget + params |
+| `compare` | Two panels side by side (wrong idea vs right idea, before vs after) | 1/2 + 1/4 ≠ 2/6 vs = 3/4 | yes | C1 |
+| `video` | Blender explainer on YouTube (unlisted), with poster + transcript, and a `scene` fallback when offline | 3D heart pumping | **no** (online only) | prompt 90 |
+| `lottie` (optional, later) | Bundled vector animation ≤ 150 KB, played on tap | states of matter particles | yes | only when someone has one |
+
+**Widget catalogue v1** (each widget is one reusable component; lessons only pass params):
+`number_line`, `fraction_bars`, `function_graph` (sliders for named parameters; expressions parsed by a safe maths parser in `packages/core`, never `eval`), `geometry_shape` (drag vertices; live angles, area, perimeter), `angle`, `balance` (equations as a scale), `probability` (coins/dice/spinner, run N trials, chart the results), `motion_graph` (object moves, distance/speed–time graph draws alongside), `circuit` (series/parallel, bulb brightness). Adding a widget is a small code change, reused by every lesson after that.
+
+**Pedagogy built in:** any `scene` or `widget` can carry a `predict` question (a practice item) asked *before* it plays: predict, observe, explain. `quick_check` follows a visual section. Kid presentation leans on `fraction_bars`, `number_line`, counting scenes and read-aloud captions; secondary leans on graphs, simulations and scenes.
+
+### 7b.2 The stage (UI)
+- A rounded panel tinted with a light wash of the subject hue, with a 2 px ink outline: the one place in the lesson where colour is strong. Aspect 16:10 (scenes, charts) or square (figures, widgets), max height 60 % of the viewport on phone.
+- Controls under the stage, always visible: step dots (or a scrubber for 6+ steps), ◀ ▶, Play/Pause, Replay, Fullscreen, and a "Text version" toggle. Sticker style, ≥ 48 dp (56 for kid).
+- Caption under the stage = the text for the current step, in the reading language; it changes with the step. Urdu captions use the Nastaliq metrics (§2.3) and the stage mirrors in RTL except graphs and number lines, which stay left-to-right like the textbook.
+- Desktop/Chromebook ≥ 900: two-pane, stage sticky on the left (60 %), captions + text on the right; arrow keys step, Space plays.
+
+### 7b.3 Diagram style (so every visual looks like one app)
+C1, teachers and the importer follow these (`diagram` token):
+- Strokes 2 px ink `#1B1A3A`, round caps; fills from subject hues; **meaning colours**: indigo = the quantity in focus, saffron = highlight (fill only, ink outline), green = correct/result, clay = wrong idea, grey `#77729A` = guides and axes.
+- Labels: Nunito Bold 14 (Latin), Nastaliq 16 (Urdu); no text baked into raster images; every label is a separate text element with an id so both languages swap.
+- Units always written (m/s, cm²). Graphs: light grid, axes in grey, data in indigo/saffron/green.
+
+### 7b.4 Motion of lesson visuals ("content motion")
+Lesson visuals are content, but they obey the same rules: **layers move by transform and opacity only**; widgets redraw geometry directly under the finger (drawing, not animation: no easing, no springs).
+
+| Moment | Token | full | lite | off |
+|---|---|---|---|---|
+| Scene step | `sceneStep` | layers tween to the step's state, 220–900 ms ease-in-out (author sets `ms` ≤ 4000) | layers cross-fade, 120 ms | instant |
+| Scene Play | `sceneStep` | auto-advances; pauses on the last step; **never autoplays on open or on scroll** | same, with cross-fades | no autoplay; Play steps once per tap |
+| Chart reveal | `chartReveal` | series/bars grow from the baseline (scaleY from 0.6) + fade | fade | instant |
+| Hotspot label | `hotspotReveal` | label pops (snappy) | fade | instant |
+| Predict → reveal | `predictReveal` | answer chip fades, scene starts | fade | instant |
+| Widget drag | — | follows the finger every frame | same | same (direct manipulation is never removed) |
+
+Rules: any playback longer than 5 s has Pause (WCAG 2.2.2); a layer that flashes is not allowed (> 3 flashes/s); **exam items may only use static `figure` and `chart`** (no scenes, widgets or video in exams).
+
+### 7b.5 Budgets (cheap 4 GB Chromebook, offline packs)
+`visualBudget` token: SVG ≤ 60 KB and ≤ 400 elements per figure/scene; ≤ 12 layers moving at once; WebP ≤ 100 KB; Lottie ≤ 150 KB; ≤ 8 scene steps per block; widget redraw at 60 fps on the reference Chromebook in full tier, otherwise the device drops to lite. A chapter pack stays small because visuals are vector JSON (prompt 32 measures it).
+
+### 7b.6 Accessibility and language
+- Every visual block **requires** `alt` (en + ur) and a caption per step: the importer rejects a visual without them. "Text version" shows all of it as plain text for screen readers and low-end devices.
+- Hotspot labels, chart labels, widget readouts are text (both languages), never pixels.
+- Widgets have keyboard equivalents (arrow keys move the selected handle/slider by one step) and announce values ("slope m = 2").
+
+### 7b.7 Security
+SVG is markup, so the importer **sanitises** it: no `<script>`, event attributes, `foreignObject`, external `href`s or embedded raster data over budget. Sanitising lives in `packages/core/importer` and is unit-tested (prompt 21/33).
 
 ## 8. Voice and UX copy
 

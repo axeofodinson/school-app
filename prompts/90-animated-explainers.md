@@ -1,6 +1,6 @@
 # 90 — Animated explainer pipeline (Blender)
 
-**Model:** Opus (local session with Blender MCP) · **Phase:** 9 · **Depends on:** 30 · **Blocked by:** Must run in Claude Code on Hassan's PC with Blender + Blender MCP (GUIDE.md §2)
+**Model:** Opus (local session with Blender MCP) · **Phase:** 9 · **Depends on:** 30, 33 · **Blocked by:** Must run in Claude Code on Hassan's PC with Blender + Blender MCP (GUIDE.md §2)
 
 Paste everything below the line into a new Claude Code session on the `school-app` repo.
 
@@ -24,7 +24,7 @@ Make short animated explainers for concepts where a picture beats text, with cor
 - Prototype one 60–90 s explainer for a pilot concept using Blender driven through the Blender MCP (scene, objects, keyframes, camera, render to MP4 720p, 24–30 fps).
 - Urdu text: Blender's text objects don't shape Arabic-script text correctly, so render each Urdu caption as a transparent PNG/SVG with a proper text engine (headless Chromium via Playwright with the bundled Nastaliq font) and import it as an image plane, or overlay captions afterwards with ffmpeg. Verify this on day one with one sentence.
 - Script-driven: a `tools/explainers/<concept>/script.json` (scenes, narration en/ur, captions) and a Python Blender script that builds the scene from it, so more videos can be made the same way. Narration audio is recorded by a teacher or left silent with captions.
-- Measure render time and file size; upload to the school YouTube channel (unlisted) by hand; link from a lesson video block.
+- Measure render time and file size; upload to the school YouTube channel (unlisted) by hand; link from a lesson `video` block (poster + transcript + `offline_fallback_block` pointing at a `scene` that explains the same idea without internet). Use Blender only where a 3D or long animation is worth it; short 2D explanations are `scene` blocks (prompt 33), which work offline.
 
 ## Don't
 - Don't put rendered videos in the repo (only scripts and small previews).

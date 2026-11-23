@@ -28,6 +28,7 @@ Result on 2026-11-23: all pass (see `LMS_AUDIT.md` §5.3).
 - **T-1 Urdu type specimen** (unverified): render `urduSpecimens` at every type step on an Android phone, a school Chromebook (APK) and Chrome on Windows. Pass = no clipped marks in buttons, tabs, chips, timer bar; wraps cleanly. Fix line-heights in tokens only.
 - **T-2 Tabular digits**: exam timer digits don't shift width in Nunito on Android and web.
 - **T-3 Text at 200 %**: system font size 200 % on Android and browser zoom 200 %: no clipped text, no horizontal scroll, Urdu included.
+- **V-1 Lesson visuals** (prompt 33): sample scene, chart and widget on the reference Chromebook (APK) and Chrome: 60 fps in full tier (Chrome performance panel / Perf Monitor), lite cross-fades only, off has no autoplay; offline pack plays all but video; "Text version" reads every caption; Urdu captions don't clip; SVG sanitiser rejects `<script>`, event attributes, `foreignObject`, external `href`.
 - **A-1 Screen readers**: TalkBack (Android/ChromeOS) and NVDA (web): login, practice question + feedback, exam question + timer + submit, mastery ring label.
 
 ## Functional (per phase, `packages/core` unit tests in Node)
