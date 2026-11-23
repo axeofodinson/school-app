@@ -84,9 +84,9 @@ Goal: a distinctly polished, alive UI that stays fast on 4 GB Chromebooks.
 
 **Rules**
 1. **Tokens, not ad-hoc values.** A `ui/motion.ts` file defines durations (fast 120 ms / base 220 ms / slow 360 ms) and spring presets (gentle, snappy, bouncy). Components use only these.
-2. **Animate only transform and opacity.** Never animate layout properties (width, height, top, margin) on lists.
+2. **Animate only transform and opacity.** Never animate layout properties (width, height, top, margin) on lists. One exception: the mastery ring's SVG stroke (DECISIONS #33).
 3. **Three motion tiers,** chosen automatically from device RAM and frame-drop sampling, overridable in settings:
-   - **full:** springs, shared-element transitions, parallax, mastery-ring fills, confetti.
+   - **full:** springs, mastery-ring fills, one celebration burst. (Parallax and shared-element transitions are not used: DECISIONS #33. The per-moment choreography is `DESIGN_SYSTEM.md` §6.)
    - **lite:** short fades and slides only. This is the default on low-memory devices.
    - **off:** for users whose system has "reduce motion" switched on.
 4. **Exams use minimal motion in every tier.** Nothing moves while a student is answering, apart from the timer and save indicator.

@@ -1,0 +1,455 @@
+# DESIGN_SYSTEM.md — Al-Syed app: look, feel, motion
+
+Status: **spec v0.1 (session 00, 2026-11-23)**. Later sessions build to this
+instead of improvising. Tokens: [`docs/design/tokens.draft.ts`](docs/design/tokens.draft.ts)
+(session 02 moves them to `apps/mobile/ui/`). Checked by
+`node --experimental-strip-types scripts/verify-design-tokens.mjs` (contrast,
+motion table, exam lock-down, tier picker). Interactive wireframes (all screens in §7 plus a foundations board) are a
+private Design canvas for Hassan's review: https://claude.ai/artifact/5ziYMyoKToGFB761ASkGjN
+
+Constraints that shaped everything: 4 GB school Chromebooks and cheap phones,
+unreliable internet, English + Urdu (RTL), ages 4 to 16, no CDN, no
+decorative motion, exams are monitored not locked.
+
+## 0. Things Hassan should decide (open questions)
+
+| # | Question | My default (used in this spec) |
+|---|---|---|
+| Q1 | Is the direction right: calm "paper + teal" with a warm saffron highlight, rounded Latin font, no mascot, no streaks? | Yes |
+| Q2 | Digits in Urdu screens: Western `0–9` (matches textbooks and maths) or Eastern `۰–۹`? | Western everywhere |
+| Q3 | Primary band (PG–5) gets a **read-aloud speaker** on prompts. Urdu voices on ChromeOS/Windows are unverified (LMS_AUDIT §1.1). OK to ship it English-first and Urdu only where the voice test passes? | Yes |
+| Q4 | One small exception to "transform and opacity only" (§6.1): the mastery ring draws with SVG `stroke-dashoffset`. OK? | Yes (DECISIONS #33) |
+| Q5 | Lottie celebrations: one burst asset (≈ 15 KB) bundled. Fine for the pilot, or none until later? | One asset |
+
+Nothing below is blocked on these; they change small details.
+
+## 1. Identity
+
+**Feel:** a well-kept exercise notebook. Warm paper, ink-dark text, one deep teal
+for "do this", one warm saffron for "you moved forward". Quiet, then
+occasionally delighted. Never loud, never punishing.
+
+Principles (these decide arguments):
+1. **Study first.** Content (the question, the lesson) is the biggest, highest-contrast thing on screen. Chrome recedes.
+2. **Wrong is information.** Wrong answers use clay, not alarm red; no shake, no buzzer, always a reason shown.
+3. **No streaks, no flames, no loss messages** (LMS_AUDIT principle "measure learning, not activity"). Progress cues show concepts moved up and follow-ups cleared, never days in a row.
+4. **Colour is never the only signal.** Every state has an icon shape and a word.
+5. **Same components for all ages.** Age changes size, copy length, illustration amount and celebration size (§3), not the component set.
+6. **Fast beats pretty** on a cheap Chromebook. Tier-down is a design feature (§6).
+
+### 1.1 Iconography
+- 24 px grid, 2 px stroke, round caps and joins, **outline by default, filled when selected**. Corner radius matches `radius.sm`.
+- Library suggestion: **Lucide** (ISC licence) via `lucide-react-native` + `react-native-svg`, bundled, so no CDN. Session 02 confirms it builds for Android + web; otherwise we draw ~40 icons ourselves.
+- **RTL:** directional icons (chevron, arrow, back, send, list-bullet-with-indent) mirror; neutral icons (check, clock, cloud, book, pencil, lightbulb) do not. The `Icon` primitive takes `directional` as a prop.
+- Mastery band shapes (so colour-blind users can tell them apart): **learning = half-filled circle**, **weak = triangle with a dot** ("needs work"), **mastered = filled circle with a tick**.
+
+### 1.2 Illustration (empty states, onboarding, result)
+- Flat geometric spot illustrations built from palette tokens, one saffron accent each, **no text inside images** (i18n), no faces or characters (nothing to localise, nothing to date).
+- Objects from a classroom: book, pencil, lamp, sprout, backpack, clock. ≤ 8 KB SVG each, drawn with `react-native-svg`, tinted from tokens so dark mode is free.
+- Primary band gets larger art (up to 160 dp), student band 96 dp, staff 64 dp or icon only.
+- Lottie only for one celebration burst (§6). Old pixel sprites in `assets/sprites/` are retired with the old app.
+
+## 2. Foundations
+
+### 2.1 Colour
+Semantic roles, each with a light and a dark value (full table in the tokens file). All 48 text and UI pairs per theme pass AA (4.5:1 text, 3:1 UI), verified by the script.
+
+| Role | Light | Dark | Use |
+|---|---|---|---|
+| `bg` / `surface` / `surfaceAlt` | `#F6F4EE` / `#FFFFFF` / `#ECE8DE` | `#0E1514` / `#162120` / `#1E2C2A` | canvas / cards / quiet fills |
+| `text` / `textMuted` | `#16201F` / `#475553` | `#E9F0EE` / `#A7B8B4` | primary / secondary text |
+| `primary` (+`onPrimary`) | `#0B6B62` | `#4CC2B2` | main action, links, focus, progress fill |
+| `accent` (+`onAccent`) | `#F0A81E` | `#F2B84B` | medal, today marker, highlight banner (always labelled) |
+| `correct` / `wrong` | `#1F7A4D` / `#B3422C` | `#5CCF8C` / `#FF8F78` | answer feedback (+ icon + word) |
+| `learning` / `weak` / mastered=`correct` | `#2B5DB0` / `#A95A00` / `#1F7A4D` | `#8DB4FF` / `#F2A65A` / `#5CCF8C` | 3 mastery bands |
+| `borderStrong` | `#7A8582` | `#70837F` | input and control outlines (3:1) |
+
+Rules: no hex outside tokens; dark mode swaps shadows for hairline borders; `accent` is a fill, never a thin line on white (2:1); neutrals lean warm in light and teal in dark so the page never goes flat grey.
+
+### 2.2 Spacing, radius, elevation
+- Space (4-pt grid): `xxs 2 · xs 4 · sm 8 · md 12 · lg 16 · xl 24 · xxl 32 · huge 48 · giant 64`. Screen gutter 16 phone, 24 tablet/desktop, 20 kid.
+- Radius: `sm 8 · md 12 · lg 16 · xl 24 · full`. Kid presentation adds +4. Always `borderCurve: 'continuous'` on native.
+- Elevation: `flat · card · raised · overlay` as `boxShadow` strings; dark mode `none` + a `border` colour instead.
+- Breakpoints: phone < 600, tablet/Chromebook-window 600–899, desktop ≥ 900 (two-pane), wide ≥ 1280 (max content width 1120).
+
+### 2.3 Type
+**Latin: Nunito** (OFL; rounded, friendly for 5-year-olds, still clean at 16 sp for Class 10). Bundled from `@expo-google-fonts/nunito` TTFs on native, WOFF2 subset on web (Regular, SemiBold, Bold only). **Urdu: Noto Nastaliq Urdu** (already in `assets/fonts/`, Regular + Bold; subset to WOFF2 for web). Tabular digits for the timer are applied with `fontVariant: ['tabular-nums']`; whether Nunito ships a `tnum` feature in the subset is **unverified** (test T-2).
+
+| Step | Latin size/line | Urdu size/line (ratio) | Weight | Use |
+|---|---|---|---|---|
+| display | 32 / 40 | 36 / 70 (1.94) | Bold | result score, onboarding |
+| title | 24 / 32 | 27 / 54 (2.0) | Bold | screen titles |
+| heading | 20 / 28 | 22 / 46 (2.1) | SemiBold | section and card titles |
+| body | 16 / 24 | 18 / 40 (2.2) | Regular | questions, lessons, lists |
+| bodySm | 14 / 20 | 16 / 36 (2.25) | Regular | helper text |
+| caption | 12 / 16 | 14 / 30 (2.15) | Regular | timestamps, counts (never essential info for kid) |
+| label | 15 / 20 | 17 / 34 | SemiBold | buttons, tabs, chips |
+
+**Why Urdu is bigger and taller:** Nastaliq has a small x-height and tall diagonal strokes plus stacked marks, so it reads smaller at the same point size and clips when the line box is tight. Rules (also in `urduTextRules`):
+- Urdu sizes ≈ 12 % larger; line-height ratio **≥ 1.9** (2.0–2.25 for running text).
+- Controls with one line of Urdu use `minHeight` plus vertical padding, **never a fixed height**. Android: `includeFontPadding: false` and check top/bottom clipping.
+- No letter-spacing, no italics, no uppercase, no faux bold (use the Bold file).
+- Maths, numbers with units and Latin runs inside Urdu are isolated LTR (Unicode isolates), so `8/10` or `x²` never reorders.
+- Kid presentation multiplies sizes **and** line-heights by 1.15.
+
+**Urdu type specimen** (a specimen to test shaping, *not product copy*; real Urdu is written and reviewed by teachers per CLAUDE.md and DECISIONS #28). These four strings are in `urduSpecimens` and render in the gallery at every step:
+
+| id | text | what it tests |
+|---|---|---|
+| joins | پڑھائی کا وقت | joins, ڑ, ھ |
+| diacritics | اُستاد نے سَبَق سمجھایا | zabar/zer/pesh stacks, the tallest case |
+| mixed | ٹیسٹ میں 8/10 نمبر | digits + loanword, LTR isolation |
+| long | آج ہم کسر کی پہچان اور ان کا آپس میں موازنہ سیکھیں گے۔ | wrapping over 2–3 lines |
+
+**Unverified until run:** *T-1* render the specimen at every step on a phone, a school Chromebook (APK) and Chrome: no clipped marks in single-line buttons, tabs, chips or the exam timer bar; adjust line-heights in the tokens, not per screen. *T-2* tabular digits in Nunito. *T-3* Urdu in the timer/header at 200 % system font size. Add all three to `TEST_PLAN.md` P-2/P-4.
+
+Voice register: casual, kid-friendly, loanwords kids use ("test", "homework", "result"). Urdu is never machine-translated; new English keys get an Urdu key or `// TODO: ur`.
+
+### 2.4 Mastery band display
+Three bands only (no percentages shown), always **ring or chip + shape + word**:
+
+| Band | Shape | Word (en) | Colour |
+|---|---|---|---|
+| learning | half-filled circle | Learning | `learning` |
+| weak | triangle with a dot | Needs work | `weak` |
+| mastered | circle with a tick | Got it | `correct` |
+
+## 3. Age presentation (same components, three presentations)
+
+Picked from `classes.grade_level` of the active enrollment (`presentationForGrade`): PG and grades 1–5 → **kid**, 6–10 → **student**; staff screens → **staff**. No class (Play Store users) → **student**, or the grade they pick. A parent/teacher can override per account later.
+
+| | kid (PG–5) | student (6–10) | staff (teacher/admin, desktop) |
+|---|---|---|---|
+| Font scale | ×1.15 | ×1 | ×1 |
+| Min touch target / control height | 56 / 60 dp | 48 / 52 dp | 44 / 40 (mouse + keyboard) |
+| Radius, gutter | +4, 20 | base, 16 | base, 24 |
+| Icons | 32 dp, **always with a label** | 24 dp | 20 dp |
+| Copy | ≤ 8 words per line; one idea per screen; encouraging voice | ≤ 16 words; plain, study-focused | ≤ 24 words; terse |
+| Prompts | **speaker button** reads the question aloud (Q3) | none | none |
+| Options | one per row, large, option letters hidden | one per row, A/B/C/D | compact |
+| Illustration | large (160 dp), on most empty states | medium (96 dp) | small or icon only |
+| Celebration | big (bouncy spring, Lottie burst) | small (scale + tick) | none or toast |
+| Default motion tier | auto | auto | **lite** |
+| Density | airy | comfortable | dense, tables and two-pane |
+
+Tone examples (en; Urdu TODO with teachers): kid correct → "Yes! Well done."; student correct → "Correct."; kid wrong → "Not quite. Let's look."; student wrong → "Not quite. Here's why."
+
+## 4. Components (inventory for session 02)
+
+All take `style` (merged last), read tokens, honour presentation + motion tier, mirror under RTL, and have pressed, focus-visible, disabled and loading states. Names align with prompt 02.
+
+| Group | Components | Notes |
+|---|---|---|
+| Core | `Text` (auto script, Nastaliq metrics), `Icon`, `Button` (primary / secondary / ghost / danger; sm md lg), `IconButton`, `Card`, `ListItem`, `Badge`, `Divider` | `Button` min target by presentation; label always visible for kid |
+| Input | `TextField`, `PinField` (typed PIN, masked, big keys on kid), `SegmentedControl`, `Checkbox/Radio/Switch` (native where possible), `LanguageSwitch` | admission number field accepts QR scan prefill; PIN always typed |
+| Feedback | `Toast`, `Banner` (info / success / warn / offline), `SyncStatusPill`, `Skeleton`, `EmptyState` (art + title + hint + one action), `ErrorState` (what, why, retry) | |
+| Navigation | `Tabs` (bottom bar phone, side rail ≥ 900), `TopBar`, `Sheet/Modal`, `TwoPane` | tabs never slide |
+| Learning | `ProgressRing`, `ProgressBar`, `MasteryChip`, `ConceptCard`, `FollowUpRow`, `QuestionCard`, `OptionButton`, `FeedbackPanel` (correct / not quite + why), `LessonBlock` renderers | `OptionButton` states: idle, selected, correct, wrong, disabled |
+| Exam | `ExamTimer`, `SaveIndicator`, `QuestionNavigator`, `SubmitBar` | the only exam-safe motion (§6) |
+| Staff | `DataTable` (virtualised), `StudentTile`, `EventFeed`, `ReviewPane`, `StatTile` | web-first (`*.web.tsx` allowed) |
+| Gallery | `/dev/gallery` renders each in en/ur × light/dark × full/lite/off × kid/student/staff | acceptance for 02 |
+
+Component rules (from `expo-design-system`): a view moves into `ui/` only when used by ≥ 2 screens and has a nameable role; composition (`children`) beats prop explosion; native pickers/switches stay native.
+
+## 5. Layout and input
+
+- **Phone:** one column, bottom tabs (Home · Prepare · Tests · Me), safe-area aware.
+- **Chromebook window / tablet (600–899):** one column, wider max width (680), bottom or side rail tabs.
+- **Desktop ≥ 900:** `TwoPane` (list left 360–420, detail right), side rail, max width 1120. Review queue, live view, curriculum editors are built for this.
+- Keyboard everywhere: visible focus (3 px `focus` ring + 2 px offset), Tab order follows reading order and **mirrors in RTL**, Enter submits, Esc closes sheets, number keys 1–4 select options on desktop, arrow keys move between options. Hover states on pointer devices (subtle `surfaceAlt`), never required.
+- No orientation lock (CLAUDE.md). Text scales to 200 % without clipping: no fixed-height text containers.
+
+## 6. Motion
+
+Libraries and tier model: ARCHITECTURE §6b, CLAUDE.md Motion rules. This section is the **choreography**: which moments animate and exactly how. Tokens are in `moments` in the tokens file; `resolveMoment(name, tier, {inExam})` returns the behaviour.
+
+**Gate every moment must pass** (from `expo-animation`): *How often?* (often → near-imperceptible or nothing). *What is its one-word purpose?* (feedback, state, hierarchy, progress, sync, explanation, delight; no purpose, no motion.) If it fails, the table says `none`.
+
+**Durations:** `fast 120 · base 220 · slow 360` ms. **Springs** (classic form, work in Reanimated 3 and 4): `gentle` {damping 22, stiffness 170} no overshoot · `snappy` {18, 320, mass 0.9} tiny overshoot · `bouncy` {11, 260, mass 0.9} visible bounce (kid celebration only). **Easing:** out `(0.23,1,0.32,1)`, in-out `(0.77,0,0.175,1)`; never ease-in. Animate **transform + opacity only**; slide directions mirror in RTL.
+
+**Tiers.** *full:* the table's full column. *lite:* opacity fades only, ≤ `base`, no springs, no movement (default on ≤ 4 GB RAM, on measured frame drops, and on staff screens). *off:* nothing moves; state still changes instantly (colour, icon, text), so nothing is lost. OS "reduce motion" forces **off** and cannot be overridden in-app. User can pick full/lite/off/auto in Settings.
+
+### 6.1 Choreography table
+
+| Moment | Purpose · how often | Token | **full** | **lite** | **off** | Haptic |
+|---|---|---|---|---|---|---|
+| Screen push/pop | hierarchy · often | `screenPush` | native stack slide (≈ 360 ms, platform curve), mirrors in RTL | fade, 120 ms | instant | — |
+| Tab switch | hierarchy · often | `tabSwitch` | **none** (tabs are peers) | none | none | selection (tab bar only) |
+| Sheet / modal | hierarchy · occasional | `sheetPresent` | native `formSheet`, or gentle spring up + fade | fade 120 | instant | — |
+| Press feedback | feedback · often | `press` | scale 0.97, 120 ms | opacity 0.85, 120 ms | colour change only | — |
+| Option selected | state · often | `selectionChange` | border + fill cross-fade 120 | same | instant | selection |
+| **Answer correct** | feedback · often | `answerCorrect` | tick scale-in 0.9→1 on snappy spring + green tint fade | tint fade 120 | tint + tick appear | success |
+| **Answer wrong** | feedback · often | `answerWrong` | clay tint fade 220; **no shake** | fade 120 | instant | light |
+| **Why-wrong reveal** | explanation · often | `whyWrongReveal` | panel fades in and rises 12 px, gentle spring (panel is already laid out; only transform/opacity move) | fade 220 | instant | — |
+| **Mastery ring fill** | progress · occasional | `masteryRingFill` | ring sweeps to value, 360 ms ease-out. *Exception: SVG `stroke-dashoffset`, one small ring, no layout* | cross-fade old→new value, 120 | set final value | — |
+| Mastery band up | progress · rare | `masteryBandUp` | ring colour cross-fade + one 1→1.06→1 pulse (snappy) | fade 220 | instant | light |
+| Progress bar | progress · often | `progressBar` | fill slides inside an `overflow: hidden` track (translateX, 220, mirrors in RTL) | fade 120 | set value | — |
+| **Follow-up cleared** | progress · occasional | `followUpCleared` | tick pops in the row (snappy) and row dims to "Done"; it stays in place and leaves the list on the next visit (no list reflow animation) | fade 220 | instant | success |
+| Gate unlocked | progress · rare | `gateUnlocked` | lock icon swaps to open + scale-in, gentle | fade 220 | instant | success |
+| Streak-free progress cue | progress · often | `progressBar` / `masteryBandUp` | **"Today you moved up 2 concepts"** counter changes with a fade; no flames, no streak ring, no loss state | same | instant | — |
+| Sync: syncing | sync · often | `syncSyncing` | pill icon pulses opacity slowly (360 ms steps), **only while syncing, stops after 10 s** | static "Syncing" label | static label | — |
+| Sync: done | sync · often | `syncDone` | label cross-fades to "Saved" tick, rests as idle after 2 s | same | instant | — |
+| Offline banner | sync · occasional | `bannerEnter` | rises 8 px + fade, gentle | fade 120 | instant | — |
+| Toast | feedback · occasional | `toast` | rises + fade, gentle; auto-dismiss 4 s | fade 120 | instant | — |
+| Empty state | state · occasional | `emptyState` | art fades in and rises 8 px, 220 | fade 220 | instant | — |
+| Skeleton | state · often | `skeleton` | slow opacity pulse | static `surfaceAlt` | static | — |
+| **Celebration: mastery** (student) | delight · rare | `celebrationMastery` | one bundled Lottie burst ≤ 1.5 s, once | badge scale-in (gentle) + fade | static badge | success |
+| **Celebration: kid** | delight · rare | `celebrationKid` | bouncy badge pop, big | fade 220 | static badge | success |
+| **Exam timer** | state · often | `examTimerTick` | digits change, **no tween**; colour change at 5 min and 1 min, no pulse | same | same | — |
+| **Exam save indicator** | sync · often | `examSaveIndicator` | dot ↔ tick cross-fade 120 | same | instant | — |
+| Language switch | — | — | **none**; direction flips instantly | | | — |
+| Question switch (practice) | — | — | **none** (budget < 150 ms; content swaps, the feedback panel handles the motion) | | | — |
+| Live view tile status | state · often (teacher) | `liveTileStatus` | colour cross-fade 120 | same | instant | — |
+| Live event row | state · often (teacher) | `liveEventRow` | fade-in 220 (no slide, 40 tiles) | fade 120 | instant | — |
+
+**Rules from the table:**
+1. **Exams:** with `inExam` set, `resolveMoment` returns `none` for everything except `examTimerTick` and `examSaveIndicator`, identical in all three tiers. No transitions between exam questions, no confetti, no toasts that slide; submit confirmation is an instant dialog. The post-submit **Result** screen is not an exam screen and may use `answerCorrect`-level motion only if the tier allows.
+2. **One exception to transform + opacity (needs Hassan's OK, Q4):** `svgStrokeOffset` on one `ProgressRing` (paint property of a single SVG circle, no layout, no list). The ring falls back to a fade in lite/off. Nothing else is allowed.
+3. **No parallax, shared-element hero transitions or looping decoration** (ARCHITECTURE §6b lists parallax and shared elements under *full*: this spec does not use them, as they carry no meaning on study screens; revisit only with a use case).
+4. **Haptics:** one per user action, same frame as the visual, never the only feedback; a setting turns them off.
+5. **Budget:** every moment above must hold 60 fps on the reference phone and the cheapest Chromebook in lite tier (TEST_PLAN P-4/P-6). If one does not, its lite behaviour becomes the full behaviour.
+
+## 7. Screen wireframes (low fi)
+
+Annotations: `[ ]` button, `( )` ring/chip, `▒` content area. Drawn left-to-right (English); Urdu mirrors the whole layout. Interactive, themed versions are in the review Artifact. Each screen also needs an empty state and an offline state (listed under it).
+
+### 7.1 Student Home (phone)
+```
+┌────────────────────────────────┐
+│ Hi, Ayesha            [ا/EN] ☁✓│  greeting · language · sync pill
+├────────────────────────────────┤
+│ ▌ TEST IS OPEN  (only if live)  │  banner, top priority, accent
+│ ▌ Physics · 15 min    [ Start ] │
+├────────────────────────────────┤
+│ Next up                         │
+│ ┌────────────────────────────┐ │
+│ │ ⚠ 2 follow-ups to clear    │ │  → Prepare (follow-ups first)
+│ │   Fractions · Decimals     │ │
+│ │               [ Continue ] │ │
+│ └────────────────────────────┘ │
+│ My subjects                     │
+│ ( 62% ) Maths      Learning  › │  ring + band chip
+│ ( 90% ) Science    Got it    › │
+│ ( 30% ) English    Needs work› │
+│ Today: moved up 1 concept       │  streak-free cue
+├────────────────────────────────┤
+│ Home   Prepare   Tests    Me   │
+└────────────────────────────────┘
+Empty (no class yet): art + "You're not in a class yet. Ask your teacher to add you." 
+Offline: banner "No internet. Your work is saved here and will sync later."
+```
+
+### 7.2 Prepare tab: follow-ups first
+```
+┌────────────────────────────────┐
+│ Prepare                  Maths ▾│  subject switcher
+├────────────────────────────────┤
+│ Do these first (2)              │  open follow-ups, gate message
+│ ┌────────────────────────────┐ │
+│ │ ◔ Fractions: adding        │ │  FollowUpRow: concept, kind, why
+│ │   After your test · 6 Qs   │ │
+│ │                    [ Start ]│ │
+│ ├────────────────────────────┤ │
+│ │ ◔ Decimals: place value  ✓ │ │  cleared → dims to "Done"
+│ └────────────────────────────┘ │
+│ New topics are paused until     │  gate, plain reason + how to clear
+│ these are done.                 │
+├────────────────────────────────┤
+│ Revise today (3)    ▒▒▒▒▒▒     │  spaced revision due
+│ Keep learning        ▒▒▒▒▒▒     │  topics / concepts with MasteryChip
+├────────────────────────────────┤
+│ Home   Prepare   Tests    Me   │
+└────────────────────────────────┘
+Empty (nothing due): art + "All caught up. Pick a topic to keep learning."
+Gate relieved automatically after 3 rounds: note "We unlocked this for you."
+```
+
+### 7.3 Lesson reader
+```
+┌────────────────────────────────┐
+│ ‹  Fractions: adding   3 / 8 ▬▬│  progress bar (blocks read)
+├────────────────────────────────┤
+│ ▒ Heading block                 │
+│ ▒ Text block (body, 18 line)    │
+│ ▒ Worked example card           │
+│ ▒ Diagram (SVG, pinch zoom)     │
+│ ▒ [▶ Video, online only]        │  offline: "Video needs internet"
+│ ▒ Check yourself (1 question)   │
+│ [ ‹ Back ]          [ Next › ]  │  or "Try practice" on last block
+└────────────────────────────────┘
+Desktop: outline of blocks in a left pane, reader right.
+Empty: "No lesson here yet. Practice is open." 
+```
+
+### 7.4 Practice question
+```
+┌────────────────────────────────┐
+│ ✕  Fractions        4 / 10  ▬▬ │
+├────────────────────────────────┤
+│ [🔊] What is 1/2 + 1/4 ?        │  speaker: kid only
+│                                 │
+│ ( ) 3/4                         │  OptionButton, big
+│ ( ) 2/6                         │
+│ ( ) 1/4                         │
+│ ( ) 2/4                         │
+│                    [ Check ]    │
+└────────────────────────────────┘
+after Check, panel rises (no layout jump):
+┌────────────────────────────────┐
+│ ✗ Not quite.                    │  or ✓ Correct.
+│ You added the tops and bottoms. │  why-wrong, concept-linked
+│ Add fractions with the same     │
+│ bottom number first.            │
+│  [ See lesson ]    [ Next › ]   │
+└────────────────────────────────┘
+Empty: "No questions here yet." Offline: works from cached pack; answers queue.
+```
+
+### 7.5 Exam screen (no motion except timer and save)
+```
+┌────────────────────────────────┐
+│ Physics test      ⏱ 12:41  ● Saved│  timer + save indicator: ONLY moving parts
+├────────────────────────────────┤
+│ Question 6 of 15                │
+│ A car speeds up from rest …     │
+│ ( ) 2 m/s²                      │  options shuffled per student
+│ ( ) 4 m/s²                      │
+│ ( ) 5 m/s²                      │
+│ [ ‹ Previous ]     [ Next › ]   │  instant swap, <150 ms
+├────────────────────────────────┤
+│ 1 2 3 4 5 ▣6 7 8 9 …  [ Submit ]│  QuestionNavigator: answered/unanswered/flagged
+│ Your teacher can see if you     │  honest, never "locked"
+│ leave this screen.              │
+└────────────────────────────────┘
+Offline: "Offline. Answers are kept here and sent when you're back."
+Timer: colour change at 5 min and 1 min only. Submit → instant dialog "Submit 12 of 15 answered?"
+```
+
+### 7.6 Result
+```
+┌────────────────────────────────┐
+│          Physics test           │
+│            11 / 15              │  display type
+│   (  ●  )  Got it · most topics │
+│ Your teacher will confirm marks.│  until results confirmed
+├────────────────────────────────┤
+│ By topic                        │
+│ Motion        ▬▬▬▬▬▬▬▬ 4/4  ✓  │
+│ Forces        ▬▬▬▬▬▬     3/5 ⚠  │
+│ Energy        ▬▬▬▬       2/4 ⚠  │
+│ 2 follow-ups added in Prepare.  │
+│ [ Review my answers ] [ Go to Prepare ]│
+└────────────────────────────────┘
+Kid: bigger score, one celebration, 1 sentence.
+```
+
+### 7.7 Teacher: surprise exam launch (2 taps with a saved blueprint; ≤ 3 always)
+```
+Teacher Home (desktop)                           Tap 1: ⚡ on a class tile
+┌────────────┬───────────────────────────────────────┐
+│ Classes    │ Class 9 · Physics      [ ⚡ Surprise exam ]│  ← tap 1
+│ Home       │ 38 students · last exam 12 Nov           │
+│ Review     │                                         │
+└────────────┴───────────────────────────────────────┘
+Sheet (blueprint remembered per class + subject)  Tap 2: Start
+┌──────────────────────────────────────┐
+│ Surprise exam · Class 9 Physics      │
+│ 10 questions · mixed · 15 min        │
+│ Topics: Motion, Forces (last used)   │
+│ [ Edit blueprint ]                   │
+│            [ Cancel ] [ Start exam ] │  ← tap 2 → Live view opens
+└──────────────────────────────────────┘
+First time: Edit blueprint opens inline (class, subject, topics, count, minutes), then Start (3 taps).
+Not enough approved questions: "Only 6 approved questions for Motion. Pick another topic or lower the count."
+```
+
+### 7.8 Teacher: live exam view (desktop, two-pane)
+```
+┌────────────────────────────────────────────────────────────┐
+│ Class 9 Physics · ⏱ 09:12 left · 36 / 38 started  [Extend][End]│
+├───────────────────────────────────┬────────────────────────┤
+│ ▢ Ayesha  7/10 ●   ▢ Bilal 3/10 ● │ Events                 │
+│ ▢ Chand   —   ○    ▢ Dua  10/10 ✓ │ 10:42 Bilal left screen│
+│ ▢ Ehsan   5/10 ⚠ left screen      │ 10:41 Dua submitted    │
+│  … 40 tiles, status = icon + word │ 10:40 Chand not started│
+│                                   │ [ Void session ]       │
+└───────────────────────────────────┴────────────────────────┘
+Tile states: not started ○ · answering ● n/N · submitted ✓ · left screen ⚠ · offline ◌ · voided ⊘ (icon + word, never colour alone)
+Empty: "Nobody has started yet. Ask students to open the app." Realtime lost: banner "Live updates paused. Retrying…"
+```
+
+### 7.9 Teacher: review queue (desktop, two-pane)
+```
+┌──────────────────────┬─────────────────────────────────────┐
+│ To review (214)  ▾   │ Q-1042 · Fractions · level 2        │
+│ ▢ Q-1042 ● Fractions │ ┌─ English ───────┬─ اردو ─────────┐ │
+│ ▢ Q-1043   Fractions │ │ stem, options   │ stem, options  │ │
+│ ▢ Q-1044   Decimals  │ └─────────────────┴────────────────┘ │
+│ Filters: subject,    │ Answer: B · Explanation (both langs) │
+│ status, batch        │ ☐ Urdu reads naturally  ☐ Answer correct│
+│                      │ [ Reject ] [ Edit ]       [ Approve ] │
+└──────────────────────┴─────────────────────────────────────┘
+Keys: J/K next/prev · A approve · E edit · R reject. Bulk: select rows → "Approve 12".
+Empty: "Nothing to review. Import questions to get started."
+```
+
+### 7.10 Admin home (desktop)
+```
+┌──────────┬───────────────────────────────────────────────┐
+│ Home     │ 2026–27 · setup 4 of 6 done                   │
+│ Students │ ☑ Academic year  ☑ Classes  ☑ Teachers        │  checklist, each links in
+│ Classes  │ ☑ Enrolments  ☐ Curriculum  ☐ First content   │
+│ Teachers │ Needs attention                               │
+│ Curric.  │  3 students without a PIN · 214 questions waiting review│
+│ Review   │ School at a glance  (656 students · 23 teachers) │
+│ Backups  │ Last backup: yesterday 02:00 ✓                 │
+└──────────┴───────────────────────────────────────────────┘
+Empty (day one): checklist is the screen; every row has its own "Add the first …" action.
+```
+
+## 8. Voice and UX copy
+
+Principles: say what happens; verbs on buttons ("Start test", not "OK"); errors = what happened + why + what to do, no blame; plain words; never "secure" or "locked" for exams (DECISIONS #17). Kid voice: short, warm, concrete.
+
+| Moment | English (student) | Kid variant | Urdu |
+|---|---|---|---|
+| Student sign-in title | Sign in | Hello! Sign in | TODO: ur |
+| Admission field / PIN | Admission number · PIN | same | TODO: ur |
+| Wrong PIN | That PIN isn't right. Try again. | Oops, that PIN isn't right. | TODO: ur |
+| No connection | No internet. Your work is saved here and will sync later. | No internet. Don't worry, your work is safe. | TODO: ur |
+| Correct | Correct. | Yes! Well done. | TODO: ur |
+| Wrong | Not quite. Here's why. | Not quite. Let's look. | TODO: ur |
+| Follow-ups gate | New topics are paused until you clear your follow-ups. | Finish these first. Then you can go on. | TODO: ur |
+| Relief | We unlocked this for you so you can keep learning. | same | TODO: ur |
+| Prepare empty | All caught up. Pick a topic to keep learning. | All done! Pick something new. | TODO: ur |
+| No class | You're not in a class yet. Ask your teacher to add you. | same | TODO: ur |
+| Exam open | A test is open: {subject} | same | TODO: ur |
+| Exam leave notice | Your teacher can see if you leave this screen. | same | TODO: ur |
+| Submit confirm | Submit {n} of {total} answered? You can't change them after. | same | TODO: ur |
+| Result pending | Your teacher will confirm marks. | same | TODO: ur |
+| Sync states | Syncing · Saved · Waiting for internet · Couldn't sync, tap to retry | same | TODO: ur |
+| Teacher: start | Start exam | | TODO: ur |
+| Teacher: thin bank | Only {n} approved questions for {topic}. Pick another topic or lower the count. | | TODO: ur |
+| Admin empty | No classes yet. Add one first. | | TODO: ur |
+
+Urdu column is intentionally empty: teachers write it (DECISIONS #28), assisted by prompt C2.
+
+## 9. Accessibility review (of this spec, WCAG 2.1 AA)
+
+| Check | Result |
+|---|---|
+| 1.4.3 / 1.4.11 contrast | **Pass**, 48 pairs × 2 themes, script-verified. Found and fixed: `accent` on white is 2.03:1, so it is never used as a thin line or sole signal (labelled fills only). |
+| 1.4.1 colour not sole signal | Spec'd: icon shapes + words for feedback, bands, live tiles |
+| 1.4.4 / 1.4.12 text scale | Spec'd: no fixed-height text; Urdu uses `minHeight`; **test T-3** at 200 % |
+| 2.1.1 / 2.4.7 keyboard + focus | Spec'd: 3 px ring, Tab order mirrors in RTL, option keys 1–4 |
+| 2.2.1 timing | Exam time is teacher-set; extensions via teacher **Extend** (needs per-student extra time later: open item) |
+| 2.3.3 / reduce motion | OS setting forces `off`; exam moments near-static |
+| 2.5.5 target size | 56 / 48 / 44 dp by presentation, `hitSlop` for small visuals |
+| 3.3.x errors, labels | Copy pattern in §8; every input has a visible label (placeholders are not labels) |
+| 4.1.2 name, role, value | Primitives set `accessibilityRole/State/Label`; `FeedbackPanel` is an `alert`/live region; ring exposes "62 %, Learning" |
+| Screen reader | **Unverified**: TalkBack on Android/ChromeOS and NVDA on web. Test: A-1 in `TEST_PLAN.md` |
+
+## 10. How later sessions use this
+- **02:** move tokens to `apps/mobile/ui/`, add React providers, primitives, tier detection, `/dev/gallery` (en/ur × light/dark × 3 tiers × 3 presentations), unit-test `pickMotionTier`/`resolveMoment` in `packages/core` (copy the checks from `scripts/verify-design-tokens.mjs`). Confirm Moti + Reanimated versions match the SDK (Moti's support for Reanimated 4 is unverified) and that Lucide builds; else draw icons.
+- **01:** `app.json` needs no orientation lock; fonts: `@expo-google-fonts/nunito` + existing Nastaliq files.
+- **All screens:** build from §7, add the empty/offline state, take screenshots in en + ur, light + dark, kid + student.

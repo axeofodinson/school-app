@@ -2,6 +2,13 @@
 
 Newest first. Each: decision — reason — who/when.
 
+## 2026-11-23 — visual identity (session 00, pending Hassan's review of the wireframes)
+
+32. **Identity: "a well-kept exercise notebook".** Warm paper neutrals, deep teal primary, saffron highlight, clay (not red) for wrong answers, three mastery bands shown as shape + word + colour, no streaks or mascot. Latin font **Nunito** (bundled from npm, OFL), Urdu **Noto Nastaliq** (already bundled) at ~12 % larger size and line-height ≥ 1.9×. Why: calm for study, friendly for PG without looking childish for Class 10, every pair passes WCAG AA (script-verified). Spec: `DESIGN_SYSTEM.md`.
+33. **One exception to "animate transform and opacity only": the mastery `ProgressRing` may animate SVG `stroke-dashoffset`** (one small ring, paint only, no layout), full tier only; lite/off cross-fade or set the value. Everything else stays transform + opacity; follow-up rows don't reflow-animate (they dim to "Done" and leave on the next visit). Parallax and shared-element transitions from ARCHITECTURE §6b are not used (no meaning on study screens).
+34. **Three presentations of the same components:** `kid` (PG–5, from `classes.grade_level ≤ 5`), `student` (6–10, and no-class users), `staff` (teacher/admin, defaults to lite motion). They change sizes, copy length, illustration and celebration size, not the component set.
+35. **Draft tokens live in `docs/design/tokens.draft.ts`** (not inside DESIGN_SYSTEM.md) because `apps/mobile` doesn't exist yet and a real TS file can be type-checked and tested (`scripts/verify-design-tokens.mjs`). Session 02 moves it to `apps/mobile/ui/`.
+
 ## 2026-11-23 — tooling
 
 30. **No Fable; every session runs on Opus with skills and MCPs.** Design work uses `frontend-design`, `design:*` and the Expo skills (`expo-design-system`, `expo-animation`), with Figma optional. The Supabase MCP is connected to the **dev project only**. Context7 is used for current library docs. Workflow and setup: `GUIDE.md`.
