@@ -88,5 +88,18 @@ stems (normalised hash + trigram similarity), cognitive_level present (CLAUDE.md
 | `019_mastery_rpcs.sql` | 4 | `record_practice_attempt` → mastery/follow-ups/relief |
 | `020_exam_sweep_offline.sql` | 5–6 | pg_cron sweep, option permutation, offline acceptance RPC, item-analysis view |
 | `021_rollups.sql` | 8 | nightly analytics rollups |
+| `022_stem_projects.sql` | 7 | STEM projects (draft, dry-run verified; see §6) |
 
 Every migration: idempotent, dry-run with `db/test/` harness before Supabase.
+
+## 6. STEM projects (`db/022_stem_projects.sql`, draft)
+
+```
+projects ─┬─ project_concepts → concepts
+          └─ project_rubric_criteria (max_points, levels, concept_id?)
+assessments(type='project', project_id) ─┬─ project_teams → project_team_members(enrollment)
+                                         ├─ project_scores(enrollment, criterion, points, remark)
+                                         └─ submissions (total via record_grade → submission_grade_edits)
+storage bucket project-evidence: {assessment_id}/{enrollment_id}/{file}
+```
+Constraints: `source <> 'school'` requires `licence_note` (third-party content only with permission); `type='project'` ⇔ `project_id` set; one team per student per assignment; scores ≤ criterion `max_points`; criteria retired, never deleted. Scores are written only through `score_project()` (teacher of the class or staff), which can apply one score to a whole team and then records each total through `record_grade()`.

@@ -20,6 +20,7 @@ Last updated: 2026-11-23. Update at the end of every session.
 | Online exams + live view | 5 | 🟡 RPCs drafted in 017 | auth, bank | |
 | Offline exams + sync hardening | 6 | ⏳ | exams | |
 | Worksheets + assignments | 7 | ⏳ | bank | |
+| STEM projects (rubrics, teams, evidence) | 7 | 📝 `db/022` draft, dry-run verified | assessments, 017 concepts | STEMP21 licence answer (`LMS_AUDIT.md` §7.9) |
 | Dashboards, parents, iOS | 8 | ⏳ | mastery, exams | |
 | Animated explainers, in-app AI | 9 | ⏳ | — | |
 

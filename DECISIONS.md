@@ -2,6 +2,10 @@
 
 Newest first. Each: decision — reason — who/when.
 
+## 2026-11-23 — STEMP21 offer
+
+18. **Absorb STEM projects into our own LMS; use STEMP21 for content, kits and training.** One student platform keeps logins, grades and data in one place; STEMP21 is Grades 1–8 STEM only (per public material), while our LMS covers PG–10 and every subject. Projects are a generic module; STEMP21 content is loaded only with written permission (DB enforces `licence_note`). Rubric scores live in their own table (not `submissions.responses`) so per-criterion and concept analysis is a plain query; totals still go through `record_grade()`. See `STEMP21_COMPARISON.md`.
+
 ## 2026-11-23 — planning session (Hassan + Claude Code)
 
 1. **Full remake of app and UI; backend kept.** Existing data, RLS, student login and grade audit are sound and hold real school records; the UI/navigation are phone-only and untyped.

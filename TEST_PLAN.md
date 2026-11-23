@@ -13,6 +13,7 @@ $P -c "create database t" && $P -d t -f db/test/supabase_stubs.sql
 for f in db/setup.sql db/0*.sql; do $P -d t -f $f || echo "FAIL $f"; done
 $P -d t -f db/017_lms_foundation.sql          # re-run = idempotency check
 $P -d t -f db/test/017_smoke.sql
+$P -d t -f db/test/022_smoke.sql               # after 017 smoke (reuses its fixtures)
 su postgres -c "$BIN/pg_ctl -D $D/data stop" && rm -rf $D
 ```
 (Run Postgres outside the Claude scratchpad; its permissions get reset.)

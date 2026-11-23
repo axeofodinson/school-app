@@ -35,6 +35,7 @@ Targets from one codebase:
 | Mastery | Prepare tab, follow-ups | mastery rule, relief rule, revision schedule | concept_mastery, follow_ups, gate_overrides |
 | Examinations | teacher launch, live view, student exam | paper/shuffle, timer display | assessments, exam_sessions, exam_session_answers, exam_events |
 | Worksheets & Assignments | print + interactive | A/B shuffle | assessments, submissions |
+| STEM Projects | catalogue, teams, rubric scoring, evidence upload | rubric totals | projects, project_rubric_criteria, project_teams(+_members), project_scores; assessments type `project` |
 | Analytics | dashboards | — | nightly rollups |
 | Offline Sync | sync status UI | durable queue, storage adapters | idempotent keys only |
 

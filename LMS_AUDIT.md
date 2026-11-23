@@ -268,6 +268,7 @@ Scale tests: 40 concurrent exam sessions (k6/node script calling the RPCs with r
 6. **Pilot thresholds:** mastery rule (proposed 80 % over last 5 distinct incl. a hard + unseen item) and relief N (proposed 3 rounds) — accept as starting values?
 7. **Dev Supabase project:** may we create a second free project for seed/scale tests (free tier allows 2)?
 8. **Who reviews Urdu?** Named teachers per subject for translation review.
+9. **STEMP21** (see `STEMP21_COMPARISON.md`): written licence to load their projects/rubrics into our app? Do they require their own app for the benefits? Score export (CSV/API)? Student-data sharing terms? Demo logins for a teacher and a student?
 
 ---
 
@@ -305,3 +306,9 @@ Scale tests: 40 concurrent exam sessions (k6/node script calling the RPCs with r
 | P14 Offline/shared-device privacy as foundations | **Approve** | |
 
 **Over-engineering flags for a 656-student school:** `sync_records`, separate `question_options`/`question_tags`, `content_assets` table, weighted multi-factor mastery model before pilot data, in-app AI generation, animated video for every topic, configurable everything. Each is cut or deferred above.
+
+---
+
+## 9. STEMP21 Pakistan (added 2026-11-23)
+
+STEMP21 offered a Grades 1–8 STEM curriculum, a lab and kits, teacher training and a project-assessment app. Public material describes a teacher/admin project-assessment app, not a full student LMS, so their LMS features are unconfirmed. **Decision:** take their content, kits and training; run STEM projects inside our LMS through a generic projects module (`db/022_stem_projects.sql`, Phase 7, dry-run verified). Full comparison, verdict and demo checklist: `STEMP21_COMPARISON.md`.
