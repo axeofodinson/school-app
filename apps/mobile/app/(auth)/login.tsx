@@ -11,6 +11,10 @@ const previews: { href: Href; label: TKey }[] = [
   { href: '/learn', label: 'student.home.title' },
   { href: '/classes', label: 'teacher.home.title' },
   { href: '/school', label: 'console.home.title' },
+  // Same rule as app/dev/gallery.tsx: only where the gallery is turned on.
+  ...(__DEV__ || process.env.EXPO_PUBLIC_DEV_GALLERY === '1'
+    ? [{ href: '/dev/gallery' as Href, label: 'dev.gallery.title' as TKey }]
+    : []),
 ];
 
 export default function Login() {
