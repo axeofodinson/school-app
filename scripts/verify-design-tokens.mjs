@@ -33,6 +33,17 @@ console.table(rows.filter((r) => process.env.ALL || r.ok === 'FAIL'));
 console.log(`contrast: ${rows.length - failed}/${rows.length} pairs pass AA`);
 assert.equal(failed, 0, `${failed} contrast pair(s) below AA`);
 
+// Subject hues always carry ink text: ≥ 4.5 in both themes.
+for (const [name, h] of Object.entries(t.subjectHues)) for (const theme of ['light', 'dark']) {
+  const r = ratio(t.colours[theme].ink === '#05051A' ? '#1B1A3A' : t.colours[theme].ink, h[theme]);
+  assert.ok(r >= 4.5, `ink on subject hue ${name} (${theme}) = ${r.toFixed(2)}`);
+}
+// hueForSubject is stable and honours a valid colour key.
+assert.equal(t.hueForSubject('abc'), t.hueForSubject('abc'));
+assert.equal(t.hueForSubject('abc', 'coral'), 'coral');
+assert.ok(Object.keys(t.subjectHues).includes(t.hueForSubject('xyz', 'not-a-hue')));
+console.log(`subject hues: ${Object.keys(t.subjectHues).length} × 2 themes carry ink text at AA`);
+
 // Light and dark define the same roles.
 assert.deepEqual(Object.keys(t.colours.light).sort(), Object.keys(t.colours.dark).sort());
 
@@ -51,8 +62,8 @@ for (const [name, m] of Object.entries(t.moments)) {
   const b = m.lite;
   if (b.kind === 'timing') assert.deepEqual(b.props, ['opacity'], `${name}: lite must be fade-only`);
 }
-// screenPush lite: fade. Only transform/opacity (+ the one named SVG exception).
-const allowed = new Set(['opacity', 'translateX', 'translateY', 'scale', 'rotate', 'svgStrokeOffset']);
+// Only transform and opacity, no exceptions.
+const allowed = new Set(['opacity', 'translateX', 'translateY', 'scale', 'rotate']);
 for (const [name, m] of Object.entries(t.moments)) for (const tier of ['full', 'lite']) {
   const b = m[tier];
   if (b.props) for (const p of b.props) assert.ok(allowed.has(p), `${name}: ${p} not allowed`);

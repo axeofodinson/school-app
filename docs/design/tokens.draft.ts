@@ -1,5 +1,5 @@
 /**
- * DRAFT design tokens for the Al-Syed app remake (session 00).
+ * DRAFT design tokens for the Al-Syed app remake (session 00, v0.2 "Mosaic").
  * Spec and reasons: DESIGN_SYSTEM.md. Session 02 moves this to
  * apps/mobile/ui/tokens.ts (+ ui/motion.ts) and wires it to React.
  *
@@ -8,11 +8,13 @@
  *    in Node and can move to packages/core if useful.
  *  - Colours are semantic roles with a light and a dark value. Every text/background
  *    pair is checked for WCAG AA by scripts/verify-design-tokens.mjs.
- *  - Motion animates transform + opacity only (one named SVG exception, see DESIGN_SYSTEM.md §6.1).
+ *  - Motion animates transform + opacity only. No exceptions (the mastery ring became mosaic tiles in v0.2).
  *  - Urdu strings here are type SPECIMENS only, not product copy.
  */
 
 // ───────────────────────────── 1. Colour ─────────────────────────────
+// v0.2 "Mosaic" direction: fountain-pen ink, bright subject colours, tile patterns,
+// chunky "sticker" controls with a hard ink shadow. See DESIGN_SYSTEM.md §1.
 
 export type ColourRoles = {
   // surfaces
@@ -21,15 +23,16 @@ export type ColourRoles = {
   surfaceAlt: string; // quiet fills, selected rows, skeleton
   border: string; // decorative dividers (no contrast requirement)
   borderStrong: string; // input / control boundary (≥ 3:1 vs bg and surface)
+  ink: string; // hard 'sticker' shadow (both themes) and sticker outline in light; dark outlines use borderStrong
   // text
   text: string;
   textMuted: string; // secondary text (≥ 4.5:1 on bg, surface, surfaceAlt)
   // brand
-  primary: string; // fills, links, focus; also text on bg/surface (≥ 4.5:1)
-  onPrimary: string; // text on a primary fill
+  primary: string; // main action fill, links, focus; also text on bg/surface (≥ 4.5:1)
+  onPrimary: string;
   primarySoft: string;
   onPrimarySoft: string;
-  accent: string; // warm highlight fill (medal, today marker). Always carries a label in onAccent; never the only signal, never a thin line on white (2:1)
+  accent: string; // saffron FILL (stars, medals, "today" marker). Labelled in onAccent; never a thin line on white
   onAccent: string;
   accentSoft: string;
   onAccentSoft: string;
@@ -40,7 +43,7 @@ export type ColourRoles = {
   wrong: string; // clay, deliberately not alarm-red: wrong is information, not punishment
   wrongSoft: string;
   onWrongSoft: string;
-  // mastery bands (3 bands, DECISIONS #26 / LMS_AUDIT 5.4). mastered reuses `correct`.
+  // mastery bands (3 bands, DECISIONS #26). mastered reuses `correct`.
   learning: string;
   learningSoft: string;
   onLearningSoft: string;
@@ -48,74 +51,112 @@ export type ColourRoles = {
   weakSoft: string;
   onWeakSoft: string;
   // misc
-  focus: string; // keyboard focus ring (Chromebook / Windows): 3 px + 2 px offset
-  scrim: string; // modal backdrop
+  focus: string; // keyboard focus ring: 3 px + 2 px offset
+  scrim: string;
 };
 
 export const colours: { light: ColourRoles; dark: ColourRoles } = {
   light: {
-    bg: '#F6F4EE',
+    bg: '#F5F3FB',
     surface: '#FFFFFF',
-    surfaceAlt: '#ECE8DE',
-    border: '#D8D2C4',
-    borderStrong: '#7A8582',
-    text: '#16201F',
-    textMuted: '#475553',
-    primary: '#0B6B62',
+    surfaceAlt: '#ECE9F6',
+    border: '#DDD8EC',
+    borderStrong: '#77729A',
+    ink: '#1B1A3A',
+    text: '#1B1A3A',
+    textMuted: '#4F4B6E',
+    primary: '#4434D4',
     onPrimary: '#FFFFFF',
-    primarySoft: '#D9EEEA',
-    onPrimarySoft: '#08534C',
-    accent: '#F0A81E',
-    onAccent: '#2A1B00',
-    accentSoft: '#FBEBC8',
-    onAccentSoft: '#6B4200',
-    correct: '#1F7A4D',
-    correctSoft: '#DDF1E4',
-    onCorrectSoft: '#145A38',
-    wrong: '#B3422C',
-    wrongSoft: '#FAE3DC',
-    onWrongSoft: '#8A2F1C',
-    learning: '#2B5DB0',
-    learningSoft: '#E1EAF7',
-    onLearningSoft: '#1E4687',
-    weak: '#A95A00',
-    weakSoft: '#FBE8CF',
-    onWeakSoft: '#7A4100',
-    focus: '#0B6B62',
-    scrim: 'rgba(22, 32, 31, 0.45)',
+    primarySoft: '#E6E2FF',
+    onPrimarySoft: '#3326AA',
+    accent: '#FFB627',
+    onAccent: '#1B1A3A',
+    accentSoft: '#FFF0CC',
+    onAccentSoft: '#6E4600',
+    correct: '#11865B',
+    correctSoft: '#D9F5E8',
+    onCorrectSoft: '#0B5E40',
+    wrong: '#C2412D',
+    wrongSoft: '#FFE3DC',
+    onWrongSoft: '#8E2B1B',
+    learning: '#1F6FD1',
+    learningSoft: '#DDEBFF',
+    onLearningSoft: '#174F96',
+    weak: '#B35C00',
+    weakSoft: '#FFE9CF',
+    onWeakSoft: '#7A3F00',
+    focus: '#4434D4',
+    scrim: 'rgba(27, 26, 58, 0.5)',
   },
   dark: {
-    bg: '#0E1514',
-    surface: '#162120',
-    surfaceAlt: '#1E2C2A',
-    border: '#2C3D3A',
-    borderStrong: '#70837F',
-    text: '#E9F0EE',
-    textMuted: '#A7B8B4',
-    primary: '#4CC2B2',
-    onPrimary: '#04211E',
-    primarySoft: '#12312D',
-    onPrimarySoft: '#8FE0D4',
-    accent: '#F2B84B',
-    onAccent: '#231600',
-    accentSoft: '#3A2C0B',
-    onAccentSoft: '#F5C86A',
-    correct: '#5CCF8C',
-    correctSoft: '#123223',
-    onCorrectSoft: '#9BE8BC',
-    wrong: '#FF8F78',
-    wrongSoft: '#3A1D17',
-    onWrongSoft: '#FFB5A3',
-    learning: '#8DB4FF',
-    learningSoft: '#172A4A',
-    onLearningSoft: '#B9D0FF',
-    weak: '#F2A65A',
-    weakSoft: '#3A2410',
-    onWeakSoft: '#F8C58F',
-    focus: '#4CC2B2',
+    bg: '#121230',
+    surface: '#1D1C42',
+    surfaceAlt: '#272652',
+    border: '#34335E',
+    borderStrong: '#8C88B5',
+    ink: '#05051A',
+    text: '#EFEEFF',
+    textMuted: '#B4B1D6',
+    primary: '#A79CFF',
+    onPrimary: '#14123A',
+    primarySoft: '#2D2870',
+    onPrimarySoft: '#D4CEFF',
+    accent: '#FFC34D',
+    onAccent: '#1B1A3A',
+    accentSoft: '#3D2F0E',
+    onAccentSoft: '#FFD27A',
+    correct: '#4FD8A0',
+    correctSoft: '#103A2B',
+    onCorrectSoft: '#9EF0CB',
+    wrong: '#FF8C75',
+    wrongSoft: '#43201A',
+    onWrongSoft: '#FFB8A8',
+    learning: '#7DB4FF',
+    learningSoft: '#172F57',
+    onLearningSoft: '#BBD7FF',
+    weak: '#F5A65A',
+    weakSoft: '#3F2711',
+    onWeakSoft: '#FBC891',
+    focus: '#A79CFF',
     scrim: 'rgba(0, 0, 0, 0.6)',
   },
 };
+
+/**
+ * Subject hues: bright, light fills that ALWAYS carry `ink` text (contrast-checked).
+ * Subjects are data (CLAUDE.md rule 1): a subject gets a hue from `subjects.colour_key`
+ * if set, else by stable hash of its id into this list. Never hardcode subject → colour.
+ */
+export const subjectHues = {
+  sky: { light: '#7CC4FF', dark: '#5AA8F0' },
+  mint: { light: '#6EDDB3', dark: '#45C493' },
+  coral: { light: '#FF9E8A', dark: '#F27E68' },
+  sunflower: { light: '#FFD25E', dark: '#F2BD3A' },
+  lilac: { light: '#C3B0FF', dark: '#A792F5' },
+  lagoon: { light: '#5ED1D6', dark: '#3DB7BD' },
+  rose: { light: '#FFA8C8', dark: '#F288B0' },
+  lime: { light: '#B8E26A', dark: '#9CCB4A' },
+} as const;
+export type SubjectHue = keyof typeof subjectHues;
+
+export function hueForSubject(subjectId: string, colourKey?: string | null): SubjectHue {
+  const keys = Object.keys(subjectHues) as SubjectHue[];
+  if (colourKey && (keys as string[]).includes(colourKey)) return colourKey as SubjectHue;
+  let h = 0;
+  for (let i = 0; i < subjectId.length; i++) h = (h * 31 + subjectId.charCodeAt(i)) >>> 0;
+  return keys[h % keys.length];
+}
+
+/**
+ * Tile patterns (Mughal / Lahore-fort girih inspired), drawn with react-native-svg as a
+ * repeating 48 dp tile at low opacity over a subject hue. Used ONLY on header bands,
+ * subject cards and celebrations. Never behind running text, never on exam screens.
+ */
+export const patterns = {
+  star8: { tile: 48, opacity: { light: 0.22, dark: 0.18 } }, // khatam: 8-point star
+  hexFlower: { tile: 48, opacity: { light: 0.2, dark: 0.16 } },
+  chevron: { tile: 32, opacity: { light: 0.18, dark: 0.14 } },
+} as const;
 
 export type MasteryBand = 'learning' | 'weak' | 'mastered';
 
@@ -129,6 +170,7 @@ export const masteryRoles: Record<MasteryBand, { fill: keyof ColourRoles; soft: 
 /**
  * Text/background pairs that MUST meet WCAG AA. Checked by scripts/verify-design-tokens.mjs.
  * min 4.5 = normal text, 3 = large text (≥ 24 sp, or ≥ 18.66 sp bold) or non-text UI.
+ * Subject hues are checked separately: `ink` on every hue ≥ 4.5 in both themes.
  */
 export const contrastPairs: ReadonlyArray<{ fg: keyof ColourRoles; bg: keyof ColourRoles; min: 3 | 4.5; why: string }> = [
   { fg: 'text', bg: 'bg', min: 4.5, why: 'body on canvas' },
@@ -152,10 +194,10 @@ export const contrastPairs: ReadonlyArray<{ fg: keyof ColourRoles; bg: keyof Col
   { fg: 'borderStrong', bg: 'surface', min: 3, why: 'input boundary on card' },
   { fg: 'focus', bg: 'bg', min: 3, why: 'focus ring' },
   { fg: 'focus', bg: 'surface', min: 3, why: 'focus ring on card' },
-  { fg: 'correct', bg: 'surface', min: 3, why: 'mastered ring / check icon' },
+  { fg: 'correct', bg: 'surface', min: 3, why: 'mastered tile / check icon' },
   { fg: 'wrong', bg: 'surface', min: 3, why: 'wrong icon' },
-  { fg: 'learning', bg: 'surface', min: 3, why: 'learning ring' },
-  { fg: 'weak', bg: 'surface', min: 3, why: 'weak ring' },
+  { fg: 'learning', bg: 'surface', min: 3, why: 'learning band icon' },
+  { fg: 'weak', bg: 'surface', min: 3, why: 'weak band icon' },
 ];
 
 // ───────────────────────────── 2. Space, radius, elevation ─────────────────────────────
@@ -175,25 +217,40 @@ export const space = {
 
 export const radius = { sm: 8, md: 12, lg: 16, xl: 24, full: 9999 } as const;
 
-/** Dark mode swaps shadow for a hairline border (shadows vanish on dark surfaces). */
+/**
+ * Two shadow families.
+ * - `sticker*`: hard, unblurred offset shadow in `ink` on things you can press (buttons, option
+ *   buttons, subject cards). Pressing translates the element down INTO its shadow (transform only).
+ * - soft (`card`, `overlay`): passive surfaces and sheets. Dark mode drops soft shadows for a border.
+ */
 export const elevation = {
   flat: { light: 'none', dark: 'none' },
-  card: { light: '0 1px 2px rgba(22, 32, 31, 0.08)', dark: 'none' },
-  raised: { light: '0 4px 12px rgba(22, 32, 31, 0.12)', dark: 'none' },
-  overlay: { light: '0 10px 28px rgba(22, 32, 31, 0.20)', dark: 'none' },
+  stickerSm: { light: '0 2px 0 #1B1A3A', dark: '0 2px 0 #05051A' },
+  sticker: { light: '0 4px 0 #1B1A3A', dark: '0 4px 0 #05051A' },
+  card: { light: '0 1px 3px rgba(27, 26, 58, 0.10)', dark: 'none' },
+  overlay: { light: '0 12px 32px rgba(27, 26, 58, 0.24)', dark: 'none' },
 } as const;
+/** Press = translateY by the shadow depth so the sticker "clicks" down. */
+export const stickerPressDepth = { stickerSm: 2, sticker: 4 } as const;
+export const strokeWidth = { hairline: 1, control: 2, sticker: 2 } as const;
 
 // ───────────────────────────── 3. Type ─────────────────────────────
 
-/** Bundled font families (no CDN). Latin: Nunito (OFL, via @expo-google-fonts/nunito, TTF native / WOFF2 subset web). Urdu: Noto Nastaliq Urdu (already in assets/fonts). */
+/**
+ * Bundled font families (no CDN; npm @expo-google-fonts/* TTFs on native, WOFF2 subsets on web).
+ * Display: Baloo 2 (OFL, by Ek Type, made for South Asian scripts): chunky, warm, not babyish.
+ *   Used for display/title/heading and numbers that matter (scores, timer). Body: Nunito.
+ * Urdu: Noto Nastaliq Urdu (already in assets/fonts) for every step, including display.
+ */
 export const fontFamily = {
+  display: { semibold: 'Baloo2-SemiBold', bold: 'Baloo2-Bold', extrabold: 'Baloo2-ExtraBold' },
   latin: { regular: 'Nunito-Regular', semibold: 'Nunito-SemiBold', bold: 'Nunito-Bold' },
   urdu: { regular: 'NotoNastaliqUrdu-Regular', semibold: 'NotoNastaliqUrdu-Bold', bold: 'NotoNastaliqUrdu-Bold' },
 } as const;
 
 export type TypeStep = 'display' | 'title' | 'heading' | 'body' | 'bodySm' | 'caption' | 'label';
 export type Script = 'latin' | 'urdu';
-export type TextMetrics = { size: number; lineHeight: number; weight: 'regular' | 'semibold' | 'bold' };
+export type TextMetrics = { size: number; lineHeight: number; weight: 'regular' | 'semibold' | 'bold' | 'extrabold'; family?: 'display' | 'body' };
 
 /**
  * Sizes in sp at presentation "student". The "kid" and "staff" presentations scale these (see `presentations`).
@@ -203,13 +260,13 @@ export type TextMetrics = { size: number; lineHeight: number; weight: 'regular' 
  */
 export const typeScale: Record<Script, Record<TypeStep, TextMetrics>> = {
   latin: {
-    display: { size: 32, lineHeight: 40, weight: 'bold' },
-    title: { size: 24, lineHeight: 32, weight: 'bold' },
-    heading: { size: 20, lineHeight: 28, weight: 'semibold' },
+    display: { size: 36, lineHeight: 42, weight: 'extrabold', family: 'display' }, // Baloo 2
+    title: { size: 26, lineHeight: 32, weight: 'bold', family: 'display' },
+    heading: { size: 20, lineHeight: 26, weight: 'semibold', family: 'display' },
     body: { size: 16, lineHeight: 24, weight: 'regular' },
     bodySm: { size: 14, lineHeight: 20, weight: 'regular' },
     caption: { size: 12, lineHeight: 16, weight: 'regular' },
-    label: { size: 15, lineHeight: 20, weight: 'semibold' }, // buttons, tabs, chips
+    label: { size: 15, lineHeight: 20, weight: 'bold' }, // buttons, tabs, chips (Nunito Bold)
   },
   urdu: {
     display: { size: 36, lineHeight: 70, weight: 'bold' }, // ≈1.94
@@ -310,7 +367,7 @@ export const easing = {
 
 export type SpringName = keyof typeof spring;
 export type DurationName = keyof typeof duration;
-export type AnimProp = 'opacity' | 'translateX' | 'translateY' | 'scale' | 'rotate' | 'svgStrokeOffset';
+export type AnimProp = 'opacity' | 'translateX' | 'translateY' | 'scale' | 'rotate';
 
 /** What one tier does for one moment. `none` = state changes instantly (colour/icon still change). */
 export type Behaviour =
@@ -344,7 +401,7 @@ export const moments = {
   screenPush: { purpose: 'hierarchy', frequency: 'often', rtlFlip: true, full: { kind: 'timing', duration: 'slow', ease: 'inOut', props: ['translateX', 'opacity'] }, lite: fade('fast'), off: none },
   tabSwitch: { purpose: 'hierarchy', frequency: 'often', full: none, lite: none, off: none }, // tabs are peers: never slide
   sheetPresent: { purpose: 'hierarchy', frequency: 'occasional', full: { kind: 'spring', spring: 'gentle', props: ['translateY', 'opacity'] }, lite: fade('fast'), off: none },
-  press: { purpose: 'feedback', frequency: 'often', haptic: 'none', full: { kind: 'timing', duration: 'fast', ease: 'out', props: ['scale'] }, lite: fade('fast'), off: none },
+  press: { purpose: 'feedback', frequency: 'often', haptic: 'none', full: { kind: 'timing', duration: 'fast', ease: 'out', props: ['translateY'] }, lite: fade('fast'), off: none }, // sticker sinks into its shadow (stickerPressDepth)
   selectionChange: { purpose: 'state', frequency: 'often', haptic: 'selection', full: fade('fast'), lite: fade('fast'), off: none },
 
   // Answer feedback (practice, diagnostic, follow-up). Not used in exams.
@@ -353,7 +410,7 @@ export const moments = {
   whyWrongReveal: { purpose: 'explanation', frequency: 'often', full: { kind: 'spring', spring: 'gentle', props: ['translateY', 'opacity'] }, lite: fade('base'), off: none },
 
   // Progress
-  masteryRingFill: { purpose: 'progress', frequency: 'occasional', full: { kind: 'timing', duration: 'slow', ease: 'out', props: ['svgStrokeOffset'] }, lite: fade('fast'), off: none },
+  mosaicTileSet: { purpose: 'progress', frequency: 'occasional', haptic: 'light', full: { kind: 'spring', spring: 'snappy', props: ['scale', 'opacity'] }, lite: fade('base'), off: none }, // a mastered concept's tile drops into the subject mosaic
   masteryBandUp: { purpose: 'progress', frequency: 'rare', haptic: 'light', full: { kind: 'spring', spring: 'snappy', props: ['scale'] }, lite: fade('base'), off: none },
   progressBar: { purpose: 'progress', frequency: 'often', full: { kind: 'timing', duration: 'base', ease: 'out', props: ['translateX'] }, lite: fade('fast'), off: none }, // fill slides inside an overflow-hidden track
   followUpCleared: { purpose: 'progress', frequency: 'occasional', haptic: 'success', full: { kind: 'spring', spring: 'snappy', props: ['scale', 'opacity', 'translateX'] }, lite: fade('base'), off: none },

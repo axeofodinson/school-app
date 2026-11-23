@@ -1,6 +1,6 @@
 # DESIGN_SYSTEM.md — Al-Syed app: look, feel, motion
 
-Status: **spec v0.1 (session 00, 2026-11-23)**. Later sessions build to this
+Status: **spec v0.2 "Mosaic" (session 00, 2026-11-23)**. v0.1 (calm paper + teal) was reviewed as too plain; v0.2 keeps the structure and rules but changes the look. Later sessions build to this
 instead of improvising. Tokens: [`docs/design/tokens.draft.ts`](docs/design/tokens.draft.ts)
 (session 02 moves them to `apps/mobile/ui/`). Checked by
 `node --experimental-strip-types scripts/verify-design-tokens.mjs` (contrast,
@@ -15,27 +15,37 @@ decorative motion, exams are monitored not locked.
 
 | # | Question | My default (used in this spec) |
 |---|---|---|
-| Q1 | Is the direction right: calm "paper + teal" with a warm saffron highlight, rounded Latin font, no mascot, no streaks? | Yes |
+| Q1 | Is v0.2 "Mosaic" right: ink + indigo, bright subject colours, Lahore-tile patterns, chunky sticker buttons, Baloo 2 headings? Fun but not childish? | Yes |
 | Q2 | Digits in Urdu screens: Western `0–9` (matches textbooks and maths) or Eastern `۰–۹`? | Western everywhere |
 | Q3 | Primary band (PG–5) gets a **read-aloud speaker** on prompts. Urdu voices on ChromeOS/Windows are unverified (LMS_AUDIT §1.1). OK to ship it English-first and Urdu only where the voice test passes? | Yes |
-| Q4 | One small exception to "transform and opacity only" (§6.1): the mastery ring draws with SVG `stroke-dashoffset`. OK? | Yes (DECISIONS #33) |
+| Q4 | Mastery shown as **tiles filling a subject mosaic** (replaces the v0.1 ring, and removes the only motion exception). OK? | Yes (DECISIONS #33) |
 | Q5 | Lottie celebrations: one burst asset (≈ 15 KB) bundled. Fine for the pilot, or none until later? | One asset |
 
 Nothing below is blocked on these; they change small details.
 
-## 1. Identity
+## 1. Identity: "Mosaic"
 
-**Feel:** a well-kept exercise notebook. Warm paper, ink-dark text, one deep teal
-for "do this", one warm saffron for "you moved forward". Quiet, then
-occasionally delighted. Never loud, never punishing.
+**Feel:** a bright, well-made school notebook with stickers in it. Fountain-pen
+**ink** for text and outlines, **indigo** for "do this", **saffron** stars, and a
+bright colour per subject. Headers and subject cards carry **Lahore-fort tile
+patterns** (8-point *khatam* star, hex flower), which gives the app a local, crafted
+look instead of a generic edtech one. Pressable things are chunky **stickers**:
+2 px ink outline plus a hard 4 px ink shadow that you press "into". Playful where
+students learn; quiet where they're tested.
+
+**The big idea: mastery is a mosaic.** Each concept a student masters sets one tile
+in that subject's pattern. Finishing a chapter completes a pattern (the only
+celebration moment). Tiles never fall out, so progress is visible and permanent
+without streaks or loss messages.
 
 Principles (these decide arguments):
-1. **Study first.** Content (the question, the lesson) is the biggest, highest-contrast thing on screen. Chrome recedes.
+1. **Study first.** Content (the question, the lesson) is the biggest, highest-contrast thing on screen. Colour and pattern live in headers, cards and feedback, never behind running text.
 2. **Wrong is information.** Wrong answers use clay, not alarm red; no shake, no buzzer, always a reason shown.
-3. **No streaks, no flames, no loss messages** (LMS_AUDIT principle "measure learning, not activity"). Progress cues show concepts moved up and follow-ups cleared, never days in a row.
+3. **No streaks, no flames, no loss messages** (LMS_AUDIT principle "measure learning, not activity"). Progress = tiles set, follow-ups cleared.
 4. **Colour is never the only signal.** Every state has an icon shape and a word.
-5. **Same components for all ages.** Age changes size, copy length, illustration amount and celebration size (§3), not the component set.
-6. **Fast beats pretty** on a cheap Chromebook. Tier-down is a design feature (§6).
+5. **Same components for all ages.** Age changes size, copy length, colour amount and celebration size (§3), not the component set.
+6. **Exams are calm.** No patterns, no sticker shadows, nothing moves but the timer and save dot.
+7. **Fast beats pretty** on a cheap Chromebook. Patterns are tiny SVG tiles; tier-down is a design feature (§6).
 
 ### 1.1 Iconography
 - 24 px grid, 2 px stroke, round caps and joins, **outline by default, filled when selected**. Corner radius matches `radius.sm`.
@@ -44,7 +54,8 @@ Principles (these decide arguments):
 - Mastery band shapes (so colour-blind users can tell them apart): **learning = half-filled circle**, **weak = triangle with a dot** ("needs work"), **mastered = filled circle with a tick**.
 
 ### 1.2 Illustration (empty states, onboarding, result)
-- Flat geometric spot illustrations built from palette tokens, one saffron accent each, **no text inside images** (i18n), no faces or characters (nothing to localise, nothing to date).
+- Flat geometric spot illustrations with ink outlines (sticker style), subject hues + one saffron accent, **no text inside images** (i18n), no faces or characters (nothing to localise, nothing to date).
+- **Patterns** (`patterns` token): 8-point star, hex flower, chevron; 32–64 dp SVG tiles at 7–22 % opacity on header bands, subject cards, the kid practice background and celebrations. Never behind running text, never on exam screens, never on staff data tables.
 - Objects from a classroom: book, pencil, lamp, sprout, backpack, clock. ≤ 8 KB SVG each, drawn with `react-native-svg`, tinted from tokens so dark mode is free.
 - Primary band gets larger art (up to 160 dp), student band 96 dp, staff 64 dp or icon only.
 - Lottie only for one celebration burst (§6). Old pixel sprites in `assets/sprites/` are retired with the old app.
@@ -52,38 +63,40 @@ Principles (these decide arguments):
 ## 2. Foundations
 
 ### 2.1 Colour
-Semantic roles, each with a light and a dark value (full table in the tokens file). All 48 text and UI pairs per theme pass AA (4.5:1 text, 3:1 UI), verified by the script.
+Semantic roles, each with a light and a dark value (full table in the tokens file). All 48 text and UI pairs pass AA (24 per theme; 4.5:1 text, 3:1 UI), and all 8 subject hues carry ink text at ≥ 4.5:1 in both themes, verified by the script.
 
 | Role | Light | Dark | Use |
 |---|---|---|---|
-| `bg` / `surface` / `surfaceAlt` | `#F6F4EE` / `#FFFFFF` / `#ECE8DE` | `#0E1514` / `#162120` / `#1E2C2A` | canvas / cards / quiet fills |
-| `text` / `textMuted` | `#16201F` / `#475553` | `#E9F0EE` / `#A7B8B4` | primary / secondary text |
-| `primary` (+`onPrimary`) | `#0B6B62` | `#4CC2B2` | main action, links, focus, progress fill |
-| `accent` (+`onAccent`) | `#F0A81E` | `#F2B84B` | medal, today marker, highlight banner (always labelled) |
-| `correct` / `wrong` | `#1F7A4D` / `#B3422C` | `#5CCF8C` / `#FF8F78` | answer feedback (+ icon + word) |
-| `learning` / `weak` / mastered=`correct` | `#2B5DB0` / `#A95A00` / `#1F7A4D` | `#8DB4FF` / `#F2A65A` / `#5CCF8C` | 3 mastery bands |
-| `borderStrong` | `#7A8582` | `#70837F` | input and control outlines (3:1) |
+| `bg` / `surface` / `surfaceAlt` | `#F5F3FB` / `#FFFFFF` / `#ECE9F6` | `#121230` / `#1D1C42` / `#272652` | canvas / cards / quiet fills |
+| `text` = `ink` / `textMuted` | `#1B1A3A` / `#4F4B6E` | `#EFEEFF` / `#B4B1D6` | text; ink is also the sticker outline + hard shadow |
+| `primary` (+`onPrimary`) | `#4434D4` indigo | `#A79CFF` | main action, links, focus |
+| `accent` (+`onAccent`) | `#FFB627` saffron | `#FFC34D` | stars, medals, "test is open" (always labelled) |
+| `correct` / `wrong` | `#11865B` / `#C2412D` | `#4FD8A0` / `#FF8C75` | answer feedback (+ icon + word) |
+| `learning` / `weak` / mastered=`correct` | `#1F6FD1` / `#B35C00` / `#11865B` | `#7DB4FF` / `#F5A65A` / `#4FD8A0` | 3 mastery bands |
+| `borderStrong` | `#77729A` | `#8C88B5` | input outlines; sticker outlines in dark |
 
-Rules: no hex outside tokens; dark mode swaps shadows for hairline borders; `accent` is a fill, never a thin line on white (2:1); neutrals lean warm in light and teal in dark so the page never goes flat grey.
+**Subject hues** (`subjectHues`): sky `#7CC4FF`, mint `#6EDDB3`, coral `#FF9E8A`, sunflower `#FFD25E`, lilac `#C3B0FF`, lagoon `#5ED1D6`, rose `#FFA8C8`, lime `#B8E26A` (each a step darker in dark mode), always with ink text. Subjects are data, so a subject's hue comes from an optional `subjects.colour_key` or a stable hash of its id (`hueForSubject`); never a hardcoded subject→colour map. (`colour_key` would be a small additive migration in a later session; until then the hash is used.)
+
+Rules: no hex outside tokens; soft shadows disappear in dark mode (hard sticker shadows stay, near-black); `accent` is a fill, never a thin line on white; neutrals lean violet so the page never goes flat grey.
 
 ### 2.2 Spacing, radius, elevation
 - Space (4-pt grid): `xxs 2 · xs 4 · sm 8 · md 12 · lg 16 · xl 24 · xxl 32 · huge 48 · giant 64`. Screen gutter 16 phone, 24 tablet/desktop, 20 kid.
 - Radius: `sm 8 · md 12 · lg 16 · xl 24 · full`. Kid presentation adds +4. Always `borderCurve: 'continuous'` on native.
-- Elevation: `flat · card · raised · overlay` as `boxShadow` strings; dark mode `none` + a `border` colour instead.
+- Elevation: **stickers** (`stickerSm` 2 px, `sticker` 4 px hard ink shadow, no blur) on pressable things; **soft** (`card`, `overlay`) on passive surfaces and sheets. Press = translateY by the shadow depth (`stickerPressDepth`), so the button sinks into its shadow. Staff data screens use soft/flat only; exam screens use no sticker shadows.
 - Breakpoints: phone < 600, tablet/Chromebook-window 600–899, desktop ≥ 900 (two-pane), wide ≥ 1280 (max content width 1120).
 
 ### 2.3 Type
-**Latin: Nunito** (OFL; rounded, friendly for 5-year-olds, still clean at 16 sp for Class 10). Bundled from `@expo-google-fonts/nunito` TTFs on native, WOFF2 subset on web (Regular, SemiBold, Bold only). **Urdu: Noto Nastaliq Urdu** (already in `assets/fonts/`, Regular + Bold; subset to WOFF2 for web). Tabular digits for the timer are applied with `fontVariant: ['tabular-nums']`; whether Nunito ships a `tnum` feature in the subset is **unverified** (test T-2).
+**Display: Baloo 2** (OFL, by Ek Type, a foundry that designs for South Asian scripts): chunky and warm, used for display/title/heading and the numbers that matter (scores, timer). **Body: Nunito** (OFL; rounded, very legible). Both bundled from `@expo-google-fonts/*` TTFs on native, WOFF2 subsets on web (Baloo 2 SemiBold/Bold/ExtraBold; Nunito Regular/SemiBold/Bold). **Urdu: Noto Nastaliq Urdu** (already in `assets/fonts/`, Regular + Bold; subset to WOFF2 for web). Tabular digits for the timer are applied with `fontVariant: ['tabular-nums']`; whether Nunito ships a `tnum` feature in the subset is **unverified** (test T-2).
 
 | Step | Latin size/line | Urdu size/line (ratio) | Weight | Use |
 |---|---|---|---|---|
-| display | 32 / 40 | 36 / 70 (1.94) | Bold | result score, onboarding |
-| title | 24 / 32 | 27 / 54 (2.0) | Bold | screen titles |
-| heading | 20 / 28 | 22 / 46 (2.1) | SemiBold | section and card titles |
+| display | 36 / 42 Baloo | 36 / 70 (1.94) | ExtraBold | result score, greeting |
+| title | 26 / 32 Baloo | 27 / 54 (2.0) | Bold | screen titles, questions |
+| heading | 20 / 26 Baloo | 22 / 46 (2.1) | SemiBold | section and card titles |
 | body | 16 / 24 | 18 / 40 (2.2) | Regular | questions, lessons, lists |
 | bodySm | 14 / 20 | 16 / 36 (2.25) | Regular | helper text |
 | caption | 12 / 16 | 14 / 30 (2.15) | Regular | timestamps, counts (never essential info for kid) |
-| label | 15 / 20 | 17 / 34 | SemiBold | buttons, tabs, chips |
+| label | 15 / 20 | 17 / 34 | Bold | buttons, tabs, chips |
 
 **Why Urdu is bigger and taller:** Nastaliq has a small x-height and tall diagonal strokes plus stacked marks, so it reads smaller at the same point size and clips when the line box is tight. Rules (also in `urduTextRules`):
 - Urdu sizes ≈ 12 % larger; line-height ratio **≥ 1.9** (2.0–2.25 for running text).
@@ -106,7 +119,7 @@ Rules: no hex outside tokens; dark mode swaps shadows for hairline borders; `acc
 Voice register: casual, kid-friendly, loanwords kids use ("test", "homework", "result"). Urdu is never machine-translated; new English keys get an Urdu key or `// TODO: ur`.
 
 ### 2.4 Mastery band display
-Three bands only (no percentages shown), always **ring or chip + shape + word**:
+Three bands only (no percentages shown), always **chip + shape + word**. Progress inside a subject is the **mosaic** (one tile per concept, filled = mastered, dashed = not yet), with an accessible label such as "Maths: 7 of 12 concepts mastered".
 
 | Band | Shape | Word (en) | Colour |
 |---|---|---|---|
@@ -128,6 +141,7 @@ Picked from `classes.grade_level` of the active enrollment (`presentationForGrad
 | Prompts | **speaker button** reads the question aloud (Q3) | none | none |
 | Options | one per row, large, option letters hidden | one per row, A/B/C/D | compact |
 | Illustration | large (160 dp), on most empty states | medium (96 dp) | small or icon only |
+| Colour | full: hue backgrounds, pattern behind practice | hue headers and cards | hue accents only (class card top band) |
 | Celebration | big (bouncy spring, Lottie burst) | small (scale + tick) | none or toast |
 | Default motion tier | auto | auto | **lite** |
 | Density | airy | comfortable | dense, tables and two-pane |
@@ -144,7 +158,7 @@ All take `style` (merged last), read tokens, honour presentation + motion tier, 
 | Input | `TextField`, `PinField` (typed PIN, masked, big keys on kid), `SegmentedControl`, `Checkbox/Radio/Switch` (native where possible), `LanguageSwitch` | admission number field accepts QR scan prefill; PIN always typed |
 | Feedback | `Toast`, `Banner` (info / success / warn / offline), `SyncStatusPill`, `Skeleton`, `EmptyState` (art + title + hint + one action), `ErrorState` (what, why, retry) | |
 | Navigation | `Tabs` (bottom bar phone, side rail ≥ 900), `TopBar`, `Sheet/Modal`, `TwoPane` | tabs never slide |
-| Learning | `ProgressRing`, `ProgressBar`, `MasteryChip`, `ConceptCard`, `FollowUpRow`, `QuestionCard`, `OptionButton`, `FeedbackPanel` (correct / not quite + why), `LessonBlock` renderers | `OptionButton` states: idle, selected, correct, wrong, disabled |
+| Learning | `MosaicTiles`, `PatternBand`, `SubjectCard`, `ProgressBar`, `MasteryChip`, `ConceptCard`, `FollowUpRow`, `QuestionCard`, `OptionButton`, `FeedbackPanel` (correct / not quite + why), `LessonBlock` renderers | `OptionButton` states: idle, selected, correct, wrong, disabled |
 | Exam | `ExamTimer`, `SaveIndicator`, `QuestionNavigator`, `SubmitBar` | the only exam-safe motion (§6) |
 | Staff | `DataTable` (virtualised), `StudentTile`, `EventFeed`, `ReviewPane`, `StatTile` | web-first (`*.web.tsx` allowed) |
 | Gallery | `/dev/gallery` renders each in en/ur × light/dark × full/lite/off × kid/student/staff | acceptance for 02 |
@@ -176,24 +190,24 @@ Libraries and tier model: ARCHITECTURE §6b, CLAUDE.md Motion rules. This sectio
 | Screen push/pop | hierarchy · often | `screenPush` | native stack slide (≈ 360 ms, platform curve), mirrors in RTL | fade, 120 ms | instant | — |
 | Tab switch | hierarchy · often | `tabSwitch` | **none** (tabs are peers) | none | none | selection (tab bar only) |
 | Sheet / modal | hierarchy · occasional | `sheetPresent` | native `formSheet`, or gentle spring up + fade | fade 120 | instant | — |
-| Press feedback | feedback · often | `press` | scale 0.97, 120 ms | opacity 0.85, 120 ms | colour change only | — |
+| Press feedback | feedback · often | `press` | sticker sinks into its shadow (translateY 2–4 px), 120 ms | opacity 0.85, 120 ms | colour change only | — |
 | Option selected | state · often | `selectionChange` | border + fill cross-fade 120 | same | instant | selection |
 | **Answer correct** | feedback · often | `answerCorrect` | tick scale-in 0.9→1 on snappy spring + green tint fade | tint fade 120 | tint + tick appear | success |
 | **Answer wrong** | feedback · often | `answerWrong` | clay tint fade 220; **no shake** | fade 120 | instant | light |
 | **Why-wrong reveal** | explanation · often | `whyWrongReveal` | panel fades in and rises 12 px, gentle spring (panel is already laid out; only transform/opacity move) | fade 220 | instant | — |
-| **Mastery ring fill** | progress · occasional | `masteryRingFill` | ring sweeps to value, 360 ms ease-out. *Exception: SVG `stroke-dashoffset`, one small ring, no layout* | cross-fade old→new value, 120 | set final value | — |
-| Mastery band up | progress · rare | `masteryBandUp` | ring colour cross-fade + one 1→1.06→1 pulse (snappy) | fade 220 | instant | light |
+| **Tile set** (concept mastered) | progress · occasional | `mosaicTileSet` | new tile drops into the mosaic: scale 0.6→1 + fade, snappy spring | fade 220 | tile appears | light |
+| Mastery band up | progress · rare | `masteryBandUp` | band chip cross-fade + one 1→1.06→1 pulse (snappy) | fade 220 | instant | light |
 | Progress bar | progress · often | `progressBar` | fill slides inside an `overflow: hidden` track (translateX, 220, mirrors in RTL) | fade 120 | set value | — |
 | **Follow-up cleared** | progress · occasional | `followUpCleared` | tick pops in the row (snappy) and row dims to "Done"; it stays in place and leaves the list on the next visit (no list reflow animation) | fade 220 | instant | success |
 | Gate unlocked | progress · rare | `gateUnlocked` | lock icon swaps to open + scale-in, gentle | fade 220 | instant | success |
-| Streak-free progress cue | progress · often | `progressBar` / `masteryBandUp` | **"Today you moved up 2 concepts"** counter changes with a fade; no flames, no streak ring, no loss state | same | instant | — |
+| Streak-free progress cue | progress · often | `mosaicTileSet` / `progressBar` | **"You set 3 new tiles this week"** changes with a fade; no flames, no streak counter, no loss state | same | instant | — |
 | Sync: syncing | sync · often | `syncSyncing` | pill icon pulses opacity slowly (360 ms steps), **only while syncing, stops after 10 s** | static "Syncing" label | static label | — |
 | Sync: done | sync · often | `syncDone` | label cross-fades to "Saved" tick, rests as idle after 2 s | same | instant | — |
 | Offline banner | sync · occasional | `bannerEnter` | rises 8 px + fade, gentle | fade 120 | instant | — |
 | Toast | feedback · occasional | `toast` | rises + fade, gentle; auto-dismiss 4 s | fade 120 | instant | — |
 | Empty state | state · occasional | `emptyState` | art fades in and rises 8 px, 220 | fade 220 | instant | — |
 | Skeleton | state · often | `skeleton` | slow opacity pulse | static `surfaceAlt` | static | — |
-| **Celebration: mastery** (student) | delight · rare | `celebrationMastery` | one bundled Lottie burst ≤ 1.5 s, once | badge scale-in (gentle) + fade | static badge | success |
+| **Celebration: pattern complete** (chapter, student) | delight · rare | `celebrationMastery` | one bundled Lottie burst ≤ 1.5 s in the subject hue, once | badge scale-in (gentle) + fade | static badge | success |
 | **Celebration: kid** | delight · rare | `celebrationKid` | bouncy badge pop, big | fade 220 | static badge | success |
 | **Exam timer** | state · often | `examTimerTick` | digits change, **no tween**; colour change at 5 min and 1 min, no pulse | same | same | — |
 | **Exam save indicator** | sync · often | `examSaveIndicator` | dot ↔ tick cross-fade 120 | same | instant | — |
@@ -204,14 +218,14 @@ Libraries and tier model: ARCHITECTURE §6b, CLAUDE.md Motion rules. This sectio
 
 **Rules from the table:**
 1. **Exams:** with `inExam` set, `resolveMoment` returns `none` for everything except `examTimerTick` and `examSaveIndicator`, identical in all three tiers. No transitions between exam questions, no confetti, no toasts that slide; submit confirmation is an instant dialog. The post-submit **Result** screen is not an exam screen and may use `answerCorrect`-level motion only if the tier allows.
-2. **One exception to transform + opacity (needs Hassan's OK, Q4):** `svgStrokeOffset` on one `ProgressRing` (paint property of a single SVG circle, no layout, no list). The ring falls back to a fade in lite/off. Nothing else is allowed.
+2. **Transform + opacity only, no exceptions.** v0.1 needed an SVG-stroke exception for the mastery ring; v0.2's mosaic tiles animate with scale + opacity.
 3. **No parallax, shared-element hero transitions or looping decoration** (ARCHITECTURE §6b lists parallax and shared elements under *full*: this spec does not use them, as they carry no meaning on study screens; revisit only with a use case).
 4. **Haptics:** one per user action, same frame as the visual, never the only feedback; a setting turns them off.
 5. **Budget:** every moment above must hold 60 fps on the reference phone and the cheapest Chromebook in lite tier (TEST_PLAN P-4/P-6). If one does not, its lite behaviour becomes the full behaviour.
 
 ## 7. Screen wireframes (low fi)
 
-Annotations: `[ ]` button, `( )` ring/chip, `▒` content area. Drawn left-to-right (English); Urdu mirrors the whole layout. Interactive, themed versions are in the review Artifact. Each screen also needs an empty state and an offline state (listed under it).
+Annotations: `[ ]` button, `( )` chip, `▦` mosaic tiles, `▒` content area. These text sketches give the layout; the v0.2 look (colour, pattern, stickers) is in the canvas. Drawn left-to-right (English); Urdu mirrors the whole layout. Interactive, themed versions are in the review Artifact. Each screen also needs an empty state and an offline state (listed under it).
 
 ### 7.1 Student Home (phone)
 ```
@@ -228,7 +242,7 @@ Annotations: `[ ]` button, `( )` ring/chip, `▒` content area. Drawn left-to-ri
 │ │               [ Continue ] │ │
 │ └────────────────────────────┘ │
 │ My subjects                     │
-│ ( 62% ) Maths      Learning  › │  ring + band chip
+│ ▦▦▦▦░░ Maths      Learning  › │  subject card: hue + mosaic + band
 │ ( 90% ) Science    Got it    › │
 │ ( 30% ) English    Needs work› │
 │ Today: moved up 1 concept       │  streak-free cue
@@ -446,7 +460,7 @@ Urdu column is intentionally empty: teachers write it (DECISIONS #28), assisted 
 | 2.3.3 / reduce motion | OS setting forces `off`; exam moments near-static |
 | 2.5.5 target size | 56 / 48 / 44 dp by presentation, `hitSlop` for small visuals |
 | 3.3.x errors, labels | Copy pattern in §8; every input has a visible label (placeholders are not labels) |
-| 4.1.2 name, role, value | Primitives set `accessibilityRole/State/Label`; `FeedbackPanel` is an `alert`/live region; ring exposes "62 %, Learning" |
+| 4.1.2 name, role, value | Primitives set `accessibilityRole/State/Label`; `FeedbackPanel` is an `alert`/live region; mosaic exposes "Maths: 7 of 12 concepts mastered, Learning" |
 | Screen reader | **Unverified**: TalkBack on Android/ChromeOS and NVDA on web. Test: A-1 in `TEST_PLAN.md` |
 
 ## 10. How later sessions use this

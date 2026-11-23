@@ -24,7 +24,7 @@ Turn the design spec into reusable, RTL-safe, themed components and the motion t
 ## Do
 - `apps/mobile/ui/tokens.ts` and `ui/motion.ts` (durations, springs, the `moments` table) moved from `docs/design/tokens.draft.ts`; delete the draft once moved. Keep `pickMotionTier`/`resolveMoment`/`presentationForGrade` pure and port the checks in `scripts/verify-design-tokens.mjs` into `packages/core` tests.
 - Theme provider: light/dark, presentation (`kid` / `student` / `staff`, DESIGN_SYSTEM.md §3).
-- Primitives: Text (auto Nastaliq for Urdu), Button, IconButton, Card, ListItem, TextField, PinField, Badge, ProgressRing (mastery), EmptyState, Skeleton, Toast, Sheet/Modal, Tabs, SyncStatusPill.
+- Primitives: Text (auto Nastaliq for Urdu), Button, IconButton, Card, ListItem, TextField, PinField, Badge, MosaicTiles + PatternBand + SubjectCard (mastery, DESIGN_SYSTEM.md §1), EmptyState, Skeleton, Toast, Sheet/Modal, Tabs, SyncStatusPill.
 - Motion tiers: detect full/lite/off (OS reduce-motion, device memory where available, user setting), a `useMotion()` hook so components read the tier; exam-mode context that forces off.
 - Responsive layout helpers: breakpoints for phone / tablet-Chromebook / desktop, a two-pane layout.
 - A hidden `/dev/gallery` route showing every component in both languages, both themes and all three tiers.

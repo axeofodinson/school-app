@@ -44,7 +44,7 @@ Deferred: parents (81) and iOS (82).
 
 | ✓ | Prompt | Model | Depends on | Blocked by | Notes |
 |---|---|---|---|---|---|
-| [x] | [00 Visual identity and motion choreography](00-design-identity.md) | Opus | — | — | 2026-11-23: DESIGN_SYSTEM.md + docs/design/tokens.draft.ts (AA-verified); wireframes Artifact published; **Hassan's review + Q1–Q5 still open** |
+| [x] | [00 Visual identity and motion choreography](00-design-identity.md) | Opus | — | — | 2026-11-23: DESIGN_SYSTEM.md v0.2 "Mosaic" + docs/design/tokens.draft.ts (AA-verified); wireframe canvas redrawn after Hassan found v0.1 plain; **Hassan's review + Q1–Q5 still open** |
 | [ ] | [01 App scaffold: Expo + TypeScript + expo-router + web](01-scaffold.md) | Opus | 00 (tokens can follow later) | — | |
 | [ ] | [02 Design system and motion foundation](02-design-system-motion.md) | Opus | 00, 01 | — | |
 | [ ] | [03 Login: students (admission no + PIN, QR) and staff](03-auth.md) | Opus | 01, 02 | — | |
