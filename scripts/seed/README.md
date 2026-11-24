@@ -4,6 +4,22 @@ A fake school at real scale, so every phase is built and tested without real
 student data. **It runs only against local Postgres or the dev Supabase
 project. It refuses production.**
 
+## Easiest: paste into the Supabase SQL Editor (dev project)
+
+1. Open the **dev** project in Supabase (never the real school one) → SQL Editor.
+2. Paste all of [`sql/seed-dev.sql`](sql/seed-dev.sql) → **Run**. The last result
+   shows `656 | 22 | 687` (students, classes, logins). Running it again adds nothing.
+3. To undo: paste [`sql/remove-dev.sql`](sql/remove-dev.sql) → **Run**. The last
+   result shows all zeros.
+
+Both files stop with "STOP: this database has real students" if pasted into a
+database with more than 50 real students. They hold the school part only; the
+LMS part (question bank + history) needs `npm run seed:dev` once 017 is applied.
+They are generated: after changing the generators run `npm run seed:sql`
+(a test fails while they are stale).
+
+## From a terminal
+
 | Command (from the repo root)             | What it does                                                                   |
 | ---------------------------------------- | ------------------------------------------------------------------------------ |
 | `npm run seed:dev`                       | Seed (idempotent: a second run inserts nothing)                                |

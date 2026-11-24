@@ -4,8 +4,7 @@ import { connect, type Client } from './db.ts';
 import { STUDENT_CODE_LIKE } from './markers.ts';
 import { resolveTarget, type TargetEnv } from './target.ts';
 
-/** More real (non-TEST) students than this means "not a dev database". */
-export const MAX_REAL_STUDENTS = 50;
+import { MAX_REAL_STUDENTS } from './guard-constants.ts';
 
 export async function openTarget(env: TargetEnv): Promise<{ client: Client; label: string }> {
   const target = resolveTarget(env);

@@ -81,7 +81,8 @@ project**, never the production one.
    `DEV_SUPABASE_ANON_KEY` (done). Never put a service-role key or DB password
    in the app or in `EXPO_PUBLIC_*` variables.
 5. For dev builds of the app, point `EXPO_PUBLIC_SUPABASE_URL/ANON_KEY` at the dev project.
-6. Seed it (prompt 04, `scripts/seed/README.md`): from your PC, set
+6. Seed it (prompt 04): in the dev project's SQL Editor paste
+   `scripts/seed/sql/seed-dev.sql` and Run (undo: `remove-dev.sql`). Or, from your PC, set
    `SEED_DATABASE_URL` to the dev project's **session pooler** URL (Dashboard →
    Connect; it contains the DB password, so keep it out of the repo and the
    cloud environment) and `DEV_SUPABASE_URL`, then `npm run seed:dev`. The

@@ -13,7 +13,7 @@ import {
 
 const lit = (s: string): string => `'${s.replace(/'/g, "''")}'`;
 
-interface Schema {
+export interface Schema {
   has(table: string): boolean;
   hasCol(table: string, col: string): boolean;
 }
@@ -27,7 +27,7 @@ async function readSchema(c: Client, tables: string[]): Promise<Schema> {
   };
 }
 
-const ALL_TABLES = [
+export const ALL_TABLES = [
   'public.academic_years',
   'public.classes',
   'public.subjects',
@@ -72,7 +72,7 @@ const ALL_TABLES = [
 ];
 
 /** Temp id sets, created in this order (later ones read earlier ones). */
-function idSets(s: Schema): { name: string; sql: string }[] {
+export function idSets(s: Schema): { name: string; sql: string }[] {
   const flag = (t: string): string => (s.hasCol(t, 'is_test_data') ? ` or is_test_data` : '');
   const sets: { name: string; sql: string }[] = [
     {
@@ -184,7 +184,7 @@ export interface Step {
 const inSet = (col: string, set: string): string => `${col} in (select id from ${set})`;
 
 /** Child-first: deleting in this order never trips a foreign key. */
-function steps(s: Schema): Step[] {
+export function steps(s: Schema): Step[] {
   const all: Step[] = [
     { table: 'public.exam_events', where: inSet('session_id', 'seed_sessions') },
     { table: 'public.exam_session_answers', where: inSet('session_id', 'seed_sessions') },

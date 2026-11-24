@@ -124,10 +124,11 @@ npm test            # packages/core unit tests (vitest)
 
 ## Fake school data for development
 
-`npm run seed:dev` fills a **dev or local** database with a synthetic school
+Paste `scripts/seed/sql/seed-dev.sql` into the **dev** project's SQL Editor (or
+run `npm run seed:dev`) to fill a **dev or local** database with a synthetic school
 (656 `TEST-` students, 30 teachers, 22 sections, and, once `db/017` is applied,
-a question bank and 3 months of practice and exam history). `npm run
-seed:remove` deletes all of it. It refuses the production project. Setup and
+a question bank and 3 months of practice and exam history). `remove-dev.sql`
+(or `npm run seed:remove`) deletes all of it. It refuses the production project. Setup and
 details: [`scripts/seed/README.md`](./scripts/seed/README.md).
 
 ## Conventions (see CLAUDE.md)
