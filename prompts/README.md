@@ -98,7 +98,7 @@ Deferred: parents (81) and iOS (82).
 
 | ✓ | Prompt | Model | Depends on | Blocked by | Notes |
 |---|---|---|---|---|---|
-| [ ] | [50 Teacher surprise exam + student exam screen](50-exam-launch-and-take.md) | Opus | 22, 41 | — | |
+| [ ] | [50 Quick-generate assessments (3 clicks) + student exam screen](50-exam-launch-and-take.md) | Opus | 22, 41 | — | Scope widened 2026-11-24: random draw from a blueprint for every assessment type, not only live exams (DECISIONS #67) |
 | [ ] | [51 Live exam view, item analysis, exam follow-ups, confirm to grades](51-live-view-results.md) | Opus | 50 | — | |
 
 ### Phase 6 — Offline, shared devices, scale

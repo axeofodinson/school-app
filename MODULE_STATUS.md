@@ -24,7 +24,7 @@ prompts: `prompts/README.md`.
 | Learn renderer + visual blocks + offline packs | 3 | ⏳ (visual block format specced in session 00) | [30](prompts/30-learn-renderer.md) [33](prompts/33-visual-blocks.md) [32](prompts/32-offline-learn-packs.md) | |
 | Practice engine | 3 | ⏳ | [31](prompts/31-practice-engine.md) | |
 | Mastery / follow-ups / gates / revision | 4 | ⏳ | [40](prompts/40-mastery-rpcs.md) [41](prompts/41-followups-gates-prepare.md) [42](prompts/42-spaced-revision.md) | |
-| Online exams + live view | 5 | 🟡 RPCs drafted in 017 | [50](prompts/50-exam-launch-and-take.md) [51](prompts/51-live-view-results.md) | |
+| Online exams + live view | 5 | 🟡 RPCs drafted in 017; 50 now also owns quick-generate (random draw from a blueprint, 3 clicks) for every assessment type (DECISIONS #67) | [50](prompts/50-exam-launch-and-take.md) [51](prompts/51-live-view-results.md) | |
 | Offline exams, sync + shared devices, load tests | 6 | ⏳ | [60](prompts/60-offline-exams.md) [61](prompts/61-sync-shared-devices.md) [62](prompts/62-load-tests.md) | |
 | Worksheets + assignments | 7 | ⏳ | [70](prompts/70-worksheets.md) [71](prompts/71-assignments.md) | |
 | STEM projects (rubrics, teams, evidence) | 7 | 📝 `db/022` draft, dry-run verified | [72](prompts/72-stem-projects.md) | |

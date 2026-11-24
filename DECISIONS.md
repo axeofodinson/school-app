@@ -2,6 +2,10 @@
 
 Newest first. Each: decision — reason — who/when.
 
+## 2026-11-24 — quick generate is the main way to make a paper (Hassan)
+
+67. **Assessments are normally generated, not hand-built: class + subject → blueprint → Publish (3 clicks).** Hassan will import thousands of MCQs per subject (prompt 21 importer, not the authoring form), so a test, quiz, exam or assignment is drawn at random from approved items. Defaults (change if Hassan disagrees): (a) a **blueprint** per class/subject (chapters/topics, question count, difficulty mix, minutes, marks per question) lives in `assessments.blueprint` (017) and the last one used is pre-filled, so the common case is three clicks: pick class/subject, accept or tweak the blueprint, Publish; (b) **one draw per assessment**: every student gets the same questions (fair marks, one answer key, printable), with order and MCQ options shuffled per student by the server (`start_exam_session` + option permutation, 020); (c) the draw prefers questions **not used in that class recently**, and only approved, exam-scope items; (d) it applies to **every type** (test, quiz, exam, assignment; online, offline or printed via 70), not only live exams; (e) the prompt 10 builder stays as the "review / swap a question / hand-pick" screen that opens after a draw, and the authoring form stays for one-off questions. Built in prompt 50 (needs 017 for topics, difficulty and approvals). — Hassan + Claude, after session 10.
+
 ## 2026-11-24 — question authoring + assessment builder (session 10)
 
 64. **`short_text` answer shape: `answer = {"correct": "<model answer>", "also": ["<other accepted>", …]}`, body `{stem}`.** No shape existed before (the old app never authored it). `correct` keeps every type's key under the same name; `also` is optional, deduped, max 10. Matching (`shortTextMatches` in core, for prompt 11's grading) ignores case, extra spaces and Urdu/Arabic digits. Anything fuzzier (spelling tolerance) is a teacher regrade, not auto-marking. — Claude, session 10.
