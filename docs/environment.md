@@ -88,3 +88,24 @@ project**, never the production one.
    cloud environment) and `DEV_SUPABASE_URL`, then `npm run seed:dev`. The
    cloud container can't reach Postgres ports, only HTTPS. The script refuses
    the production ref and anything not on its dev allow-list.
+
+## Web app (EAS Hosting): https://ice-010-school-app.expo.app
+
+The **new** app's web build, pointed at the **dev** Supabase project, with the
+component gallery switched on. It is a test site, not the school's production
+site. To publish an update (from `apps/mobile`; a session needs `EXPO_TOKEN` and
+the Expo hosts on the allowlist, see above):
+
+```bash
+rm -rf dist && EXPO_PUBLIC_SUPABASE_URL="$DEV_SUPABASE_URL" EXPO_PUBLIC_SUPABASE_ANON_KEY="$DEV_SUPABASE_ANON_KEY" EXPO_PUBLIC_DEV_GALLERY=1 npx expo export -p web
+```
+
+```bash
+npx eas-cli@latest deploy --prod --export-dir dist --non-interactive
+```
+
+Check the bundle names only the dev ref (`grep -rho "[a-z]\{20\}\.supabase\.co" dist`)
+before deploying. Last deploy: 2026-11-24 (session 04, main @ db333d4: auth from
+prompt 03 + seeded dev data); a seeded student (`TEST-0001` / `1234`) signs in on
+the live URL.
+
