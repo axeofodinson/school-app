@@ -9,18 +9,22 @@ import { space, subjectHues, type SubjectHue } from './tokens';
 /**
  * A header band in a subject hue with a tile pattern. Text on it is always ink
  * (AA-checked on every hue). Exam mode: plain quiet fill, no pattern. Staff
- * presentation: hue accent only, no pattern (DESIGN_SYSTEM.md §3).
+ * presentation: hue accent only, no pattern (DESIGN_SYSTEM.md §3). The pattern drifts
+ * per the motion tier (`patternDrift`, DECISIONS #47).
  */
 export function PatternBand({
   hue,
   pattern = 'star8',
   minHeight = 56,
+  trigger,
   children,
   style,
 }: {
   hue: SubjectHue;
   pattern?: PatternName;
   minHeight?: number;
+  /** Replays the lite-tier pattern glide when it changes (see PatternFill). */
+  trigger?: string | number;
   children?: ReactNode;
   style?: StyleProp<ViewStyle>;
 }) {
@@ -30,7 +34,7 @@ export function PatternBand({
   const decorate = !inExam && presentation !== 'staff';
   return (
     <View style={[styles.band, { minHeight, backgroundColor: bg }, style]}>
-      {decorate ? <PatternFill name={pattern} /> : null}
+      {decorate ? <PatternFill name={pattern} animated trigger={trigger} /> : null}
       {children}
     </View>
   );

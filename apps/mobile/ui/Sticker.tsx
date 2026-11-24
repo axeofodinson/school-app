@@ -42,6 +42,7 @@ export function useFocusRing() {
  */
 export function PressableSticker({
   onPress,
+  onPressIn,
   disabled,
   busy,
   depth = 'sticker',
@@ -54,6 +55,8 @@ export function PressableSticker({
   ...a11y
 }: AccessibilityProps & {
   onPress?: () => void;
+  /** Extra press-in hook (e.g. to start a pattern glide); feedback motion still runs. */
+  onPressIn?: () => void;
   disabled?: boolean;
   /** Not pressable (e.g. loading) but not greyed out like `disabled`. */
   busy?: boolean;
@@ -81,7 +84,10 @@ export function PressableSticker({
       onPress={onPress}
       disabled={disabled || busy}
       hitSlop={hitSlop}
-      onPressIn={press.onPressIn}
+      onPressIn={() => {
+        press.onPressIn();
+        onPressIn?.();
+      }}
       onPressOut={press.onPressOut}
       accessibilityState={{ disabled: Boolean(disabled), ...a11y.accessibilityState }}
       style={[{ paddingBottom: d, borderRadius: radius }, ring, disabled && styles.disabled, style]}

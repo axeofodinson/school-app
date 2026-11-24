@@ -61,8 +61,11 @@ export const easings = {
 /** The Reanimated animation (or plain value, for `none`) that moves a value to `to`. */
 export function animateTo(b: Behaviour, to: number) {
   switch (b.kind) {
-    case 'timing':
-      return withTiming(to, { duration: duration[b.duration], easing: easings[b.ease] });
+    case 'timing': {
+      const t = withTiming(to, { duration: duration[b.duration], easing: easings[b.ease] });
+      // Loops restart from the start value (no reverse): seamless for periodic content only.
+      return b.repeat === 'loop' ? withRepeat(t, -1, false) : t;
+    }
     case 'spring':
       return withSpring(to, spring[b.spring]);
     case 'lottie':

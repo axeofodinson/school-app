@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { useI18n } from '../i18n';
@@ -34,6 +35,8 @@ export function SubjectCard({
   const { colours, presentation } = useTheme();
   const hue = hueForSubject(subject.id, subject.colourKey);
   const r = radiusFor('lg', presentation);
+  // Lite tier: the pattern glides again on press and when a tile is set.
+  const [presses, setPresses] = useState(0);
   const label = t('ui.mosaic.label', {
     subject: subject.name,
     count: subject.mastered,
@@ -41,6 +44,7 @@ export function SubjectCard({
   });
   return (
     <PressableSticker
+      onPressIn={() => setPresses((n) => n + 1)}
       onPress={onPress}
       radius={r}
       accessibilityRole="button"
@@ -50,7 +54,11 @@ export function SubjectCard({
         { backgroundColor: pressed ? colours.surfaceAlt : colours.surface },
       ]}
     >
-      <PatternBand hue={hue} minHeight={presentation === 'kid' ? 72 : 56}>
+      <PatternBand
+        hue={hue}
+        minHeight={presentation === 'kid' ? 72 : 56}
+        trigger={`${presses}:${justSet ?? ''}`}
+      >
         <Text variant="heading" tone="ink" numberOfLines={2}>
           {subject.name}
         </Text>

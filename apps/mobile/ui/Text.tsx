@@ -5,6 +5,7 @@ import { useI18n } from '../i18n';
 import { useTheme } from './theme';
 import {
   isolateLtrRuns,
+  urduTextRules,
   scriptOf,
   textMetrics,
   type ColourRoles,
@@ -69,10 +70,19 @@ export function Text({
           writingDirection: urdu ? 'rtl' : 'ltr',
           // Align to the start of the UI direction (not the text's own), so an English
           // fallback inside the Urdu UI still lines up on the right. Callers may override.
-          textAlign: isRTL ? 'right' : 'left',
+          // Android already swaps left/right inside an RTL layout (Screen sets direction),
+          // so there 'left' means start; web takes the side literally.
+          textAlign: Platform.OS === 'android' ? 'left' : isRTL ? 'right' : 'left',
           // Nastaliq: never tracked, italicised or uppercased (urduTextRules).
           ...(urdu
-            ? { letterSpacing: 0, fontStyle: 'normal' as const, textTransform: 'none' as const }
+            ? {
+                letterSpacing: 0,
+                fontStyle: 'normal' as const,
+                textTransform: 'none' as const,
+                // Room for Nastaliq overhang so tails and marks are not clipped.
+                paddingHorizontal: Math.ceil(m.fontSize * urduTextRules.overhangPadding.x),
+                paddingVertical: Math.ceil(m.fontSize * urduTextRules.overhangPadding.y),
+              }
             : null),
           ...(Platform.OS === 'android' ? { includeFontPadding: false } : null),
         },

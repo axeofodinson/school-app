@@ -1,9 +1,17 @@
-import { useId } from 'react';
-import { StyleSheet } from 'react-native';
+import { useFocusEffect } from 'expo-router';
+import { useCallback, useId, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import Animated, {
+  cancelAnimation,
+  useAnimatedStyle,
+  useSharedValue,
+} from 'react-native-reanimated';
 import Svg, { Circle, Defs, G, Path, Pattern as SvgPattern, Rect } from 'react-native-svg';
 
+import { useI18n } from '../i18n';
+import { animateTo, useMoment } from './motion';
 import { useTheme } from './theme';
-import { patterns } from './tokens';
+import { mirrorX, patterns } from './tokens';
 
 export type PatternName = keyof typeof patterns;
 
@@ -56,33 +64,86 @@ export function PatternTile({ name, colour }: { name: PatternName; colour: strin
  * A repeating Lahore-tile pattern filling its parent (absolute). Decoration only:
  * low opacity, ink on a subject hue, hidden from screen readers. Never behind running
  * text, never on exam screens (callers decide; PatternBand does it for you).
+ *
+ * Motion (`patternDrift`, DECISIONS #47): the SVG is one tile larger than the band and
+ * moves diagonally by exactly one tile, so the repeat is seamless. Full tier loops;
+ * lite glides once per `trigger` change and when the screen gains focus; off is still.
+ * Sizes are measured (numbers, not "100%") so Android fills the whole band.
  */
-export function PatternFill({ name, colour }: { name: PatternName; colour?: string }) {
+export function PatternFill({
+  name,
+  colour,
+  animated = false,
+  trigger,
+}: {
+  name: PatternName;
+  colour?: string;
+  animated?: boolean;
+  /** Change this value to replay the lite-tier glide (press, tile set). */
+  trigger?: string | number;
+}) {
   const { colours, scheme } = useTheme();
+  const { isRTL } = useI18n();
   const id = `pat-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`;
   const p = patterns[name];
+  const [size, setSize] = useState<{ w: number; h: number } | null>(null);
+  const b = useMoment('patternDrift');
+  const moves = animated && b.kind === 'timing';
+  const behaviourKey = b.kind === 'timing' ? `${b.duration}:${b.repeat ?? 'once'}` : b.kind;
+  const progress = useSharedValue(0);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (!moves) {
+        cancelAnimation(progress);
+        progress.set(0);
+        return;
+      }
+      progress.set(0);
+      progress.set(animateTo(b, 1));
+      // Stop the loop while the screen is not visible (stacked screens stay mounted).
+      return () => cancelAnimation(progress);
+      // b is identified by behaviourKey (exam/off resolve to a fresh object each render).
+    }, [moves, behaviourKey, trigger, progress]), // eslint-disable-line react-hooks/exhaustive-deps
+  );
+
+  const dx = mirrorX(p.tile, isRTL);
+  const style = useAnimatedStyle(() => ({
+    transform: [{ translateX: progress.get() * dx }, { translateY: progress.get() * p.tile }],
+  }));
+
   return (
-    <Svg
-      width="100%"
-      height="100%"
+    <View
       style={StyleSheet.absoluteFill}
       pointerEvents="none"
       accessibilityElementsHidden
       importantForAccessibility="no-hide-descendants"
+      onLayout={(e) => {
+        const { width, height } = e.nativeEvent.layout;
+        if (!size || size.w !== width || size.h !== height) setSize({ w: width, h: height });
+      }}
     >
-      <Defs>
-        <SvgPattern id={id} patternUnits="userSpaceOnUse" width={p.tile} height={p.tile}>
-          <PatternTile name={name} colour={colour ?? colours.ink} />
-        </SvgPattern>
-      </Defs>
-      <Rect
-        x={0}
-        y={0}
-        width="100%"
-        height="100%"
-        fill={`url(#${id})`}
-        opacity={p.opacity[scheme]}
-      />
-    </Svg>
+      {size ? (
+        <Animated.View style={[styles.drift, { top: -p.tile, start: -p.tile }, style]}>
+          <Svg width={size.w + p.tile} height={size.h + p.tile}>
+            <Defs>
+              <SvgPattern id={id} patternUnits="userSpaceOnUse" width={p.tile} height={p.tile}>
+                <PatternTile name={name} colour={colour ?? colours.ink} />
+              </SvgPattern>
+            </Defs>
+            <Rect
+              x={0}
+              y={0}
+              width={size.w + p.tile}
+              height={size.h + p.tile}
+              fill={`url(#${id})`}
+              opacity={p.opacity[scheme]}
+            />
+          </Svg>
+        </Animated.View>
+      ) : null}
+    </View>
   );
 }
+
+const styles = StyleSheet.create({ drift: { position: 'absolute' } });
