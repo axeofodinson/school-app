@@ -1,0 +1,74 @@
+// Student home until the Learn surface exists (prompt 30): greeting, where my
+// work is (sync status), and the two things a student can do today.
+import { attemptKey, SUBMISSION_KIND } from '@school/core';
+import { useRouter } from 'expo-router';
+import { StyleSheet, View } from 'react-native';
+
+import { useI18n } from '../../i18n';
+import { ListItem, Screen, SyncStatusPill, Text } from '../../ui';
+import { space } from '../../ui/tokens';
+import { AccountActions } from '../auth/AccountActions';
+import { useAuth } from '../auth/AuthProvider';
+import { useAttemptSync } from './AttemptSync';
+import { useHome } from './useHome';
+
+export function StudentHome() {
+  const { t } = useI18n();
+  const router = useRouter();
+  const { profile } = useAuth();
+  const { status, pending, flushNow, items } = useAttemptSync();
+  const { state } = useHome();
+  const home = state?.status === 'ready' ? state.data : null;
+  let todo: number | null = null;
+  if (home && typeof home.enrollment !== 'string') {
+    const eid = home.enrollment.id;
+    const done = new Set(home.submissions.map((s) => s.assessmentId));
+    todo = home.assessments.filter(
+      (a) =>
+        a.status === 'published' &&
+        !done.has(a.id) &&
+        !items.some((i) => i.kind === SUBMISSION_KIND && i.key === attemptKey(eid, a.id)),
+    ).length;
+  }
+
+  return (
+    <Screen>
+      <View style={styles.top}>
+        <AccountActions />
+        <SyncStatusPill status={status} pending={pending} onRetry={() => flushNow()} />
+      </View>
+      <Text variant="title" accessibilityRole="header">
+        {profile?.full_name
+          ? t('student.home.greeting', { name: profile.full_name })
+          : t('student.home.title')}
+      </Text>
+      <View style={styles.list}>
+        <ListItem
+          title={t('student.home.assessments')}
+          subtitle={
+            todo
+              ? t('student.assessments.todoCount', { count: todo })
+              : t('student.home.assessmentsNote')
+          }
+          onPress={() => router.push('/tests')}
+        />
+        <ListItem
+          title={t('student.home.scores')}
+          subtitle={t('student.home.scoresNote')}
+          onPress={() => router.push('/results')}
+        />
+      </View>
+    </Screen>
+  );
+}
+
+const styles = StyleSheet.create({
+  top: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: space.sm,
+  },
+  list: { gap: space.sm, marginTop: space.lg },
+});

@@ -216,12 +216,17 @@
         "todo": "کرنا ہے",
         "submitted": "ہو گیا",
         "pending": "محفوظ",
-        "file": "ورک شیٹ"
+        "file": "ورک شیٹ",
+        "started": "Started // TODO: ur",
+        "problem": "Not sent // TODO: ur",
+        "closed": "Closed // TODO: ur",
+        "waiting": "Waiting to send // TODO: ur"
       },
       "errors": {
         "network": "انٹرنیٹ نہیں ہے۔ کنکشن چیک کر کے دوبارہ کوشش کرو۔",
         "unknown": "کچھ گڑبڑ ہو گئی۔ دوبارہ کوشش کرو۔"
-      }
+      },
+      "offline": "You’re offline: showing your saved list. // TODO: ur"
     },
     "fileAssessment": {
       "back": "واپس",
@@ -260,7 +265,19 @@
       "errors": {
         "network": "انٹرنیٹ نہیں ہے۔ تمہارے جواب محفوظ ہیں — انٹرنیٹ آنے پر دوبارہ کوشش کرو۔",
         "unknown": "جمع نہیں ہو سکا۔ دوبارہ کوشش کرو۔"
-      }
+      },
+      "unsupported": "This kind of question can’t be answered here yet. Skip it. // TODO: ur",
+      "yourAnswer": "Your answer // TODO: ur",
+      "draftSaved": "Saved on this device // TODO: ur",
+      "blankWarning": {
+        "one": "%{count} question is blank. Submit anyway? // TODO: ur",
+        "other": "%{count} questions are blank. Submit anyway? // TODO: ur"
+      },
+      "submitAnyway": "Submit anyway // TODO: ur",
+      "sendNow": "Try sending now // TODO: ur",
+      "rejected": "Your answers couldn’t be sent. This test may be closed or not for your class. Ask your teacher. // TODO: ur",
+      "closed": "This test is closed. // TODO: ur",
+      "notAvailable": "This test isn’t available for you. // TODO: ur"
     },
     "prereader": {
       "listen": "سوال سنو",
@@ -294,7 +311,9 @@
       "errors": {
         "network": "انٹرنیٹ نہیں ہے۔ کنکشن چیک کر کے دوبارہ کوشش کرو۔",
         "unknown": "کچھ گڑبڑ ہو گئی۔ دوبارہ کوشش کرو۔"
-      }
+      },
+      "notSent": "Not sent yet // TODO: ur",
+      "unknownTest": "A test // TODO: ur"
     },
     "report": {
       "title": "میرا رپورٹ کارڈ",

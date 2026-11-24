@@ -216,12 +216,17 @@
         "todo": "To do",
         "submitted": "Done",
         "pending": "Saved",
-        "file": "Worksheet"
+        "file": "Worksheet",
+        "started": "Started",
+        "problem": "Not sent",
+        "closed": "Closed",
+        "waiting": "Waiting to send"
       },
       "errors": {
         "network": "No internet. Check your connection and try again.",
         "unknown": "Something went wrong. Try again."
-      }
+      },
+      "offline": "You’re offline: showing your saved list."
     },
     "fileAssessment": {
       "back": "Back",
@@ -260,7 +265,19 @@
       "errors": {
         "network": "No internet. Your answers are saved — try again when you’re back online.",
         "unknown": "Couldn’t submit. Please try again."
-      }
+      },
+      "unsupported": "This kind of question can’t be answered here yet. Skip it.",
+      "yourAnswer": "Your answer",
+      "draftSaved": "Saved on this device",
+      "blankWarning": {
+        "one": "%{count} question is blank. Submit anyway?",
+        "other": "%{count} questions are blank. Submit anyway?"
+      },
+      "submitAnyway": "Submit anyway",
+      "sendNow": "Try sending now",
+      "rejected": "Your answers couldn’t be sent. This test may be closed or not for your class. Ask your teacher.",
+      "closed": "This test is closed.",
+      "notAvailable": "This test isn’t available for you."
     },
     "prereader": {
       "listen": "Hear the question",
@@ -294,7 +311,9 @@
       "errors": {
         "network": "No internet. Check your connection and try again.",
         "unknown": "Something went wrong. Try again."
-      }
+      },
+      "notSent": "Not sent yet",
+      "unknownTest": "A test"
     },
     "report": {
       "title": "My report card",
