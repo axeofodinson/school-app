@@ -133,7 +133,7 @@ safe maths parser.
 | `020_exam_sweep_offline.sql` | 5–6 | pg_cron sweep, option permutation, offline acceptance RPC, item-analysis view |
 | `021_rollups.sql` | 8 | nightly analytics rollups |
 | `022_stem_projects.sql` | 7 | STEM projects (draft, dry-run verified; see §6) |
-| `024_profiles_self_update_guard.sql` | now (production fix; needs only 002–016) | trigger: non-staff clients edit only their own `full_name`/`phone` (closes the self-promote hole, DECISIONS #62) |
+| `024_profiles_self_update_guard.sql` | applied to production 2026-11-24 | trigger: non-staff clients edit only their own `full_name`/`phone` (closes the self-promote hole, DECISIONS #62) |
 | `023_access_tiers.sql` | 0/2 (after 017; before Google sign-in is switched on) | `profiles.access_tier` (`school`/`prep_only`), `merged_into`/`merged_at`; `handle_new_user_v2` + `auth.identities` guard; `profiles_guard` (self-edit = name/phone only); `is_school_member()` + restrictive policies; `account_links` (insert-only); `find_prep_accounts()`, `link_prep_account()` (draft, dry-run verified; DECISIONS #57–61). Re-run after applying 022 so project tables get their policy |
 
 Every migration: idempotent, dry-run with `db/test/` harness before Supabase.

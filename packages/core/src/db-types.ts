@@ -1,5 +1,6 @@
 // GENERATED: do not edit by hand.
-// Source: local DB harness (TEST_PLAN DB-1) with db/setup.sql + db/002–016 (the
+// Source: local DB harness (TEST_PLAN DB-1) with db/setup.sql + db/002–016 (024,
+// applied 2026-11-24, adds only a trigger: no type change) (the
 // migrations applied in production; drafts 017/022 excluded), via
 //   npx supabase@3.3.0 gen types typescript --db-url <harness> --schema public
 // Regenerate after each migration Hassan runs (see packages/core/README.md).
