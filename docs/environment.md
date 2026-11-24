@@ -103,5 +103,6 @@ Prep-only Google sign-in needs `db/017` and `db/023` applied on the project and:
    `schoolapp://auth-callback` (Android), `http://localhost:8081/auth-callback` (web dev) and
    the deployed web origin + `/auth-callback`.
 4. Rebuild the Android dev client (new native module `expo-web-browser`).
+5. Turn the button on: set `EXPO_PUBLIC_GOOGLE_SIGNIN=1` (EAS env var for builds, `.env` for local web). Without it the login screen shows school login only. **Status 2026-11-24:** Hassan couldn't create the Google Cloud OAuth client yet, so this is postponed; the flag stays off.
 
 The Android app uses a browser tab (Custom Tab) to show Google's sign-in page, so it needs no SHA-1 or Android OAuth client.

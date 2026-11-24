@@ -8,6 +8,10 @@ import { useI18n } from '../../i18n';
 import { isSupabaseConfigured } from '../../lib/supabase';
 import { Button, Card, LanguageToggle, PinField, Screen, Text, TextField } from '../../ui';
 
+// Off until the Google provider is set up on the Supabase project
+// (docs/environment.md "Google sign-in"); then build with EXPO_PUBLIC_GOOGLE_SIGNIN=1.
+const GOOGLE_ENABLED = process.env.EXPO_PUBLIC_GOOGLE_SIGNIN === '1';
+
 // Student sign-in: admission number (typed, or filled by scanning a QR card) + PIN
 // (always typed). Same backend calls as the old app (db/004, db/008).
 export default function StudentLogin() {
@@ -121,7 +125,7 @@ export default function StudentLogin() {
           />
         </View>
       </Card>
-      {sharedMode ? null : (
+      {sharedMode || !GOOGLE_ENABLED ? null : (
         <Card>
           <View style={styles.form}>
             <Text variant="heading">{t('auth.google.title')}</Text>

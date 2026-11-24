@@ -1,6 +1,6 @@
 // TEST_PLAN A-4: Google sign-in + prep-only gating on web against a MOCKED
 // Supabase (no request leaves localhost). Same build/serve as auth-web.cjs:
-// Build: cd apps/mobile && EXPO_PUBLIC_SUPABASE_URL=https://fakedevproject.supabase.co EXPO_PUBLIC_SUPABASE_ANON_KEY=fake npx expo export -p web
+// Build: cd apps/mobile && EXPO_PUBLIC_GOOGLE_SIGNIN=1 EXPO_PUBLIC_SUPABASE_URL=https://fakedevproject.supabase.co EXPO_PUBLIC_SUPABASE_ANON_KEY=fake npx expo export -p web
 // Serve: node scripts/e2e/serve-dist.mjs "$PWD/apps/mobile/dist" 8089
 // Run:   NODE_PATH=$(npm root -g) node scripts/e2e/google-web.cjs <screenshot-dir>
 const { chromium } = require('playwright');
