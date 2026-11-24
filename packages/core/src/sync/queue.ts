@@ -257,7 +257,15 @@ export function createSyncQueue(store: ScopedStore, opts: SyncQueueOptions = {})
       : dueItems(await read(), now());
     for (const item of due) {
       const send = senders[item.kind];
-      if (!send) continue; // another screen's kind; left for its own sender
+      if (!send) {
+        // Another feature's kind: leave it for its own sender, but look again later
+        // so a wake-up timer keyed on nextAt doesn't spin on it.
+        await mutate((q) => ({
+          next: q.map((x) => (x.id === item.id ? { ...x, nextAt: now() + BACKOFF_MAX_MS } : x)),
+          out: null,
+        }));
+        continue;
+      }
       let r: SendOutcome | SendError | null;
       try {
         r = await send(item);

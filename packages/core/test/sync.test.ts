@@ -79,6 +79,10 @@ describe('error classification (old attemptStore cases)', () => {
     [{ status: 401, code: 'PGRST301', message: 'JWT expired' }, 'retry'],
     [{ status: 403, code: '42501', message: 'row-level security' }, 'reject'],
     [{ status: 400, code: '23514', message: 'check constraint' }, 'reject'],
+    [
+      { name: 'TypeError', message: "Cannot read properties of undefined (reading 'id')" },
+      'reject',
+    ],
   ])('classifySendError(%j) = %s', (e, want) => expect(classifySendError(e)).toBe(want));
 });
 
@@ -303,7 +307,10 @@ describe('createSyncQueue', () => {
     });
     expect(r).toMatchObject({ rejected: 1, remaining: 2 });
     const items = await q.items();
-    expect(items.find((x) => x.kind === 'practice')!.state).toBe('pending');
+    const practice = items.find((x) => x.kind === 'practice')!;
+    expect(practice.state).toBe('pending');
+    // Skipped kinds are pushed back so a nextAt-driven timer doesn't spin on them.
+    expect(practice.nextAt).toBe(BACKOFF_MAX_MS);
     expect(items.find((x) => x.kind === 'submission')!.lastError).toBe('22P02 invalid input');
   });
 

@@ -7,6 +7,14 @@ export type { SpeakInput } from './speech';
 
 let clip: HTMLAudioElement | null = null;
 
+// Chrome fills getVoices() asynchronously; ask early so the first tap finds Urdu.
+if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.addEventListener?.('voiceschanged', () =>
+    window.speechSynthesis.getVoices(),
+  );
+}
+
 function synth(): SpeechSynthesis | null {
   return typeof window !== 'undefined' && 'speechSynthesis' in window
     ? window.speechSynthesis

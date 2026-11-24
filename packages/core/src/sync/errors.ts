@@ -22,7 +22,6 @@ export function isNetworkError(e: SendError | null | undefined): boolean {
   const msg = (e.message ?? '').toLowerCase();
   return (
     e.name === 'AuthRetryableFetchError' ||
-    e.name === 'TypeError' ||
     e.name === 'AbortError' ||
     e.status === 0 ||
     NETWORK.test(msg)

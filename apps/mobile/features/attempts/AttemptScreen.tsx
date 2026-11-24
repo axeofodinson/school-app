@@ -134,6 +134,11 @@ function Attempt({
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<SubmitResult | null>(null);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Latest answers for the change handler (quick taps never lose an earlier answer).
+  const answersRef = useRef<Answers | null>(null);
+  useEffect(() => {
+    answersRef.current = answers;
+  }, [answers]);
 
   // Apply the saved draft once the paper is here (only answers to this paper's questions).
   useEffect(() => {
@@ -159,17 +164,16 @@ function Attempt({
     (qid: string, v: AnswerValue) => {
       setConfirmBlank(false);
       setSaved(false);
-      setAnswers((prev) => {
-        const next = { ...(prev ?? {}), [qid]: v };
-        if (saveTimer.current) clearTimeout(saveTimer.current);
-        saveTimer.current = setTimeout(() => {
-          drafts
-            ?.save(key, next)
-            .then(() => setSaved(true))
-            .catch(() => undefined);
-        }, DRAFT_SAVE_MS);
-        return next;
-      });
+      const next = { ...(answersRef.current ?? {}), [qid]: v };
+      answersRef.current = next;
+      setAnswers(next);
+      if (saveTimer.current) clearTimeout(saveTimer.current);
+      saveTimer.current = setTimeout(() => {
+        drafts
+          ?.save(key, next)
+          .then(() => setSaved(true))
+          .catch(() => undefined);
+      }, DRAFT_SAVE_MS);
     },
     [drafts, key],
   );
@@ -195,7 +199,9 @@ function Attempt({
       />
     );
   }
-  if (queued) {
+  // While the first send is in flight, keep the form (with its spinner): the item is
+  // already queued, but saying "no internet" before the server answers would be wrong.
+  if (queued && !busy) {
     const rejected = queued.state === 'rejected';
     return (
       <EmptyState
