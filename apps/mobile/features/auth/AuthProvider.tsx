@@ -7,15 +7,17 @@
 // except their unsynced queue. Routing by role is a convenience; RLS is the
 // security boundary (CLAUDE.md rule 4).
 //
-// Extension point for prompt 05 (Google sign-in, prep-only tier, DECISIONS #23):
-// add a `googleSignIn()` here next to studentSignIn/staffSignIn, select
-// `access_tier` in PROFILE_COLUMNS once db adds it, and give the 'prep'
-// destination its own route group in app/_layout.tsx. destinationFor() already
-// returns 'prep' for access_tier = 'prep'.
+// Google sign-in (prompt 05, DECISIONS #23, #58): Preparation only. Native opens
+// an auth session (Custom Tab) and finishes here; web redirects the page and
+// app/auth-callback.tsx finishes with completeGoogleRedirect(). Either way the
+// session is kept only for a prep-only account (packages/core auth/oauth.ts).
 import type { Session } from '@supabase/supabase-js';
 import {
+  completeGoogleCallback,
   createIdleClock,
   destinationFor,
+  googleSignIn as coreGoogleSignIn,
+  tierOf,
   purgeOtherUsers,
   SHARED_IDLE_TIMEOUT_MS,
   staffSignIn as coreStaffSignIn,
@@ -25,8 +27,11 @@ import {
   wipeUserNamespace,
   type AuthBackend,
   type AuthState,
+  type AccessTier,
   type Destination,
+  type GoogleSignInError,
   type IdleClock,
+  type OAuthBackend,
   type ProfileSummary,
   type ScopedStore,
   type StaffSignInError,
@@ -43,12 +48,18 @@ import {
   type ReactNode,
 } from 'react';
 import { AppState, Platform, StyleSheet, View } from 'react-native';
+import * as WebBrowser from 'expo-web-browser';
 
 import { clearSessionCopies, deviceKV } from '../../lib/storage';
 import { supabase } from '../../lib/supabase';
 import { isSharedMode, loadDeviceSettings, saveSharedMode } from './device-settings';
 
-const PROFILE_COLUMNS = 'role, full_name, student_id';
+// '*' so the app works on a server with or without db/023 (access_tier,
+// merged_into): a missing access_tier reads as 'school'. Profiles hold no
+// secrets, and RLS only returns the caller's own row.
+const PROFILE_COLUMNS = '*';
+/** Must be in the Supabase project's Auth → URL Configuration → Redirect URLs. */
+const NATIVE_REDIRECT = 'schoolapp://auth-callback';
 const IDLE_CHECK_MS = 15_000;
 
 export type SignOutReason = 'user' | 'idle' | 'switch';
@@ -70,6 +81,14 @@ interface AuthValue {
   queueStorage: ScopedStore | null;
   studentSignIn(admissionNo: string, pin: string): Promise<StudentSignInError | null>;
   staffSignIn(email: string, password: string): Promise<StaffSignInError | null>;
+  /** Native: the whole round trip. Web: starts a redirect (null = leaving the page). */
+  googleSignIn(): Promise<GoogleSignInError | null>;
+  /** Web: finish a Google redirect on /auth-callback. */
+  completeGoogleRedirect(url: string): Promise<GoogleSignInError | null>;
+  /** The last Google sign-in failure, for the login screen (null = none). */
+  oauthError: GoogleSignInError | null;
+  clearOauthError(): void;
+  tier: AccessTier;
   signOut(reason?: SignOutReason): Promise<void>;
   retryProfile(): void;
   setSharedMode(on: boolean): Promise<void>;
@@ -90,12 +109,75 @@ const backend: AuthBackend = {
   },
 };
 
+function oauthRedirect(): string {
+  if (Platform.OS === 'web' && typeof window !== 'undefined') {
+    return `${window.location.origin}/auth-callback`;
+  }
+  return NATIVE_REDIRECT;
+}
+
+/** Codes already exchanged (Android may also deliver the redirect as a deep link). */
+const usedCodes = new Set<string>();
+
+const oauthBackend: OAuthBackend = {
+  async startOAuth() {
+    if (!supabase) return { url: null, error: { message: 'not configured' } };
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: oauthRedirect(),
+        skipBrowserRedirect: Platform.OS !== 'web',
+        queryParams: { prompt: 'select_account' },
+      },
+    });
+    return { url: data?.url ?? null, error };
+  },
+  ...(Platform.OS === 'web'
+    ? {}
+    : {
+        async openAuthSession(url: string) {
+          const r = await WebBrowser.openAuthSessionAsync(url, NATIVE_REDIRECT);
+          return r.type === 'success'
+            ? { type: 'success' as const, url: r.url }
+            : { type: 'cancel' as const };
+        },
+      }),
+  async exchangeCode(code) {
+    if (!supabase) return { error: { message: 'not configured' } };
+    if (usedCodes.has(code)) return { error: null };
+    usedCodes.add(code);
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    return { error };
+  },
+  async loadTier() {
+    if (!supabase) return null;
+    const { data: u } = await supabase.auth.getUser();
+    if (!u.user) return null;
+    const { data, error } = await supabase
+      .from('profiles')
+      .select(PROFILE_COLUMNS)
+      .eq('id', u.user.id)
+      .maybeSingle();
+    if (error || !data) return null;
+    return tierOf(data as { access_tier?: string | null });
+  },
+  async signOut() {
+    await supabase?.auth.signOut({ scope: 'local' }).catch(() => undefined);
+    await clearSessionCopies().catch(() => undefined);
+  },
+};
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [initializing, setInitializing] = useState(supabase !== null);
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null | 'loading' | 'error'>('loading');
   const [sharedMode, setSharedModeState] = useState(false);
   const [lastSignOut, setLastSignOut] = useState<SignOutReason | null>(null);
+  // While a Google sign-in is being checked, routing waits (no flash of a
+  // school surface before a refused account is signed out again).
+  const [oauthBusy, setOauthBusy] = useState(false);
+  // Kept here, not on the login screen: that screen unmounts while routing waits.
+  const [oauthError, setOauthError] = useState<GoogleSignInError | null>(null);
   const userId = session?.user.id ?? null;
   const loadSeq = useRef(0);
   const uidRef = useRef<string | null>(null);
@@ -114,7 +196,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .eq('id', uid)
         .maybeSingle();
       if (seq !== loadSeq.current) return; // a newer sign-in won
-      setProfile(error ? 'error' : (data ?? null));
+      setProfile(error ? 'error' : ((data as Profile | null) ?? null));
     } catch {
       if (seq === loadSeq.current) setProfile('error');
     }
@@ -221,6 +303,51 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return err;
   }, []);
 
+  // Routing holds only while the code is exchanged and the tier checked; the
+  // login screen stays mounted while the Google page is open.
+  const oauth = useMemo<OAuthBackend>(
+    () => ({
+      ...oauthBackend,
+      exchangeCode: (code: string) => {
+        setOauthBusy(true);
+        return oauthBackend.exchangeCode(code);
+      },
+    }),
+    [],
+  );
+
+  const finishOAuth = useCallback((err: GoogleSignInError | null) => {
+    setOauthBusy(false);
+    // Cancelling is not an error worth a message.
+    setOauthError(err === 'cancelled' ? null : err);
+    if (!err) setLastSignOut(null);
+    return err;
+  }, []);
+
+  const googleSignIn = useCallback(async () => {
+    setOauthError(null);
+    let err: GoogleSignInError | null = 'unknown';
+    try {
+      err = await coreGoogleSignIn(oauth);
+    } finally {
+      finishOAuth(err);
+    }
+    return err;
+  }, [oauth, finishOAuth]);
+
+  const completeGoogleRedirect = useCallback(
+    async (url: string) => {
+      let err: GoogleSignInError | null = 'unknown';
+      try {
+        err = await completeGoogleCallback(oauth, url);
+      } finally {
+        finishOAuth(err);
+      }
+      return err;
+    },
+    [oauth, finishOAuth],
+  );
+
   const retryProfile = useCallback(() => {
     if (userId) loadProfile(userId);
   }, [userId, loadProfile]);
@@ -231,11 +358,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const value = useMemo<AuthValue>(() => {
-    const state: AuthState = initializing
-      ? { kind: 'initializing' }
-      : !session
-        ? { kind: 'signedOut' }
-        : { kind: 'signedIn', profile };
+    const state: AuthState =
+      initializing || oauthBusy
+        ? { kind: 'initializing' }
+        : !session
+          ? { kind: 'signedOut' }
+          : { kind: 'signedIn', profile };
     return {
       destination: supabase ? destinationFor(state) : 'signedOut',
       session,
@@ -246,12 +374,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       queueStorage: userId ? userQueueStore(deviceKV, userId) : null,
       studentSignIn,
       staffSignIn,
+      googleSignIn,
+      completeGoogleRedirect,
+      oauthError,
+      clearOauthError: () => setOauthError(null),
+      tier: tierOf(typeof profile === 'object' ? profile : null),
       signOut,
       retryProfile,
       setSharedMode,
     };
   }, [
     initializing,
+    oauthBusy,
+    oauthError,
+    googleSignIn,
+    completeGoogleRedirect,
     session,
     profile,
     sharedMode,

@@ -171,7 +171,12 @@ describe('routing by role', () => {
     expect(signedIn('pending')).toBe('pending');
     expect(signedIn('parent')).toBe('pending');
     expect(signedIn('hacker')).toBe('pending');
-    expect(signedIn('student', null, 'prep')).toBe('prep');
+    expect(signedIn('student', null, 'prep_only')).toBe('prep');
+    // Even a (malformed) prep row with a staff role or student link stays prep.
+    expect(signedIn('admin', null, 'prep_only')).toBe('prep');
+    expect(signedIn('student', 'sid', 'prep_only')).toBe('prep');
+    expect(signedIn('student', 'sid', 'school')).toBe('student');
+    expect(signedIn('student', 'sid', 'prep')).toBe('student'); // only the db value counts
   });
 });
 

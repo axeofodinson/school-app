@@ -50,7 +50,7 @@ Deferred: parents (81) and iOS (82).
 | [x] | [02 Design system and motion foundation](02-design-system-motion.md) | Opus | 00, 01 | — | 2026-11-23: tokens moved to `packages/core/src/design` (+87 tests), providers + 20 `ui/` primitives, tier detection + `<ExamMode>`, `/dev/gallery`; Moti dropped (DECISIONS #41–46); web verified, Android unverified |
 | [x] | [03 Login: students (admission no + PIN, QR) and staff](03-auth.md) | Opus | 01, 02 | — | 2026-11-24: core auth module (+23 tests), PIN/staff login, role guards, QR scan + A4 card sheet, shared mode (memory session, idle 10 min, Switch student, namespace wipe), Settings; web verified with mocked Supabase (A-2); dev-project + Android login **unverified** (no dev project yet) |
 | [x] | [04 Synthetic data at school scale (656 students)](04-seed-dev-data.md) | Opus | 01 | Dev project exists. | Done 2026-11-24: `scripts/seed` (seed/remove, local dry-run verified, 0 dups, 0 left after remove); dev project: Hassan pastes `scripts/seed/sql/seed-dev.sql` into its SQL Editor. |
-| [ ] | [05 Google sign-in and access tiers (prep-only vs school)](05-google-signin-prep-access.md) | Opus | 03 | Must ship before the paid Play Store release | |
+| [x] | [05 Google sign-in and access tiers (prep-only vs school)](05-google-signin-prep-access.md) | Opus | 03 | Must ship before the paid Play Store release | Done 2026-11-24: `db/023` (draft, needs 017; dry-run + DB-4 smoke pass), Google PKCE sign-in, `(prep)` surface, admin `/link-prep`; web verified with mocks (A-4); dev project + Android unverified (A-5) |
 
 ### Phase 1 — Parity (retire the old app's core flows)
 
@@ -150,6 +150,7 @@ Deferred: parents (81) and iOS (82).
 | — | [C1 Generate topic content](C1-generate-topic-content.md) | Opus (claude.ai chat) | From Phase 2 on, one topic at a time (pilot: Class 9 Math/Science) |
 
 ## Changelog
+- 2026-11-24: 05 done. `db/023_access_tiers.sql` needs 017 first, so it runs at Phase 2 start (or on dev whenever). It also closes a self-promote hole that is live in production today (DECISIONS #60). Prompt 40 must recompute mastery after `link_prep_account()`, and prompts 30–42 should gate features with `canUse(tier, …)`.
 - 2026-11-23: 02 done. Tokens now live in `packages/core/src/design/` (draft file and verify script removed); 01 no longer installs Moti.
 - 2026-11-23: design questions answered (DECISIONS #37); 16 now includes ElevenLabs read-aloud audio for junior maths.
 - 2026-11-23: visual-first lessons (DECISIONS #36): new prompt 33 (scenes, charts, widgets); 30, 32, 21, C1, 90 updated to the visual block format.

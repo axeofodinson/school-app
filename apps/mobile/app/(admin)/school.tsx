@@ -20,6 +20,11 @@ export default function AdminHome() {
         <Text>{t('console.home.welcome', { name: profile.full_name })}</Text>
       ) : null}
       <ListItem title={t('auth.cards.open')} onPress={() => router.push('/qr-cards')} />
+      <ListItem
+        title={t('console.linkPrep.open')}
+        subtitle={t('console.linkPrep.openHint')}
+        onPress={() => router.push('/link-prep')}
+      />
       <ListItem title={t('auth.settings.deviceTitle')} onPress={() => router.push('/settings')} />
       <EmptyState title={t('console.academicYears.empty')} />
     </Screen>

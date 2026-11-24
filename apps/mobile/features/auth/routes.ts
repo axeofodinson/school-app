@@ -16,8 +16,9 @@ export function homeFor(d: Destination): Href | null {
       return '/school';
     case 'profileError':
       return '/profile-error';
+    case 'prep':
+      return '/prepare';
     case 'pending':
-    case 'prep': // prompt 05 gives prep-only users their own Preparation surface
       return '/pending';
   }
 }

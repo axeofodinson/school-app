@@ -40,6 +40,8 @@ function Root() {
         {/* Each surface exists only for the matching destination (features/auth).
             Navigation convenience only: RLS is the security boundary. */}
         <Stack.Screen name="index" />
+        {/* Google redirect target (web); reachable in every state. */}
+        <Stack.Screen name="auth-callback" />
         <Stack.Protected guard={destination === 'signedOut'}>
           <Stack.Screen name="(auth)" />
         </Stack.Protected>
@@ -52,15 +54,19 @@ function Root() {
         <Stack.Protected guard={destination === 'admin'}>
           <Stack.Screen name="(admin)" />
         </Stack.Protected>
-        <Stack.Protected
-          guard={
-            destination === 'pending' || destination === 'prep' || destination === 'profileError'
-          }
-        >
+        <Stack.Protected guard={destination === 'prep'}>
+          <Stack.Screen name="(prep)" />
+        </Stack.Protected>
+        <Stack.Protected guard={destination === 'pending' || destination === 'profileError'}>
           <Stack.Screen name="(account)" />
         </Stack.Protected>
         <Stack.Protected
-          guard={destination === 'student' || destination === 'teacher' || destination === 'admin'}
+          guard={
+            destination === 'student' ||
+            destination === 'teacher' ||
+            destination === 'admin' ||
+            destination === 'prep'
+          }
         >
           <Stack.Screen name="settings" />
         </Stack.Protected>

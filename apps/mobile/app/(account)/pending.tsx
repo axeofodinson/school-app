@@ -5,8 +5,8 @@ import { useI18n } from '../../i18n';
 import { Button, EmptyState, Screen, Text } from '../../ui';
 
 // Signed in, but no usable role yet: 'pending' (awaiting an admin), a parent
-// (deferred), a student profile not linked to a student record, or (until
-// prompt 05) a prep-only Google account.
+// (deferred), or a student profile not linked to a student record. Prep-only
+// Google accounts have their own surface, app/(prep).
 export default function Pending() {
   const { t } = useI18n();
   const { session, signOut } = useAuth();
