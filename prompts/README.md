@@ -56,7 +56,7 @@ Deferred: parents (81) and iOS (82).
 
 | ✓ | Prompt | Model | Depends on | Blocked by | Notes |
 |---|---|---|---|---|---|
-| [ ] | [10 Parity: teacher/admin assessment builder](10-assessment-builder.md) | Opus | 03 | — | |
+| [x] | [10 Parity: teacher/admin assessment builder](10-assessment-builder.md) | Opus | 03 | — | Done 2026-11-24: `features/questions` + `features/assessments` (+ shared `features/scope`), core `questions.ts`/`assessments.ts` (+35 tests), `(staff)` routes; RLS smoke AB-1 pass (prod + full order), web e2e AB-2 41/41 with mocks; Android + dev project **unverified** |
 | [ ] | [11 Parity: student takes assessments, offline-safe](11-student-attempts-offline.md) | Opus | 03, 10 | — | |
 | [ ] | [12 Parity: file assessments and grading with audit](12-file-assessments-grading.md) | Opus | 10, 11 | — | |
 | [ ] | [13 Cut-over: retire old flows and close the answer-key hole](13-cutover-close-answer-keys.md) | Opus | 10, 11, 12 | Hassan's go-ahead to publish the new build | |
