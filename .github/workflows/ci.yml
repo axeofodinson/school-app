@@ -26,6 +26,8 @@ jobs:
         run: npm run lint
       - name: Core tests
         run: npm test
+      - name: Backup retention rules
+        run: node --test scripts/backup/prune.test.mjs
       - name: Old app checks still pass
         run: npm run verify:grading
       - name: Web export builds

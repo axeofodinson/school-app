@@ -1,0 +1,5 @@
+# age public keys that nightly backups are encrypted to, one per line (age1...).
+# Public keys are safe to commit. The PRIVATE keys never go in any repo, secret
+# or cloud folder: Hassan keeps them offline (printed + USB stick).
+# How to make one: docs/backup-restore.md, setup step 1.
+# The backup workflow refuses to run until at least one age1... line is here.

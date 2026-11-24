@@ -1,6 +1,6 @@
 # OPS — Remove legacy (old-app) code or data
 
-**Model:** Opus · **When:** any time an old feature's code or data gets in the way of the rebuild (DECISIONS #22) · **Requires:** a verified backup from [OPS-backup](OPS-backup.md) taken the same day
+**Model:** Opus · **When:** any time an old feature's code or data gets in the way of the rebuild (DECISIONS #22) · **Requires:** a verified backup from [OPS-backup](OPS-backup.md) taken the same day (Actions → Database backup → Run workflow with `keep_label`, e.g. `before-legacy-removal`, so it is never pruned; `docs/backup-restore.md`)
 
 Paste everything below the line into a new Claude Code session, then fill in "What to remove".
 

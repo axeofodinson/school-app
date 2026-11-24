@@ -106,3 +106,12 @@ Prep-only Google sign-in needs `db/017` and `db/023` applied on the project and:
 5. Turn the button on: set `EXPO_PUBLIC_GOOGLE_SIGNIN=1` (EAS env var for builds, `.env` for local web). Without it the login screen shows school login only. **Status 2026-11-24:** Hassan couldn't create the Google Cloud OAuth client yet, so this is postponed; the flag stays off.
 
 The Android app uses a browser tab (Custom Tab) to show Google's sign-in page, so it needs no SHA-1 or Android OAuth client.
+
+## Backups (GitHub Actions settings)
+
+Nightly backups and the keep-alive read these `school-app` repo settings
+(Settings → Secrets and variables → Actions); full steps in
+[`docs/backup-restore.md`](backup-restore.md): secrets `SUPABASE_DB_URL`
+(production session pooler, :5432), `BACKUP_REPO_TOKEN`, optional
+`SUPABASE_URL` + `SUPABASE_ANON_KEY`; variables `BACKUP_REPO`, optional
+`KEEPALIVE=on`. If the production project ever changes, update them.

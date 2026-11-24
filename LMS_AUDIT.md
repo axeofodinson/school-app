@@ -253,8 +253,8 @@ Seed (details `TEST_PLAN.md` §Seed): 656 students across PG–10 (≈ 2 section
 | Realtime | 200 concurrent | 40 in exam + teachers | ✅ — but subscribe only on screens that need it (messages, live exam) |
 | Edge Functions | 500k/mo | Push only | ✅ |
 | MAU | 50k | < 1k | ✅ |
-| Backups | **none** | — | ❌ add scheduled `pg_dump` (GitHub Action → private storage) before real LMS data |
-| Pausing | after 7 days idle | School holidays | ⚠️ a weekly keep-alive ping or accept manual unpause |
+| Backups | **none** | — | ✅ nightly encrypted `pg_dump` → private GitHub repo, 14 daily + 8 weekly (OPS-backup, `docs/backup-restore.md`); Storage files not yet |
+| Pausing | after 7 days idle | School holidays | ✅ weekly keep-alive workflow (opt-in, `KEEPALIVE=on`) + nightly backup connection |
 
 Scale tests: 40 concurrent exam sessions (k6/node script calling the RPCs with real JWTs) + 5 classes simultaneously worst case; teacher views p95 < 1 s on seeded history; `EXPLAIN ANALYZE` of RLS helper paths (`teaches_learner` is the hottest — index `profiles(student_id)` exists, `enrollments(class_id, year_id)` exists).
 
