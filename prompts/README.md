@@ -30,7 +30,8 @@ Prompts that don't build features:
 | What | Needed by |
 |---|---|
 | Merge planning branch into `main` | every session |
-| Create the dev Supabase project + add its keys (`docs/environment.md`) | 04, 62, testing from 03 on |
+| Create the dev Supabase project + add its keys (`docs/environment.md`) | 04, 62, testing from 03 on (done: project exists) |
+| Paste `scripts/seed/sql/seed-dev.sql` into the dev project's SQL Editor and Run | 03 testing, 10 onward |
 | Create a private repo for backups + add secrets | OPS-backup |
 | Run migrations in the Supabase SQL Editor when a session hands them over | 05, 13, 20 onward |
 | Google OAuth credentials (Google Cloud console) | 05 |
@@ -48,7 +49,7 @@ Deferred: parents (81) and iOS (82).
 | [x] | [01 App scaffold: Expo + TypeScript + expo-router + web](01-scaffold.md) | Opus | 00 (tokens can follow later) | — | 2026-11-23: SDK 58 monorepo (old app untouched at root), route groups + empty states, core + 34 tests, db-types from harness, typed i18n/RTL, CI; Android dev build unverified; Moti vs Reanimated 4 left to 02 (DECISIONS #38) |
 | [x] | [02 Design system and motion foundation](02-design-system-motion.md) | Opus | 00, 01 | — | 2026-11-23: tokens moved to `packages/core/src/design` (+87 tests), providers + 20 `ui/` primitives, tier detection + `<ExamMode>`, `/dev/gallery`; Moti dropped (DECISIONS #41–46); web verified, Android unverified |
 | [x] | [03 Login: students (admission no + PIN, QR) and staff](03-auth.md) | Opus | 01, 02 | — | 2026-11-24: core auth module (+23 tests), PIN/staff login, role guards, QR scan + A4 card sheet, shared mode (memory session, idle 10 min, Switch student, namespace wipe), Settings; web verified with mocked Supabase (A-2); dev-project + Android login **unverified** (no dev project yet) |
-| [ ] | [04 Synthetic data at school scale (656 students)](04-seed-dev-data.md) | Opus | 01 | Hassan creating the dev Supabase project + adding its URL/anon/service keys to the environment (decided: DECISIONS #27). Until then, seed the local harness DB only. | |
+| [x] | [04 Synthetic data at school scale (656 students)](04-seed-dev-data.md) | Opus | 01 | Dev project exists. | Done 2026-11-24: `scripts/seed` (seed/remove, local dry-run verified, 0 dups, 0 left after remove); dev project: Hassan pastes `scripts/seed/sql/seed-dev.sql` into its SQL Editor. |
 | [ ] | [05 Google sign-in and access tiers (prep-only vs school)](05-google-signin-prep-access.md) | Opus | 03 | Must ship before the paid Play Store release | |
 
 ### Phase 1 — Parity (retire the old app's core flows)

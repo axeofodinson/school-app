@@ -1,6 +1,6 @@
 # 04 — Synthetic data at school scale (656 students)
 
-**Model:** Opus · **Phase:** 0 · **Depends on:** 01 · **Blocked by:** Hassan creating the dev Supabase project + adding its URL/anon/service keys to the environment (decided: DECISIONS #27). Until then, seed the local harness DB only.
+**Model:** Opus · **Phase:** 0 · **Depends on:** 01 · **Blocked by:** Hassan creating the dev Supabase project (DECISIONS #27). **Done in session 04** (`scripts/seed/`, see its README). The seed connects to Postgres directly (no service-role key), so the dev run needs the dev project's session-pooler URL and must run where Postgres ports are reachable (Hassan's PC; the cloud container can't).
 
 Paste everything below the line into a new Claude Code session on the `school-app` repo.
 

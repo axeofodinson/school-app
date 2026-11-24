@@ -40,6 +40,7 @@ packages/core/      pure TS logic (scoring, mastery, gates, sync queue, importer
 db/                 setup.sql (bootstrap, NEVER re-run) + additive NNN_*.sql
 db/test/            local dry-run harness: supabase_stubs.sql + *_smoke.sql
 supabase/functions/ Edge Functions
+scripts/seed/       synthetic dev data (TEST- markers): seed + remove, never prod
 prompts/            ready-to-paste session prompts (index: prompts/README.md)
 src/, App.js        OLD app (frozen)
 ```

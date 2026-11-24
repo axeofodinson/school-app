@@ -77,7 +77,14 @@ project**, never the production one.
    the one place running `setup.sql` is fine: the project is empty and disposable.
 3. Add its host to the cloud environment's allowed domains (like the production
    entry above).
-4. Add environment variables for sessions: `DEV_SUPABASE_URL`,
-   `DEV_SUPABASE_ANON_KEY`, and (seed scripts only) `DEV_SUPABASE_SERVICE_ROLE_KEY`.
-   Never put the service-role key in the app or in `EXPO_PUBLIC_*` variables.
+4. Add environment variables for sessions: `DEV_SUPABASE_URL` and
+   `DEV_SUPABASE_ANON_KEY` (done). Never put a service-role key or DB password
+   in the app or in `EXPO_PUBLIC_*` variables.
 5. For dev builds of the app, point `EXPO_PUBLIC_SUPABASE_URL/ANON_KEY` at the dev project.
+6. Seed it (prompt 04): in the dev project's SQL Editor paste
+   `scripts/seed/sql/seed-dev.sql` and Run (undo: `remove-dev.sql`). Or, from your PC, set
+   `SEED_DATABASE_URL` to the dev project's **session pooler** URL (Dashboard →
+   Connect; it contains the DB password, so keep it out of the repo and the
+   cloud environment) and `DEV_SUPABASE_URL`, then `npm run seed:dev`. The
+   cloud container can't reach Postgres ports, only HTTPS. The script refuses
+   the production ref and anything not on its dev allow-list.
