@@ -22,7 +22,7 @@
       "passwordPlaceholder": "Your password",
       "submit": "Sign in",
       "submitting": "Signing in…",
-      "studentNote": "Students: use the student app to sign in with your roll number.",
+      "studentNote": "Students: sign in with your admission number and PIN.",
       "studentLink": "Student sign in"
     },
     "student": {
@@ -35,7 +35,9 @@
       "submit": "Go",
       "submitting": "Signing in…",
       "staffLink": "Teacher or admin?",
-      "staffLinkAction": "Staff sign in"
+      "staffLinkAction": "Staff sign in",
+      "scan": "Scan my card",
+      "or": "or type it"
     },
     "studentErrors": {
       "missingCode": "Type your admission number.",
@@ -43,13 +45,19 @@
       "notFound": "We couldn’t find that admission number. Check with your teacher.",
       "wrongPin": "That PIN isn’t right. Try again.",
       "network": "No internet. Check your connection and try again.",
-      "unknown": "Something went wrong. Try again."
+      "unknown": "Something went wrong. Try again.",
+      "badPin": "Your PIN has 4 to 8 numbers.",
+      "revoked": "Your login is switched off. Ask the school office.",
+      "rateLimited": "Too many tries. Wait a minute, then try again."
     },
     "errors": {
       "missingFields": "Enter your email and password.",
       "invalidCredentials": "Email or password is incorrect.",
       "network": "No internet connection. Check your network and try again.",
-      "unknown": "Something went wrong. Please try again."
+      "unknown": "Something went wrong. Please try again.",
+      "revoked": "This account is switched off. Ask an admin.",
+      "rateLimited": "Too many tries. Wait a minute, then try again.",
+      "notConfigured": "This app isn’t connected to the school server yet."
     },
     "pending": {
       "title": "Awaiting access",
@@ -61,7 +69,57 @@
       "body": "We couldn’t reach the server. Check your connection and try again.",
       "retry": "Retry"
     },
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "scan": {
+      "title": "Scan your card",
+      "hint": "Hold your card in front of the camera.",
+      "notOurCard": "That isn’t a school login card. Try your own card.",
+      "noCamera": "No camera to scan with here. Type your admission number instead.",
+      "permissionTitle": "Allow the camera",
+      "permissionBody": "The camera only reads your card. No photo is saved.",
+      "allow": "Allow camera",
+      "typeInstead": "Type my admission number"
+    },
+    "shared": {
+      "switchStudent": "Switch student",
+      "switchHint": "Signs you out so the next student can sign in",
+      "idleSignedOut": "Signed out after 10 minutes without use.",
+      "switched": "Signed out. Next student, sign in."
+    },
+    "settings": {
+      "title": "Settings",
+      "open": "Settings",
+      "motion": "Motion",
+      "motionHelp": "Auto picks for this device. Off stops all movement.",
+      "motionAuto": "Auto",
+      "motionFull": "Full",
+      "motionLite": "Lite",
+      "motionOff": "Off",
+      "deviceTitle": "This device",
+      "sharedTitle": "Shared device (computer lab)",
+      "sharedBody": "Nobody stays signed in after the app closes, 10 minutes without use signs out, and each sign-out clears that person’s saved data from this device (answers not yet sent stay, locked to their owner).",
+      "sharedOn": "Shared",
+      "sharedOff": "Personal",
+      "adminOnly": "Only an admin can change this.",
+      "back": "Back"
+    },
+    "cards": {
+      "title": "Login cards",
+      "open": "Print login cards",
+      "subtitle": "QR cards show the student’s name and admission number. They never show a PIN.",
+      "allClasses": "All classes",
+      "print": "Print A4 sheet",
+      "count": {
+        "one": "%{count} card",
+        "other": "%{count} cards"
+      },
+      "empty": "No students with an active enrollment yet. Enroll students first.",
+      "error": "Couldn’t load students. Check your connection and try again.",
+      "retry": "Try again",
+      "footer": "Scan this card, then type your PIN. Never write your PIN on it.",
+      "admissionNo": "Admission no.",
+      "school": "Al-Syed High School"
+    }
   },
   "student": {
     "home": {
@@ -1059,10 +1117,6 @@
     }
   },
   "shell": {
-    "login": {
-      "notReady": "Sign-in arrives in the next update. Until then you can preview the empty screens.",
-      "previewTitle": "Preview"
-    },
     "teacher": {
       "empty": "No classes assigned to you yet. Ask the office to add you to a class."
     },

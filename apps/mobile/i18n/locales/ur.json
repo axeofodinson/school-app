@@ -22,7 +22,7 @@
       "passwordPlaceholder": "اپنا پاس ورڈ",
       "submit": "لاگ اِن کریں",
       "submitting": "لاگ اِن ہو رہا ہے…",
-      "studentNote": "طلبہ اپنے رول نمبر سے اسٹوڈنٹ ایپ میں لاگ اِن کریں۔",
+      "studentNote": "Students: sign in with your admission number and PIN. // TODO: ur",
       "studentLink": "اسٹوڈنٹ لاگ اِن"
     },
     "student": {
@@ -35,7 +35,9 @@
       "submit": "چلو",
       "submitting": "لاگ اِن ہو رہا ہے…",
       "staffLink": "ٹیچر یا ایڈمن ہو؟",
-      "staffLinkAction": "اسٹاف لاگ اِن"
+      "staffLinkAction": "اسٹاف لاگ اِن",
+      "scan": "Scan my card // TODO: ur",
+      "or": "or type it // TODO: ur"
     },
     "studentErrors": {
       "missingCode": "اپنا ایڈمشن نمبر لکھو۔",
@@ -43,13 +45,19 @@
       "notFound": "یہ ایڈمشن نمبر نہیں ملا۔ اپنے ٹیچر سے پوچھو۔",
       "wrongPin": "پِن غلط ہے۔ دوبارہ کوشش کرو۔",
       "network": "انٹرنیٹ نہیں ہے۔ کنکشن چیک کر کے دوبارہ کوشش کرو۔",
-      "unknown": "کچھ گڑبڑ ہو گئی۔ دوبارہ کوشش کرو۔"
+      "unknown": "کچھ گڑبڑ ہو گئی۔ دوبارہ کوشش کرو۔",
+      "badPin": "Your PIN has 4 to 8 numbers. // TODO: ur",
+      "revoked": "Your login is switched off. Ask the school office. // TODO: ur",
+      "rateLimited": "Too many tries. Wait a minute, then try again. // TODO: ur"
     },
     "errors": {
       "missingFields": "ای میل اور پاس ورڈ دونوں لکھیں۔",
       "invalidCredentials": "ای میل یا پاس ورڈ غلط ہے۔",
       "network": "انٹرنیٹ نہیں ہے۔ کنکشن چیک کر کے دوبارہ کوشش کریں۔",
-      "unknown": "کچھ گڑبڑ ہو گئی۔ دوبارہ کوشش کریں۔"
+      "unknown": "کچھ گڑبڑ ہو گئی۔ دوبارہ کوشش کریں۔",
+      "revoked": "This account is switched off. Ask an admin. // TODO: ur",
+      "rateLimited": "Too many tries. Wait a minute, then try again. // TODO: ur",
+      "notConfigured": "This app isn’t connected to the school server yet. // TODO: ur"
     },
     "pending": {
       "title": "رسائی کا انتظار",
@@ -61,7 +69,57 @@
       "body": "سرور سے رابطہ نہیں ہو سکا۔ کنکشن چیک کر کے دوبارہ کوشش کریں۔",
       "retry": "دوبارہ کوشش کریں"
     },
-    "signOut": "لاگ آؤٹ"
+    "signOut": "لاگ آؤٹ",
+    "scan": {
+      "title": "Scan your card // TODO: ur",
+      "hint": "Hold your card in front of the camera. // TODO: ur",
+      "notOurCard": "That isn’t a school login card. Try your own card. // TODO: ur",
+      "noCamera": "No camera to scan with here. Type your admission number instead. // TODO: ur",
+      "permissionTitle": "Allow the camera // TODO: ur",
+      "permissionBody": "The camera only reads your card. No photo is saved. // TODO: ur",
+      "allow": "Allow camera // TODO: ur",
+      "typeInstead": "Type my admission number // TODO: ur"
+    },
+    "shared": {
+      "switchStudent": "Switch student // TODO: ur",
+      "switchHint": "Signs you out so the next student can sign in // TODO: ur",
+      "idleSignedOut": "Signed out after 10 minutes without use. // TODO: ur",
+      "switched": "Signed out. Next student, sign in. // TODO: ur"
+    },
+    "settings": {
+      "title": "Settings // TODO: ur",
+      "open": "Settings // TODO: ur",
+      "motion": "Motion // TODO: ur",
+      "motionHelp": "Auto picks for this device. Off stops all movement. // TODO: ur",
+      "motionAuto": "Auto // TODO: ur",
+      "motionFull": "Full // TODO: ur",
+      "motionLite": "Lite // TODO: ur",
+      "motionOff": "Off // TODO: ur",
+      "deviceTitle": "This device // TODO: ur",
+      "sharedTitle": "Shared device (computer lab) // TODO: ur",
+      "sharedBody": "Nobody stays signed in after the app closes, 10 minutes without use signs out, and each sign-out clears that person’s saved data from this device (answers not yet sent stay, locked to their owner). // TODO: ur",
+      "sharedOn": "Shared // TODO: ur",
+      "sharedOff": "Personal // TODO: ur",
+      "adminOnly": "Only an admin can change this. // TODO: ur",
+      "back": "Back // TODO: ur"
+    },
+    "cards": {
+      "title": "Login cards // TODO: ur",
+      "open": "Print login cards // TODO: ur",
+      "subtitle": "QR cards show the student’s name and admission number. They never show a PIN. // TODO: ur",
+      "allClasses": "All classes // TODO: ur",
+      "print": "Print A4 sheet // TODO: ur",
+      "count": {
+        "one": "%{count} card // TODO: ur",
+        "other": "%{count} cards // TODO: ur"
+      },
+      "empty": "No students with an active enrollment yet. Enroll students first. // TODO: ur",
+      "error": "Couldn’t load students. Check your connection and try again. // TODO: ur",
+      "retry": "Try again // TODO: ur",
+      "footer": "Scan this card, then type your PIN. Never write your PIN on it. // TODO: ur",
+      "admissionNo": "Admission no. // TODO: ur",
+      "school": "Al-Syed High School // TODO: ur"
+    }
   },
   "student": {
     "home": {
@@ -1059,10 +1117,6 @@
     }
   },
   "shell": {
-    "login": {
-      "notReady": "Sign-in arrives in the next update. Until then you can preview the empty screens. // TODO: ur",
-      "previewTitle": "Preview // TODO: ur"
-    },
     "teacher": {
       "empty": "No classes assigned to you yet. Ask the office to add you to a class. // TODO: ur"
     },
