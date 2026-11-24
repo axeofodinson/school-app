@@ -98,7 +98,7 @@ Tick these off as you go (sessions also tick `prompts/README.md`).
 
 ### Step A: before building (this week)
 - [ ] §1 setup done (merge, plugins, Context7, dev Supabase project, env vars).
-- [ ] Run **OPS-backup**: your real data gets a nightly backup before anything changes.
+- [ ] Run **OPS-backup**: your real data gets a nightly backup before anything changes. (Built; then follow the setup in `docs/backup-restore.md`.)
 
 ### Step B: Foundations (Phase 0, about 5–7 sessions)
 - [ ] **00 Design identity.** You approve the look, the motion style and the key screens. Spend time here; everything else builds on it.

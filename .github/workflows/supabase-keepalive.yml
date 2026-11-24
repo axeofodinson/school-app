@@ -1,0 +1,46 @@
+name: Supabase keep-alive
+
+# Free-tier projects pause after 7 days without activity (school holidays).
+# One small REST read a week keeps the production project awake. Off unless the
+# repo variable KEEPALIVE is "on" (docs/backup-restore.md, keep-alive).
+#   secret   SUPABASE_URL        https://<ref>.supabase.co
+#   secret   SUPABASE_ANON_KEY   the public anon key (same one the app ships)
+
+on:
+  schedule:
+    # Wednesdays 04:23 UTC = 09:23 in Pakistan.
+    - cron: '23 4 * * 3'
+  workflow_dispatch:
+
+permissions:
+  issues: write # only to open an issue when the project doesn't answer
+
+jobs:
+  ping:
+    if: vars.KEEPALIVE == 'on'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Read one row through the REST API
+        env:
+          URL: ${{ secrets.SUPABASE_URL }}
+          KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          [ -n "$URL" ] && [ -n "$KEY" ] || { echo "::error::SUPABASE_URL / SUPABASE_ANON_KEY not set"; exit 1; }
+          echo "::add-mask::${URL#https://}"
+          # anon sees no rows (RLS) but the request still reaches Postgres.
+          code=$(curl -sS -o /dev/null -w '%{http_code}' --max-time 30 --retry 3 \
+            -H "apikey: $KEY" -H "Authorization: Bearer $KEY" \
+            "$URL/rest/v1/academic_years?select=id&limit=1")
+          echo "HTTP $code"
+          # A paused or broken project answers 5xx (or nothing): fail so GitHub emails.
+          [ "$code" -ge 200 ] && [ "$code" -lt 500 ]
+
+      - name: Report failure as an issue
+        if: failure() && github.event_name == 'schedule'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          gh issue create --repo "$GITHUB_REPOSITORY" --title "Supabase keep-alive failed (project paused?)" \
+            --body "Run: $RUN_URL. If the project is paused, restore it from the Supabase dashboard (docs/backup-restore.md, keep-alive)."

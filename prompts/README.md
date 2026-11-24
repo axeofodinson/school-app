@@ -32,7 +32,7 @@ Prompts that don't build features:
 | Merge planning branch into `main` | every session |
 | Create the dev Supabase project + add its keys (`docs/environment.md`) | 04, 62, testing from 03 on (done: project exists) |
 | Paste `scripts/seed/sql/seed-dev.sql` into the dev project's SQL Editor and Run | 03 testing, 10 onward |
-| Create a private repo for backups + add secrets | OPS-backup |
+| Backups setup: age key (offline), private `school-app-backups` repo, token + 3 settings, merge to `main`, run once (`docs/backup-restore.md`) | OPS-backup (built), before OPS-remove-legacy |
 | Run migrations in the Supabase SQL Editor when a session hands them over | 05, 13, 20 onward |
 | Google OAuth credentials (Google Cloud console) | 05 |
 
@@ -145,11 +145,12 @@ Deferred: parents (81) and iOS (82).
 
 | ✓ | Prompt | Model | When |
 |---|---|---|---|
-| [ ] | [OPS backup](OPS-backup.md) | Opus | Before real LMS data (Phase 0–1) |
+| [x] | [OPS backup](OPS-backup.md) | Opus | Before real LMS data (Phase 0–1). Done 2026-11-24: Hassan finishes setup in `docs/backup-restore.md` |
 | — | [OPS remove legacy](OPS-remove-legacy.md) | Opus | Whenever old code/data gets in the way (repeatable) |
 | — | [C1 Generate topic content](C1-generate-topic-content.md) | Opus (claude.ai chat) | From Phase 2 on, one topic at a time (pilot: Class 9 Math/Science) |
 
 ## Changelog
+- 2026-11-24: OPS-backup done (DECISIONS #63). Before OPS-remove-legacy, run the backup workflow by hand with `keep_label` so that backup is never pruned. Storage file contents aren't in the dump yet.
 - 2026-11-24: `db/024_profiles_self_update_guard.sql` added as a standalone production fix (DECISIONS #62); Hassan runs it now, ahead of 017.
 - 2026-11-24: 05 done. `db/023_access_tiers.sql` needs 017 first, so it runs at Phase 2 start (or on dev whenever). It also closes a self-promote hole that is live in production today (DECISIONS #60). Prompt 40 must recompute mastery after `link_prep_account()`, and prompts 30–42 should gate features with `canUse(tier, …)`.
 - 2026-11-23: 02 done. Tokens now live in `packages/core/src/design/` (draft file and verify script removed); 01 no longer installs Moti.

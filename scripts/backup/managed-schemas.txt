@@ -1,0 +1,24 @@
+# Schemas Supabase creates and manages in every project. They are NOT dumped
+# as schema (a fresh project already has them); app data inside auth/storage
+# is taken table by table (see SUPABASE_TABLES in dump.sh).
+auth
+storage
+extensions
+graphql
+graphql_public
+realtime
+_realtime
+supabase_functions
+supabase_migrations
+pgsodium
+pgsodium_masks
+vault
+net
+cron
+pgbouncer
+_analytics
+pgtle
+topology
+tiger
+tiger_data
+information_schema

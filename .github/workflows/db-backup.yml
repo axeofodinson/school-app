@@ -1,0 +1,140 @@
+name: Database backup
+
+# Nightly encrypted pg_dump of the production Supabase database, stored as a
+# release asset in a separate PRIVATE repo. Setup, restore and the quarterly
+# drill: docs/backup-restore.md. Runs only from the default branch (main).
+#
+# Repo settings this needs (Settings → Secrets and variables → Actions):
+#   secret   SUPABASE_DB_URL     session pooler URI (port 5432) with the DB password
+#   secret   BACKUP_REPO_TOKEN   fine-grained token: only the backups repo, Contents read/write
+#   variable BACKUP_REPO         e.g. axeofodinson/school-app-backups
+# and an age public key in scripts/backup/age-recipients.txt.
+
+on:
+  schedule:
+    # 22:37 UTC = 03:37 in Pakistan (PKT = UTC+5, no daylight saving).
+    - cron: '37 22 * * *'
+  workflow_dispatch:
+    inputs:
+      keep_label:
+        description: >-
+          Optional. Give a name (e.g. before-legacy-removal) to make a backup that is
+          never pruned. Lowercase letters, digits and dashes.
+        required: false
+        default: ''
+
+concurrency:
+  group: db-backup
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  issues: write # only to open a "backup failed" issue (see the last step)
+
+jobs:
+  backup:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      BACKUP_REPO: ${{ vars.BACKUP_REPO }}
+    steps:
+      - name: Check settings (and hide connection details from the log)
+        env:
+          DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          TOKEN: ${{ secrets.BACKUP_REPO_TOKEN }}
+        run: |
+          missing=""
+          [ -n "$DB_URL" ] || missing="$missing secret:SUPABASE_DB_URL"
+          [ -n "$TOKEN" ] || missing="$missing secret:BACKUP_REPO_TOKEN"
+          [ -n "$BACKUP_REPO" ] || missing="$missing variable:BACKUP_REPO"
+          if [ -n "$missing" ]; then
+            echo "::error::Not set up yet, missing:$missing (docs/backup-restore.md, setup)"; exit 1
+          fi
+          # GitHub masks the whole secret; also mask its parts in case a tool prints one.
+          rest=${DB_URL#*://}; creds=${rest%%@*}; host=${rest#*@}; host=${host%%[:/?]*}
+          for part in "$host" "${creds%%:*}" "${creds#*:}"; do
+            [ -n "$part" ] && echo "::add-mask::$part"
+          done
+          case "$DB_URL" in
+            *:6543/*|*:6543) echo "::error::Use the SESSION pooler (port 5432), not the transaction pooler (6543)"; exit 1 ;;
+          esac
+
+      - uses: actions/checkout@v4
+
+      - name: Install age + a Postgres client matching the server
+        env:
+          DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq age postgresql-common postgresql-client > /dev/null
+          major=$(psql "$DATABASE_URL" -XAtc "select current_setting('server_version_num')::int / 10000")
+          echo "Server is Postgres $major"
+          if [ ! -x "/usr/lib/postgresql/$major/bin/pg_dump" ]; then
+            sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y > /dev/null
+            sudo apt-get install -y -qq "postgresql-client-$major" > /dev/null
+          fi
+          echo "PG_BIN=/usr/lib/postgresql/$major/bin" >> "$GITHUB_ENV"
+
+      - name: Dump and encrypt
+        id: dump
+        env:
+          DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
+          KEEP_LABEL: ${{ inputs.keep_label }}
+        run: |
+          stamp=$(date -u +%Y%m%d-%H%MZ)
+          if [ -n "$KEEP_LABEL" ]; then
+            if ! [[ "$KEEP_LABEL" =~ ^[a-z0-9][a-z0-9-]{0,40}$ ]]; then
+              echo "::error::keep_label: lowercase letters, digits and dashes only"; exit 1
+            fi
+            tag="keep-$stamp-$KEEP_LABEL"
+          else
+            tag="db-$stamp"
+          fi
+          file=$(scripts/backup/backup.sh "$RUNNER_TEMP/backup" "school-db-$stamp" | tail -1)
+          {
+            echo "Encrypted with age to the key(s) in scripts/backup/age-recipients.txt."
+            echo "Restore: docs/backup-restore.md in the app repo."
+            echo
+            echo "sha256: \`$(sha256sum "$file" | cut -d' ' -f1)\`  size: $(stat -c %s "$file") bytes"
+            echo
+            echo '```'
+            cat "$RUNNER_TEMP/backup/school-db-$stamp.summary.txt"
+            echo '```'
+          } > "$RUNNER_TEMP/notes.md"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "file=$file" >> "$GITHUB_OUTPUT"
+
+      - name: Upload to the private backups repo
+        env:
+          GH_TOKEN: ${{ secrets.BACKUP_REPO_TOKEN }}
+          TAG: ${{ steps.dump.outputs.tag }}
+          FILE: ${{ steps.dump.outputs.file }}
+        run: |
+          gh release create "$TAG" "$FILE" --repo "$BACKUP_REPO" --title "$TAG" \
+            --notes-file "$RUNNER_TEMP/notes.md"
+          uploaded=$(gh release view "$TAG" --repo "$BACKUP_REPO" --json assets --jq '.assets[0].size')
+          [ "$uploaded" = "$(stat -c %s "$FILE")" ] || { echo "::error::uploaded size $uploaded != local"; exit 1; }
+          echo "Uploaded $TAG ($uploaded bytes)" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Prune (keep 14 daily + 8 weekly; keep-* never)
+        env:
+          GH_TOKEN: ${{ secrets.BACKUP_REPO_TOKEN }}
+        run: node scripts/backup/prune.mjs "$BACKUP_REPO" | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Remove local copies
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/backup"
+
+      # GitHub's own failure email goes to whoever last edited the cron line, so
+      # also open (or update) an issue here: the repo owner is notified of it.
+      - name: Report failure as an issue
+        if: failure() && github.event_name == 'schedule'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          title="Nightly database backup failed"
+          n=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "\"$title\" in:title" --json number --jq '.[0].number')
+          body="Run: $RUN_URL ($(date -u +%Y-%m-%dT%H:%MZ)). What to check: docs/backup-restore.md, troubleshooting."
+          if [ -n "$n" ]; then gh issue comment "$n" --repo "$GITHUB_REPOSITORY" --body "Failed again. $body"
+          else gh issue create --repo "$GITHUB_REPOSITORY" --title "$title" --body "$body"; fi
