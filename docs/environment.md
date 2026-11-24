@@ -88,3 +88,21 @@ project**, never the production one.
    cloud environment) and `DEV_SUPABASE_URL`, then `npm run seed:dev`. The
    cloud container can't reach Postgres ports, only HTTPS. The script refuses
    the production ref and anything not on its dev allow-list.
+
+## Google sign-in (prompt 05, dev project first)
+
+Prep-only Google sign-in needs `db/017` and `db/023` applied on the project and:
+
+1. **Google Cloud console** → APIs & Services → Credentials → *Create OAuth client ID* →
+   type **Web application**. Authorised redirect URI:
+   `https://<project-ref>.supabase.co/auth/v1/callback`. (The OAuth consent screen needs
+   an app name, support email and the `email`/`profile` scopes; publish it before the Play release.)
+2. **Supabase** → Authentication → Providers → **Google**: enable, paste the client ID and
+   secret. Leave "manual linking" off.
+3. **Supabase** → Authentication → URL Configuration → **Redirect URLs**: add
+   `schoolapp://auth-callback` (Android), `http://localhost:8081/auth-callback` (web dev) and
+   the deployed web origin + `/auth-callback`.
+4. Rebuild the Android dev client (new native module `expo-web-browser`).
+5. Turn the button on: set `EXPO_PUBLIC_GOOGLE_SIGNIN=1` (EAS env var for builds, `.env` for local web). Without it the login screen shows school login only. **Status 2026-11-24:** Hassan couldn't create the Google Cloud OAuth client yet, so this is postponed; the flag stays off.
+
+The Android app uses a browser tab (Custom Tab) to show Google's sign-in page, so it needs no SHA-1 or Android OAuth client.

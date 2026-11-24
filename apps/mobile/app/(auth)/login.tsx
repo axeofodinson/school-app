@@ -8,12 +8,18 @@ import { useI18n } from '../../i18n';
 import { isSupabaseConfigured } from '../../lib/supabase';
 import { Button, Card, LanguageToggle, PinField, Screen, Text, TextField } from '../../ui';
 
+// Off until the Google provider is set up on the Supabase project
+// (docs/environment.md "Google sign-in"); then build with EXPO_PUBLIC_GOOGLE_SIGNIN=1.
+const GOOGLE_ENABLED = process.env.EXPO_PUBLIC_GOOGLE_SIGNIN === '1';
+
 // Student sign-in: admission number (typed, or filled by scanning a QR card) + PIN
 // (always typed). Same backend calls as the old app (db/004, db/008).
 export default function StudentLogin() {
   const { t } = useI18n();
   const router = useRouter();
-  const { studentSignIn, lastSignOut } = useAuth();
+  const { studentSignIn, lastSignOut, googleSignIn, oauthError, clearOauthError, sharedMode } =
+    useAuth();
+  const [googleBusy, setGoogleBusy] = useState(false);
   const params = useLocalSearchParams<{ admission?: string }>();
   const [code, setCode] = useState('');
   const [pin, setPin] = useState('');
@@ -44,6 +50,17 @@ export default function StudentLogin() {
       if (err === 'wrongPin' || err === 'badPin') setPin('');
     }
     // On success the root layout's guards move us to the student home.
+  };
+
+  // Google = Preparation only (DECISIONS #23). Not offered on shared school
+  // devices: those use school logins, and a memory-only session can't survive
+  // the web redirect.
+  const google = async () => {
+    if (googleBusy) return;
+    setGoogleBusy(true);
+    setError(null);
+    await googleSignIn();
+    setGoogleBusy(false);
   };
 
   const codeError = error === 'missingCode' || error === 'notFound';
@@ -108,6 +125,29 @@ export default function StudentLogin() {
           />
         </View>
       </Card>
+      {sharedMode || !GOOGLE_ENABLED ? null : (
+        <Card>
+          <View style={styles.form}>
+            <Text variant="heading">{t('auth.google.title')}</Text>
+            <Text tone="textMuted">{t('auth.google.body')}</Text>
+            {oauthError ? (
+              <Text tone="onWrongSoft" accessibilityLiveRegion="polite">
+                {t(`auth.google.errors.${oauthError}`)}
+              </Text>
+            ) : null}
+            <Button
+              title={googleBusy ? t('auth.google.submitting') : t('auth.google.submit')}
+              variant="secondary"
+              loading={googleBusy}
+              disabled={googleBusy || busy || !isSupabaseConfigured}
+              onPress={() => {
+                clearOauthError();
+                google();
+              }}
+            />
+          </View>
+        </Card>
+      )}
       <View style={styles.staff}>
         <Text tone="textMuted">{t('auth.student.staffLink')}</Text>
         <Link href="/staff" style={styles.link}>

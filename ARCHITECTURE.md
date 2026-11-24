@@ -50,7 +50,7 @@ decides anything (score, mastery, gate, relief) lives in `packages/core` and is
 unit-tested in Node, the same habit as today's `scripts/verify-*.mjs`.
 
 ## 3. Security
-- **Access tiers** (`profiles.access_tier`): `school` (admission no + PIN, or staff) gets everything their role allows; `prep_only` (Google sign-in, Play Store buyers) gets Preparation only. RLS enforces it; the UI hides the rest.
+- **Access tiers** (`profiles.access_tier`): `school` (admission no + PIN, or staff) gets everything their role allows; `prep_only` (Google sign-in, Play Store buyers) gets Preparation only. RLS enforces it (`db/023`: `is_school_member()` restrictive policies on every school table; DECISIONS #57–61); the UI routes prep-only users to `(prep)` and explains the rest. Only Google creates prep-only accounts; Google can never attach to a school/staff account. Staff link a prep account to a student's school login with `link_prep_account()` (history moves, logged in `account_links`).
 - RLS is the boundary (CLAUDE.md rule 4). Every new table has RLS on.
 - Students never read answer keys for exam items: exam papers come from
   `start_exam_session()` (security definer, strips answers). Practice items are

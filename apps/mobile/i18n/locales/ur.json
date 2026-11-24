@@ -119,6 +119,20 @@
       "footer": "Scan this card, then type your PIN. Never write your PIN on it. // TODO: ur",
       "admissionNo": "Admission no. // TODO: ur",
       "school": "Al-Syed High School // TODO: ur"
+    },
+    "google": {
+      "title": "Not at Al-Syed? Prepare on your own // TODO: ur",
+      "body": "Sign in with Google to use Learn and Practice. School things like tests, results, attendance and messages need a school login. // TODO: ur",
+      "submit": "Sign in with Google (Preparation only) // TODO: ur",
+      "submitting": "Opening Google… // TODO: ur",
+      "errors": {
+        "refused": "This Google account can’t be used here. If you’re at the school, use your school login above. // TODO: ur",
+        "network": "No internet. Check your connection and try again. // TODO: ur",
+        "rateLimited": "Too many tries. Wait a minute, then try again. // TODO: ur",
+        "notConfigured": "Google sign-in isn’t set up yet. // TODO: ur",
+        "cancelled": "Google sign-in was cancelled. // TODO: ur",
+        "unknown": "Google sign-in didn’t work. Try again. // TODO: ur"
+      }
     }
   },
   "student": {
@@ -1017,6 +1031,34 @@
           "unknown": "ڈیلیٹ نہیں ہو سکا۔ دوبارہ کوشش کریں۔"
         }
       }
+    },
+    "linkPrep": {
+      "open": "Link a Google account // TODO: ur",
+      "openHint": "Move a Preparation learner’s practice to their school login // TODO: ur",
+      "title": "Link a Google account to a student // TODO: ur",
+      "subtitle": "For a learner who used Preparation with Google and has now joined the school. Their practice moves to the student’s school login; the Google account stays Preparation only. // TODO: ur",
+      "step1": "1. Find the Google account // TODO: ur",
+      "searchLabel": "Email or name // TODO: ur",
+      "searchPlaceholder": "At least 3 letters // TODO: ur",
+      "search": "Search // TODO: ur",
+      "noAccounts": "No Google accounts found // TODO: ur",
+      "noAccountsBody": "Check the spelling, or ask the learner which Google email they used. // TODO: ur",
+      "accountLine": "%{name} · %{attempts} practice attempts // TODO: ur",
+      "linked": "Linked // TODO: ur",
+      "chosen": "Chosen // TODO: ur",
+      "step2": "2. Find the student // TODO: ur",
+      "findStudent": "Find student // TODO: ur",
+      "noStudent": "No student with that admission number. // TODO: ur",
+      "reason": "Reason // TODO: ur",
+      "reasonPlaceholder": "e.g. Admitted to Class 9 in April // TODO: ur",
+      "explain": "Moves practice attempts, mastery and follow-ups. Nothing is deleted, and the link is logged. // TODO: ur",
+      "link": "Link and move practice // TODO: ur",
+      "done": "Linked. Moved %{attempts} attempts, %{mastery} mastery rows and %{followUps} follow-ups. // TODO: ur",
+      "errors": {
+        "server": "That didn’t work. Check your connection and try again. // TODO: ur",
+        "noLogin": "This student has no school login yet. Give them a login (PIN) first. // TODO: ur",
+        "otherStudent": "This Google account is already linked to another student. // TODO: ur"
+      }
     }
   },
   "teacher": {
@@ -1213,6 +1255,34 @@
       },
       "examHint": "Only the exam timer and save dot may move. // TODO: ur",
       "memoryGb": "%{count} GB // TODO: ur"
+    }
+  },
+  "prep": {
+    "home": {
+      "title": "Prepare // TODO: ur",
+      "greeting": "Hi, %{name}! // TODO: ur",
+      "badge": "Preparation // TODO: ur",
+      "emptyTitle": "Lessons and practice are on the way // TODO: ur",
+      "emptyBody": "Learn, practise and fix weak spots here. // TODO: ur",
+      "emptyBodyAuto": "Learn, practise and fix weak spots here. If something stays hard after a few tries, the app moves you on and brings it back later, so you never get stuck. // TODO: ur"
+    },
+    "merged": {
+      "title": "Your practice moved to your school login // TODO: ur",
+      "body": "The school linked this account to your school login. Sign in with your admission number and PIN to carry on. // TODO: ur"
+    },
+    "locked": {
+      "title": "School features // TODO: ur",
+      "body": "These are for Al-Syed students and teachers, with a school login: // TODO: ur",
+      "howTo": "Joined the school? Ask the office for your admission number and PIN. They can move your practice to your school login. // TODO: ur"
+    },
+    "features": {
+      "exams": "Tests // TODO: ur",
+      "assignments": "Assignments // TODO: ur",
+      "worksheets": "Worksheets // TODO: ur",
+      "results": "Results // TODO: ur",
+      "attendance": "Attendance // TODO: ur",
+      "messages": "Messages // TODO: ur",
+      "projects": "Projects // TODO: ur"
     }
   }
 }

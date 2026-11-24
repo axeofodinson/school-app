@@ -198,14 +198,16 @@ export type Destination =
   | 'admin'
   | 'pending'
   | 'profileError'
-  /** Prompt 05: Google sign-in, Preparation only (DECISIONS #23). Not built yet. */
+  /** Google sign-in: Preparation only (DECISIONS #23, db/023). */
   | 'prep';
 
 export interface ProfileSummary {
   role: string | null;
   student_id: string | null;
-  /** Prompt 05 adds profiles.access_tier ('school' | 'prep'); absent until then. */
+  /** db/023: 'school' | 'prep_only'. Absent on a server without 023 (= school). */
   access_tier?: string | null;
+  /** db/023: set when an admin linked this prep-only account to a school login. */
+  merged_into?: string | null;
 }
 
 export type AuthState =
@@ -224,7 +226,9 @@ export function destinationFor(state: AuthState): Destination {
   if (p === 'loading') return 'loading';
   if (p === 'error') return 'profileError';
   if (!p) return 'pending'; // no profile row yet (trigger lag): wait for an admin
-  if (p.access_tier === 'prep') return 'prep';
+  // Tier first: a prep-only account is role 'student' with no student_id, and
+  // must never fall through to the school routes.
+  if (p.access_tier === 'prep_only') return 'prep';
   switch (p.role) {
     case 'student':
       // A student role must be linked to a students row (db/004), else nothing works.

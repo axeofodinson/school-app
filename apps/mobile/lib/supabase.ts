@@ -19,7 +19,31 @@ export const supabase: SupabaseClient<Database> | null = isSupabaseConfigured
         storage: sessionStorage,
         persistSession: true,
         autoRefreshToken: true,
+        // Google sign-in (prompt 05) uses PKCE: the redirect carries a one-time
+        // code that features/auth exchanges itself, on native and on web.
+        flowType: 'pkce',
         detectSessionInUrl: false,
       },
     })
   : null;
+
+/**
+ * Calls into db/023 (a draft migration that needs 017, so it isn't in the
+ * generated db-types yet). Untyped on purpose and kept to this one helper:
+ * regenerate packages/core/src/db-types.ts once Hassan runs 017 + 023, then
+ * switch the callers to `supabase.rpc` and delete this.
+ */
+export async function rpcPending<T>(
+  fn: 'find_prep_accounts' | 'link_prep_account',
+  args: Record<string, unknown>,
+): Promise<{ data: T | null; error: { message: string; code?: string } | null }> {
+  if (!supabase) return { data: null, error: { message: 'not configured' } };
+  const client = supabase as unknown as {
+    rpc(
+      f: string,
+      a: Record<string, unknown>,
+    ): PromiseLike<{ data: unknown; error: { message: string; code?: string } | null }>;
+  };
+  const { data, error } = await client.rpc(fn, args);
+  return { data: (data as T | null) ?? null, error };
+}
