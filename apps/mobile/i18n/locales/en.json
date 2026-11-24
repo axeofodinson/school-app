@@ -1154,7 +1154,8 @@
         "tfRequired": "Choose True or False.",
         "marksInvalid": "Marks must be a whole number between 1 and 100.",
         "network": "No internet connection. Check your network and try again.",
-        "unknown": "Couldn’t save. Please try again."
+        "unknown": "Couldn’t save. Please try again.",
+        "shortRequired": "Type the correct answer."
       }
     }
   },
@@ -1283,6 +1284,111 @@
       "attendance": "Attendance",
       "messages": "Messages",
       "projects": "Projects"
+    }
+  },
+  "staff": {
+    "back": "Back",
+    "retry": "Try again",
+    "saveShortcut": "Press Enter in a field, or Ctrl + Enter, to save.",
+    "errors": {
+      "network": "No internet connection. Your changes are still here; try again when you're back online.",
+      "forbidden": "You can only do this for classes you teach. Ask an admin if this class should be yours.",
+      "unknown": "Something went wrong and nothing was saved. Please try again."
+    },
+    "home": {
+      "questionsHint": "Write and edit questions for your chapters",
+      "assessmentsHint": "Build tests, quizzes and exams, then publish them"
+    },
+    "scope": {
+      "class": "Class",
+      "subject": "Subject",
+      "chapter": "Chapter",
+      "allChapters": "All chapters",
+      "allClasses": "All classes",
+      "loadError": "Couldn't load your classes",
+      "subjectsError": "Couldn't load subjects",
+      "chaptersError": "Couldn't load chapters",
+      "noYear": "No school year is open",
+      "noYearStaff": "Set the current academic year in the school console (Academic years) first. Everything here belongs to a year.",
+      "noYearTeacher": "Ask an admin to open this school year. You can add questions and tests once it's set.",
+      "noClasses": "No classes yet",
+      "noClassesStaff": "Add a class in the school console (Classes) first. Assessments belong to a class.",
+      "noAssignments": "You're not assigned to a class yet",
+      "noAssignmentsTeacher": "Ask an admin to assign you to your classes for this year.",
+      "noSubjects": "This class has no subjects yet",
+      "noSubjectsStaff": "Add its subjects in the school console (Syllabus) first.",
+      "noSubjectsTeacher": "Ask an admin to set up the syllabus for this class.",
+      "noChapters": "This subject has no chapters yet",
+      "noChaptersStaff": "Add its chapters in the school console (Syllabus) first. Questions belong to a chapter.",
+      "noChaptersTeacher": "Ask an admin to add this subject's chapters. Questions belong to a chapter."
+    },
+    "questions": {
+      "show": "Show",
+      "showAll": "All",
+      "yours": "Yours",
+      "inUse": "In use",
+      "emptyChapter": "No questions in this chapter yet",
+      "emptyBody": "Choose “New question” to write the first one.",
+      "pickOne": "Pick a question or write a new one",
+      "pickOneBody": "Questions you open appear here.",
+      "options": "Options",
+      "optionsHint": "Tap a letter to mark the correct option.",
+      "optionLabel": "Option %{letter}",
+      "correctOption": "Correct option",
+      "markCorrect": "Mark %{letter} as correct",
+      "removeOption": "Remove option %{letter}",
+      "addOption": "Add option",
+      "correctAnswer": "Correct answer",
+      "correct": "correct",
+      "shortHint": "Students' answers are matched ignoring capitals and extra spaces.",
+      "shortAlso": "Also accept (optional)",
+      "shortAlsoHint": "Other spellings or answers that count as correct, one per line.",
+      "marksHint": "Whole number from 1 to 100. Leave blank for 1.",
+      "marksBadge": {
+        "one": "%{count} mark",
+        "other": "%{count} marks"
+      },
+      "updated": "Question updated.",
+      "copy": "Make a copy to edit",
+      "readOnlyType": "Picture questions for young learners can't be edited here yet. You can still add them to an assessment.",
+      "readOnlyInUse": "This question is in a published assessment, so it can't change. Make a copy to write a new version.",
+      "readOnlyOthers": "Another teacher wrote this question. Make a copy if you want your own version.",
+      "backToList": "All questions"
+    },
+    "assessments": {
+      "new": "New assessment",
+      "emptyBody": "Build one from your question bank, save it as a draft, and publish it when it's ready.",
+      "step": {
+        "details": "1. Details",
+        "questions": "2. Choose questions",
+        "paper": "3. The paper"
+      },
+      "dateHint": "Optional. Format: 2026-12-01",
+      "bankEmpty": "No questions to choose from",
+      "writeQuestions": "Write questions",
+      "chapterEmpty": "No questions in this chapter. Pick another chapter or “All chapters”.",
+      "add": "Add",
+      "added": "Added",
+      "noneYet": "No questions on the paper yet",
+      "noneYetBody": "Tap questions above to add them. You can save a draft without any.",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "remove": "Remove",
+      "unknownQuestion": "(question not in this subject's bank)",
+      "lockedNote": "This assessment is published, so its questions and marks are fixed. You can still change the title, weightage and date.",
+      "saveDraft": "Save draft",
+      "publish": "Publish",
+      "close": "Close",
+      "reopen": "Reopen",
+      "publishHint": "Publishing shows it to students in the class. Its questions can't change after that.",
+      "closeHint": "Closing stops new answers. You can reopen it later.",
+      "reopenHint": "Reopening lets students answer again.",
+      "published": "“%{title}” is published.",
+      "savedAsDraft": "Saved as a draft, but it couldn't be published. Check it and try Publish again.",
+      "notFound": "Assessment not found",
+      "notFoundBody": "It may belong to a class you don't teach, or the link is wrong.",
+      "fileLater": "File worksheets open in the next update",
+      "fileLaterBody": "This assessment is an uploaded file. Edit it in the school console for now."
     }
   }
 }

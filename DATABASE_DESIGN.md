@@ -55,6 +55,8 @@ body:   {"stem": {"en": "...", "ur": "..."},
          "audio": {"en": "storage/path.opus", "ur": "storage/path.opus",
                    "source": "elevenlabs|recorded|none", "voice": "voice id"}}
 answer: {"correct": "B"}
+// true_false: {"correct": true}   numeric: {"correct": 42}
+// short_text: {"correct": "Lahore", "also": ["Lahore City"]}  (DECISIONS #64)
 explanation: {"en": "...", "ur": "...", "why_wrong": {"A": {"en": "...", "ur": "..."}}}
 ```
 

@@ -1154,7 +1154,8 @@
         "tfRequired": "درست یا غلط منتخب کریں۔",
         "marksInvalid": "نمبر 1 اور 100 کے درمیان پورا عدد ہونا چاہیے۔",
         "network": "انٹرنیٹ نہیں ہے۔ کنکشن چیک کر کے دوبارہ کوشش کریں۔",
-        "unknown": "محفوظ نہیں ہو سکا۔ دوبارہ کوشش کریں۔"
+        "unknown": "محفوظ نہیں ہو سکا۔ دوبارہ کوشش کریں۔",
+        "shortRequired": "Type the correct answer. // TODO: ur"
       }
     }
   },
@@ -1283,6 +1284,111 @@
       "attendance": "Attendance // TODO: ur",
       "messages": "Messages // TODO: ur",
       "projects": "Projects // TODO: ur"
+    }
+  },
+  "staff": {
+    "back": "Back // TODO: ur",
+    "retry": "Try again // TODO: ur",
+    "saveShortcut": "Press Enter in a field, or Ctrl + Enter, to save. // TODO: ur",
+    "errors": {
+      "network": "No internet connection. Your changes are still here; try again when you're back online. // TODO: ur",
+      "forbidden": "You can only do this for classes you teach. Ask an admin if this class should be yours. // TODO: ur",
+      "unknown": "Something went wrong and nothing was saved. Please try again. // TODO: ur"
+    },
+    "home": {
+      "questionsHint": "Write and edit questions for your chapters // TODO: ur",
+      "assessmentsHint": "Build tests, quizzes and exams, then publish them // TODO: ur"
+    },
+    "scope": {
+      "class": "Class // TODO: ur",
+      "subject": "Subject // TODO: ur",
+      "chapter": "Chapter // TODO: ur",
+      "allChapters": "All chapters // TODO: ur",
+      "allClasses": "All classes // TODO: ur",
+      "loadError": "Couldn't load your classes // TODO: ur",
+      "subjectsError": "Couldn't load subjects // TODO: ur",
+      "chaptersError": "Couldn't load chapters // TODO: ur",
+      "noYear": "No school year is open // TODO: ur",
+      "noYearStaff": "Set the current academic year in the school console (Academic years) first. Everything here belongs to a year. // TODO: ur",
+      "noYearTeacher": "Ask an admin to open this school year. You can add questions and tests once it's set. // TODO: ur",
+      "noClasses": "No classes yet // TODO: ur",
+      "noClassesStaff": "Add a class in the school console (Classes) first. Assessments belong to a class. // TODO: ur",
+      "noAssignments": "You're not assigned to a class yet // TODO: ur",
+      "noAssignmentsTeacher": "Ask an admin to assign you to your classes for this year. // TODO: ur",
+      "noSubjects": "This class has no subjects yet // TODO: ur",
+      "noSubjectsStaff": "Add its subjects in the school console (Syllabus) first. // TODO: ur",
+      "noSubjectsTeacher": "Ask an admin to set up the syllabus for this class. // TODO: ur",
+      "noChapters": "This subject has no chapters yet // TODO: ur",
+      "noChaptersStaff": "Add its chapters in the school console (Syllabus) first. Questions belong to a chapter. // TODO: ur",
+      "noChaptersTeacher": "Ask an admin to add this subject's chapters. Questions belong to a chapter. // TODO: ur"
+    },
+    "questions": {
+      "show": "Show // TODO: ur",
+      "showAll": "All // TODO: ur",
+      "yours": "Yours // TODO: ur",
+      "inUse": "In use // TODO: ur",
+      "emptyChapter": "No questions in this chapter yet // TODO: ur",
+      "emptyBody": "Choose “New question” to write the first one. // TODO: ur",
+      "pickOne": "Pick a question or write a new one // TODO: ur",
+      "pickOneBody": "Questions you open appear here. // TODO: ur",
+      "options": "Options // TODO: ur",
+      "optionsHint": "Tap a letter to mark the correct option. // TODO: ur",
+      "optionLabel": "Option %{letter} // TODO: ur",
+      "correctOption": "Correct option // TODO: ur",
+      "markCorrect": "Mark %{letter} as correct // TODO: ur",
+      "removeOption": "Remove option %{letter} // TODO: ur",
+      "addOption": "Add option // TODO: ur",
+      "correctAnswer": "Correct answer // TODO: ur",
+      "correct": "correct // TODO: ur",
+      "shortHint": "Students' answers are matched ignoring capitals and extra spaces. // TODO: ur",
+      "shortAlso": "Also accept (optional) // TODO: ur",
+      "shortAlsoHint": "Other spellings or answers that count as correct, one per line. // TODO: ur",
+      "marksHint": "Whole number from 1 to 100. Leave blank for 1. // TODO: ur",
+      "marksBadge": {
+        "one": "%{count} mark // TODO: ur",
+        "other": "%{count} marks // TODO: ur"
+      },
+      "updated": "Question updated. // TODO: ur",
+      "copy": "Make a copy to edit // TODO: ur",
+      "readOnlyType": "Picture questions for young learners can't be edited here yet. You can still add them to an assessment. // TODO: ur",
+      "readOnlyInUse": "This question is in a published assessment, so it can't change. Make a copy to write a new version. // TODO: ur",
+      "readOnlyOthers": "Another teacher wrote this question. Make a copy if you want your own version. // TODO: ur",
+      "backToList": "All questions // TODO: ur"
+    },
+    "assessments": {
+      "new": "New assessment // TODO: ur",
+      "emptyBody": "Build one from your question bank, save it as a draft, and publish it when it's ready. // TODO: ur",
+      "step": {
+        "details": "1. Details // TODO: ur",
+        "questions": "2. Choose questions // TODO: ur",
+        "paper": "3. The paper // TODO: ur"
+      },
+      "dateHint": "Optional. Format: 2026-12-01 // TODO: ur",
+      "bankEmpty": "No questions to choose from // TODO: ur",
+      "writeQuestions": "Write questions // TODO: ur",
+      "chapterEmpty": "No questions in this chapter. Pick another chapter or “All chapters”. // TODO: ur",
+      "add": "Add // TODO: ur",
+      "added": "Added // TODO: ur",
+      "noneYet": "No questions on the paper yet // TODO: ur",
+      "noneYetBody": "Tap questions above to add them. You can save a draft without any. // TODO: ur",
+      "moveUp": "Move up // TODO: ur",
+      "moveDown": "Move down // TODO: ur",
+      "remove": "Remove // TODO: ur",
+      "unknownQuestion": "(question not in this subject's bank) // TODO: ur",
+      "lockedNote": "This assessment is published, so its questions and marks are fixed. You can still change the title, weightage and date. // TODO: ur",
+      "saveDraft": "Save draft // TODO: ur",
+      "publish": "Publish // TODO: ur",
+      "close": "Close // TODO: ur",
+      "reopen": "Reopen // TODO: ur",
+      "publishHint": "Publishing shows it to students in the class. Its questions can't change after that. // TODO: ur",
+      "closeHint": "Closing stops new answers. You can reopen it later. // TODO: ur",
+      "reopenHint": "Reopening lets students answer again. // TODO: ur",
+      "published": "“%{title}” is published. // TODO: ur",
+      "savedAsDraft": "Saved as a draft, but it couldn't be published. Check it and try Publish again. // TODO: ur",
+      "notFound": "Assessment not found // TODO: ur",
+      "notFoundBody": "It may belong to a class you don't teach, or the link is wrong. // TODO: ur",
+      "fileLater": "File worksheets open in the next update // TODO: ur",
+      "fileLaterBody": "This assessment is an uploaded file. Edit it in the school console for now. // TODO: ur"
     }
   }
 }

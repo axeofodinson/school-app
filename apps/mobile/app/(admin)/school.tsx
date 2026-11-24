@@ -19,6 +19,16 @@ export default function AdminHome() {
       {profile?.full_name ? (
         <Text>{t('console.home.welcome', { name: profile.full_name })}</Text>
       ) : null}
+      <ListItem
+        title={t('console.assessments.title')}
+        subtitle={t('staff.home.assessmentsHint')}
+        onPress={() => router.push('/assessments')}
+      />
+      <ListItem
+        title={t('teacher.questions.title')}
+        subtitle={t('staff.home.questionsHint')}
+        onPress={() => router.push('/questions')}
+      />
       <ListItem title={t('auth.cards.open')} onPress={() => router.push('/qr-cards')} />
       <ListItem
         title={t('console.linkPrep.open')}

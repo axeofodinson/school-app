@@ -54,6 +54,9 @@ function Root() {
         <Stack.Protected guard={destination === 'admin'}>
           <Stack.Screen name="(admin)" />
         </Stack.Protected>
+        <Stack.Protected guard={destination === 'teacher' || destination === 'admin'}>
+          <Stack.Screen name="(staff)" />
+        </Stack.Protected>
         <Stack.Protected guard={destination === 'prep'}>
           <Stack.Screen name="(prep)" />
         </Stack.Protected>
