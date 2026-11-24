@@ -150,6 +150,7 @@ Deferred: parents (81) and iOS (82).
 | — | [C1 Generate topic content](C1-generate-topic-content.md) | Opus (claude.ai chat) | From Phase 2 on, one topic at a time (pilot: Class 9 Math/Science) |
 
 ## Changelog
+- 2026-11-24: `db/024_profiles_self_update_guard.sql` added as a standalone production fix (DECISIONS #62); Hassan runs it now, ahead of 017.
 - 2026-11-24: 05 done. `db/023_access_tiers.sql` needs 017 first, so it runs at Phase 2 start (or on dev whenever). It also closes a self-promote hole that is live in production today (DECISIONS #60). Prompt 40 must recompute mastery after `link_prep_account()`, and prompts 30–42 should gate features with `canUse(tier, …)`.
 - 2026-11-23: 02 done. Tokens now live in `packages/core/src/design/` (draft file and verify script removed); 01 no longer installs Moti.
 - 2026-11-23: design questions answered (DECISIONS #37); 16 now includes ElevenLabs read-aloud audio for junior maths.

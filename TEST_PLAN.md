@@ -16,12 +16,15 @@ $P -d t -f db/test/017_smoke.sql
 $P -d t -f db/test/022_smoke.sql               # after 017 smoke (reuses its fixtures)
 $P -d t -f db/023_access_tiers.sql && $P -d t -f db/023_access_tiers.sql   # idempotency
 $P -d t -f db/test/023_smoke.sql               # after 022 smoke (DB-4)
+$P -d t -f db/test/024_smoke.sql               # DB-5
 su postgres -c "$BIN/pg_ctl -D $D/data stop" && rm -rf $D
 ```
 (Run Postgres outside the Claude scratchpad; its permissions get reset.)
 Result on 2026-11-23: all pass (see `LMS_AUDIT.md` §5.3).
 
 **DB-4 Access tiers (023, 2026-11-24: pass).** `db/test/023_smoke.sql` as `authenticated` with grants like Supabase: Google sign-up → prep-only student (also when the provider isn't in app metadata yet); anonymous/GitHub sign-ups stay pending; Google/GitHub identity refused on teacher, school student and admin; prep user gets 0 rows from assessments, assessment_questions, enrollments, attendance, submissions, students, messages, exam sessions/answers, questions, project teams, even with a deliberately leaky permissive policy added; reads approved practice versions, topics, concepts, own profile only; inserts its own practice attempt, not another's; can't write attendance/messages/school bucket or start an exam; can rename itself but not change role/tier/student link; school student and teacher keep their access and the student can no longer self-promote; teacher can't see prep attempts; find/link RPCs staff-only, wildcard escaped, link moves the attempt, is re-runnable, logged, log immutable. Mutation check: removing the restrictive policy, the profile guard or the identity guard each makes the smoke fail.
+
+**DB-5 Profile self-update guard (024, 2026-11-24: pass).** Production order (stubs → setup → 002–016 → 024 twice → `db/test/024_smoke.sql`) and the full order above both pass: a student can rename itself but can't set `role` (developer/admin) or change its `student_id`; a pending sign-up can't approve itself; an admin still changes roles; the SQL Editor (postgres) and `provision_student_login()` still work. Without 024 the smoke fails at `STUDENT_BECAME_DEVELOPER` (the hole is real).
 
 **DB-2 RLS matrix.** For each new table × role (student own / other student / teacher own class / teacher other class / admin / Play Store learner): select/insert/update/delete expected allow/deny. Run as `set role authenticated` + `request.jwt.claim.sub`.
 
