@@ -7,7 +7,16 @@
 export type MotionTier = 'full' | 'lite' | 'off';
 
 /** ARCHITECTURE §6b durations. */
-export const duration = { instant: 0, fast: 120, base: 220, slow: 360 } as const;
+export const duration = {
+  instant: 0,
+  fast: 120,
+  base: 220,
+  slow: 360,
+  /** Lite-tier pattern glide (DECISIONS #47). */
+  glide: 2000,
+  /** Full-tier pattern loop: one tile of drift per cycle, linear, seamless. */
+  drift: 8000,
+} as const;
 
 /**
  * Spring presets in the classic damping/stiffness/mass form, which Reanimated 4 still accepts.
@@ -43,7 +52,14 @@ export type AnimProp = 'opacity' | 'translateX' | 'translateY' | 'scale' | 'rota
 /** What one tier does for one moment. `none` = state changes instantly (colour/icon still change). */
 export type Behaviour =
   | { kind: 'none' }
-  | { kind: 'timing'; duration: DurationName; ease: keyof typeof easing; props: AnimProp[] }
+  | {
+      kind: 'timing';
+      duration: DurationName;
+      ease: keyof typeof easing;
+      props: AnimProp[];
+      /** 'loop' repeats forever from the start (seamless only for periodic content). */
+      repeat?: 'loop';
+    }
   | { kind: 'spring'; spring: SpringName; props: AnimProp[] }
   | { kind: 'lottie'; asset: string; maxMs: number };
 
@@ -271,6 +287,24 @@ export const moments = {
     off: none,
   },
 
+  // Subject tile patterns (DECISIONS #47, Hassan 2026-11-24): the one approved looping
+  // decoration. Full: slow diagonal drift that loops. Lite: one ~2 s glide when the screen
+  // opens, a card is pressed or a tile is set. Off and exams: still (exams show no pattern).
+  patternDrift: {
+    purpose: 'delight',
+    frequency: 'often',
+    rtlFlip: true,
+    full: {
+      kind: 'timing',
+      duration: 'drift',
+      ease: 'linear',
+      props: ['translateX', 'translateY'],
+      repeat: 'loop',
+    },
+    lite: { kind: 'timing', duration: 'glide', ease: 'inOut', props: ['translateX', 'translateY'] },
+    off: none,
+  },
+
   // Exam: identical in every tier. Nothing else moves.
   examTimerTick: {
     purpose: 'state',
@@ -307,6 +341,12 @@ export const moments = {
 } as const satisfies Record<string, Moment>;
 
 export type MomentName = keyof typeof moments;
+
+/**
+ * Moments allowed to move (not just fade) in the lite tier. Only the subject-pattern glide,
+ * by Hassan's decision (DECISIONS #47); every other lite behaviour is a fade.
+ */
+export const liteMovementExceptions: ReadonlyArray<MomentName> = ['patternDrift'];
 
 /** Moments allowed while an exam screen is mounted. Everything else resolves to `none`. */
 export const examAllowedMoments: ReadonlyArray<MomentName> = ['examTimerTick', 'examSaveIndicator'];

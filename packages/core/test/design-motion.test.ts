@@ -5,11 +5,13 @@ import {
   deviceMemoryGb,
   duration,
   examAllowedMoments,
+  liteMovementExceptions,
   mirrorX,
   moments,
   pickMotionTier,
   resolveMoment,
   spring,
+  type Behaviour,
   type MomentName,
   type MotionTier,
 } from '../src/design';
@@ -35,8 +37,9 @@ describe('choreography table', () => {
     }
   });
 
-  it('lite is fade-only (no springs moving things, no translate/scale timing)', () => {
+  it('lite is fade-only, except the approved pattern glide (DECISIONS #47)', () => {
     for (const name of names) {
+      if (liteMovementExceptions.includes(name)) continue;
       const b = moments[name].lite;
       if (b.kind === 'timing') expect(b.props, name).toEqual(['opacity']);
     }
@@ -50,6 +53,20 @@ describe('choreography table', () => {
           expect(allowed.has(p), `${name}: ${p}`).toBe(true);
       }
     }
+  });
+
+  it('only the full-tier pattern drift loops, and it stops in exams and off', () => {
+    for (const name of names) {
+      for (const tier of tiers) {
+        const b: Behaviour = moments[name][tier];
+        const loops = b.kind === 'timing' && b.repeat === 'loop';
+        expect(loops, `${name}.${tier}`).toBe(name === 'patternDrift' && tier === 'full');
+      }
+    }
+    expect(liteMovementExceptions).toEqual(['patternDrift']);
+    for (const tier of tiers)
+      expect(resolveMoment('patternDrift', tier, { inExam: true }).kind).toBe('none');
+    expect(resolveMoment('patternDrift', 'off').kind).toBe('none');
   });
 
   it('tabs never move', () => {

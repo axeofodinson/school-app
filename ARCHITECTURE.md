@@ -95,7 +95,7 @@ Goal: a distinctly polished, alive UI that stays fast on 4 GB Chromebooks.
    - **lite:** short fades and slides only. This is the default on low-memory devices.
    - **off:** for users whose system has "reduce motion" switched on.
 4. **Exams use minimal motion in every tier.** Nothing moves while a student is answering, apart from the timer and save indicator.
-5. **Motion carries meaning.** Correct and incorrect feedback, mastery progress, follow-up cleared, sync status, screen hierarchy. No decorative loops on study screens.
+5. **Motion carries meaning.** Correct and incorrect feedback, mastery progress, follow-up cleared, sync status, screen hierarchy. No decorative loops on study screens, except the subject-pattern drift Hassan approved (DECISIONS #47: full tier loops, lite glides once, off still, never in exams).
 6. **RTL-aware.** Slide directions flip with the language.
 7. **Budget:** 60 fps on a mid-range phone, no dropped frames during screen transitions on the reference Chromebook in lite tier (TEST_PLAN P-4/P-6).
 

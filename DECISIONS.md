@@ -2,6 +2,10 @@
 
 Newest first. Each: decision — reason — who/when.
 
+## 2026-11-24 — subject patterns move (Hassan, after trying the preview build)
+
+47. **Subject tile patterns drift: the one approved looping decoration.** Hassan wants the Lahore-tile patterns on subject cards and pattern bands to move. Moment `patternDrift`: **full** = slow diagonal drift that loops (one tile per `duration.drift` = 8 s, linear, seamless because the pattern repeats); **lite** = one `duration.glide` (2 s) glide when the screen gains focus (e.g. Home opens), when a subject card is pressed and when a tile is set, then still; **off** = still. Never in exams (no pattern is drawn there) or on staff screens (no pattern). This relaxes DESIGN_SYSTEM §6 rule 3 ("no looping decoration") and the lite "fades only" rule for this moment only (`liteMovementExceptions`, tested). Safeguards: it moves only transform (one Animated.View per band, UI thread), stops when its screen loses focus, and 4 GB devices default to lite, so the loop only runs on stronger devices or by choice. WCAG 2.2.2 needs a way to stop motion longer than 5 s: the motion setting (and OS reduce-motion) does that, so **the Settings screen must expose full / lite / off / auto** (prompt 03 or later). Frame rate with several cards on a 4 GB Chromebook in full tier is **unverified** (TEST_PLAN P-4).
+
 ## 2026-11-23 — design system + motion tiers (session 02)
 
 41. **Moti dropped; Reanimated 4 directly** (settles #38). Moti 0.30 (no release since Jan 2025) does not type-check against Reanimated 4, and everything we need (shared values, `withTiming`/`withSpring`, `withRepeat`, layout `exiting`) is in Reanimated, which runs on Android and web. Components never call Reanimated with their own numbers: they name a **moment** (`useEnterStyle('toast', visible, { translateY: 16 })`, `usePressMotion(depth)`, `usePulse('skeleton')`), and `ui/motion.ts` resolves it through the tier and exam mode. Only the props the resolved behaviour lists move, so lite automatically becomes a fade and off/exam snap to the end state. Removing Moti also removes a hoisted package that needed the Metro singleton pins.
