@@ -1,3 +1,4 @@
+import { toAsciiDigits } from '@school/core';
 import { useState } from 'react';
 import {
   Platform,
@@ -28,6 +29,7 @@ export function PinField({
   onChange,
   label,
   length = 4,
+  minLength,
   error,
   keypad,
   autoFocus,
@@ -36,7 +38,10 @@ export function PinField({
   value: string;
   onChange: (pin: string) => void;
   label: string;
+  /** Max digits. */
   length?: number;
+  /** For variable-length PINs: boxes shown before typing; one more appears per digit up to `length`. */
+  minLength?: number;
   error?: string;
   /** Default: on for the kid presentation. */
   keypad?: boolean;
@@ -50,7 +55,9 @@ export function PinField({
   const box = presentation === 'kid' ? 60 : presentation === 'staff' ? 44 : 52;
   const r = radiusFor('md', presentation);
 
-  const set = (next: string) => onChange(next.replace(/\D/g, '').slice(0, length));
+  const boxes = minLength ? Math.min(length, Math.max(minLength, value.length)) : length;
+  // Urdu-keyboard digits (۱۲۳) count as 0–9.
+  const set = (next: string) => onChange(toAsciiDigits(next).replace(/\D/g, '').slice(0, length));
   const press = (k: (typeof KEYS)[number]) => {
     if (k === 'del') set(value.slice(0, -1));
     else if (k) set(value + k);
@@ -67,9 +74,9 @@ export function PinField({
           accessibilityElementsHidden
           importantForAccessibility="no-hide-descendants"
         >
-          {Array.from({ length }, (_, i) => {
+          {Array.from({ length: boxes }, (_, i) => {
             const filled = i < value.length;
-            const active = focused && i === Math.min(value.length, length - 1);
+            const active = focused && i === Math.min(value.length, boxes - 1);
             return (
               <View
                 key={i}
@@ -109,7 +116,7 @@ export function PinField({
           showSoftInputOnFocus={!showKeypad}
           secureTextEntry={Platform.OS !== 'web'}
           accessibilityLabel={label}
-          accessibilityHint={error ?? t('ui.pin.entered', { count: value.length, total: length })}
+          accessibilityHint={error ?? t('ui.pin.entered', { count: value.length, total: boxes })}
           style={styles.hiddenInput}
         />
       </View>

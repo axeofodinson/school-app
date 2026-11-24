@@ -32,6 +32,16 @@
           "resizeMode": "contain",
           "backgroundColor": "#fbf0d9"
         }
+      ],
+      "expo-secure-store",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "The camera scans your school ID card to fill in your admission number.",
+          "microphonePermission": false,
+          "recordAudioAndroid": false,
+          "barcodeScannerEnabled": true
+        }
       ]
     ],
     "experiments": {
