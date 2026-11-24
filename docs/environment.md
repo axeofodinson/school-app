@@ -115,3 +115,17 @@ Nightly backups and the keep-alive read these `school-app` repo settings
 (production session pooler, :5432), `BACKUP_REPO_TOKEN`, optional
 `SUPABASE_URL` + `SUPABASE_ANON_KEY`; variables `BACKUP_REPO`, optional
 `KEEPALIVE=on`. If the production project ever changes, update them.
+
+## Web app on EAS Hosting (updated after every web-facing session)
+
+Production: https://ice-010-school-app.expo.app (Expo account `ice_010`,
+project `d0d4fed8-…`). The cloud environment has `EXPO_TOKEN` and the
+`EXPO_PUBLIC_SUPABASE_URL/ANON_KEY` the build bakes in. After a session merges
+web-facing changes to `main`:
+```bash
+cd apps/mobile && rm -rf dist && npx expo export -p web
+npx eas-cli@latest deploy --prod --non-interactive
+```
+Check that the deployment URL serves the new `entry-*.js` (compare with
+`dist/index.html`). The production alias's HTML is cached at the edge and can
+take ~5 minutes to switch (2026-11-24: prompt 10 deploy).
