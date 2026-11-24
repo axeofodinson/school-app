@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type ComponentRef, type Ref } from 'react';
 import {
   StyleSheet,
   TextInput,
@@ -22,6 +22,9 @@ import {
   type Script,
 } from './tokens';
 
+/** What a TextField ref points at (the native input: focus(), blur()). */
+export type TextFieldHandle = ComponentRef<typeof TextInput>;
+
 export type TextFieldProps = Omit<TextInputProps, 'style'> & {
   label: string;
   helper?: string;
@@ -29,6 +32,8 @@ export type TextFieldProps = Omit<TextInputProps, 'style'> & {
   /** Script of what is typed. Admission numbers, emails, PINs: 'latin'. Default: UI language. */
   script?: Script;
   style?: StyleProp<ViewStyle>;
+  /** React 19: a plain prop. Lets a form move focus (e.g. to a required reason). */
+  ref?: Ref<TextFieldHandle>;
 };
 
 /**
@@ -45,6 +50,8 @@ export function TextField({
   onFocus,
   onBlur,
   placeholder,
+  ref,
+  accessibilityLabel,
   ...input
 }: TextFieldProps) {
   const { isRTL } = useI18n();
@@ -60,13 +67,14 @@ export function TextField({
       <Text variant="label">{label}</Text>
       <TextInput
         {...input}
+        ref={ref}
         // An Urdu placeholder with a number in it ("مثلاً 2025-041") keeps the number in order.
         placeholder={
           placeholder && scriptOf(placeholder) === 'urdu'
             ? isolateLtrRuns(placeholder)
             : placeholder
         }
-        accessibilityLabel={label}
+        accessibilityLabel={accessibilityLabel ?? label}
         accessibilityHint={error ?? helper}
         onFocus={(e) => {
           setFocused(true);

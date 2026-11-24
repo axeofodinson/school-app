@@ -45,6 +45,11 @@ export interface StudentAssessment {
   totalMarks: number | null;
   scheduledOn: string | null;
   questionCount: number;
+  /** Report card inputs (prompt 12). Absent in a device copy saved before 12. */
+  subjectId?: string | null;
+  weightage?: number;
+  /** 'file' worksheets (db/014): the uploaded file to view. */
+  file?: { path: string | null; name: string | null; mime: string | null } | null;
 }
 
 export interface MySubmission {
@@ -93,6 +98,11 @@ interface AssessmentRow {
   status: string;
   total_marks: number | null;
   scheduled_on: string | null;
+  weightage: number | string | null;
+  subject_id: string | null;
+  file_path: string | null;
+  file_name: string | null;
+  file_mime: string | null;
   subject: { name: string } | null;
   items: { question_id: string }[] | null;
 }
@@ -143,7 +153,9 @@ async function fetchHome(): Promise<Omit<Home, 'fromCache'>> {
     db
       .from('assessments')
       .select(
-        'id, title, type, status, total_marks, scheduled_on, subject:subjects(name), items:assessment_questions(question_id)',
+        'id, title, type, status, total_marks, scheduled_on, weightage, subject_id, ' +
+          'file_path, file_name, file_mime, ' +
+          'subject:subjects(name), items:assessment_questions(question_id)',
       )
       .eq('class_id', e.class_id)
       .eq('year_id', e.year_id)
@@ -170,19 +182,19 @@ async function fetchHome(): Promise<Omit<Home, 'fromCache'>> {
       className: e.class?.name ?? '',
       yearLabel: year.data.label,
     },
-    assessments: (as.data ?? [])
-      // File worksheets are prompt 12; they have no questions to answer here.
-      .filter((a) => a.type !== 'file')
-      .map((a) => ({
-        id: a.id,
-        title: a.title,
-        type: a.type,
-        status: a.status === 'closed' ? ('closed' as const) : ('published' as const),
-        subjectName: a.subject?.name ?? '',
-        totalMarks: a.total_marks,
-        scheduledOn: a.scheduled_on,
-        questionCount: a.items?.length ?? 0,
-      })),
+    assessments: (as.data ?? []).map((a) => ({
+      id: a.id,
+      title: a.title,
+      type: a.type,
+      status: a.status === 'closed' ? ('closed' as const) : ('published' as const),
+      subjectName: a.subject?.name ?? '',
+      totalMarks: a.total_marks,
+      scheduledOn: a.scheduled_on,
+      questionCount: a.items?.length ?? 0,
+      subjectId: a.subject_id,
+      weightage: Number(a.weightage ?? 0),
+      file: a.type === 'file' ? { path: a.file_path, name: a.file_name, mime: a.file_mime } : null,
+    })),
     submissions: (subs.data ?? []).map(toSubmission),
   };
 }

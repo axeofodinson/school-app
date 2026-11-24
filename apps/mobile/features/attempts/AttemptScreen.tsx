@@ -19,6 +19,7 @@ import { useI18n, type TKey } from '../../i18n';
 import { Badge, Button, EmptyState, ExamMode, Screen, SkeletonLines, Text } from '../../ui';
 import { space } from '../../ui/tokens';
 import { useAuth } from '../auth/AuthProvider';
+import { FileViewer } from '../files/FileViewer';
 import { useResult } from '../scope/useResult';
 import { loadPaper, type StudentAssessment } from './api';
 import { useAttemptSync, useQueuedAttempt, type SubmitResult } from './AttemptSync';
@@ -32,6 +33,7 @@ const TYPE_KEYS: Record<string, TKey> = {
   test: 'student.assessments.types.test',
   exam: 'student.assessments.types.exam',
   quiz: 'student.assessments.types.quiz',
+  file: 'student.assessments.types.file',
 };
 
 export function AttemptScreen() {
@@ -84,6 +86,19 @@ export function AttemptScreen() {
           title={t('student.attempt.notAvailable')}
           action={<BackToTests />}
         />
+      </Screen>
+    );
+  }
+  if (assessment.type === 'file') {
+    // A worksheet: read (or open) the teacher's file; the work is done on paper.
+    return (
+      <Screen>
+        {header}
+        <View style={styles.worksheet}>
+          <Text tone="textMuted">{t('student.worksheet.howTo')}</Text>
+          <FileViewer file={assessment.file ?? { path: null, name: null, mime: null }} />
+          <BackToTests />
+        </View>
       </Screen>
     );
   }
@@ -302,6 +317,7 @@ function Attempt({
 }
 
 const styles = StyleSheet.create({
+  worksheet: { gap: space.lg },
   wrap: { gap: space.md },
   start: { alignSelf: 'flex-start' },
   footer: { gap: space.sm, marginTop: space.sm },

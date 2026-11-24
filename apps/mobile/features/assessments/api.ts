@@ -22,6 +22,10 @@ export interface AssessmentSummary {
   className: string;
   subjectName: string;
   questionCount: number;
+  /** 'file' worksheets (db/014): where the uploaded file lives. */
+  file_path: string | null;
+  file_name: string | null;
+  file_mime: string | null;
 }
 
 export interface AssessmentDetail extends AssessmentSummary {
@@ -30,6 +34,7 @@ export interface AssessmentDetail extends AssessmentSummary {
 
 const COLUMNS =
   'id, title, type, status, weightage, total_marks, scheduled_on, class_id, subject_id, ' +
+  'file_path, file_name, file_mime, ' +
   'class:classes(name), subject:subjects(name), items:assessment_questions(question_id, marks, sort_order)';
 
 interface Row {
@@ -42,6 +47,9 @@ interface Row {
   scheduled_on: string | null;
   class_id: string;
   subject_id: string;
+  file_path: string | null;
+  file_name: string | null;
+  file_mime: string | null;
   class: { name: string } | null;
   subject: { name: string } | null;
   items: { question_id: string; marks: number; sort_order: number }[];
@@ -64,6 +72,9 @@ function toDetail(r: Row): AssessmentDetail {
     className: r.class?.name ?? '',
     subjectName: r.subject?.name ?? '',
     questionCount: items.length,
+    file_path: r.file_path ?? null,
+    file_name: r.file_name ?? null,
+    file_mime: r.file_mime ?? null,
     items,
   };
 }

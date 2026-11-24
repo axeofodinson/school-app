@@ -1,6 +1,16 @@
 // Every case from scripts/verify-grading.mjs, unchanged.
 import { describe, expect, it } from 'vitest';
-import { buildRoster, gradeState, parseScore, reasonRequired } from '../src/grading';
+import {
+  buildRoster,
+  fmtScore,
+  gradeBlocksAttempt,
+  gradeRpcError,
+  gradeState,
+  parseScore,
+  reasonRequired,
+  sortRoster,
+} from '../src/grading';
+import { legacy } from './legacy';
 
 describe('parseScore (total = 20)', () => {
   it.each([
@@ -55,4 +65,76 @@ describe('buildRoster', () => {
   it('preserves student join', () => expect(roster[0]?.student?.full_name).toBe('Aisha'));
   it('null roll preserved', () => expect(roster[2]?.rollNumber).toBeNull());
   it('empty inputs -> empty roster', () => expect(buildRoster(null, null)).toEqual([]));
+});
+
+describe('gradeRpcError (db/013 record_grade messages)', () => {
+  it.each([
+    ['reason_required', 'reason_required'],
+    ['P0001: not_authorized', 'not_authorized'],
+    ['score_out_of_range', 'score_out_of_range'],
+    ['enrollment_class_mismatch', 'enrollment_class_mismatch'],
+    ['Failed to fetch', null],
+    [null, null],
+  ] as const)('%s -> %s', (msg, want) => expect(gradeRpcError(msg)).toBe(want));
+});
+
+describe('gradeBlocksAttempt', () => {
+  const open = { type: 'test', status: 'published' };
+  it('open paper, no attempt yet -> warn', () => expect(gradeBlocksAttempt(open, null)).toBe(true));
+  it('attempt already in -> no warning', () =>
+    expect(gradeBlocksAttempt(open, { score: null })).toBe(false));
+  it('file worksheet -> no online attempt to lose', () =>
+    expect(gradeBlocksAttempt({ type: 'file', status: 'published' }, null)).toBe(false));
+  it('closed paper -> nothing left to submit', () =>
+    expect(gradeBlocksAttempt({ type: 'test', status: 'closed' }, null)).toBe(false));
+  it('draft -> students cannot see it yet', () =>
+    expect(gradeBlocksAttempt({ type: 'test', status: 'draft' }, null)).toBe(false));
+});
+
+describe('fmtScore', () => {
+  it.each([
+    ['15.00', '15'],
+    ['12.50', '12.5'],
+    [0, '0'],
+    [null, ''],
+    ['', ''],
+  ] as const)('%s -> %s', (s, want) => expect(fmtScore(s)).toBe(want));
+});
+
+describe('sortRoster', () => {
+  it('roll ascending, unnumbered last by name', () =>
+    expect(
+      sortRoster([
+        { id: 'c', roll_number: null, student: { full_name: 'Zoya' } },
+        { id: 'b', roll_number: 2, student: { full_name: 'Bilal' } },
+        { id: 'd', roll_number: null, student: { full_name: 'Ali' } },
+        { id: 'a', roll_number: 1, student: { full_name: 'Aisha' } },
+      ]).map((r) => r.id),
+    ).toEqual(['a', 'b', 'd', 'c']));
+});
+
+describe('parity with src/reporting/grading.js', () => {
+  it('parseScore / reasonRequired / gradeState / buildRoster agree on shared inputs', async () => {
+    const old = await legacy('src/reporting/grading.js');
+    const scores = ['', ' 7 ', '7.5', '7.555', '-1', 'x', '100', '20', '20.01', '0'];
+    for (const s of scores)
+      for (const t of [20, null, 0, '20']) {
+        expect(parseScore(s, t)).toEqual(old.parseScore!(s, t));
+      }
+    for (const [c, n] of [
+      [null, 3],
+      [3, 3],
+      [3, '3'],
+      [3, 4],
+      ['3.00', 3],
+    ] as const) {
+      expect(reasonRequired(c, n)).toBe(old.reasonRequired!(c, n));
+    }
+    for (const s of [null, { score: null }, { score: 0 }, { score: 5 }]) {
+      expect(gradeState(s)).toBe(old.gradeState!(s));
+    }
+    const en = [{ id: 'e1', roll_number: 1 }, { id: 'e2' }];
+    const subs = [{ enrollment_id: 'e2', score: 4 }];
+    expect(buildRoster(en, subs)).toEqual(old.buildRoster!(en, subs));
+  });
 });

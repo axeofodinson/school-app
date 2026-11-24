@@ -6,3 +6,6 @@ export * from './assessments';
 export * from './sync';
 export * from './attempts';
 export * from './tapImage';
+export * from './reporting';
+export * from './markdown';
+export * from './files';

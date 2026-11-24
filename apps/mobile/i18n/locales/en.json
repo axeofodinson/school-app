@@ -360,7 +360,9 @@
       "errors": {
         "network": "No internet. Check your connection and try again.",
         "unknown": "Something went wrong. Try again."
-      }
+      },
+      "cognitiveOffline": "Connect to the internet to see this part.",
+      "cognitiveNone": "Your marked tests don't have question details to show here."
     },
     "attendance": {
       "title": "My attendance",
@@ -408,6 +410,10 @@
       "body": "Your phone can stop this app in the background, so you might miss messages. Let it always run to get them on time.",
       "openSettings": "Open settings",
       "later": "Maybe later"
+    },
+    "worksheet": {
+      "open": "Worksheet",
+      "howTo": "Do this worksheet on paper and give it to your teacher."
     }
   },
   "console": {
@@ -1316,7 +1322,9 @@
     },
     "home": {
       "questionsHint": "Write and edit questions for your chapters",
-      "assessmentsHint": "Build tests, quizzes and exams, then publish them"
+      "assessmentsHint": "Build tests, quizzes and exams, then publish them",
+      "gradingHint": "Enter and correct grades, with the reason kept",
+      "overdueHint": "Homework past due, and who hasn't handed it in"
     },
     "scope": {
       "class": "Class",
@@ -1405,9 +1413,37 @@
       "published": "“%{title}” is published.",
       "savedAsDraft": "Saved as a draft, but it couldn't be published. Check it and try Publish again.",
       "notFound": "Assessment not found",
-      "notFoundBody": "It may belong to a class you don't teach, or the link is wrong.",
-      "fileLater": "File worksheets open in the next update",
-      "fileLaterBody": "This assessment is an uploaded file. Edit it in the school console for now."
+      "notFoundBody": "It may belong to a class you don't teach, or the link is wrong."
+    },
+    "files": {
+      "step": "2. Class, subject and file",
+      "limits": "Images, .md, PDF, Word, PowerPoint, Excel or text. Up to 10 MB.",
+      "replaceNote": "Saving uploads this file in place of the current one. The old file is kept.",
+      "preview": "Preview",
+      "hidePreview": "Hide preview",
+      "marksLocked": "Fixed once published: grades may already use it.",
+      "publishHint": "Publishing shows the worksheet to students in the class. Choose the file first.",
+      "errors": {
+        "fileMissing": "Choose a file first.",
+        "fileEmpty": "That file is empty. Choose another one.",
+        "fileTooBig": "That file is bigger than 10 MB. Make it smaller (e.g. a lower-quality photo) and try again.",
+        "fileType": "That kind of file can't be used. Choose an image, .md, PDF, Word, PowerPoint, Excel or text file.",
+        "pickFailed": "Couldn't open the file picker. Please try again."
+      }
+    },
+    "grading": {
+      "gradeThis": "Grade",
+      "nothingToGrade": "Nothing to grade in this class yet",
+      "nothingToGradeBody": "Publish a test, homework or worksheet first. Drafts can't be graded.",
+      "closedChip": "%{title} (closed)",
+      "noTotal": "No total marks",
+      "summary": {
+        "one": "%{count} student · %{graded} graded · %{waiting} waiting to be marked",
+        "other": "%{count} students · %{graded} graded · %{waiting} waiting to be marked"
+      },
+      "scoreFor": "Score for %{name}",
+      "saved": "Saved: %{name}, %{score}",
+      "beforeAttempt": "This student hasn't sent an answer for this test yet. If you grade now, their online answers won't be accepted later."
     }
   }
 }

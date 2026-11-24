@@ -6,6 +6,7 @@ import {
   questionsLocked,
   statusActions,
   statusAfter,
+  planUpload,
   togglePick,
   type AssessmentDraft,
   type AssessmentStatus,
@@ -18,6 +19,9 @@ import { StyleSheet, View } from 'react-native';
 import { useI18n, type TKey } from '../../i18n';
 import { Badge, Button, Card, EmptyState, Text, useToast } from '../../ui';
 import { space } from '../../ui/tokens';
+import { uploadWorksheet } from '../files/api';
+import type { PickedWorksheet } from '../files/pick';
+import { WorksheetCard } from '../files/WorksheetCard';
 import { listSubjectQuestions } from '../questions/api';
 import { listChapters } from '../scope/api';
 import { ChipPicker } from '../scope/ChipPicker';
@@ -59,6 +63,7 @@ function draftFrom(a: AssessmentDetail | null): AssessmentDraft {
     weightage: a.weightage ? String(a.weightage) : '',
     scheduledOn: a.scheduled_on ?? '',
     picks: a.items.map((i) => ({ questionId: i.question_id, marks: String(i.marks) })),
+    fileMarks: a.type === 'file' && a.total_marks != null ? String(a.total_marks) : '',
   };
 }
 
@@ -119,6 +124,8 @@ function Builder({
   const [error, setError] = useState<string | null>(null);
   const [fieldError, setFieldError] = useState<FieldError>(null);
   const [badMarksId, setBadMarksId] = useState<string | null>(null);
+  const [picked, setPicked] = useState<PickedWorksheet | null>(null);
+  const [marksError, setMarksError] = useState<string | undefined>(undefined);
 
   // Any edit clears the last save's errors: they described the old draft.
   const edit = (fn: (d: AssessmentDraft) => AssessmentDraft) => {
@@ -126,10 +133,12 @@ function Builder({
     setError(null);
     setFieldError(null);
     setBadMarksId(null);
+    setMarksError(undefined);
   };
 
   const status: AssessmentStatus = existing?.status ?? 'draft';
   const locked = questionsLocked(status);
+  const isFile = draft.type === 'file';
   const subjectId = sel.subjectId;
   const bank = useResult(subjectId ? `q:${subjectId}` : null, () =>
     listSubjectQuestions(subjectId!),
@@ -153,14 +162,36 @@ function Builder({
     [sel.subjectId],
   );
 
+  /** Upload the chosen worksheet file (file type only). False = it failed (error shown). */
+  const uploadPicked = async (assessmentId: string): Promise<boolean> => {
+    if (!isFile || !picked) return true;
+    const plan = planUpload(picked);
+    if ('error' in plan) return false;
+    const up = await uploadWorksheet(assessmentId, picked, plan);
+    if (!up.ok) {
+      setError(
+        t(
+          up.error === 'forbidden'
+            ? 'staff.errors.forbidden'
+            : 'console.assessments.errors.uploadFailed',
+        ),
+      );
+      return false;
+    }
+    setPicked(null);
+    return true;
+  };
+
   const save = async (target: AssessmentStatus) => {
     if (saving) return;
     setError(null);
     setFieldError(null);
     setBadMarksId(null);
-    const built = buildAssessment(draft, target);
+    setMarksError(undefined);
+    const built = buildAssessment(draft, target, Boolean(existing?.file_path || picked));
     if ('error' in built) {
       const message = t(`console.assessments.errors.${built.error}`);
+      if (built.error === 'fileMarksInvalid') return setMarksError(message);
       if (built.error === 'titleRequired') return setFieldError({ field: 'title', message });
       if (built.error === 'weightageInvalid') return setFieldError({ field: 'weightage', message });
       if (built.error === 'dateInvalid') return setFieldError({ field: 'scheduledOn', message });
@@ -180,9 +211,21 @@ function Builder({
         userId: scope.userId,
         fields: built.fields,
         items: built.items,
-        publish: target === 'published',
+        // A worksheet publishes only once its file is up (below).
+        publish: target === 'published' && !isFile,
       });
-      setSaving(false);
+      if (res.ok && isFile) {
+        const uploaded = await uploadPicked(res.data);
+        const pub = uploaded && target === 'published' ? await setStatus(res.data, target) : null;
+        setSaving(false);
+        if (!uploaded || (pub && !pub.ok)) {
+          toast(t('staff.assessments.savedAsDraft'), 'warn');
+          router.replace(`/assessments/${res.data}`);
+          return;
+        }
+      } else {
+        setSaving(false);
+      }
       if (!res.ok) {
         if (res.draftId) {
           toast(t('staff.assessments.savedAsDraft'), 'warn');
@@ -207,6 +250,11 @@ function Builder({
     }
 
     const { title, weightage, scheduled_on } = built.fields;
+    // The file goes up first, so a publish below never shows students an empty worksheet.
+    if (!(await uploadPicked(existing.id))) {
+      setSaving(false);
+      return;
+    }
     const upd = await updateAssessment(
       existing.id,
       locked ? { title, weightage, scheduled_on } : built.fields,
@@ -240,6 +288,15 @@ function Builder({
               class: existing.className || cls?.name || '',
             })}
           </Text>
+          {status !== 'draft' ? (
+            <Button
+              title={t('staff.grading.gradeThis')}
+              icon="pencil"
+              variant="secondary"
+              size="sm"
+              onPress={() => router.push(`/grading?assessment=${existing.id}`)}
+            />
+          ) : null}
         </View>
       ) : null}
 
@@ -256,60 +313,98 @@ function Builder({
         </View>
       </Card>
 
-      <Card>
-        <View style={styles.section}>
-          <Text variant="heading">{t('staff.assessments.step.questions')}</Text>
-          {locked ? (
-            <Text tone="textMuted">{t('staff.assessments.lockedNote')}</Text>
-          ) : existing ? (
-            <ChapterFilter
-              subjectId={existing.subject_id}
-              value={sel.chapterId ?? ALL}
-              onChange={(chapterId) => setSel((s) => ({ ...s, chapterId }))}
-            />
-          ) : (
-            <ScopePicker
-              classes={scope.classes}
-              value={sel}
-              onChange={onScope}
-              chapter="filter"
-              isStaff={scope.isStaff}
-            />
-          )}
-          {scopeReady ? (
-            <LoadState
-              state={bank.state}
-              title={t('console.assessments.build.loadQuestionsError')}
-              onRetry={bank.reload}
-            />
-          ) : null}
-          {!locked && scopeReady && bank.state?.status === 'ready' ? (
-            <QuestionPicker
-              questions={questions}
-              chapterId={sel.chapterId}
-              picks={draft.picks}
-              onToggle={(q) =>
-                edit((d) => ({ ...d, picks: togglePick(d.picks, q.id, q.default_marks) }))
+      {isFile ? (
+        <Card>
+          <View style={styles.section}>
+            <Text variant="heading">{t('staff.files.step')}</Text>
+            {existing ? null : (
+              <ScopePicker
+                classes={scope.classes}
+                value={sel}
+                onChange={onScope}
+                chapter="none"
+                isStaff={scope.isStaff}
+              />
+            )}
+            <WorksheetCard
+              current={
+                existing
+                  ? { path: existing.file_path, name: existing.file_name, mime: existing.file_mime }
+                  : null
               }
-              isStaff={scope.isStaff}
+              picked={picked}
+              onPick={(p) => {
+                setPicked(p);
+                setError(null);
+              }}
+              fileMarks={draft.fileMarks ?? ''}
+              onFileMarks={(fileMarks) => edit((d) => ({ ...d, fileMarks }))}
+              marksLocked={locked}
+              marksError={marksError}
+              onSubmit={() => save(status)}
             />
-          ) : null}
-        </View>
-      </Card>
+          </View>
+        </Card>
+      ) : null}
 
-      <Card>
-        <View style={styles.section}>
-          <Text variant="heading">{t('staff.assessments.step.paper')}</Text>
-          <PickedList
-            picks={draft.picks}
-            labelFor={labelFor}
-            onChange={(picks) => edit((d) => ({ ...d, picks }))}
-            onSubmit={() => save(status)}
-            locked={locked}
-            badMarksId={badMarksId}
-          />
-        </View>
-      </Card>
+      {isFile ? null : (
+        <>
+          <Card>
+            <View style={styles.section}>
+              <Text variant="heading">{t('staff.assessments.step.questions')}</Text>
+              {locked ? (
+                <Text tone="textMuted">{t('staff.assessments.lockedNote')}</Text>
+              ) : existing ? (
+                <ChapterFilter
+                  subjectId={existing.subject_id}
+                  value={sel.chapterId ?? ALL}
+                  onChange={(chapterId) => setSel((s) => ({ ...s, chapterId }))}
+                />
+              ) : (
+                <ScopePicker
+                  classes={scope.classes}
+                  value={sel}
+                  onChange={onScope}
+                  chapter="filter"
+                  isStaff={scope.isStaff}
+                />
+              )}
+              {scopeReady ? (
+                <LoadState
+                  state={bank.state}
+                  title={t('console.assessments.build.loadQuestionsError')}
+                  onRetry={bank.reload}
+                />
+              ) : null}
+              {!locked && scopeReady && bank.state?.status === 'ready' ? (
+                <QuestionPicker
+                  questions={questions}
+                  chapterId={sel.chapterId}
+                  picks={draft.picks}
+                  onToggle={(q) =>
+                    edit((d) => ({ ...d, picks: togglePick(d.picks, q.id, q.default_marks) }))
+                  }
+                  isStaff={scope.isStaff}
+                />
+              ) : null}
+            </View>
+          </Card>
+
+          <Card>
+            <View style={styles.section}>
+              <Text variant="heading">{t('staff.assessments.step.paper')}</Text>
+              <PickedList
+                picks={draft.picks}
+                labelFor={labelFor}
+                onChange={(picks) => edit((d) => ({ ...d, picks }))}
+                onSubmit={() => save(status)}
+                locked={locked}
+                badMarksId={badMarksId}
+              />
+            </View>
+          </Card>
+        </>
+      )}
 
       {error ? (
         <Text tone="onWrongSoft" accessibilityRole="alert" accessibilityLiveRegion="polite">
@@ -334,13 +429,21 @@ function Builder({
             title={t(ACTION_KEYS[a])}
             variant={a === 'close' ? 'danger' : 'primary'}
             disabled={saving}
-            accessibilityHint={t(ACTION_HINTS[a])}
+            accessibilityHint={t(
+              isFile && a === 'publish' ? 'staff.files.publishHint' : ACTION_HINTS[a],
+            )}
             onPress={() => save(statusAfter(a))}
           />
         ))}
       </View>
       <Text variant="caption" tone="textMuted">
-        {t(status === 'draft' ? 'staff.assessments.publishHint' : 'staff.saveShortcut')}
+        {t(
+          status !== 'draft'
+            ? 'staff.saveShortcut'
+            : isFile
+              ? 'staff.files.publishHint'
+              : 'staff.assessments.publishHint',
+        )}
       </Text>
     </View>
   );
@@ -368,19 +471,10 @@ function EditLoader({ id, scope }: { id: string; scope: ReadyScope }) {
       />
     );
   }
-  if (a.type === 'file') {
-    return (
-      <EmptyState
-        icon="book"
-        title={t('staff.assessments.fileLater')}
-        body={t('staff.assessments.fileLaterBody')}
-      />
-    );
-  }
   // Remount on reload so the form starts from the saved row.
   return (
     <Builder
-      key={`${a.id}:${a.status}:${a.items.length}:${a.title}`}
+      key={`${a.id}:${a.status}:${a.items.length}:${a.title}:${a.file_path ?? ''}`}
       scope={scope}
       existing={a}
       onSaved={res.reload}
