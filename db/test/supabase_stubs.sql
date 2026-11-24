@@ -9,3 +9,6 @@ create table storage.objects (id uuid default gen_random_uuid(), bucket_id text,
 alter table storage.objects enable row level security;
 create function storage.foldername(name text) returns text[] language sql as $$ select string_to_array(name,'/') $$;
 create publication supabase_realtime;
+-- Added in prompt 04 (seed): 009's login sync touches these on real Supabase.
+alter table auth.users add column if not exists banned_until timestamptz;
+create table if not exists auth.sessions (id uuid primary key default gen_random_uuid(), user_id uuid);

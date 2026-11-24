@@ -247,7 +247,7 @@ Seed (details `TEST_PLAN.md` §Seed): 656 students across PG–10 (≈ 2 section
 ### Free-tier budget (verify against the current Supabase pricing page; figures as known in late 2026)
 | Limit | Free tier | Our estimate | Verdict |
 |---|---|---|---|
-| Database | 500 MB | Bank ~30k questions × ~2 KB × ~1.5 versions ≈ 90 MB; attempts ≈ 1 KB/row × (656 × ~0.5/day × 180 days) ≈ 60 MB/yr; existing data small | ⚠️ fits ~2–3 years; needs yearly archive of raw attempts to Storage |
+| Database | 500 MB | Bank ~30k questions × ~2 KB × ~1.5 versions ≈ 90 MB; attempts ≈ 1 KB/row × (656 × ~0.5/day × 180 days) ≈ 60 MB/yr; existing data small | ⚠️ fits ~2–3 years; needs yearly archive of raw attempts to Storage. Measured per-row sizes from the seed (TEST_PLAN SD-1/L-3, 2026-11-24) project ≈ 325 MB for year 1 once online exams and mastery rows are counted: plan the archive/compaction with 019/021, not later |
 | Storage | 1 GB | Images/SVG + file assignments | ⚠️ cap upload size (2 MB), WebP compression |
 | Egress | 5 GB/mo | Bank delta sync + images; video on YouTube | ⚠️ fits only with caching; Learn packs must be cached, not re-fetched |
 | Realtime | 200 concurrent | 40 in exam + teachers | ✅ — but subscribe only on screens that need it (messages, live exam) |

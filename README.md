@@ -122,6 +122,14 @@ npm test            # packages/core unit tests (vitest)
 
 `npm run format` fixes formatting.
 
+## Fake school data for development
+
+`npm run seed:dev` fills a **dev or local** database with a synthetic school
+(656 `TEST-` students, 30 teachers, 22 sections, and, once `db/017` is applied,
+a question bank and 3 months of practice and exam history). `npm run
+seed:remove` deletes all of it. It refuses the production project. Setup and
+details: [`scripts/seed/README.md`](./scripts/seed/README.md).
+
 ## Conventions (see CLAUDE.md)
 
 - Content is data, not code — syllabus lives in the DB.

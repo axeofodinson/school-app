@@ -1,0 +1,28 @@
+{
+  "name": "@school/seed",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Synthetic, removable dev dataset at school scale (prompt 04). Never runs against production.",
+  "type": "module",
+  "scripts": {
+    "seed": "node src/seed.ts",
+    "remove": "node src/remove.ts",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . && prettier --check . --ignore-path ../../.prettierignore"
+  },
+  "dependencies": {
+    "pg": "^8.23.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.0.0",
+    "@types/node": "^22.0.0",
+    "@types/pg": "^8.23.1",
+    "eslint": "^9.0.0",
+    "eslint-config-prettier": "^10.0.0",
+    "prettier": "^3.0.0",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.0.0",
+    "vitest": "^5.1.0"
+  }
+}
