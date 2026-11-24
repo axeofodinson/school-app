@@ -33,7 +33,7 @@ Prompts that don't build features:
 | Create the dev Supabase project + add its keys (`docs/environment.md`) | 04, 62, testing from 03 on (done: project exists) |
 | Paste `scripts/seed/sql/seed-dev.sql` into the dev project's SQL Editor and Run | 03 testing, 10 onward |
 | Backups setup: age key (offline), private `school-app-backups` repo, token + 3 settings, merge to `main`, run once (`docs/backup-restore.md`) | OPS-backup (built), before OPS-remove-legacy |
-| Run migrations in the Supabase SQL Editor when a session hands them over | 05, 13, 20 onward |
+| Run migrations in the Supabase SQL Editor when a session hands them over | 05, 11 (`db/025`), 13, 20 onward |
 | Google OAuth credentials (Google Cloud console) | 05 |
 
 All open questions from `LMS_AUDIT.md` §7 are answered (DECISIONS #22–29).
@@ -57,7 +57,7 @@ Deferred: parents (81) and iOS (82).
 | ✓ | Prompt | Model | Depends on | Blocked by | Notes |
 |---|---|---|---|---|---|
 | [x] | [10 Parity: teacher/admin assessment builder](10-assessment-builder.md) | Opus | 03 | — | Done 2026-11-24: `features/questions` + `features/assessments` (+ shared `features/scope`), core `questions.ts`/`assessments.ts` (+35 tests), `(staff)` routes; RLS smoke AB-1 pass (prod + full order), web e2e AB-2 41/41 with mocks; Android + dev project **unverified** |
-| [ ] | [11 Parity: student takes assessments, offline-safe](11-student-attempts-offline.md) | Opus | 03, 10 | — | |
+| [x] | [11 Parity: student takes assessments, offline-safe](11-student-attempts-offline.md) | Opus | 03, 10 | — | Done 2026-11-24: core `sync/` queue + `attempts.ts` + `tapImage.ts` (+88 tests), `features/attempts` (home, tests, attempt, results), `db/025` draft (student submits only for own class + year); AT-1 smoke pass, AT-2 web e2e 41/41 incl. airplane test; Android + dev project **unverified** (AT-3) |
 | [ ] | [12 Parity: file assessments and grading with audit](12-file-assessments-grading.md) | Opus | 10, 11 | — | |
 | [ ] | [13 Cut-over: retire old flows and close the answer-key hole](13-cutover-close-answer-keys.md) | Opus | 10, 11, 12 | Hassan's go-ahead to publish the new build | |
 
@@ -150,6 +150,7 @@ Deferred: parents (81) and iOS (82).
 | — | [C1 Generate topic content](C1-generate-topic-content.md) | Opus (claude.ai chat) | From Phase 2 on, one topic at a time (pilot: Class 9 Math/Science) |
 
 ## Changelog
+- 2026-11-24: 11 done. `db/025_student_attempts_own_class.sql` is a draft for Hassan to run (dev, then production, after 024). New native module `expo-speech`: rebuild the dev client. Prompt 61 inherits the logout "N not sent" warning; 12 should show attempts that a grade-first `record_grade` turned into duplicates.
 - 2026-11-24: OPS-backup done (DECISIONS #63). Before OPS-remove-legacy, run the backup workflow by hand with `keep_label` so that backup is never pruned. Storage file contents aren't in the dump yet.
 - 2026-11-24: `db/024_profiles_self_update_guard.sql` added as a standalone production fix (DECISIONS #62); Hassan runs it now, ahead of 017.
 - 2026-11-24: 05 done. `db/023_access_tiers.sql` needs 017 first, so it runs at Phase 2 start (or on dev whenever). It also closes a self-promote hole that is live in production today (DECISIONS #60). Prompt 40 must recompute mastery after `link_prep_account()`, and prompts 30–42 should gate features with `canUse(tier, …)`.

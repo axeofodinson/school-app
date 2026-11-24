@@ -52,6 +52,7 @@ import * as WebBrowser from 'expo-web-browser';
 
 import { clearSessionCopies, deviceKV } from '../../lib/storage';
 import { supabase } from '../../lib/supabase';
+import { classifyError } from '../../lib/result';
 import { isSharedMode, loadDeviceSettings, saveSharedMode } from './device-settings';
 
 // '*' so the app works on a server with or without db/023 (access_tier,
@@ -167,6 +168,19 @@ const oauthBackend: OAuthBackend = {
   },
 };
 
+const PROFILE_CACHE = 'cache/profile';
+
+/** The last profile this device loaded for `uid` (offline start), else 'error'. */
+async function cachedProfile(uid: string): Promise<Profile | 'error'> {
+  try {
+    const raw = await userStore(deviceKV, uid).getItem(PROFILE_CACHE);
+    const p = raw ? (JSON.parse(raw) as Profile) : null;
+    return p && typeof p === 'object' ? p : 'error';
+  } catch {
+    return 'error';
+  }
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [initializing, setInitializing] = useState(supabase !== null);
   const [session, setSession] = useState<Session | null>(null);
@@ -189,6 +203,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!supabase) return;
     const seq = ++loadSeq.current;
     setProfile('loading');
+    // Start from this device's copy (instant with no internet), then refresh it.
+    const cached = await cachedProfile(uid);
+    if (seq !== loadSeq.current) return;
+    if (cached !== 'error') setProfile(cached);
     try {
       const { data, error } = await supabase
         .from('profiles')
@@ -196,9 +214,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .eq('id', uid)
         .maybeSingle();
       if (seq !== loadSeq.current) return; // a newer sign-in won
-      setProfile(error ? 'error' : ((data as Profile | null) ?? null));
+      if (!error) {
+        const p = (data as Profile | null) ?? null;
+        setProfile(p);
+        // Remembered in the user's own namespace (wiped at sign-out) so a reopen
+        // with no internet still reaches the student's saved work.
+        if (p)
+          userStore(deviceKV, uid)
+            .setItem(PROFILE_CACHE, JSON.stringify(p))
+            .catch(() => undefined);
+        return;
+      }
+      setProfile(classifyError(error) === 'network' ? cached : 'error');
     } catch {
-      if (seq === loadSeq.current) setProfile('error');
+      if (seq === loadSeq.current) setProfile(cached);
     }
   }, []);
 

@@ -101,7 +101,7 @@ src/, App.js        OLD app (frozen)
   edit a migration that has been applied.
 - Schema changes go in a **new additive, idempotent** `db/NNN_name.sql`
   (`if not exists`, drop-then-create policies). Drafts say `DRAFT — NOT YET RUN`
-  in the header. `017` and `022` are drafts.
+  in the header. `017`, `022`, `023` and `025` are drafts.
 - Every new table: RLS enabled + policies + indexes in the same file.
 - **Dry-run every migration locally** with the harness in `TEST_PLAN.md` DB-1:
   stubs → setup.sql → all migrations → the new one twice → smoke test. Run
