@@ -299,7 +299,7 @@ const GOOGLE = 'Sign in with Google (Preparation only)';
     await page.getByLabel('Admission number').fill('2026-001');
     await page.getByText('Find student', { exact: true }).click();
     check(await seen(page, 'Prep Kid (enrolled)'), 'link screen: finds the student');
-    await page.getByLabel('Reason').fill('Admitted to Class 9');
+    await page.getByLabel('Reason', { exact: true }).fill('Admitted to Class 9');
     await page.getByText('Link and move practice', { exact: true }).click({ timeout: 5000 });
     check(await seen(page, 'Moved 7 attempts, 3 mastery rows and 1 follow-ups'), 'link done');
     check(

@@ -29,6 +29,16 @@ export default function AdminHome() {
         subtitle={t('staff.home.questionsHint')}
         onPress={() => router.push('/questions')}
       />
+      <ListItem
+        title={t('console.grading.title')}
+        subtitle={t('staff.home.gradingHint')}
+        onPress={() => router.push('/grading')}
+      />
+      <ListItem
+        title={t('console.overdue.title')}
+        subtitle={t('staff.home.overdueHint')}
+        onPress={() => router.push('/overdue')}
+      />
       <ListItem title={t('auth.cards.open')} onPress={() => router.push('/qr-cards')} />
       <ListItem
         title={t('console.linkPrep.open')}

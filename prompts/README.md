@@ -33,7 +33,7 @@ Prompts that don't build features:
 | Create the dev Supabase project + add its keys (`docs/environment.md`) | 04, 62, testing from 03 on (done: project exists) |
 | Paste `scripts/seed/sql/seed-dev.sql` into the dev project's SQL Editor and Run | 03 testing, 10 onward |
 | Backups setup: age key (offline), private `school-app-backups` repo, token + 3 settings, merge to `main`, run once (`docs/backup-restore.md`) | OPS-backup (built), before OPS-remove-legacy |
-| Run migrations in the Supabase SQL Editor when a session hands them over | 05, 11 (`db/025`), 13, 20 onward |
+| Run migrations in the Supabase SQL Editor when a session hands them over | 05, 11 (`db/025`), 12 (`db/026`), 13, 20 onward |
 | Google OAuth credentials (Google Cloud console) | 05 |
 
 All open questions from `LMS_AUDIT.md` §7 are answered (DECISIONS #22–29).
@@ -58,7 +58,7 @@ Deferred: parents (81) and iOS (82).
 |---|---|---|---|---|---|
 | [x] | [10 Parity: teacher/admin assessment builder](10-assessment-builder.md) | Opus | 03 | — | Done 2026-11-24: `features/questions` + `features/assessments` (+ shared `features/scope`), core `questions.ts`/`assessments.ts` (+35 tests), `(staff)` routes; RLS smoke AB-1 pass (prod + full order), web e2e AB-2 41/41 with mocks; Android + dev project **unverified** |
 | [x] | [11 Parity: student takes assessments, offline-safe](11-student-attempts-offline.md) | Opus | 03, 10 | — | Done 2026-11-24: core `sync/` queue + `attempts.ts` + `tapImage.ts` (+88 tests), `features/attempts` (home, tests, attempt, results), `db/025` draft (student submits only for own class + year); AT-1 smoke pass, AT-2 web e2e 41/41 incl. airplane test; Android + dev project **unverified** (AT-3) |
-| [ ] | [12 Parity: file assessments and grading with audit](12-file-assessments-grading.md) | Opus | 10, 11 | — | |
+| [x] | [12 Parity: file assessments and grading with audit](12-file-assessments-grading.md) | Opus | 10, 11 | — | Done 2026-11-24: `features/files` (worksheet upload + viewer), `features/grading` (grid via `record_grade`, reason + history, overdue, report card), core `reporting/` + `markdown` + `files` with parity tests vs the old modules (R-1); `db/026` draft (no direct score writes/deletes; GR-1 pass); GR-2 web e2e 62/62; Android + dev project **unverified** (GR-3) |
 | [ ] | [13 Cut-over: retire old flows and close the answer-key hole](13-cutover-close-answer-keys.md) | Opus | 10, 11, 12 | Hassan's go-ahead to publish the new build | |
 
 ### Phase 1b — Rebuild the remaining old features

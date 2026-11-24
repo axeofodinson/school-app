@@ -88,3 +88,59 @@ export function buildRoster<TStudent, TSubmission extends { enrollment_id: strin
     submission: byEnrollment.get(e.id) ?? null,
   }));
 }
+
+// ---- record_grade() errors + the "graded before the attempt" warning --------
+
+/** Stable messages db/013 record_grade() raises; the screen maps each to an i18n key. */
+export const GRADE_RPC_ERRORS = [
+  'reason_required',
+  'not_authorized',
+  'assessment_not_found',
+  'enrollment_class_mismatch',
+  'score_required',
+  'score_out_of_range',
+] as const;
+export type GradeRpcError = (typeof GRADE_RPC_ERRORS)[number];
+
+/** Which record_grade() refusal a PostgREST error message carries, if any. */
+export function gradeRpcError(message: string | null | undefined): GradeRpcError | null {
+  const m = String(message ?? '').toLowerCase();
+  return GRADE_RPC_ERRORS.find((k) => m.includes(k)) ?? null;
+}
+
+/**
+ * True when entering a grade now would shut out the student's online attempt:
+ * record_grade() creates the (enrollment, assessment) submission row, and the
+ * student's later attempt then hits the unique key and is dropped as a
+ * duplicate (its responses are never stored). Applies to question papers that
+ * are still open; a file worksheet has no online attempt to lose.
+ */
+export function gradeBlocksAttempt(
+  assessment: { type: string; status: string },
+  submission: SubmissionLike | null | undefined,
+): boolean {
+  return !submission && assessment.type !== 'file' && assessment.status === 'published';
+}
+
+/** Show a score without trailing-zero noise: 15, 12.5 (numeric(6,2) arrives as "15.00"). */
+export function fmtScore(score: number | string | null | undefined): string {
+  if (score == null || score === '') return '';
+  const n = Number(score);
+  return Number.isFinite(n) ? String(n) : String(score);
+}
+
+/** Roll number ascending (unnumbered last), then name: the grading roster order. */
+export function sortRoster<
+  T extends { roll_number?: number | null; student?: { full_name?: string | null } | null },
+>(rows: readonly T[]): T[] {
+  return [...rows].sort((a, b) => {
+    const ra = a.roll_number ?? null;
+    const rb = b.roll_number ?? null;
+    if (ra == null && rb == null) {
+      return (a.student?.full_name ?? '').localeCompare(b.student?.full_name ?? '');
+    }
+    if (ra == null) return 1;
+    if (rb == null) return -1;
+    return ra - rb;
+  });
+}

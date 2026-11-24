@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import {
+  ASSESSMENT_TYPES,
   buildAssessment,
+  parseFileMarks,
   diffItems,
   emptyAssessment,
   isValidIsoDate,
@@ -142,4 +144,56 @@ describe('pick list', () => {
       upsert: [{ question_id: 'b', marks: 2, sort_order: 0 }],
     });
   });
+});
+
+describe('file worksheets (prompt 12)', () => {
+  const file = (over: Partial<AssessmentDraft> = {}): AssessmentDraft => ({
+    ...emptyAssessment(),
+    title: 'Worksheet 3',
+    type: 'file',
+    ...over,
+  });
+  it('file is a builder type', () => expect(ASSESSMENT_TYPES).toContain('file'));
+  it('draft without a file or marks saves, with no items', () =>
+    expect(buildAssessment(file(), 'draft')).toEqual({
+      fields: {
+        title: 'Worksheet 3',
+        type: 'file',
+        weightage: 0,
+        scheduled_on: null,
+        total_marks: null,
+      },
+      items: [],
+    }));
+  it('publishing needs the file', () =>
+    expect(buildAssessment(file(), 'published')).toEqual({ error: 'needFile' }));
+  it('publishes once the file is there; picks are ignored', () =>
+    expect(
+      buildAssessment(
+        file({ fileMarks: '۲۰', picks: [{ questionId: 'q1', marks: '5' }] }),
+        'published',
+        true,
+      ),
+    ).toEqual({
+      fields: {
+        title: 'Worksheet 3',
+        type: 'file',
+        weightage: 0,
+        scheduled_on: null,
+        total_marks: 20,
+      },
+      items: [],
+    }));
+  it.each(['0', '2.5', 'x', '1001', '-3'])('total marks %s refused', (m) =>
+    expect(buildAssessment(file({ fileMarks: m }), 'draft', true)).toEqual({
+      error: 'fileMarksInvalid',
+    }),
+  );
+  it('parseFileMarks', () => {
+    expect(parseFileMarks('')).toBeNull();
+    expect(parseFileMarks(' 10 ')).toBe(10);
+    expect(parseFileMarks('abc')).toBeUndefined();
+  });
+  it('title still checked first', () =>
+    expect(buildAssessment(file({ title: ' ' }), 'published')).toEqual({ error: 'titleRequired' }));
 });

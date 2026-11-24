@@ -360,7 +360,9 @@
       "errors": {
         "network": "انٹرنیٹ نہیں ہے۔ کنکشن چیک کر کے دوبارہ کوشش کرو۔",
         "unknown": "کچھ گڑبڑ ہو گئی۔ دوبارہ کوشش کرو۔"
-      }
+      },
+      "cognitiveOffline": "Connect to the internet to see this part. // TODO: ur",
+      "cognitiveNone": "Your marked tests don't have question details to show here. // TODO: ur"
     },
     "attendance": {
       "title": "میری حاضری",
@@ -408,6 +410,10 @@
       "body": "تمہارا فون اِس ایپ کو بیک گراؤنڈ میں بند کر سکتا ہے، تو میسج مِس ہو سکتا ہے۔ اِسے ہمیشہ چلنے دو تاکہ میسج وقت پر ملے۔",
       "openSettings": "سیٹنگز کھولو",
       "later": "بعد میں"
+    },
+    "worksheet": {
+      "open": "Worksheet // TODO: ur",
+      "howTo": "Do this worksheet on paper and give it to your teacher. // TODO: ur"
     }
   },
   "console": {
@@ -1316,7 +1322,9 @@
     },
     "home": {
       "questionsHint": "Write and edit questions for your chapters // TODO: ur",
-      "assessmentsHint": "Build tests, quizzes and exams, then publish them // TODO: ur"
+      "assessmentsHint": "Build tests, quizzes and exams, then publish them // TODO: ur",
+      "gradingHint": "Enter and correct grades, with the reason kept // TODO: ur",
+      "overdueHint": "Homework past due, and who hasn't handed it in // TODO: ur"
     },
     "scope": {
       "class": "Class // TODO: ur",
@@ -1405,9 +1413,37 @@
       "published": "“%{title}” is published. // TODO: ur",
       "savedAsDraft": "Saved as a draft, but it couldn't be published. Check it and try Publish again. // TODO: ur",
       "notFound": "Assessment not found // TODO: ur",
-      "notFoundBody": "It may belong to a class you don't teach, or the link is wrong. // TODO: ur",
-      "fileLater": "File worksheets open in the next update // TODO: ur",
-      "fileLaterBody": "This assessment is an uploaded file. Edit it in the school console for now. // TODO: ur"
+      "notFoundBody": "It may belong to a class you don't teach, or the link is wrong. // TODO: ur"
+    },
+    "files": {
+      "step": "2. Class, subject and file // TODO: ur",
+      "limits": "Images, .md, PDF, Word, PowerPoint, Excel or text. Up to 10 MB. // TODO: ur",
+      "replaceNote": "Saving uploads this file in place of the current one. The old file is kept. // TODO: ur",
+      "preview": "Preview // TODO: ur",
+      "hidePreview": "Hide preview // TODO: ur",
+      "marksLocked": "Fixed once published: grades may already use it. // TODO: ur",
+      "publishHint": "Publishing shows the worksheet to students in the class. Choose the file first. // TODO: ur",
+      "errors": {
+        "fileMissing": "Choose a file first. // TODO: ur",
+        "fileEmpty": "That file is empty. Choose another one. // TODO: ur",
+        "fileTooBig": "That file is bigger than 10 MB. Make it smaller (e.g. a lower-quality photo) and try again. // TODO: ur",
+        "fileType": "That kind of file can't be used. Choose an image, .md, PDF, Word, PowerPoint, Excel or text file. // TODO: ur",
+        "pickFailed": "Couldn't open the file picker. Please try again. // TODO: ur"
+      }
+    },
+    "grading": {
+      "gradeThis": "Grade // TODO: ur",
+      "nothingToGrade": "Nothing to grade in this class yet // TODO: ur",
+      "nothingToGradeBody": "Publish a test, homework or worksheet first. Drafts can't be graded. // TODO: ur",
+      "closedChip": "%{title} (closed) // TODO: ur",
+      "noTotal": "No total marks // TODO: ur",
+      "summary": {
+        "one": "%{count} student · %{graded} graded · %{waiting} waiting to be marked // TODO: ur",
+        "other": "%{count} students · %{graded} graded · %{waiting} waiting to be marked // TODO: ur"
+      },
+      "scoreFor": "Score for %{name} // TODO: ur",
+      "saved": "Saved: %{name}, %{score} // TODO: ur",
+      "beforeAttempt": "This student hasn't sent an answer for this test yet. If you grade now, their online answers won't be accepted later. // TODO: ur"
     }
   }
 }

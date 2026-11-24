@@ -29,6 +29,16 @@ export default function TeacherHome() {
         subtitle={t('staff.home.assessmentsHint')}
         onPress={() => router.push('/assessments')}
       />
+      <ListItem
+        title={t('console.grading.title')}
+        subtitle={t('staff.home.gradingHint')}
+        onPress={() => router.push('/grading')}
+      />
+      <ListItem
+        title={t('console.overdue.title')}
+        subtitle={t('staff.home.overdueHint')}
+        onPress={() => router.push('/overdue')}
+      />
     </Screen>
   );
 }

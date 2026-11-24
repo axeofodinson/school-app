@@ -26,6 +26,7 @@ export function StudentHome() {
     todo = home.assessments.filter(
       (a) =>
         a.status === 'published' &&
+        a.type !== 'file' &&
         !done.has(a.id) &&
         !items.some((i) => i.kind === SUBMISSION_KIND && i.key === attemptKey(eid, a.id)),
     ).length;
@@ -56,6 +57,11 @@ export function StudentHome() {
           title={t('student.home.scores')}
           subtitle={t('student.home.scoresNote')}
           onPress={() => router.push('/results')}
+        />
+        <ListItem
+          title={t('student.home.report')}
+          subtitle={t('student.home.reportNote')}
+          onPress={() => router.push('/report')}
         />
       </View>
     </Screen>

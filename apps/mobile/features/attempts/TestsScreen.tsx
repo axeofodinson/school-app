@@ -22,7 +22,10 @@ import type { StudentAssessment } from './api';
 import { StudentHeader } from './Header';
 import { useHome } from './useHome';
 
-const STATE: Record<AttemptState | 'closed', { key: TKey; tone: BadgeTone }> = {
+type RowState = AttemptState | 'closed' | 'worksheet';
+
+const STATE: Record<RowState, { key: TKey; tone: BadgeTone }> = {
+  worksheet: { key: 'student.worksheet.open', tone: 'primary' },
   todo: { key: 'student.assessments.status.todo', tone: 'primary' },
   started: { key: 'student.assessments.status.started', tone: 'primary' },
   waiting: { key: 'student.assessments.status.waiting', tone: 'accent' },
@@ -36,6 +39,7 @@ const TYPE_KEYS: Record<string, TKey> = {
   test: 'student.assessments.types.test',
   exam: 'student.assessments.types.exam',
   quiz: 'student.assessments.types.quiz',
+  file: 'student.assessments.types.file',
 };
 
 export function TestsScreen() {
@@ -97,7 +101,14 @@ export function TestsScreen() {
   }
   const enrollmentId = home.enrollment.id;
   const onServer = new Set(home.submissions.map((s) => s.assessmentId));
-  const rowState = (a: StudentAssessment): AttemptState | 'closed' => {
+  const marked = new Set(
+    home.submissions.filter((x) => x.score != null).map((x) => x.assessmentId),
+  );
+  const rowState = (a: StudentAssessment): RowState => {
+    // A worksheet is done on paper: open while published, done once it is marked.
+    if (a.type === 'file') {
+      return marked.has(a.id) ? 'submitted' : a.status === 'closed' ? 'closed' : 'worksheet';
+    }
     const key = attemptKey(enrollmentId, a.id);
     const s = attemptState({
       onServer: onServer.has(a.id),
@@ -107,10 +118,12 @@ export function TestsScreen() {
     return a.status === 'closed' && (s === 'todo' || s === 'started') ? 'closed' : s;
   };
   const rows = home.assessments.map((a) => ({ a, s: rowState(a) }));
-  const todo = rows.filter((r) => r.s === 'todo' || r.s === 'started' || r.s === 'problem');
+  const todo = rows.filter(
+    (r) => r.s === 'todo' || r.s === 'started' || r.s === 'problem' || r.s === 'worksheet',
+  );
   const rest = rows.filter((r) => !todo.includes(r));
 
-  const row = ({ a, s }: { a: StudentAssessment; s: AttemptState | 'closed' }) => {
+  const row = ({ a, s }: { a: StudentAssessment; s: RowState }) => {
     const meta = [
       a.subjectName,
       TYPE_KEYS[a.type] ? t(TYPE_KEYS[a.type]!) : null,

@@ -9,8 +9,8 @@
 
 import { toAsciiDigits } from './auth/login';
 
-/** Builder types. 'file' worksheets (db/014) are built in prompt 12. */
-export const ASSESSMENT_TYPES = ['assignment', 'test', 'exam', 'quiz'] as const;
+/** Builder types. 'file' is an uploaded worksheet (db/014): no questions, a file instead. */
+export const ASSESSMENT_TYPES = ['assignment', 'test', 'exam', 'quiz', 'file'] as const;
 export type AssessmentType = (typeof ASSESSMENT_TYPES)[number];
 
 export const ASSESSMENT_STATUSES = ['draft', 'published', 'closed'] as const;
@@ -18,10 +18,18 @@ export type AssessmentStatus = (typeof ASSESSMENT_STATUSES)[number];
 
 export const MAX_ITEM_MARKS = 100;
 export const MAX_WEIGHTAGE = 100;
+/** A worksheet's optional total (assessments.total_marks is int). */
+export const MAX_FILE_MARKS = 1000;
 
 /** i18n keys under `console.assessments.errors`. */
 export type AssessmentError =
-  'titleRequired' | 'weightageInvalid' | 'dateInvalid' | 'marksInvalid' | 'needQuestions';
+  | 'titleRequired'
+  | 'weightageInvalid'
+  | 'dateInvalid'
+  | 'marksInvalid'
+  | 'needQuestions'
+  | 'needFile'
+  | 'fileMarksInvalid';
 
 export interface PickedQuestion {
   questionId: string;
@@ -36,6 +44,8 @@ export interface AssessmentDraft {
   /** YYYY-MM-DD or blank. */
   scheduledOn: string;
   picks: PickedQuestion[];
+  /** 'file' worksheets only: total marks as typed (blank = not graded). */
+  fileMarks?: string;
 }
 
 export interface AssessmentFields {
@@ -57,7 +67,7 @@ export type AssessmentBuild =
   | { error: AssessmentError; questionId?: string };
 
 export function emptyAssessment(): AssessmentDraft {
-  return { title: '', type: 'test', weightage: '', scheduledOn: '', picks: [] };
+  return { title: '', type: 'test', weightage: '', scheduledOn: '', picks: [], fileMarks: '' };
 }
 
 export function isAssessmentType(v: unknown): v is AssessmentType {
@@ -97,17 +107,41 @@ export function totalMarks(picks: readonly PickedQuestion[]): number {
   return picks.reduce((sum, p) => sum + (parseItemMarks(p.marks) ?? 0), 0);
 }
 
+/** A worksheet's total marks: blank = none (null), else a whole number 1–1000. Undefined = invalid. */
+export function parseFileMarks(str: string | null | undefined): number | null | undefined {
+  const s = toAsciiDigits(String(str ?? '')).trim();
+  if (!s) return null;
+  if (!/^\d+$/.test(s)) return undefined;
+  const n = Number(s);
+  return n >= 1 && n <= MAX_FILE_MARKS ? n : undefined;
+}
+
 /**
  * Validate for saving at `target` status. A draft may be saved with no
- * questions (fill it in later); published/closed need at least one.
+ * questions (fill it in later); published/closed need at least one. A 'file'
+ * worksheet has no questions: it needs its file (`hasFile`) before publishing.
  */
-export function buildAssessment(d: AssessmentDraft, target: AssessmentStatus): AssessmentBuild {
+export function buildAssessment(
+  d: AssessmentDraft,
+  target: AssessmentStatus,
+  hasFile = false,
+): AssessmentBuild {
   const title = d.title.trim();
   if (!title) return { error: 'titleRequired' };
   const weightage = parseWeightage(d.weightage);
   if (weightage === null) return { error: 'weightageInvalid' };
   const date = toAsciiDigits(d.scheduledOn).trim();
   if (date && !isValidIsoDate(date)) return { error: 'dateInvalid' };
+
+  if (d.type === 'file') {
+    const total = parseFileMarks(d.fileMarks);
+    if (total === undefined) return { error: 'fileMarksInvalid' };
+    if (target !== 'draft' && !hasFile) return { error: 'needFile' };
+    return {
+      fields: { title, type: 'file', weightage, scheduled_on: date || null, total_marks: total },
+      items: [],
+    };
+  }
 
   const items: AssessmentItemRow[] = [];
   const seen = new Set<string>();
