@@ -368,6 +368,13 @@ export const urduTextRules = {
   controlsUseMinHeight: true,
   /** Android: avoid top/bottom clipping of tall glyphs. */
   androidIncludeFontPadding: false,
+  /**
+   * Nastaliq glyphs overhang their advance box: the last letter's tail (ں, ے) sticks out
+   * past the line end, and dots/marks past the top and bottom. Android (and web with
+   * numberOfLines) clips at the text box, so Urdu text gets this much inner padding, in em.
+   * Found on Android in the first preview build (test T-1, 2026-11-24).
+   */
+  overhangPadding: { x: 0.3, y: 0.12 },
   /** Digits: Western 0–9 in both languages (maths consistency with textbooks). Decided by Hassan (DECISIONS #37). */
   digits: 'western',
   /** Maths, numbers with units and Latin runs are isolated LTR inside RTL text (U+2066 … U+2069). */
