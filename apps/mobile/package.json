@@ -6,7 +6,7 @@
   "scripts": {
     "start": "expo start",
     "web": "expo start --web",
-    "android": "expo start --android",
+    "android": "expo run:android",
     "export:web": "expo export -p web",
     "typecheck": "tsc --noEmit",
     "lint": "eslint . && prettier --check . --ignore-path ../../.prettierignore"
@@ -19,6 +19,7 @@
     "@school/core": "*",
     "@supabase/supabase-js": "^2.119.0",
     "expo": "~58.0.26",
+    "expo-build-properties": "~58.0.12",
     "expo-camera": "~58.0.14",
     "expo-constants": "~58.0.16",
     "expo-dev-client": "~58.0.21",

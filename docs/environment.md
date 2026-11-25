@@ -57,6 +57,14 @@ and `app.json` with the same project id; DECISIONS #40). From the repo root they
 the old app. Then `eas build -p android --profile preview` (see `eas.json`; preview outputs an
 installable APK).
 
+**App size (DECISIONS #82).** Builds include three ABIs (`armeabi-v7a`, `arm64-v8a`,
+`x86_64`), compress native libraries and run R8, set by `expo-build-properties` in
+`apps/mobile/app.json`. The preview APK is one universal file for every device, so it is
+the biggest form of the app; the Play Store gets the `production` AAB and serves each
+device only its own ABI, which is usually well under half the APK. To check a build's
+size, download the APK and run `unzip -lv app.apk | sort -k3 -n | tail` (biggest
+entries last).
+
 ## Note
 
 The running Expo app reaches Supabase from the **phone/simulator**, not from this
