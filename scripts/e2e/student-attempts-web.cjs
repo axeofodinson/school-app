@@ -158,6 +158,9 @@ const db = {
       graded_at: '2026-10-03T09:00:00Z',
     },
   ],
+  // The student layout loads the inbox (prompt 15).
+  messages: [],
+  message_reads: [],
 };
 
 const net = { down: false, loseNextFor: 'a-lost' };

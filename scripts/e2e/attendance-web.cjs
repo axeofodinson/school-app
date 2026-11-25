@@ -138,6 +138,9 @@ const db = {
   assessments: [],
   assessment_questions: [],
   submissions: [],
+  // The student layout loads the inbox (prompt 15).
+  messages: [],
+  message_reads: [],
 };
 const rpcCalls = [];
 const writes = [];

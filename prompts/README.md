@@ -66,7 +66,7 @@ Deferred: parents (81) and iOS (82).
 | ✓ | Prompt | Model | Depends on | Blocked by | Notes |
 |---|---|---|---|---|---|
 | [x] | [14 Rebuild: attendance](14-attendance.md) | Opus | 13 | — | Code done 2026-11-25: `features/attendance` (teacher marks a class in one save, offline queue, past days with reason + history; admin day/class summaries; student calendar + %), core `attendance.ts` (+29 tests), `db/028` draft (`record_attendance`, audit history, guard; independent of 017/018); AD-1 SQL pass, AD-2 web e2e 68/68; **dev project + Android unverified (AD-3): Hassan runs 028 on dev first** |
-| [ ] | [15 Rebuild: messaging and push notifications](15-messaging-push.md) | Opus | 13 | — | |
+| [x] | [15 Rebuild: messaging and push notifications](15-messaging-push.md) | Opus | 13 | — | Code done 2026-11-25: `features/messages` (student inbox with server read state, Realtime toast while foregrounded, Android push + tap → inbox; teacher/admin compose to class / student / whole school with reach count and "Read by N"), core `messages.ts` (+9 tests) + Edge Function logic tests (+5), `db/029` draft (read state, shared-device token hand-over, once-only push, messages immutable; independent of 017/018); hardened `send-message-push` (reads the message from the DB). MS-1 SQL pass, MS-2 web e2e 43/43 (toast in ~150 ms); AD-2/AT-2/GR-2/AB-2/A-2 still pass. **Unverified:** dev project with 029, real push on Android (needs Firebase setup, docs/environment.md), MS-3 |
 | [ ] | [16 Rebuild: pre-reader tap-image questions (PG / young kids)](16-prereader.md) | Opus | 11 | — | |
 
 ### Phase 2 — Curriculum and question bank

@@ -53,6 +53,7 @@ import * as WebBrowser from 'expo-web-browser';
 import { clearSessionCopies, deviceKV } from '../../lib/storage';
 import { supabase } from '../../lib/supabase';
 import { classifyError } from '../../lib/result';
+import { unregisterPush } from '../messages/push';
 import { isSharedMode, loadDeviceSettings, saveSharedMode } from './device-settings';
 
 // '*' so the app works on a server with or without db/023 (access_tier,
@@ -280,6 +281,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     async (reason: SignOutReason = 'user') => {
       const uid = userId;
       setLastSignOut(reason);
+      // Shared phones: stop this install's push for the student who is leaving
+      // (db/029). Needs the session, so before sign-out, and never waits long
+      // when offline.
+      await Promise.race([unregisterPush(), new Promise((r) => setTimeout(r, 1500))]).catch(
+        () => undefined,
+      );
       // Local scope: removes this device's session first, never depends on the
       // network, and doesn't sign the student out of their own phone.
       await supabase?.auth.signOut({ scope: 'local' }).catch(() => undefined);

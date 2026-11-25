@@ -178,6 +178,9 @@ const db = {
     },
   ],
   submission_grade_edits: [],
+  // The student layout loads the inbox (prompt 15).
+  messages: [],
+  message_reads: [],
 };
 const storage = new Map(); // path -> { body: Buffer, type }
 const rpcCalls = [];

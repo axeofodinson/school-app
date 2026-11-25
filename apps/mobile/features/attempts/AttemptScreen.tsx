@@ -20,6 +20,7 @@ import { Badge, Button, EmptyState, ExamMode, Screen, SkeletonLines, Text } from
 import { space } from '../../ui/tokens';
 import { useAuth } from '../auth/AuthProvider';
 import { FileViewer } from '../files/FileViewer';
+import { useHoldMessageToasts } from '../messages/MessagesProvider';
 import { useResult } from '../scope/useResult';
 import { loadPaper, type StudentAssessment } from './api';
 import { useAttemptSync, useQueuedAttempt, type SubmitResult } from './AttemptSync';
@@ -106,11 +107,18 @@ export function AttemptScreen() {
     // Formal tests and exams: nothing moves except the save indicator (CLAUDE.md motion rules).
     <ExamMode active={assessment.type === 'exam' || assessment.type === 'test'}>
       <Screen>
+        {/* A message arriving mid-test waits in the inbox instead of popping up. */}
+        <HoldMessageToasts active={assessment.type === 'exam' || assessment.type === 'test'} />
         {header}
         <Attempt enrollmentId={enrollment.id} assessment={assessment} onServer={onServer} />
       </Screen>
     </ExamMode>
   );
+}
+
+function HoldMessageToasts({ active }: { active: boolean }) {
+  useHoldMessageToasts(active);
+  return null;
 }
 
 function BackToTests() {

@@ -11,3 +11,4 @@ export * from './markdown';
 export * from './files';
 export * from './autoMark';
 export * from './attendance';
+export * from './messages';

@@ -41,6 +41,7 @@ Targets from one codebase:
 | Examinations | teacher launch, live view, student exam | paper/shuffle, timer display | assessments, exam_sessions, exam_session_answers, exam_events |
 | Worksheets & Assignments | print + interactive | A/B shuffle | assessments, submissions |
 | STEM Projects | catalogue, teams, rubric scoring, evidence upload | rubric totals | projects, project_rubric_criteria, project_teams(+_members), project_scores; assessments type `project` |
+| Messaging | inbox, live toast (Realtime, foreground only), Android push registration, compose + sent list | compose rules, inbox merge (`messages.ts`) | messages, message_reads, push_tokens; Edge Function `send-message-push` (webhook on insert) |
 | Analytics | dashboards | — | nightly rollups |
 | Offline Sync | sync status UI | durable queue, storage adapters | idempotent keys only |
 

@@ -436,7 +436,14 @@
         "school": "School",
         "class": "Your class",
         "student": "For you"
-      }
+      },
+      "markAllRead": "Mark all as read",
+      "offline": "You’re offline. These are the messages saved on this phone.",
+      "newCount": {
+        "one": "%{count} new",
+        "other": "%{count} new"
+      },
+      "unsupported": "Messages pop up here while the app is open."
     },
     "battery": {
       "title": "Keep your messages coming",
@@ -1044,7 +1051,8 @@
         "searchStudents": "Search by name or admission number",
         "changeStudent": "Change",
         "send": "Send",
-        "sending": "Sending…"
+        "sending": "Sending…",
+        "count": "%{n} / %{max}"
       },
       "errors": {
         "titleRequired": "Enter a title.",
@@ -1053,7 +1061,20 @@
         "studentRequired": "Choose a student to send to.",
         "notAllowed": "You can only message classes and students you teach.",
         "network": "No internet connection. Check your network and try again.",
-        "unknown": "Couldn’t send. Please try again."
+        "unknown": "Couldn’t send. Please try again.",
+        "titleLong": "Keep the title to %{max} characters.",
+        "bodyLong": "Keep the message to %{max} characters."
+      },
+      "sentTitle": "Sent messages",
+      "sentEmpty": "Nothing sent yet. Messages you send show up here, with how many students have read them.",
+      "sentLoadError": "Couldn’t load the messages you sent.",
+      "readBy": {
+        "one": "Read by %{count} student",
+        "other": "Read by %{count} students"
+      },
+      "reach": {
+        "one": "Goes to %{count} student",
+        "other": "Goes to %{count} students"
       }
     },
     "dev": {
@@ -1360,7 +1381,8 @@
       "gradingHint": "Enter and correct grades, with the reason kept",
       "overdueHint": "Homework past due, and who hasn't handed it in",
       "attendanceHint": "Mark today's attendance in a few taps, or fix a past day",
-      "attendanceSummaryHint": "Each class's day, and each student's month"
+      "attendanceSummaryHint": "Each class's day, and each student's month",
+      "messagesHint": "Send news to a class, one student or the whole school"
     },
     "scope": {
       "class": "Class",
