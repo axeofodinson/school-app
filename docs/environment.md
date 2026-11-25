@@ -138,6 +138,14 @@ once per Expo project (dev and production builds use the same Firebase app):
 
 Without steps 1–3 the app still builds and runs; push registration just fails quietly.
 
+## ElevenLabs read-aloud clips (prompt 16)
+The generator (`scripts/audio/README.md`) runs in the **`school-app`** cloud
+environment, which holds `ELEVENLABS_API_KEY`. That environment also needs the
+dev project's `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` as secrets, and its
+network policy must allow `api.elevenlabs.io` (the default Expo environment
+blocks it: `CONNECT tunnel failed, 403`, 2026-11-25). Dev first; production only
+with `--write --project <prod ref>` after the clips have been listened to.
+
 ## Backups (GitHub Actions settings)
 
 Nightly backups and the keep-alive read these `school-app` repo settings

@@ -64,3 +64,4 @@ Thumbs.db
 .idea/
 .vscode/*
 !.vscode/extensions.json
+scripts/audio/out/

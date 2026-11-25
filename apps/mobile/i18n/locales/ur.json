@@ -311,8 +311,14 @@
       "offline": "آف لائن — تمہارا محفوظ ٹیسٹ چل رہا ہے",
       "celebrate": {
         "title": "شاباش! سب ہو گیا!",
-        "saved": "تمہارے اسٹار محفوظ ہو گئے!"
-      }
+        "saved": "تمہارے اسٹار محفوظ ہو گئے!",
+        "queued": "Saved on this device. It will send by itself. // TODO: ur"
+      },
+      "back": "Back // TODO: ur",
+      "progress": "Question %{number} of %{total} // TODO: ur",
+      "picked": "Picked // TODO: ur",
+      "listenFirst": "Tap the speaker to hear the question // TODO: ur",
+      "done": "All done? Finish here // TODO: ur"
     },
     "results": {
       "title": "میرے نمبر",
@@ -1438,7 +1444,14 @@
       "readOnlyType": "Picture questions for young learners can't be edited here yet. You can still add them to an assessment. // TODO: ur",
       "readOnlyInUse": "This question is in a published assessment, so it can't change. Make a copy to write a new version. // TODO: ur",
       "readOnlyOthers": "Another teacher wrote this question. Make a copy if you want your own version. // TODO: ur",
-      "backToList": "All questions // TODO: ur"
+      "backToList": "All questions // TODO: ur",
+      "audio": {
+        "title": "Read-aloud clip // TODO: ur",
+        "playEn": "Play English clip // TODO: ur",
+        "playUr": "Play Urdu clip // TODO: ur",
+        "none": "No recorded clip yet. Students hear the device voice. // TODO: ur",
+        "failed": "This clip couldn’t play. Check the internet and try again. // TODO: ur"
+      }
     },
     "assessments": {
       "new": "New assessment // TODO: ur",

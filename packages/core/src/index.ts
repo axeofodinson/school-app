@@ -12,3 +12,5 @@ export * from './files';
 export * from './autoMark';
 export * from './attendance';
 export * from './messages';
+export * from './prereaderAudio';
+export * from './readAloud';

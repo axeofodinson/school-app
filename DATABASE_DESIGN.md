@@ -104,7 +104,11 @@ sanitised and within `visualBudget` (≤ 60 KB, ≤ 400 elements). No schema cha
 Exam items may contain only static `figure`/`chart` (no scene, widget, video).
 `body.audio` (read-aloud, mainly PG–5): files are generated once (ElevenLabs) or
 recorded, stored in Storage, part of the item version (new audio = new version),
-and included in offline packs. Bucket and generation step: prompt 16.
+and included in offline packs. Shape: `{"en": path, "ur": path}`, paths in the
+private `question-audio` bucket (`db/030`), content-addressed
+`{question_id}/{fingerprint}.{locale}.mp3` (fingerprint = text + voice + model,
+`packages/core/src/prereaderAudio.ts`). Made by `scripts/audio/generate-prereader-audio.mjs`
+(prompt 16, DECISIONS #90–91). Legacy `body.prompt_audio` (db/006) is still read.
 
 **Import file (one per topic):**
 ```json

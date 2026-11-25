@@ -7,6 +7,8 @@ import {
   answeredCount,
   attemptKey,
   buildResponses,
+  clipRefs,
+  isPreReaderSet,
   pruneAnswers,
   type AnswerValue,
   type Answers,
@@ -21,6 +23,9 @@ import { space } from '../../ui/tokens';
 import { useAuth } from '../auth/AuthProvider';
 import { FileViewer } from '../files/FileViewer';
 import { useHoldMessageToasts } from '../messages/MessagesProvider';
+import { PreReaderDone } from '../prereader/Celebration';
+import { PreReaderPaper } from '../prereader/PreReaderPaper';
+import { prefetchClips } from '../prereader/readAloud';
 import { useResult } from '../scope/useResult';
 import { loadPaper, type StudentAssessment } from './api';
 import { useAttemptSync, useQueuedAttempt, type SubmitResult } from './AttemptSync';
@@ -150,6 +155,15 @@ function Attempt({
 
   const paper = useResult(`p:${assessment.id}`, () => loadPaper(assessment.id, userStorage));
   const questions = paper.state?.status === 'ready' ? paper.state.data.questions : null;
+  const fromCache = paper.state?.status === 'ready' && paper.state.data.fromCache;
+  const preReader = !!questions && isPreReaderSet(questions);
+
+  // While online, keep this paper's read-aloud clips on the device so they play offline.
+  useEffect(() => {
+    if (!questions || fromCache) return;
+    const refs = clipRefs(questions.map((q) => q.body));
+    if (refs.length) prefetchClips(refs).catch(() => undefined);
+  }, [questions, fromCache]);
 
   const [answers, setAnswers] = useState<Answers | null>(null); // null = draft not read yet
   const [saved, setSaved] = useState(false);
@@ -212,6 +226,13 @@ function Attempt({
     setResult(r);
   }, [questions, answers, drafts, key, submit, enrollmentId, assessment.id]);
 
+  // A pre-reader paper just finished: celebrate (full tier) and say where the work is.
+  if (
+    preReader &&
+    (result === 'submitted' || (result === 'queued' && queued?.state !== 'rejected'))
+  ) {
+    return <PreReaderDone queued={result === 'queued' && !!queued} action={<BackToTests />} />;
+  }
   // Already on the server (before this visit, or after a queued send went through).
   if (onServer || result === 'submitted' || (result && !queued && result !== 'error')) {
     return (
@@ -271,16 +292,53 @@ function Attempt({
   const done = answeredCount(qs, a);
   const blank = qs.length - done;
 
+  const status = (
+    <>
+      <Text tone="textMuted" accessibilityLiveRegion="polite">
+        {t('student.attempt.answeredSummary', { answered: done, total: qs.length })}
+        {saved ? ` · ${t('student.attempt.draftSaved')}` : ''}
+      </Text>
+      {confirmBlank ? (
+        <Text tone="wrong" accessibilityLiveRegion="assertive">
+          {t('student.attempt.blankWarning', { count: blank })}
+        </Text>
+      ) : null}
+      {result === 'error' ? <Text tone="wrong">{t('student.attempt.errors.unknown')}</Text> : null}
+    </>
+  );
+  const finish = () => {
+    if (blank > 0 && !confirmBlank) setConfirmBlank(true);
+    else doSubmit();
+  };
+  const offlineBadge = paper.state.data.fromCache ? (
+    <Badge
+      icon="cloudOff"
+      label={t('student.attempt.offlineBanner')}
+      tone="accent"
+      style={styles.start}
+    />
+  ) : null;
+
+  if (preReader) {
+    return (
+      <View style={styles.wrap}>
+        {offlineBadge}
+        <PreReaderPaper
+          questions={qs}
+          answers={a}
+          onAnswer={setAnswer}
+          onFinish={finish}
+          busy={busy}
+          footer={<View style={styles.footer}>{status}</View>}
+          finishLabel={confirmBlank ? t('student.attempt.submitAnyway') : undefined}
+        />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.wrap}>
-      {paper.state.data.fromCache ? (
-        <Badge
-          icon="cloudOff"
-          label={t('student.attempt.offlineBanner')}
-          tone="accent"
-          style={styles.start}
-        />
-      ) : null}
+      {offlineBadge}
       {qs.map((q, i) => (
         <QuestionCard
           key={q.id}
@@ -292,18 +350,7 @@ function Attempt({
         />
       ))}
       <View style={styles.footer}>
-        <Text tone="textMuted" accessibilityLiveRegion="polite">
-          {t('student.attempt.answeredSummary', { answered: done, total: qs.length })}
-          {saved ? ` · ${t('student.attempt.draftSaved')}` : ''}
-        </Text>
-        {confirmBlank ? (
-          <Text tone="wrong" accessibilityLiveRegion="assertive">
-            {t('student.attempt.blankWarning', { count: blank })}
-          </Text>
-        ) : null}
-        {result === 'error' ? (
-          <Text tone="wrong">{t('student.attempt.errors.unknown')}</Text>
-        ) : null}
+        {status}
         <Button
           title={
             busy
@@ -314,10 +361,7 @@ function Attempt({
           }
           size="lg"
           loading={busy}
-          onPress={() => {
-            if (blank > 0 && !confirmBlank) setConfirmBlank(true);
-            else doSubmit();
-          }}
+          onPress={finish}
         />
       </View>
     </View>
