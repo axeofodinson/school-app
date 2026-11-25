@@ -561,15 +561,22 @@ async function studentLogin(page) {
     'F opens full screen',
   );
   await page.screenshot({ path: SHOTS + '/reader-full-1280.png' });
+<<<<<<< HEAD
   // The reader hands focus back from the YouTube frame 60 ms after opening; no
   // person presses Esc faster than that.
   await page.waitForTimeout(200);
+=======
+  // Let the frame load and take focus first, as it would for a learner, then
+  // wait for the state rather than a fixed delay.
+  await page.waitForTimeout(1500);
+>>>>>>> origin/main
   await page.keyboard.press('Escape');
-  await page.waitForTimeout(300);
-  check(
-    (await page.getByRole('button', { name: 'Leave full screen' }).count()) === 0,
-    'Esc leaves full screen (even on a playing video)',
-  );
+  let left = false;
+  for (let i = 0; i < 25 && !left; i++) {
+    left = (await page.getByRole('button', { name: 'Leave full screen' }).count()) === 0;
+    if (!left) await page.waitForTimeout(200);
+  }
+  check(left, 'Esc leaves full screen (even on a playing video)');
   await page.keyboard.press('End');
   await page.getByText('Finish', { exact: true }).filter({ visible: true }).first().click();
   check(await seen(page, 'Lesson done!'), 'finish card');
@@ -733,9 +740,19 @@ async function studentLogin(page) {
       (await sendBtn.getAttribute('aria-disabled')) === 'true',
     'send back needs a reason',
   );
+<<<<<<< HEAD
   // Let the sheet finish opening before Esc (a key pressed mid-open can be lost).
   await t.waitForTimeout(300);
   await t.keyboard.press('Escape');
+=======
+  // Close the sheet with its own button and wait until it is gone (a key press
+  // can land before the sheet is ready on a busy machine).
+  await t.getByRole('button', { name: 'Close' }).last().click();
+  await t
+    .getByRole('button', { name: 'Close' })
+    .waitFor({ state: 'detached', timeout: 10000 })
+    .catch(() => undefined);
+>>>>>>> origin/main
   await t.getByRole('button', { name: 'Approve' }).click();
   check(await seen(t, 'Approved. Students can read it now.'), 'approve toast');
   check(

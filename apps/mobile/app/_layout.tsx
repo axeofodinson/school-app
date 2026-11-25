@@ -11,6 +11,7 @@ import { I18nProvider, useI18n } from '../i18n';
 import {
   MotionProvider,
   SoundProvider,
+  SchemeProvider,
   ThemeProvider,
   ToastProvider,
   useMotion,
@@ -90,17 +91,19 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <I18nProvider>
-          <ThemeProvider scheme="system">
-            <MotionProvider>
-              <SoundProvider>
-                <ToastProvider>
-                  <AuthProvider>
-                    <Root />
-                  </AuthProvider>
-                </ToastProvider>
-              </SoundProvider>
-            </MotionProvider>
-          </ThemeProvider>
+          <SchemeProvider>
+            <ThemeProvider>
+              <MotionProvider>
+                <SoundProvider>
+                  <ToastProvider>
+                    <AuthProvider>
+                      <Root />
+                    </AuthProvider>
+                  </ToastProvider>
+                </SoundProvider>
+              </MotionProvider>
+            </ThemeProvider>
+          </SchemeProvider>
         </I18nProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

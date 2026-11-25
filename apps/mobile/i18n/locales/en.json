@@ -129,6 +129,10 @@
       "sound": "Sounds",
       "soundOn": "On",
       "soundOff": "Off",
+      "theme": "Theme",
+      "themeLight": "Light",
+      "themeDark": "Dark",
+      "themeHelp": "Light is the default. Dark only turns on if you pick it here.",
       "soundHelp": "Little sounds and spoken prompts for young learners. Never during tests and exams."
     },
     "cards": {
@@ -2164,6 +2168,202 @@
         "retired": "This lesson is retired.",
         "notReady": "Lesson approval isn't switched on yet: run db/033 on this project.",
         "forbidden": "Only a teacher of this subject (or an admin) can decide on this lesson."
+      }
+    },
+    "review": {
+      "title": "Review queue",
+      "kicker": "Check before students see it",
+      "subtitle": "One question at a time, both languages side by side. Approve it for where it can be used, fix it, or send it back.",
+      "navHint": "Approve, fix or send back imported questions",
+      "notReady": "Not switched on yet",
+      "notReadyBody": "The review queue needs the content tables. Ask Hassan to run db/017, db/023, db/031 and db/032, then open this again.",
+      "filters": {
+        "topic": "Topic",
+        "allTopics": "All topics",
+        "batch": "Import",
+        "allBatches": "All imports",
+        "batchItem": "%{file} · %{count}"
+      },
+      "tabs": {
+        "label": "Which questions",
+        "to_review": "To review (%{n})",
+        "changes": "Changes asked (%{n})",
+        "approved": "Approved (%{n})",
+        "retired": "Rejected (%{n})"
+      },
+      "progress": "%{done} reviewed · %{left} left",
+      "progressLabel": "Review progress",
+      "listLabel": "Questions",
+      "qid": "Q-%{id}",
+      "noStem": "(no question text)",
+      "origin": {
+        "ai": "AI draft",
+        "ai_edited": "AI, edited",
+        "human": "Teacher"
+      },
+      "badges": {
+        "needsUrdu": "Urdu missing",
+        "changes": "Changes asked",
+        "readOnly": "Read only",
+        "untagged": "No concept",
+        "inUse": "On a paper",
+        "audio": "Has audio"
+      },
+      "select": "Select %{id} for bulk approve",
+      "bulk": {
+        "selected": "%{n} selected",
+        "approve": "Approve %{n}",
+        "clear": "Clear",
+        "title": "Approve %{n} questions?",
+        "body": "They'll be approved for: %{scopes}. You haven't opened each one, so only do this for questions you've already checked.",
+        "confirm": "Approve all %{n}",
+        "done": "%{n} approved.",
+        "skipped": "%{n} skipped (not yours, no concept, or changed meanwhile)."
+      },
+      "pane": {
+        "pickOne": "Pick a question",
+        "pickOneBody": "Choose one from the list, or press J to start at the top.",
+        "meta": "%{concept} · %{level} · difficulty %{difficulty}",
+        "version": "Version %{v}",
+        "source": "Source: %{book} p. %{page}",
+        "sourceNoPage": "Source: %{book}",
+        "english": "English",
+        "urdu": "اردو",
+        "missing": "Not written yet",
+        "answer": "Answer",
+        "answerIs": "Answer: %{value}",
+        "also": "Also accepted: %{list}",
+        "true": "True",
+        "false": "False",
+        "explanation": "Explanation",
+        "whyWrong": "Why %{key} is wrong",
+        "audio": "Read-aloud clips",
+        "lastChanges": "Changes asked: %{notes}",
+        "lastApproved": "Approved for: %{scopes}",
+        "noConcept": "No concept yet. Only an admin can tag it; until then nobody can approve it.",
+        "noConceptStaff": "No concept yet. Edit it and pick one before approving.",
+        "notYours": "You can read this question, but deciding on it is for teachers of its subject.",
+        "inUse": "It's on a published paper, so it can't be edited here (old papers read it as it is).",
+        "retired": "Rejected: %{notes}",
+        "checks": "Checks",
+        "checkAnswer": "The answer is right (V)",
+        "checkUrdu": "The Urdu reads naturally (U)",
+        "urduGaps": "Urdu missing: %{list}",
+        "gapStem": "question",
+        "gapOptions": "%{n} options",
+        "gapExplanation": "explanation",
+        "scopes": "Approve for",
+        "scopesHint": "Keys 1 to 4. Exam is never ticked for you.",
+        "approve": "Approve (A)",
+        "edit": "Edit (E)",
+        "changes": "Ask for changes (C)",
+        "reject": "Reject (R)",
+        "blocked": {
+          "cantReview": "Not a subject you teach.",
+          "retired": "Already rejected.",
+          "noConcept": "Tag a concept first.",
+          "noScopes": "Tick at least one place it can be used.",
+          "answerUnchecked": "Tick “The answer is right” first (V)."
+        },
+        "back": "Back to the list"
+      },
+      "scope": {
+        "learn": "Learn",
+        "practice": "Practice",
+        "exam": "Exam",
+        "worksheet": "Worksheet"
+      },
+      "verdict": {
+        "approve": "Approved",
+        "request_changes": "Sent back",
+        "reject": "Rejected",
+        "edited": "Saved as version %{v}"
+      },
+      "reason": {
+        "titleReject": "Reject this question",
+        "titleChanges": "Ask for changes",
+        "bodyReject": "It's kept (never deleted) but won't be used. Say why, so whoever imports the next file can do better.",
+        "bodyChanges": "It goes to “Changes asked” with your note. Anyone who teaches it can fix it and approve it.",
+        "label": "Why",
+        "placeholderReject": "e.g. the answer is wrong; duplicate of another question",
+        "placeholderChanges": "e.g. option C's Urdu is a word-for-word translation",
+        "required": "Write a short reason first.",
+        "confirmReject": "Reject",
+        "confirmChanges": "Send back",
+        "cancel": "Cancel"
+      },
+      "editor": {
+        "title": "Edit question",
+        "note": "Saving makes a new version. Any approval is dropped, so approve it again afterwards.",
+        "stemEn": "Question (English)",
+        "stemUr": "Question (Urdu)",
+        "option": "Option %{key}",
+        "optionEn": "Option %{key} (English)",
+        "optionUr": "Option %{key} (Urdu)",
+        "correct": "Correct answer",
+        "markCorrect": "%{key} is correct",
+        "answer": "Answer",
+        "also": "Also accept (one per line)",
+        "explEn": "Explanation (English)",
+        "explUr": "Explanation (Urdu)",
+        "level": "Thinking level",
+        "difficulty": "Difficulty",
+        "concept": "Concept",
+        "noConcepts": "This chapter has no concepts yet. Add one in Curriculum first.",
+        "save": "Save new version",
+        "cancel": "Cancel",
+        "notEditable": "This kind of question is edited in the question bank.",
+        "nothingChanged": "Nothing changed.",
+        "errors": {
+          "stemRequired": "Write the question in at least one language.",
+          "optionsTooFew": "Keep at least two options.",
+          "optionEmpty": "Every option needs text.",
+          "correctMissing": "Pick the correct answer.",
+          "numericInvalid": "The answer must be a number.",
+          "shortRequired": "Write the answer.",
+          "notEditable": "This kind of question is edited in the question bank.",
+          "conceptRequired": "Pick a concept."
+        }
+      },
+      "help": {
+        "open": "Keyboard shortcuts (?)",
+        "title": "Keyboard shortcuts",
+        "body": "On a computer the whole queue works from the keyboard. Shortcuts pause while you type in a box.",
+        "rows": {
+          "nav": "J / K or ↓ / ↑: next / previous",
+          "approve": "A: approve for the ticked places",
+          "edit": "E: edit (makes a new version)",
+          "reject": "R: reject (asks why)",
+          "changes": "C: ask for changes (asks why)",
+          "scopes": "1 2 3 4: Learn, Practice, Exam, Worksheet",
+          "checks": "V: answer is right · U: Urdu reads naturally",
+          "select": "X: select for bulk approve",
+          "save": "Ctrl + Enter: save an edit · Esc: close"
+        },
+        "close": "Close"
+      },
+      "empty": {
+        "to_review": "Nothing to review",
+        "to_reviewBody": "Import questions to get started.",
+        "changes": "Nothing sent back",
+        "changesBody": "Questions you ask changes for wait here.",
+        "approved": "Nothing approved yet",
+        "approvedBody": "Approved questions show here.",
+        "retired": "Nothing rejected",
+        "retiredBody": "Rejected questions are kept here, never deleted.",
+        "allDone": "All done here",
+        "allDoneBody": "You reviewed %{n} this time. Pick another topic, or import the next file.",
+        "goImport": "Import questions"
+      },
+      "errors": {
+        "loadError": "The review queue couldn't load.",
+        "stale": "Someone changed this question a moment ago. It's reloaded: check it again.",
+        "reason": "Write a short reason first.",
+        "retired": "This question was already rejected.",
+        "inUse": "It's on a published paper, so it can't be edited here.",
+        "badConcept": "That concept isn't in this chapter, or isn't yours.",
+        "conceptRequired": "Tag a concept before approving.",
+        "scopes": "Tick at least one place it can be used."
       }
     }
   }

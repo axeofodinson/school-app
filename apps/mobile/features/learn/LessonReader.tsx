@@ -594,11 +594,14 @@ export function LessonReader({
   // YouTube frame, which would swallow Esc and the arrows. Hand focus back.
   useEffect(() => {
     if (!fullscreen || Platform.OS !== 'web' || typeof document === 'undefined') return;
-    const id = setTimeout(() => {
-      const el = document.activeElement as HTMLElement | null;
-      if (el?.tagName === 'IFRAME') el.blur();
-    }, 60);
-    return () => clearTimeout(id);
+    // The trap and the frame can be slow on a busy Chromebook: check a few times.
+    const ids = [60, 250, 600, 1200].map((ms) =>
+      setTimeout(() => {
+        const el = document.activeElement as HTMLElement | null;
+        if (el?.tagName === 'IFRAME') el.blur();
+      }, ms),
+    );
+    return () => ids.forEach(clearTimeout);
   }, [fullscreen]);
 
   const kicker = [
