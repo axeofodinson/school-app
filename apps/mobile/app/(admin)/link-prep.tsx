@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { useI18n } from '../../i18n';
-import { isSupabaseConfigured, rpcPending, supabase } from '../../lib/supabase';
+import { isSupabaseConfigured, supabase } from '../../lib/supabase';
 import { Badge, Button, Card, EmptyState, ListItem, Screen, Text, TextField } from '../../ui';
 
 // Upgrade path (DECISIONS #59): a Google (prep-only) learner who joins the
@@ -49,12 +49,13 @@ export default function LinkPrep() {
     setError(null);
     setAccount(null);
     setMoved(null);
-    const { data, error: e } = await rpcPending<PrepAccount[]>('find_prep_accounts', {
+    if (!supabase) return setBusy(false);
+    const { data, error: e } = await supabase.rpc('find_prep_accounts', {
       p_query: query.trim(),
     });
     setBusy(false);
     if (e) return setError(t('console.linkPrep.errors.server'));
-    setAccounts(data ?? []);
+    setAccounts((data ?? []).map((a) => ({ ...a, attempts: Number(a.attempts) })));
   };
 
   const findStudent = async () => {
@@ -88,7 +89,8 @@ export default function LinkPrep() {
     if (!account || !student || student === 'none' || !reason.trim()) return;
     setBusy(true);
     setError(null);
-    const { data, error: e } = await rpcPending<Moved>('link_prep_account', {
+    if (!supabase) return setBusy(false);
+    const { data, error: e } = await supabase.rpc('link_prep_account', {
       p_prep_profile: account.id,
       p_student_id: student.id,
       p_reason: reason.trim(),
@@ -106,7 +108,7 @@ export default function LinkPrep() {
         ),
       );
     }
-    setMoved(data ?? {});
+    setMoved((data as Moved | null) ?? {});
   };
 
   const canLink =

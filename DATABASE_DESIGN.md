@@ -34,6 +34,9 @@ assessments (mode) → assessment_questions (question_version)
 | exam_sessions | unique (assessment_id, learner_id) | Two devices resume one session |
 | exam_session_answers | PK (session_id, question_id); FK → question_versions | Idempotent saves, exact version |
 | gate_overrides | append-only trigger | Audit |
+| topics / concepts | non-blank title ≤ 200, Urdu ≤ 200, summaries ≤ 1000; `diagnostic_size` null or 5–60; no DELETE policy (retire) | Editors (prompt 20), DECISIONS #97 |
+| concept_prerequisites | PK (concept, requires), no self link, trigger `t_cprereq_no_cycle` (no loops) | Follow-ups walk it (DECISIONS #98) |
+| curricula | code ≤ 40 unique, board, name non-blank | Textbook editions (DECISIONS #101) |
 | practice_attempts | PK = client UUID | Retry-safe offline upload |
 | assessments | `mode in (standard, live_exam, offline_exam)`; unique live join_code | |
 
@@ -133,7 +136,7 @@ safe maths parser.
 ## 5. Migration plan
 | File | Phase | Contents |
 |---|---|---|
-| `017_lms_foundation.sql` | 2 (run at start of Phase 2) | everything above (draft, dry-run verified) |
+| `017_lms_foundation.sql` | 2 (final in prompt 20, not run yet; then 023) | everything above. Prompt 20 added: Part 0 preflight (stops on a hand-made table of the same name), curriculum check constraints, prerequisite loop trigger, `teaches_chapter_subject()` (teacher curriculum scope = subject taught this year), insert/update-only policies (no deletes) on topics/concepts/learning content, insert-only review log, no-delete approvals/batches (DECISIONS #96–99) |
 | `018_close_answer_key_read.sql` | 1 cut-over (prompt 13; draft, runs after 026) | `p_questions_read` = staff + teachers only (017 Part 10); `student_paper(assessment)` + `student_paper_levels(assessments[])` security-definer reads without answers; `auto_mark_item()` (pure rule, same as core `autoMark.ts`) + AFTER INSERT trigger `t_submissions_auto_mark`: a fully auto-markable paper is scored on insert, with an `Auto-marked` row in `submission_grade_edits` (edited_by null) (DECISIONS #78–81) |
 | `019_mastery_rpcs.sql` | 4 | `record_practice_attempt` → mastery/follow-ups/relief |
 | `020_exam_sweep_offline.sql` | 5–6 | pg_cron sweep, option permutation, offline acceptance RPC, item-analysis view |

@@ -1,5 +1,5 @@
--- Smoke test for db/023_access_tiers.sql. Run AFTER db/test/017_smoke.sql and
--- 022_smoke.sql (reuses their fixtures: teacher ...0a, student ...0b in
+-- Smoke test for db/023_access_tiers.sql. Run AFTER db/test/017_smoke.sql (and
+-- 022_smoke.sql when 022 is applied; reuses their fixtures: teacher ...0a, student ...0b in
 -- Class 9 SMOKE, a published exam, two questions). Throwaway local Postgres
 -- only (TEST_PLAN.md DB-1 / DB-4). Every check raises on failure.
 \set ON_ERROR_STOP 1
@@ -35,6 +35,14 @@ insert into auth.identities(id, user_id, provider, provider_id) values
 insert into auth.users(id, email, encrypted_password) values
  ('0000000a-0000-0000-0000-0000000000c1', 'admin@school.test', 'x');
 update profiles set role = 'admin' where id = '0000000a-0000-0000-0000-0000000000c1';
+-- The teacher teaches Class 9 SMOKE (022_smoke.sql makes this too; 022 is a
+-- draft that isn't applied everywhere, so don't depend on it).
+insert into teacher_assignments(teacher_id, class_id, year_id)
+select '00000000-0000-0000-0000-00000000000a', '20000000-0000-0000-0000-000000000001',
+       '10000000-0000-0000-0000-000000000001'
+where not exists (select 1 from teacher_assignments
+                   where teacher_id = '00000000-0000-0000-0000-00000000000a'
+                     and class_id = '20000000-0000-0000-0000-000000000001');
 -- an approved practice version, an attendance row and a school message
 insert into item_approvals(item_kind, item_id, version, scope, approved_by)
 values ('question', '80000000-0000-0000-0000-000000000002', 1, 'practice', '0000000a-0000-0000-0000-0000000000c1');
@@ -108,7 +116,15 @@ do $$ begin
   assert (select count(*) from exam_sessions) = 0, 'prep reads exam_sessions';
   assert (select count(*) from exam_session_answers) = 0, 'prep reads exam answers';
   assert (select count(*) from questions) = 0, 'prep reads questions (answer keys)';
-  assert (select count(*) from project_teams) = 0, 'prep reads project teams';
+  if to_regclass('public.attendance_edits') is not null then
+    assert (select count(*) from attendance_edits) = 0, 'prep reads attendance history';
+  end if;
+  if to_regclass('public.message_reads') is not null then
+    assert (select count(*) from message_reads) = 0, 'prep reads message reads';
+  end if;
+  if to_regclass('public.project_teams') is not null then
+    assert (select count(*) from project_teams) = 0, 'prep reads project teams';
+  end if;
   -- Preparation content stays readable.
   assert (select count(*) from question_versions) = 1, 'prep cannot read approved practice versions';
   assert (select count(*) from topics) >= 1, 'prep cannot read topics';

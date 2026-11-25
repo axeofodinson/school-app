@@ -1669,6 +1669,158 @@
       "messages": "Messages",
       "brandTeacher": "Al-Syed · Teacher",
       "brandAdmin": "Al-Syed · Admin"
+    },
+    "curriculum": {
+      "title": "Curriculum",
+      "kicker": "Content map",
+      "subtitle": "Chapters, topics and concepts: the map every lesson, practice question and follow-up hangs on.",
+      "subtitleTeacher": "Topics and concepts for the subjects you teach this year.",
+      "navHint": "Topics, concepts and prerequisites for each chapter",
+      "tabs": {
+        "map": "Chapters and topics",
+        "editions": "Textbook editions",
+        "label": "Curriculum section"
+      },
+      "showRetired": "Show retired",
+      "chapters": "Chapters",
+      "chapterMeta": "Topics: %{topics} · Concepts: %{concepts}",
+      "chapterMetaEmpty": "No topics yet",
+      "noEdition": "No edition",
+      "addChapter": "Add chapter",
+      "editChapter": "Edit chapter",
+      "pickChapter": "Pick a chapter",
+      "pickChapterBody": "Its topics and concepts open here.",
+      "noChapters": "No chapters in this subject yet",
+      "noChaptersAdmin": "Add the first chapter, in textbook order.",
+      "noChaptersTeacher": "Ask the admin to add this subject's chapters first.",
+      "chapterHeader": "Chapter %{n}",
+      "textbookRef": "Textbook: %{ref}",
+      "topics": "Topics",
+      "addTopic": "Add topic",
+      "editTopic": "Edit topic",
+      "noTopics": "No topics in this chapter yet",
+      "noTopicsBody": "Split the chapter into the topics you teach. Each topic gets a short diagnostic and its own concepts.",
+      "topicNumber": "Topic %{n}",
+      "diagnostic": "Diagnostic: %{n} questions",
+      "diagnosticDefault": "Diagnostic: %{n} questions (default)",
+      "tilesLabel": {
+        "one": "Students fill %{count} tile in this topic",
+        "other": "Students fill %{count} tiles in this topic"
+      },
+      "concepts": "Concepts",
+      "addConcept": "Add concept",
+      "editConcept": "Edit concept",
+      "noConcepts": "No concepts yet. A concept is one idea a student can master, like \"adding fractions with the same bottom number\".",
+      "needs": "Needs",
+      "needsCount": "Needs %{count}",
+      "retired": "Retired",
+      "retire": "Retire",
+      "restore": "Bring back",
+      "retireTopicHint": "Students stop seeing it. Its history stays.",
+      "moveUp": "Move %{name} up",
+      "moveDown": "Move %{name} down",
+      "readOnly": "You can read this chapter. Only its subject's teachers this year and admins can change it.",
+      "fields": {
+        "titleEn": "Title (English)",
+        "titleUr": "Title (Urdu)",
+        "titleUrHelper": "Type it the way you'd say it in class. Leave empty to show the English.",
+        "summaryEn": "What the student learns (English)",
+        "summaryUr": "What the student learns (Urdu)",
+        "summaryHelper": "One or two sentences. Shown above the lesson.",
+        "diagnostic": "Diagnostic size",
+        "diagnosticHelper": "Questions in this topic's first check, %{min} to %{max}. Leave empty for %{def}.",
+        "textbookRef": "Textbook reference",
+        "textbookRefHelper": "For example \"Unit 3, pages 41 to 58\".",
+        "edition": "Textbook edition",
+        "code": "Code",
+        "codeHelper": "Short and unique, for example PTB-2025.",
+        "board": "Board",
+        "name": "Name",
+        "effectiveFrom": "In use from",
+        "effectiveFromHelper": "Date as YYYY-MM-DD, for example 2025-04-01. Optional."
+      },
+      "prereqs": {
+        "title": "Prerequisites",
+        "help": "Concepts a student should master before this one. Follow-ups send students back to these.",
+        "none": "None yet.",
+        "edit": "Choose prerequisites",
+        "sheetTitle": "Prerequisites for %{name}",
+        "search": "Search concepts",
+        "thisSubject": "This subject",
+        "earlier": "Earlier classes",
+        "noneFound": "No concepts match.",
+        "noneEarlier": "No earlier class has %{subject} concepts yet.",
+        "loop": "Can't pick: it already needs this concept, so that would make a loop.",
+        "selected": {
+          "one": "%{count} picked",
+          "other": "%{count} picked"
+        },
+        "where": "%{class} · %{chapter} · %{topic}"
+      },
+      "save": "Save",
+      "cancel": "Cancel",
+      "saved": "Saved",
+      "topicAdded": "Topic added",
+      "conceptAdded": "Concept added",
+      "chapterAdded": "Chapter added",
+      "retiredToast": "Retired. Turn on \"Show retired\" to bring it back.",
+      "restoredToast": "Back in use",
+      "errors": {
+        "titleRequired": "Write the English title.",
+        "titleTooLong": "Keep the title under 200 letters.",
+        "summaryTooLong": "Keep it under 1,000 letters.",
+        "diagnosticNotNumber": "Type a whole number, or leave it empty.",
+        "diagnosticRange": "Use a number from 5 to 60.",
+        "codeRequired": "Give the edition a short code.",
+        "codeTooLong": "Keep the code under 40 letters.",
+        "boardRequired": "Name the board, for example Punjab Textbook Board.",
+        "nameRequired": "Give the edition a name.",
+        "textTooLong": "That's too long.",
+        "dateInvalid": "Use a real date as YYYY-MM-DD.",
+        "cycle": "That would make a loop of prerequisites. Nothing was changed.",
+        "duplicate": "That code is already used by another edition.",
+        "loadError": "Couldn't load the curriculum"
+      },
+      "editions": {
+        "heading": "Textbook editions",
+        "body": "Each chapter belongs to one edition (for example the Punjab Textbook Board books in use from April 2025). When the board prints new books, add a new edition and keep the old one for history.",
+        "add": "Add edition",
+        "edit": "Edit edition",
+        "empty": "No textbook editions yet",
+        "emptyBody": "Add the edition your books are from (for example PTB-2025), then attach your chapters to it.",
+        "chapters": {
+          "one": "%{count} chapter",
+          "other": "%{count} chapters"
+        },
+        "from": "From %{date}",
+        "added": "Edition added",
+        "retireHint": "A retired edition stays on its chapters but isn't offered for new ones."
+      },
+      "attach": {
+        "heading": "Chapters without an edition",
+        "body": "Chapters made before editions existed. Pick the edition, tick the chapters, attach.",
+        "pickEdition": "Attach to",
+        "needEdition": "Add an edition first, then attach chapters to it.",
+        "none": "Every chapter has an edition.",
+        "selectAll": "Select all %{count}",
+        "selectNone": "Clear",
+        "selectGroup": "All of %{group}",
+        "attach": {
+          "one": "Attach %{count} chapter",
+          "other": "Attach %{count} chapters"
+        },
+        "done": {
+          "one": "%{count} chapter attached to %{edition}",
+          "other": "%{count} chapters attached to %{edition}"
+        },
+        "skipped": {
+          "one": "%{count} already had an edition and was left as it was.",
+          "other": "%{count} already had an edition and were left as they were."
+        }
+      },
+      "notReady": "The curriculum isn't switched on yet",
+      "notReadyAdmin": "The database update for chapters, topics and concepts (db/017, then db/023) hasn't been run on this project yet. Once it has, this screen fills in by itself.",
+      "notReadyTeacher": "The school hasn't switched on topics and concepts yet. Ask the admin; nothing is lost in the meantime."
     }
   }
 }
