@@ -5,49 +5,21 @@
 // Drives the SyncStatusPill: icon + words, never colour alone.
 import {
   attemptKey,
-  createDraftStore,
-  createSyncQueue,
   SUBMISSION_KIND,
-  summarize,
-  userQueueStore,
   type DraftStore,
   type Responses,
   type SubmissionPayload,
   type SyncItem,
-  type SyncQueue,
 } from '@school/core';
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type ReactNode,
-} from 'react';
-import { AppState, Platform } from 'react-native';
+import { createContext, useCallback, useContext, useMemo, type ReactNode } from 'react';
 
-import { deviceKV } from '../../lib/storage';
+import { userQueueStores } from '../../lib/userQueue';
+import { useQueueRunner } from '../../lib/useQueueRunner';
 import type { SyncStatus } from '../../ui';
 import { useAuth } from '../auth/AuthProvider';
 import { sendSubmission } from './api';
 
 const SENDERS = { [SUBMISSION_KIND]: sendSubmission };
-/** Never wait longer than this between automatic tries (native has no "online" event). */
-const MAX_WAIT_MS = 60_000;
-
-/** One queue + draft store per user per app run, so every screen shares one lock. */
-const perUser = new Map<string, { queue: SyncQueue; drafts: DraftStore }>();
-function storesFor(userId: string) {
-  let s = perUser.get(userId);
-  if (!s) {
-    const ns = userQueueStore(deviceKV, userId);
-    s = { queue: createSyncQueue(ns), drafts: createDraftStore(ns) };
-    perUser.set(userId, s);
-  }
-  return s;
-}
 
 export type SubmitResult = 'submitted' | 'queued' | 'rejected' | 'error';
 
@@ -67,88 +39,11 @@ const Ctx = createContext<AttemptSyncValue | null>(null);
 export function AttemptSyncProvider({ children }: { children: ReactNode }) {
   const { session } = useAuth();
   const userId = session?.user.id ?? null;
-  const stores = useMemo(() => (userId ? storesFor(userId) : null), [userId]);
-  // Tagged with the stores they came from, so another user's list never shows.
-  const [loaded, setLoaded] = useState<{ owner: object; items: readonly SyncItem[] } | null>(null);
-  const items = useMemo(
-    () => (loaded && stores && loaded.owner === stores ? loaded.items : []),
-    [loaded, stores],
+  const stores = useMemo(() => (userId ? userQueueStores(userId) : null), [userId]);
+  const { items, status, pending, syncedTick, flush, flushNow } = useQueueRunner(
+    stores?.queue ?? null,
+    SENDERS,
   );
-  const [flushing, setFlushing] = useState(false);
-  const [offline, setOffline] = useState(false);
-  const [justSent, setJustSent] = useState(false);
-  const [syncedTick, setSyncedTick] = useState(0);
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const flush = useCallback(
-    async (force = false) => {
-      if (!stores) return;
-      setFlushing(true);
-      try {
-        const r = await stores.queue.flush(SENDERS, { force });
-        setOffline(r.offline);
-        if (r.sent + r.duplicates > 0) {
-          setJustSent(true);
-          setSyncedTick((n) => n + 1);
-        }
-      } finally {
-        setFlushing(false);
-      }
-    },
-    [stores],
-  );
-
-  // Load + follow the queue; flush once on start.
-  useEffect(() => {
-    if (!stores) return;
-    let live = true;
-    const set = (q: readonly SyncItem[]) => live && setLoaded({ owner: stores, items: q });
-    stores.queue.items().then(set);
-    const off = stores.queue.subscribe(set);
-    // Next tick: the first pass's state updates don't belong to this render.
-    Promise.resolve()
-      .then(() => flush(true))
-      .catch(() => undefined);
-    return () => {
-      live = false;
-      off();
-    };
-  }, [stores, flush]);
-
-  // Foreground / back online → try now, ignoring backoff.
-  useEffect(() => {
-    const sub = AppState.addEventListener('change', (s) => {
-      if (s === 'active') flush(true).catch(() => undefined);
-    });
-    let removeOnline = () => {};
-    if (Platform.OS === 'web' && typeof window !== 'undefined') {
-      const on = () => flush(true).catch(() => undefined);
-      window.addEventListener('online', on);
-      removeOnline = () => window.removeEventListener('online', on);
-    }
-    return () => {
-      sub.remove();
-      removeOnline();
-    };
-  }, [flush]);
-
-  // Wake up when the next backoff ends (capped, so a reconnect is noticed within a minute).
-  const summary = useMemo(() => summarize(items), [items]);
-  useEffect(() => {
-    if (timer.current) clearTimeout(timer.current);
-    if (summary.nextAt === null || flushing) return;
-    const wait = Math.min(MAX_WAIT_MS, Math.max(1_000, summary.nextAt - Date.now()));
-    timer.current = setTimeout(() => flush().catch(() => undefined), wait);
-    return () => {
-      if (timer.current) clearTimeout(timer.current);
-    };
-  }, [summary.nextAt, flushing, flush]);
-
-  const flushNow = useCallback(async () => {
-    if (!stores) return;
-    await stores.queue.retryRejected();
-    await flush(true);
-  }, [stores, flush]);
 
   const submit = useCallback<AttemptSyncValue['submit']>(
     async (enrollmentId, assessmentId, responses) => {
@@ -180,23 +75,17 @@ export function AttemptSyncProvider({ children }: { children: ReactNode }) {
     [stores, flush],
   );
 
-  let status: SyncStatus = 'idle';
-  if (flushing && summary.pending > 0) status = 'syncing';
-  else if (summary.rejected > 0) status = 'error';
-  else if (summary.pending > 0) status = offline ? 'offline' : 'syncing';
-  else if (justSent) status = 'saved';
-
   const value = useMemo<AttemptSyncValue>(
     () => ({
       drafts: stores?.drafts ?? null,
       items,
       status,
-      pending: summary.pending + summary.rejected,
+      pending,
       syncedTick,
       flushNow,
       submit,
     }),
-    [stores, items, status, summary.pending, summary.rejected, syncedTick, flushNow, submit],
+    [stores, items, status, pending, syncedTick, flushNow, submit],
   );
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

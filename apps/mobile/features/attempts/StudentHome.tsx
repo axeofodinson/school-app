@@ -59,6 +59,11 @@ export function StudentHome() {
           onPress={() => router.push('/results')}
         />
         <ListItem
+          title={t('student.home.attendance')}
+          subtitle={t('student.home.attendanceNote')}
+          onPress={() => router.push('/attendance')}
+        />
+        <ListItem
           title={t('student.home.report')}
           subtitle={t('student.home.reportNote')}
           onPress={() => router.push('/report')}

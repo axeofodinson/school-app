@@ -1,7 +1,8 @@
 // GENERATED: do not edit by hand.
 // Source: local DB harness (TEST_PLAN DB-1) with db/setup.sql + db/002–016 + 024 +
 // 025 + 026 (applied in production 2026-11-25) + 018 (draft, prompt 13: the app
-// calls its student_paper / student_paper_levels RPCs; run it at the cut-over).
+// calls its student_paper / student_paper_levels RPCs; run it at the cut-over) +
+// 028 (draft, prompt 14: attendance audit + record_attendance / summaries).
 // Drafts 017/022/023 excluded. Via
 //   npx supabase@3.3.0 gen types typescript --db-url <harness> --schema public
 // Regenerate after each migration Hassan runs (see packages/core/README.md).
@@ -159,23 +160,32 @@ export type Database = {
       };
       attendance: {
         Row: {
+          edit_count: number;
           enrollment_id: string;
           id: string;
+          last_edited_at: string | null;
+          marked_at: string | null;
           marked_by: string | null;
           on_date: string;
           status: string;
         };
         ComputedFields: never;
         Insert: {
+          edit_count?: number;
           enrollment_id: string;
           id?: string;
+          last_edited_at?: string | null;
+          marked_at?: string | null;
           marked_by?: string | null;
           on_date?: string;
           status?: string;
         };
         Update: {
+          edit_count?: number;
           enrollment_id?: string;
           id?: string;
+          last_edited_at?: string | null;
+          marked_at?: string | null;
           marked_by?: string | null;
           on_date?: string;
           status?: string;
@@ -191,6 +201,52 @@ export type Database = {
           {
             foreignKeyName: 'attendance_marked_by_fkey';
             columns: ['marked_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      attendance_edits: {
+        Row: {
+          attendance_id: string;
+          edited_at: string;
+          edited_by: string | null;
+          id: string;
+          new_status: string;
+          prev_status: string;
+          reason: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          attendance_id: string;
+          edited_at?: string;
+          edited_by?: string | null;
+          id?: string;
+          new_status: string;
+          prev_status: string;
+          reason: string;
+        };
+        Update: {
+          attendance_id?: string;
+          edited_at?: string;
+          edited_by?: string | null;
+          id?: string;
+          new_status?: string;
+          prev_status?: string;
+          reason?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'attendance_edits_attendance_id_fkey';
+            columns: ['attendance_id'];
+            isOneToOne: false;
+            referencedRelation: 'attendance';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'attendance_edits_edited_by_fkey';
+            columns: ['edited_by'];
             isOneToOne: false;
             referencedRelation: 'profiles';
             referencedColumns: ['id'];
@@ -737,6 +793,30 @@ export type Database = {
     };
     Functions: {
       answer_text_norm: { Args: { p: string }; Returns: string };
+      attendance_day_summary: {
+        Args: { p_on_date: string; p_year_id: string };
+        Returns: {
+          absent: number;
+          class_id: string;
+          class_name: string;
+          enrolled: number;
+          grade_level: number;
+          late: number;
+          marked: number;
+          on_leave: number;
+          present: number;
+        }[];
+      };
+      attendance_student_summary: {
+        Args: { p_class_id: string; p_from: string; p_to: string; p_year_id: string };
+        Returns: {
+          absent: number;
+          enrollment_id: string;
+          late: number;
+          on_leave: number;
+          present: number;
+        }[];
+      };
       auto_mark_item: { Args: { p_answer: Json; p_type: string; p_value: Json }; Returns: boolean };
       dearmor: { Args: { '': string }; Returns: string };
       dev_hard_delete_student: { Args: { p_student_id: string }; Returns: Json };
@@ -749,6 +829,16 @@ export type Database = {
       my_student_id: { Args: Record<PropertyKey, never>; Returns: string };
       pgp_armor_headers: { Args: { '': string }; Returns: Record<string, unknown>[] };
       provision_student_login: { Args: { p_pin: string; p_student_id: string }; Returns: string };
+      record_attendance: {
+        Args: {
+          p_class_id: string;
+          p_marks: Json;
+          p_on_date: string;
+          p_reason?: string;
+          p_taken_at?: string;
+        };
+        Returns: Json;
+      };
       record_grade: {
         Args: {
           p_assessment_id: string;

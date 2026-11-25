@@ -10,6 +10,29 @@
     "toast": {
       "newMessage": "New message",
       "hint": "Tap to open your messages. Swipe up to dismiss."
+    },
+    "months": {
+      "m01": "January",
+      "m02": "February",
+      "m03": "March",
+      "m04": "April",
+      "m05": "May",
+      "m06": "June",
+      "m07": "July",
+      "m08": "August",
+      "m09": "September",
+      "m10": "October",
+      "m11": "November",
+      "m12": "December"
+    },
+    "weekdaysShort": {
+      "d0": "Mon",
+      "d1": "Tue",
+      "d2": "Wed",
+      "d3": "Thu",
+      "d4": "Fri",
+      "d5": "Sat",
+      "d6": "Sun"
     }
   },
   "auth": {
@@ -383,7 +406,17 @@
       "errors": {
         "network": "No internet. Check your connection and try again.",
         "unknown": "Something went wrong. Try again."
-      }
+      },
+      "monthRate": "%{rate}% this month",
+      "yearRate": "%{rate}% this year",
+      "noRate": "No school days counted yet",
+      "rateNote": "Late still counts as being at school. Leave doesn't count against you.",
+      "prevMonth": "Previous month",
+      "nextMonth": "Next month",
+      "dayLabel": "%{day} %{month}: %{status}",
+      "notMarked": "not marked",
+      "offline": "No internet. This is what your device saved last time.",
+      "monthEmpty": "Nothing marked this month"
     },
     "inbox": {
       "title": "Messages",
@@ -1325,7 +1358,9 @@
       "questionsHint": "Write and edit questions for your chapters",
       "assessmentsHint": "Build tests, quizzes and exams, then publish them",
       "gradingHint": "Enter and correct grades, with the reason kept",
-      "overdueHint": "Homework past due, and who hasn't handed it in"
+      "overdueHint": "Homework past due, and who hasn't handed it in",
+      "attendanceHint": "Mark today's attendance in a few taps, or fix a past day",
+      "attendanceSummaryHint": "Each class's day, and each student's month"
     },
     "scope": {
       "class": "Class",
@@ -1445,6 +1480,71 @@
       "scoreFor": "Score for %{name}",
       "saved": "Saved: %{name}, %{score}",
       "beforeAttempt": "This student hasn't sent an answer for this test yet. If you grade now, their online answers won't be accepted later."
+    },
+    "attendance": {
+      "hint": "Everyone starts as present. Tap only the students who are absent, late or on leave.",
+      "prevDay": "Previous day",
+      "nextDay": "Next day",
+      "goToDate": "Go to a date",
+      "goToDateHelp": "YYYY-MM-DD, then Enter",
+      "go": "Go",
+      "dayLabel": "%{weekday} %{day} %{month} %{year}",
+      "todayTag": "Today",
+      "pastDay": "This day is over. Changing a mark that was already saved needs a reason.",
+      "notTaken": "Not taken yet for this day",
+      "taken": "Saved for this day",
+      "unsaved": "Changes not saved yet",
+      "waiting": "Saved on this device. It will send when you're back online.",
+      "refused": "Not saved: %{why}",
+      "offlineCopy": "No connection. This is the class list saved on this device; marks already sent for this day aren't shown.",
+      "reason": "Reason for the change",
+      "reasonHelp": "For example: the register shows she was present",
+      "reasonRequired": "Write why you're changing a day that is over.",
+      "queued": "Saved on this device. It will send once you're online.",
+      "rejectedToast": "The school's server didn't take this day. See the note above the list.",
+      "storageFull": "This device is out of space, so nothing was saved. Free some space and try again.",
+      "rowLabel": "%{name}: %{status}",
+      "edited": {
+        "one": "Changed once",
+        "other": "Changed %{count} times"
+      },
+      "history": "History",
+      "hideHistory": "Hide history",
+      "historyRow": "%{from} → %{to}",
+      "historyLoadError": "Couldn't load the history",
+      "historyEmpty": "No changes yet",
+      "reasons": {
+        "sameDay": "Changed the same day",
+        "oldApp": "Changed in the old app"
+      },
+      "rpc": {
+        "reason_required": "this day is over, so a reason is needed. Write one and save again.",
+        "not_authorized": "you can only mark attendance for classes you teach.",
+        "date_in_future": "you can't mark attendance for a future date.",
+        "enrollment_class_mismatch": "a student on this list has moved class. Reload the list and save again.",
+        "enrollment_not_active": "a student on this list has left the class. Reload the list and save again.",
+        "other": "the server refused it. Reload the list and try again."
+      },
+      "reload": "Reload the list"
+    },
+    "attendanceSummary": {
+      "title": "Attendance summary",
+      "tabDay": "By day",
+      "tabClass": "By class",
+      "dayEmpty": "No classes with students this year",
+      "dayEmptyBody": "Enrol students in a class first. Their attendance shows here once it's taken.",
+      "notTaken": "Not taken",
+      "markedOf": "%{marked} of %{enrolled} marked",
+      "schoolTotal": "%{taken} of %{classes} classes taken · %{absent} absent · %{late} late · %{leave} on leave",
+      "prevMonth": "Previous month",
+      "nextMonth": "Next month",
+      "rate": "%{rate}%",
+      "noRate": "No days yet",
+      "left": "Left the class",
+      "markClass": "Mark this class",
+      "loadError": "Couldn't load the summary",
+      "rangeEmpty": "No students in this class this year",
+      "rateNote": "At school = present + late, out of present + late + absent. Leave isn't counted."
     }
   }
 }
