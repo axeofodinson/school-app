@@ -29,6 +29,8 @@
 --     student's messages.
 --  6. Messages become immutable from the app: no UPDATE or DELETE for client
 --     roles (CLAUDE.md rule 3). The old app only inserts, so it is unaffected.
+--  7. A teacher's one-student message needs that student's active, current-year
+--     enrollment in a class they teach (db/010 accepted any past enrollment).
 --
 --  CHECK AFTERWARDS (read-only):
 --    select to_regclass('public.message_reads');
@@ -53,6 +55,29 @@ update public.messages set push_claimed_at = created_at where push_claimed_at is
 revoke update, delete, truncate on public.messages from anon, authenticated;
 -- The inbox/compose columns the app reads; push bookkeeping stays server-side.
 revoke all on public.messages from anon;
+
+
+-- Teachers send to one student only while that student is ACTIVELY enrolled,
+-- this year, in a class the teacher teaches (db/010 accepted any enrollment
+-- ever, so a former pupil could still be messaged). Same audience the
+-- student's own read policy uses.
+drop policy if exists p_messages_teacher_send on public.messages;
+create policy p_messages_teacher_send on public.messages
+  for insert with check (
+    public.is_teacher()
+    and sender_id = auth.uid()
+    and (
+      (scope = 'class' and public.teaches_class(target_id))
+      or (scope = 'student' and exists (
+            select 1
+            from public.enrollments e
+            join public.academic_years ay on ay.id = e.year_id
+            where e.student_id = target_id
+              and e.status = 'active'
+              and ay.is_current
+              and public.teaches_class(e.class_id)))
+    )
+  );
 
 
 -- ============================================================

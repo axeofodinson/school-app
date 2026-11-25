@@ -77,7 +77,10 @@ export async function loadInbox(cache: ScopedStore | null): Promise<Result<Inbox
       )
       .retry(false);
     if (reads.error) throw reads.error;
-    const readIds = (reads.data ?? []).map((r) => r.message_id);
+    // Reads still queued on this device stay read until the server has them.
+    const readIds = [
+      ...new Set([...(reads.data ?? []).map((r) => r.message_id), ...copy.pendingReads]),
+    ];
     const next: InboxCopy = { messages, readIds, pendingReads: copy.pendingReads };
     await writeCache(cache, INBOX_CACHE, next);
     return ok(asInbox(next, false));

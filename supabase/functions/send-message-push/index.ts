@@ -80,8 +80,8 @@ Deno.serve(async (req) => {
     .is('push_claimed_at', null)
     .select('id');
   if (claim.error) {
-    // 42703 = column missing: db/029 not applied yet. Carry on unprotected.
-    if (claim.error.code !== '42703') {
+    // Column missing = db/029 not applied yet. Carry on unprotected.
+    if (!columnMissing(claim.error)) {
       console.error('claim failed', claim.error);
       return json({ error: 'could not claim message' }, 500);
     }
@@ -164,13 +164,17 @@ Deno.serve(async (req) => {
   });
 });
 
+// Postgres says 42703; PostgREST says PGRST204 when the column is in the
+// update body but not in its schema cache (production before db/029).
+const columnMissing = (e: { code?: string }) => e.code === '42703' || e.code === 'PGRST204';
+
 async function finish(
   supabase: ReturnType<typeof createClient>,
   id: string,
   result: Record<string, number>,
 ): Promise<Response> {
   const { error } = await supabase.from('messages').update({ push_result: result }).eq('id', id);
-  if (error && error.code !== '42703') console.error('could not record push result', error);
+  if (error && !columnMissing(error)) console.error('could not record push result', error);
   return json({ message_id: id, ...result });
 }
 

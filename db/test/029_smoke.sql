@@ -100,6 +100,10 @@ do $$ begin
   assert public._ms_fails($q$ insert into messages(sender_id, scope, target_id, title, body)
       values (auth.uid(), 'student', '02900000-0000-0000-0000-000000000052', 'MS s2', 'x') $q$),
     'TEACHER_SENT_OTHER_CLASS_STUDENT';
+  -- S3 was struck off 9-A: no longer the teacher's pupil (029 tightens db/010).
+  assert public._ms_fails($q$ insert into messages(sender_id, scope, target_id, title, body)
+      values (auth.uid(), 'student', '02900000-0000-0000-0000-000000000053', 'MS s3', 'x') $q$),
+    'TEACHER_SENT_FORMER_PUPIL';
   assert public._ms_fails($q$ insert into messages(sender_id, scope, target_id, title, body)
       values ('02900000-0000-0000-0000-000000000002', 'class',
               '02900000-0000-0000-0000-0000000000c1', 'MS spoof', 'x') $q$), 'TEACHER_SPOOFED_SENDER';
