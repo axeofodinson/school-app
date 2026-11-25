@@ -111,16 +111,13 @@ function OpenTest({ a, more }: { a: StudentAssessment; more: number }) {
   const { t } = useI18n();
   const router = useRouter();
   const { colours, presentation, scheme } = useTheme();
-  const { cue } = useCues();
   const r = radiusFor('lg', presentation);
   return (
     <View>
       <PressableSticker
         radius={r}
-        onPress={() => {
-          cue('pop');
-          router.push(`/tests/${a.id}`);
-        }}
+        sound="tap"
+        onPress={() => router.push(`/tests/${a.id}`)}
         accessibilityRole="button"
         accessibilityLabel={t('student.home.openTestA11y', {
           title: a.title,

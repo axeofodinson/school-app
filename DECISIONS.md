@@ -2,6 +2,10 @@
 
 Newest first. Each: decision — reason — who/when.
 
+## 2026-11-25 — Softer sounds swapped in (Hassan)
+
+140. **v2 sound effects, and our own tap replaces Android's click on cards.** Hassan's four takes from `audio/sfx-v2-script.md` replace `pop`/`ding`/`tada` and add `tap` (trimmed and level-matched: docs/audio-scripts.md B). `PressableSticker` gets a `sound` prop: `Card` and `SubjectCard` (and the open-test banner) play `tap` on release (so starting a scroll on a card stays silent) and set `android_disableSound` so the system click doesn't double it. Where app sounds aren't allowed (staff, exams, Sounds off) nothing changes, so a staff card keeps the system click and a student with Sounds off hears it too. Follows #127.
+
 ## 2026-11-25 — Light theme default, morphing mosaic tiles, softer sounds (Hassan)
 
 125. **Light is the theme; dark is opt-in only.** The app no longer follows the OS colour scheme. The root `SchemeProvider` (`apps/mobile/ui/theme.tsx`) starts light and switches to dark only when the user picks it in **Settings → Theme** (saved per device, `app.scheme`). Hassan prefers the light theme and saw a dark phone pull the app into dark mode. Sign-in screens are always light until a choice is saved on that device.
