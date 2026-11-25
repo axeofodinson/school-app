@@ -1,5 +1,6 @@
-// Student side of assessments (db/005 + db/025 RLS): my enrollment this year,
-// my class's published assessments, a paper's questions (never the answer key),
+// Student side of assessments (db/005 + db/025 RLS, db/018 RPC): my enrollment
+// this year, my class's published assessments, a paper's questions (student_paper(),
+// never the answer key; the server marks auto-markable papers on insert),
 // my submissions, and the one write: inserting a submission with the queue's
 // client UUID as its id. RLS is the boundary; these filters only keep the list tidy.
 //
@@ -216,39 +217,31 @@ export async function loadHome(cache: ScopedStore | null): Promise<Result<Home>>
   }
 }
 
-interface PaperRow {
-  marks: number;
-  sort_order: number;
-  question: { id: string; type: string; body: unknown } | null;
-}
-
 export interface Paper {
   questions: AttemptQuestion[];
   fromCache: boolean;
 }
 
-/** A paper's questions in order. Selects id, type, body only: never `answer`. */
+/**
+ * A paper's questions in order, from the server's student_paper() (db/018).
+ * Students can't read `questions` (answer keys) any more; the function returns
+ * id, type, body and marks only, for a published paper of their own class.
+ */
 export async function loadPaper(
   assessmentId: string,
   cache: ScopedStore | null,
 ): Promise<Result<Paper>> {
   if (!supabase) return notConfigured;
   const { data, error } = await supabase
-    .from('assessment_questions')
-    .select('marks, sort_order, question:questions(id, type, body)')
-    .eq('assessment_id', assessmentId)
-    .order('sort_order', { ascending: true })
-    .retry(false)
-    .overrideTypes<PaperRow[], { merge: false }>();
+    .rpc('student_paper', { p_assessment_id: assessmentId })
+    .retry(false);
   if (!error) {
-    const questions = (data ?? [])
-      .filter((r) => r.question)
-      .map((r) => ({
-        id: r.question!.id,
-        type: r.question!.type,
-        body: r.question!.body,
-        marks: r.marks,
-      }));
+    const questions: AttemptQuestion[] = (data ?? []).map((r) => ({
+      id: r.question_id,
+      type: r.type,
+      body: r.body,
+      marks: r.marks,
+    }));
     await writeCache(cache, paperCache(assessmentId), questions);
     return ok({ questions, fromCache: false });
   }

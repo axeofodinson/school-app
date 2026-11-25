@@ -480,6 +480,7 @@
       "historyChange": "%{prev} → %{new}",
       "historyFirst": "First grade: %{new}",
       "historyMeta": "%{reason} · %{date}",
+      "historyAuto": "Marked by the app when the student sent it",
       "errors": {
         "scoreRequired": "Enter a score.",
         "scoreInvalid": "Score must be a number (up to two decimals).",

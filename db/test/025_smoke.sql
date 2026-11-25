@@ -148,10 +148,17 @@ do $$ begin
 
   -- Results list (api.ts listMyResults): own row, can't change it.
   assert (select count(*) from submissions) = 1, 'student reads exactly own submission';
-  update submissions set score = 3 where id = '02500000-0000-0000-0000-00000000aaa1';
+  -- With 018 the server auto-marks this all-mcq paper (3); without it, null.
+  -- Either way the student can't change it.
+  create temp table at_before as
+    select score from submissions where id = '02500000-0000-0000-0000-00000000aaa1';
+  update submissions set score = 99 where id = '02500000-0000-0000-0000-00000000aaa1';
   delete from submissions where id = '02500000-0000-0000-0000-00000000aaa1';
-  assert (select score from submissions where id = '02500000-0000-0000-0000-00000000aaa1') is null,
-    'student graded own submission';
+  assert (select score from submissions where id = '02500000-0000-0000-0000-00000000aaa1')
+         is not distinct from (select score from at_before), 'student graded own submission';
+  assert (select score from at_before) is null or (select score from at_before) = 3,
+    'auto mark of the one-mcq paper';
+  drop table at_before;
 end $$;
 
 -- ---- As S3 (struck off from 9-A) ------------------------------------------------

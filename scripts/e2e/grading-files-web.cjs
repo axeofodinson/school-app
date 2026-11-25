@@ -181,6 +181,7 @@ const db = {
 };
 const storage = new Map(); // path -> { body: Buffer, type }
 const rpcCalls = [];
+const levelCalls = []; // student_paper_levels() calls from the report card (db/018)
 const writes = [];
 let seq = 0;
 
@@ -342,6 +343,20 @@ async function mock(page, who) {
       if (who.role === 'student')
         return out([{ role: 'student', full_name: S.name, student_id: 's-a' }]);
       return out([{ role: who.role, full_name: who.name, student_id: null }]);
+    }
+    if (p === '/rest/v1/rpc/student_paper_levels') {
+      // Like db/018: marks + thinking level per question, no bodies or answers.
+      const { p_assessment_ids: ids } = req.postDataJSON();
+      levelCalls.push(ids);
+      const rows = db.assessment_questions
+        .filter((i) => ids.includes(i.assessment_id))
+        .map((i) => ({
+          assessment_id: i.assessment_id,
+          marks: i.marks,
+          cognitive_level:
+            db.questions.find((q) => q.id === i.question_id)?.cognitive_level ?? 'recall',
+        }));
+      return json(200, rows);
     }
     if (p === '/rest/v1/rpc/record_grade') {
       const args = req.postDataJSON();
@@ -755,6 +770,7 @@ const MD =
       (await seen(page, '40%', true)) && (await seen(page, '60%', true)),
       'recall vs thinking by marks',
     );
+    check(levelCalls.length > 0, 'report card reads levels through student_paper_levels()');
     check(!(await page.getByText('Recounted').count()), 'student never sees the correction reason');
     await page.screenshot({ path: SHOTS + '/report-card.png', fullPage: true });
     await page.goto(BASE + '/results');

@@ -130,7 +130,7 @@ safe maths parser.
 | File | Phase | Contents |
 |---|---|---|
 | `017_lms_foundation.sql` | 2 (run at start of Phase 2) | everything above (draft, dry-run verified) |
-| `018_close_answer_key_read.sql` | 1 cut-over | enable 017 Part 10 (students lose direct `questions` read) |
+| `018_close_answer_key_read.sql` | 1 cut-over (prompt 13; draft, runs after 026) | `p_questions_read` = staff + teachers only (017 Part 10); `student_paper(assessment)` + `student_paper_levels(assessments[])` security-definer reads without answers; `auto_mark_item()` (pure rule, same as core `autoMark.ts`) + AFTER INSERT trigger `t_submissions_auto_mark`: a fully auto-markable paper is scored on insert, with an `Auto-marked` row in `submission_grade_edits` (edited_by null) (DECISIONS #78–81) |
 | `019_mastery_rpcs.sql` | 4 | `record_practice_attempt` → mastery/follow-ups/relief |
 | `020_exam_sweep_offline.sql` | 5–6 | pg_cron sweep, option permutation, offline acceptance RPC, item-analysis view |
 | `021_rollups.sql` | 8 | nightly analytics rollups |

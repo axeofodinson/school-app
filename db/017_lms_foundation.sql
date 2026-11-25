@@ -776,6 +776,7 @@ create policy p_ee_read on public.exam_events for select
 -- closed. It is left commented because the OLD app's AssessmentAttemptScreen
 -- reads `questions` directly; enable it together with the cut-over that moves
 -- students onto question_versions / RPCs.
+-- DONE in db/018_close_answer_key_read.sql (prompt 13); keep this commented.
 --
 -- drop policy if exists p_questions_read on public.questions;
 -- create policy p_questions_read on public.questions

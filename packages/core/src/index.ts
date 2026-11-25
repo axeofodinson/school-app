@@ -9,3 +9,4 @@ export * from './tapImage';
 export * from './reporting';
 export * from './markdown';
 export * from './files';
+export * from './autoMark';

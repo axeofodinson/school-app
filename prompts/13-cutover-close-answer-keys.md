@@ -27,6 +27,8 @@ Ship the new app for parity flows and stop students reading answer keys.
 - Dry-run with the harness; add a smoke test proving a student cannot select `answer`.
 - Release checklist: EAS preview build, test on phone + Chromebook + Windows web, then production build with a version bump. Attendance, messaging and pre-reader are rebuilt next (prompts 14–16); until then they may be unavailable in the new app — that is accepted (DECISIONS #22).
 
+Status (2026-11-25, session 13): `db/018`, the smoke (CO-1), the app switch and the release checklist (TEST_PLAN CO-3) are done. If this prompt is re-run, continue from CO-3: the remaining steps are the builds, device tests and running 018 on dev then production.
+
 ## Don't
 - Don't run the SQL on Supabase; hand Hassan the exact steps.
 - Don't break the old app in `src/` or run SQL on the Supabase project.
