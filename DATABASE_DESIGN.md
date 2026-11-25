@@ -131,6 +131,20 @@ event attributes, foreignObject, external href), within `visualBudget`, scene
 layer ids exist in the SVG, widget name in the catalogue, `expr` parses with the
 safe maths parser.
 
+**Pre-rendered maths (`math_svgs`, db/031):** `$…$` in an imported stem, option,
+explanation or lesson block is rendered to SVG once, in the importer, and stored
+once for the whole bank: key = the TeX (display maths prefixed `D:`), value =
+the MathJax SVG with its `data-*`/ARIA bookkeeping stripped. Question bodies keep
+the TeX as written; renderers look the SVG up by key (`packages/core/src/importer/math.ts`).
+Rows are insert-only and readable by any signed-in user.
+
+**Import batch (`import_batches`, db/031):** `status` (importing → done, or
+retired), `file_name`, `chapter_id`, `topic_id`, `question_count`,
+`is_test_data`, `report` (the dry-run counts + up to 200 issues) and, once
+retired, `retired_by/at` + `retire_note`. Questions and `learning_content` carry
+`import_batch_id`, so `retire_import_batch()` pulls a bad batch as a unit
+without deleting anything.
+
 **practice_attempts.items:** `[{"q": uuid, "v": 3, "a": "B", "c": true, "ms": 8200}]`.
 
 ## 5. Migration plan
@@ -145,6 +159,7 @@ safe maths parser.
 | `025_student_attempts_own_class.sql` | 1 (with prompt 11; draft) | student submission insert must match the enrollment's class + year, active enrollment, published test; students may read closed assessments of their class (DECISIONS #70) |
 | `026_grade_write_guard.sql` | 1 (with prompt 12; draft) | trigger `submissions_grade_guard`: client roles can't write scores/graded_*/responses/submitted_at or delete submissions; grades only via `record_grade()` (DECISIONS #73) |
 | `024_profiles_self_update_guard.sql` | applied to production 2026-11-24 | trigger: non-staff clients edit only their own `full_name`/`phone` (closes the self-promote hole, DECISIONS #62) |
+| `031_content_importer.sql` | 2 (prompt 21; draft, runs after 017 + 023) | import batch status/file/chapter/topic/counts + `learning_content.import_batch_id`; `math_svgs` (one pre-rendered SVG per TeX, insert-only, unsafe markup refused by CHECK); pg_trgm + `question_match_text(body)` + GIN index; `import_find_matches(subject, texts[])`, `import_content(chunk)` (invoker, chunked, client ids = retry-safe), `retire_import_batch(batch, reason)` (DECISIONS #102–106) |
 | `023_access_tiers.sql` | 0/2 (after 017; before Google sign-in is switched on) | `profiles.access_tier` (`school`/`prep_only`), `merged_into`/`merged_at`; `handle_new_user_v2` + `auth.identities` guard; `profiles_guard` (self-edit = name/phone only); `is_school_member()` + restrictive policies; `account_links` (insert-only); `find_prep_accounts()`, `link_prep_account()` (draft, dry-run verified; DECISIONS #57–61). Re-run after applying 022 so project tables get their policy |
 
 Every migration: idempotent, dry-run with `db/test/` harness before Supabase.

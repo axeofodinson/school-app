@@ -1,6 +1,7 @@
 // The drop zone: one card the teacher drops a topic file onto, or taps to
 // browse. The border is a dashed outline that thickens while a file hovers;
 // nothing else moves (DESIGN_SYSTEM §3 staff presentation, lite motion).
+import { useEffect, useRef, useState, type Ref } from 'react';
 import { Platform, Pressable, StyleSheet, View } from 'react-native';
 
 import { useI18n } from '../../i18n';
@@ -34,32 +35,45 @@ export function DropZone({
     }
   };
 
-  // Web only: a dragged file. react-native-web passes DOM props through.
-  const dropProps =
-    CAN_DROP && Platform.OS === 'web'
-      ? ({
-          onDragOver: (e: { preventDefault: () => void }) => e.preventDefault(),
-          onDrop: async (e: {
-            preventDefault: () => void;
-            dataTransfer?: { files?: ArrayLike<File> };
-          }) => {
-            e.preventDefault();
-            const file = e.dataTransfer?.files?.[0];
-            if (!file) return;
-            try {
-              const { readFile } = await import('./pickFile.web');
-              onFile(await readFile(file));
-            } catch {
-              onError();
-            }
-          },
-        } as Record<string, unknown>)
-      : {};
+  // Web only: a dragged file. react-native-web doesn't forward drag props, so
+  // the listeners go on the DOM node itself.
+  const host = useRef<unknown>(null);
+  const [over, setOver] = useState(false);
+  useEffect(() => {
+    if (!CAN_DROP || Platform.OS !== 'web') return;
+    const node = host.current as unknown as HTMLElement | null;
+    if (!node) return;
+    const stop = (e: DragEvent) => {
+      e.preventDefault();
+      setOver(true);
+    };
+    const leave = () => setOver(false);
+    const drop = async (e: DragEvent) => {
+      e.preventDefault();
+      setOver(false);
+      const file = e.dataTransfer?.files?.[0];
+      if (!file) return;
+      try {
+        const { readFile } = await import('./pickFile.web');
+        onFile(await readFile(file));
+      } catch {
+        onError();
+      }
+    };
+    node.addEventListener('dragover', stop);
+    node.addEventListener('dragleave', leave);
+    node.addEventListener('drop', drop);
+    return () => {
+      node.removeEventListener('dragover', stop);
+      node.removeEventListener('dragleave', leave);
+      node.removeEventListener('drop', drop);
+    };
+  }, [onFile, onError]);
 
   return (
     <Pressable
+      ref={host as Ref<never>}
       {...focusProps}
-      {...dropProps}
       onPress={browse}
       disabled={busy}
       accessibilityRole="button"
@@ -68,8 +82,8 @@ export function DropZone({
       style={({ pressed, hovered }: { pressed: boolean; hovered?: boolean }) => [
         styles.zone,
         {
-          borderColor: pressed || hovered ? colours.primary : colours.borderStrong,
-          backgroundColor: pressed || hovered ? colours.primarySoft : colours.surfaceAlt,
+          borderColor: over || pressed || hovered ? colours.primary : colours.borderStrong,
+          backgroundColor: over || pressed || hovered ? colours.primarySoft : colours.surfaceAlt,
           opacity: busy ? 0.6 : 1,
         },
         ring,

@@ -12,7 +12,7 @@ import {
   type ValidateResult,
 } from '@school/core';
 import { useRouter } from 'expo-router';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { useI18n, type TKey } from '../../i18n';
@@ -40,6 +40,7 @@ import {
   loadChapterContents,
   newId,
   runImport,
+  type ChapterContents,
   type ImportErrorKind,
 } from './api';
 import { BatchesPanel } from './BatchesPanel';
@@ -133,7 +134,13 @@ export function ImporterScreen() {
 type Stage =
   | { k: 'empty' }
   | { k: 'checking' }
-  | { k: 'checked'; file: PickedFile; result: ValidateResult; math: Map<string, string> }
+  | {
+      k: 'checked';
+      file: PickedFile;
+      result: ValidateResult;
+      math: Map<string, string>;
+      existing: ChapterContents;
+    }
   | { k: 'importing'; done: number; total: number }
   | { k: 'done'; batchId: string; imported: number; report: ImportReport };
 
@@ -147,6 +154,25 @@ function ImportPane({ scope }: { scope: ReadyScope }) {
   // the file says so, because the review queue sorts by where an item came from.
   const [byPerson, setByPerson] = useState(false);
   const [note, setNote] = useState('');
+
+  // The exact write, worked out while the report is on screen: the counts the
+  // teacher confirms are the rows that will land, and the ids stay the same if
+  // a failed import is tried again.
+  const plan: ImportPlan | null = useMemo(() => {
+    if (stage.k !== 'checked' || !stage.result.file || !sel.chapterId) return null;
+    return buildImportPlan({
+      file: stage.result.file,
+      report: stage.result.report,
+      chapterId: sel.chapterId,
+      origin: byPerson ? 'human' : 'ai',
+      sourceNote: note,
+      fileName: stage.file.name,
+      skipSimilar,
+      existing: stage.existing,
+      math: stage.math,
+      newId,
+    });
+  }, [stage, sel.chapterId, byPerson, note, skipSimilar]);
 
   const reset = useCallback(() => {
     setStage({ k: 'empty' });
@@ -191,29 +217,20 @@ function ImportPane({ scope }: { scope: ReadyScope }) {
       if (res.ok) addBankMatches(result, res.data);
       else toast(t(errorKey(res.error)), 'warn');
     }
-    setStage({ k: 'checked', file, result, math });
+    // What the chapter already holds, so the confirm step can say "adds to the
+    // topic that is already there" instead of promising a second copy of it.
+    const contents = await loadChapterContents(sel.chapterId);
+    if (!contents.ok) {
+      setStage({ k: 'empty' });
+      toast(t(errorKey(contents.error)), 'warn');
+      return;
+    }
+    setStage({ k: 'checked', file, result, math, existing: contents.data });
   };
 
   // ---- the write ---------------------------------------------------------------
   const doImport = async () => {
-    if (stage.k !== 'checked' || !stage.result.file || !sel.chapterId) return;
-    const contents = await loadChapterContents(sel.chapterId);
-    if (!contents.ok) {
-      toast(t(errorKey(contents.error)), 'warn');
-      return;
-    }
-    const plan: ImportPlan = buildImportPlan({
-      file: stage.result.file,
-      report: stage.result.report,
-      chapterId: sel.chapterId,
-      origin: byPerson ? 'human' : 'ai',
-      sourceNote: note,
-      fileName: stage.file.name,
-      skipSimilar,
-      existing: contents.data,
-      math: stage.math,
-      newId,
-    });
+    if (stage.k !== 'checked' || !plan) return;
     if (!plan.questions.length && !plan.lessons.length) {
       toast(t('staff.importer.nothingToImport'), 'warn');
       return;
@@ -224,7 +241,13 @@ function ImportPane({ scope }: { scope: ReadyScope }) {
     );
     if (!res.ok) {
       toast(t(errorKey(res.error)), 'warn');
-      setStage({ k: 'checked', file: stage.file, result: stage.result, math: stage.math });
+      setStage({
+        k: 'checked',
+        file: stage.file,
+        result: stage.result,
+        math: stage.math,
+        existing: stage.existing,
+      });
       return;
     }
     setStage({
@@ -323,18 +346,20 @@ function ImportPane({ scope }: { scope: ReadyScope }) {
                 />
                 <Text tone="textMuted" variant="bodySm">
                   {t('staff.importer.willImport', {
-                    questions:
-                      stage.result.report.counts.ready -
-                      (skipSimilar ? stage.result.report.counts.similar : 0),
-                    lessons: stage.result.report.lessons.filter((l) => l.ok).length,
+                    questions: plan?.questions.length ?? 0,
+                    lessons: plan?.lessons.length ?? 0,
                   })}
                 </Text>
+                {plan?.reuse.topic ? (
+                  <Text tone="textMuted" variant="bodySm">
+                    {t('staff.importer.addsToTopic', {
+                      concepts: plan.reuse.concepts,
+                      lessons: plan.reuse.lessonsSkipped,
+                    })}
+                  </Text>
+                ) : null}
                 <View style={styles.row}>
-                  <Button
-                    title={t('staff.importer.confirm')}
-                    onPress={doImport}
-                    disabled={!stage.result.file}
-                  />
+                  <Button title={t('staff.importer.confirm')} onPress={doImport} disabled={!plan} />
                   <Button title={t('staff.importer.cancel')} variant="ghost" onPress={reset} />
                 </View>
               </Card>

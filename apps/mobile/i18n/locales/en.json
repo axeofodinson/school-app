@@ -1992,7 +1992,8 @@
         "notExamSafe": "%{detail} can't be used on an exam question: only still pictures and charts.",
         "lessonExists": "This topic already has a lesson, so this one was left out."
       },
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "addsToTopic": "This topic is already there: %{concepts} of its concepts are reused, and %{lessons} lessons it already has are left out."
     }
   }
 }
