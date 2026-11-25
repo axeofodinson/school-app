@@ -33,7 +33,8 @@
       "d4": "Fri",
       "d5": "Sat",
       "d6": "Sun"
-    }
+    },
+    "retry": "Try again"
   },
   "auth": {
     "login": {
@@ -124,7 +125,11 @@
       "sharedOn": "Shared",
       "sharedOff": "Personal",
       "adminOnly": "Only an admin can change this.",
-      "back": "Back"
+      "back": "Back",
+      "sound": "Sounds",
+      "soundOn": "On",
+      "soundOff": "Off",
+      "soundHelp": "Little sounds and spoken prompts for young learners. Never during tests and exams."
     },
     "cards": {
       "title": "Login cards",
@@ -156,7 +161,8 @@
         "cancelled": "Google sign-in was cancelled.",
         "unknown": "Google sign-in didn’t work. Try again."
       }
-    }
+    },
+    "school": "Al-Syed High School"
   },
   "student": {
     "home": {
@@ -172,7 +178,25 @@
       "reportNote": "Your results rolled up for the year",
       "attendance": "My attendance",
       "attendanceNote": "See the days you were present",
-      "signOut": "Sign out"
+      "signOut": "Sign out",
+      "weekDone": {
+        "one": "You finished %{count} test this week.",
+        "other": "You finished %{count} tests this week."
+      },
+      "weekStart": "Let's get going!",
+      "testOpen": "A test is open",
+      "testsOpen": {
+        "one": "%{count} test is open",
+        "other": "%{count} tests are open"
+      },
+      "start": "Start",
+      "openTestA11y": "Start %{title}, %{subject}",
+      "allDone": "All caught up! No tests waiting.",
+      "subjects": "My subjects",
+      "noSubjects": "No tests in any subject yet. They show up here when your teachers set them.",
+      "subjectCount": "%{count} of %{total} tests done",
+      "subjectA11y": "%{subject}: %{count} of %{total} tests done",
+      "more": "More for you"
     },
     "journey": {
       "title": "My journey",
@@ -249,7 +273,8 @@
         "network": "No internet. Check your connection and try again.",
         "unknown": "Something went wrong. Try again."
       },
-      "offline": "You’re offline: showing your saved list."
+      "offline": "You’re offline: showing your saved list.",
+      "doneHeading": "Done and closed"
     },
     "fileAssessment": {
       "back": "Back",
@@ -318,7 +343,8 @@
       "progress": "Question %{number} of %{total}",
       "picked": "Picked",
       "listenFirst": "Tap the speaker to hear the question",
-      "done": "All done? Finish here"
+      "done": "All done? Finish here",
+      "listenShort": "Listen"
     },
     "results": {
       "title": "My scores",
@@ -342,7 +368,8 @@
         "unknown": "Something went wrong. Try again."
       },
       "notSent": "Not sent yet",
-      "unknownTest": "A test"
+      "unknownTest": "A test",
+      "overallLabel": "Overall"
     },
     "report": {
       "title": "My report card",
@@ -460,6 +487,35 @@
     "worksheet": {
       "open": "Worksheet",
       "howTo": "Do this worksheet on paper and give it to your teacher."
+    },
+    "nav": {
+      "home": "Home",
+      "prepare": "Prepare",
+      "tests": "Tests",
+      "me": "Me"
+    },
+    "me": {
+      "title": "Me",
+      "settingsNote": "Language, motion and sounds"
+    },
+    "prepare": {
+      "title": "Prepare",
+      "subtitle": "Fix what tripped you up, then practise.",
+      "soonTitle": "Prepare is on its way",
+      "soonBody": "When your teachers add lessons, your follow-ups and practice will wait for you here.",
+      "followUps": {
+        "title": "Follow-ups",
+        "body": "Short tasks for anything a test showed you should look at again."
+      },
+      "practice": {
+        "title": "Practice",
+        "body": "Questions that explain why an answer is wrong."
+      },
+      "revise": {
+        "title": "Revise",
+        "body": "Old topics come back just before you forget them."
+      },
+      "goTests": "Go to my tests"
     }
   },
   "console": {
@@ -1297,6 +1353,10 @@
       "kid": "Kid",
       "student": "Student",
       "staff": "Staff"
+    },
+    "language": {
+      "toUrdu": "Switch to Urdu",
+      "toEnglish": "Switch to English"
     }
   },
   "dev": {
@@ -1388,7 +1448,30 @@
       "overdueHint": "Homework past due, and who hasn't handed it in",
       "attendanceHint": "Mark today's attendance in a few taps, or fix a past day",
       "attendanceSummaryHint": "Each class's day, and each student's month",
-      "messagesHint": "Send news to a class, one student or the whole school"
+      "messagesHint": "Send news to a class, one student or the whole school",
+      "morning": "Good morning, %{name}",
+      "afternoon": "Good afternoon, %{name}",
+      "evening": "Good evening, %{name}",
+      "year": "Academic year %{year}",
+      "myClasses": "My classes",
+      "allClasses": "Classes this year",
+      "classesError": "Couldn't load your classes.",
+      "noClassesTeacher": "You have no classes this year yet. Ask the admin to assign you one.",
+      "noClassesAdmin": "No classes this year yet. Add one first.",
+      "wholeClass": "Whole class",
+      "subjectCount": {
+        "one": "%{count} subject",
+        "other": "%{count} subjects"
+      },
+      "takeAttendance": "Attendance",
+      "newTest": "New test",
+      "grade": "Grade",
+      "tools": "Everything else",
+      "classesStat": "Classes",
+      "yearStat": "Academic year",
+      "current": "Current",
+      "cardsHint": "Print QR sign-in cards for a class",
+      "settingsHint": "Language, motion, this device"
     },
     "scope": {
       "class": "Class",
@@ -1580,6 +1663,12 @@
       "loadError": "Couldn't load the summary",
       "rangeEmpty": "No students in this class this year",
       "rateNote": "At school = present + late, out of present + late + absent. Leave isn't counted."
+    },
+    "nav": {
+      "home": "Home",
+      "messages": "Messages",
+      "brandTeacher": "Al-Syed · Teacher",
+      "brandAdmin": "Al-Syed · Admin"
     }
   }
 }

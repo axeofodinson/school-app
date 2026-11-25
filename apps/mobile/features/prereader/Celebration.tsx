@@ -1,12 +1,12 @@
 // The end of a pre-reader paper. Full motion tier only (and never in an exam): a
 // bouncy burst of stars (`celebrationKid`). Lite, off and exam mode get the same
 // words and icon, standing still. Words always say what happened (saved / will send).
-import type { ReactNode } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated from 'react-native-reanimated';
 
 import { useI18n } from '../../i18n';
-import { Icon, Text, useTheme } from '../../ui';
+import { Icon, Text, TileBurst, useCues, useTheme } from '../../ui';
 import { useEnterStyle, useMotion } from '../../ui/motion';
 import { space } from '../../ui/tokens';
 
@@ -36,8 +36,16 @@ export function PreReaderDone({ queued, action }: { queued: boolean; action?: Re
   const { tier, inExam } = useMotion();
   const { colours } = useTheme();
   const celebrate = tier === 'full' && !inExam;
+  const { cue, say } = useCues();
+  useEffect(() => {
+    // A tada, then the recorded "You did it!" if there is one (nothing in tests/exams).
+    cue('tada');
+    const timer = setTimeout(() => say(queued ? 'willSend' : 'allDone'), 700);
+    return () => clearTimeout(timer);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <View style={styles.box} accessibilityRole="summary">
+      {celebrate ? <TileBurst moment="celebrationKid" count={28} radius={220} /> : null}
       {celebrate ? (
         <Burst />
       ) : (

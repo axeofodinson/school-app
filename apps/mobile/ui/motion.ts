@@ -14,6 +14,7 @@ import {
   useSharedValue,
   withRepeat,
   withSpring,
+  withDelay,
   withTiming,
 } from 'react-native-reanimated';
 
@@ -28,6 +29,7 @@ import {
   pickMotionTier,
   resolveMoment,
   spring,
+  staggerDelay,
   type Behaviour,
   type MomentName,
   type MotionSetting,
@@ -35,6 +37,7 @@ import {
 } from './tokens';
 
 export {
+  choreography,
   duration,
   easing,
   examAllowedMoments,
@@ -141,6 +144,8 @@ export type EnterShape = {
   translateY?: number;
   /** Start scale (never 0: 0.6–0.97). */
   scaleFrom?: number;
+  /** Wait this long before moving (a cascade step from `useReveal`); ignored when off. */
+  delay?: number;
 };
 
 /**
@@ -159,8 +164,10 @@ export function useEnterStyle(name: MomentName, visible = true, shape: EnterShap
   const dy = props.includes('translateY') ? (shape.translateY ?? 0) : 0;
   const s0 = props.includes('scale') ? (shape.scaleFrom ?? 1) : 1;
 
+  const delay = b.kind === 'none' ? 0 : (shape.delay ?? 0);
   useEffect(() => {
-    progress.set(animateTo(b, target));
+    const anim = animateTo(b, target);
+    progress.set(delay > 0 && b.kind !== 'none' ? withDelay(delay, anim) : anim);
     // b is a table constant (or `none`); its kind + the moment name identify it.
   }, [target, b.kind, name, progress]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -175,6 +182,19 @@ export function useEnterStyle(name: MomentName, visible = true, shape: EnterShap
         { scale: s0 + (1 - s0) * p },
       ],
     };
+  });
+}
+
+/**
+ * The i-th sibling of a screen rising into place (`listEnter`, DECISIONS #94): full =
+ * a gentle spring up from `rise` px after a short cascade step; lite = a quick fade
+ * with the same cascade; off and exams = there at once.
+ */
+export function useReveal(index: number, rise = 14) {
+  const { tier } = useMotion();
+  return useEnterStyle('listEnter', true, {
+    translateY: rise,
+    delay: staggerDelay(index, tier),
   });
 }
 

@@ -8,7 +8,14 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { AuthProvider, useAuth } from '../features/auth/AuthProvider';
 import { I18nProvider, useI18n } from '../i18n';
-import { MotionProvider, ThemeProvider, ToastProvider, useMotion, useTheme } from '../ui';
+import {
+  MotionProvider,
+  SoundProvider,
+  ThemeProvider,
+  ToastProvider,
+  useMotion,
+  useTheme,
+} from '../ui';
 import { fontAssets } from '../ui/fonts';
 
 SplashScreen.preventAutoHideAsync().catch(() => undefined);
@@ -85,11 +92,13 @@ export default function RootLayout() {
         <I18nProvider>
           <ThemeProvider scheme="system">
             <MotionProvider>
-              <ToastProvider>
-                <AuthProvider>
-                  <Root />
-                </AuthProvider>
-              </ToastProvider>
+              <SoundProvider>
+                <ToastProvider>
+                  <AuthProvider>
+                    <Root />
+                  </AuthProvider>
+                </ToastProvider>
+              </SoundProvider>
             </MotionProvider>
           </ThemeProvider>
         </I18nProvider>

@@ -31,25 +31,64 @@ export function useLayout() {
 export function Screen({
   children,
   scroll = true,
+  header,
+  footer,
+  aside,
   style,
 }: {
   children: ReactNode;
   scroll?: boolean;
+  /** Full-bleed band above the content that scrolls with it (HeroBand). */
+  header?: ReactNode;
+  /** Pinned below the scroll area (the student tab bar on phones). */
+  footer?: ReactNode;
+  /** Pinned at the start edge (the student nav rail on desktop). */
+  aside?: ReactNode;
   style?: StyleProp<ViewStyle>;
 }) {
   const { isRTL } = useI18n();
   const { colours } = useTheme();
   const { gutter, maxContentWidth } = useLayout();
-  const content = [styles.content, { paddingHorizontal: gutter, maxWidth: maxContentWidth }, style];
+  const content = [
+    styles.content,
+    { paddingHorizontal: gutter, maxWidth: maxContentWidth },
+    header ? styles.afterHeader : null,
+    style,
+  ];
+  let body: ReactNode;
+  if (!scroll) {
+    body = (
+      <View style={styles.fill}>
+        {header}
+        <View style={[content, styles.fill]}>{children}</View>
+      </View>
+    );
+  } else if (header) {
+    body = (
+      <ScrollView style={styles.fill} contentContainerStyle={styles.grow}>
+        {header}
+        <View style={content}>{children}</View>
+      </ScrollView>
+    );
+  } else {
+    body = (
+      <ScrollView style={styles.fill} contentContainerStyle={content}>
+        {children}
+      </ScrollView>
+    );
+  }
   return (
     <SafeAreaView
+      edges={footer ? ['top', 'left', 'right'] : undefined}
       style={[styles.safe, { backgroundColor: colours.bg, direction: isRTL ? 'rtl' : 'ltr' }]}
     >
-      {scroll ? (
-        <ScrollView contentContainerStyle={content}>{children}</ScrollView>
-      ) : (
-        <View style={[content, styles.fill]}>{children}</View>
-      )}
+      <View style={styles.row}>
+        {aside}
+        <View style={styles.fill}>
+          {body}
+          {footer}
+        </View>
+      </View>
     </SafeAreaView>
   );
 }
@@ -101,6 +140,8 @@ const styles = StyleSheet.create({
     gap: space.lg,
   },
   fill: { flex: 1 },
+  grow: { flexGrow: 1 },
+  afterHeader: { flexGrow: 1, paddingTop: space.lg },
   row: { flex: 1, flexDirection: 'row' },
   listPane: { flexBasis: layout.listPane.max, flexShrink: 1, borderEndWidth: 1 },
 });

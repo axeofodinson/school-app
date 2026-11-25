@@ -35,6 +35,19 @@ export const timing = {
   syncPulseMaxMs: 10_000,
 } as const;
 
+/**
+ * Choreography (UI remake, DECISIONS #94): siblings entering together cascade by
+ * `stepMs` each, capped at `maxSteps` so a long list never waits. Off = no delay
+ * (nothing moves). A celebration burst never runs longer than `burstMs`.
+ */
+export const choreography = { stepMs: 45, maxSteps: 8, burstMs: 1400 } as const;
+
+/** Stagger delay for the i-th sibling (0-based); 0 when the tier is off. */
+export function staggerDelay(index: number, tier: MotionTier): number {
+  if (tier === 'off' || index <= 0) return 0;
+  return Math.min(index, choreography.maxSteps) * choreography.stepMs;
+}
+
 /** Opacity levels used by press feedback, pulses and disabled controls. */
 export const opacityLevels = { pressed: 0.85, pulseLow: 0.45, disabled: 0.45 } as const;
 
@@ -119,6 +132,40 @@ export const moments = {
     frequency: 'often',
     haptic: 'selection',
     full: fade('fast'),
+    lite: fade('fast'),
+    off: none,
+  },
+
+  // Screen choreography (DECISIONS #94): cards, rows and tiles rise into place in a short
+  // cascade (choreography.stepMs) so the eye reads the screen top to bottom. Never in exams.
+  listEnter: {
+    purpose: 'hierarchy',
+    frequency: 'often',
+    full: { kind: 'spring', spring: 'gentle', props: ['translateY', 'opacity'] },
+    lite: fade('fast'),
+    off: none,
+  },
+  // A score or count that matters lands with a small pop (results, test banner).
+  scoreReveal: {
+    purpose: 'progress',
+    frequency: 'occasional',
+    haptic: 'light',
+    full: { kind: 'spring', spring: 'snappy', props: ['scale', 'opacity'] },
+    lite: fade('base'),
+    off: none,
+  },
+
+  // A child's tap on a picture tile: the tile bounces and a few mosaic chips fly out, so a
+  // pre-reader knows the tap counted (no right/wrong is shown: rule 9). Kid band only.
+  kidPick: {
+    purpose: 'feedback',
+    frequency: 'often',
+    haptic: 'selection',
+    full: {
+      kind: 'spring',
+      spring: 'bouncy',
+      props: ['scale', 'opacity', 'translateX', 'translateY', 'rotate'],
+    },
     lite: fade('fast'),
     off: none,
   },

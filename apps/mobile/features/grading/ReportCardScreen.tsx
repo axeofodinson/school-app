@@ -83,8 +83,7 @@ export function ReportCardScreen() {
 
   if (!state || state.status === 'loading') {
     return (
-      <Screen>
-        {header}
+      <Screen header={header}>
         <SkeletonLines lines={5} />
       </Screen>
     );
@@ -97,8 +96,7 @@ export function ReportCardScreen() {
     state.data.assessments.some((a) => a.weightage === undefined);
   if (state.status === 'error' || stale) {
     return (
-      <Screen>
-        {header}
+      <Screen header={header}>
         <EmptyState
           icon="cloudOff"
           title={t(
@@ -111,16 +109,14 @@ export function ReportCardScreen() {
   }
   if (!enrolled) {
     return (
-      <Screen>
-        {header}
+      <Screen header={header}>
         <EmptyState icon="info" title={t(`student.report.${home!.enrollment as 'noYear'}`)} />
       </Screen>
     );
   }
   if (!rows.length) {
     return (
-      <Screen>
-        {header}
+      <Screen header={header}>
         <EmptyState icon="star" title={t('student.report.empty')} />
       </Screen>
     );
@@ -128,8 +124,7 @@ export function ReportCardScreen() {
 
   const { overall, subjects, cognitive } = report;
   return (
-    <Screen>
-      {header}
+    <Screen header={header}>
       {home!.fromCache ? (
         <Badge
           icon="cloudOff"
