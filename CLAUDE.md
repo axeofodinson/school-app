@@ -150,8 +150,8 @@ src/, App.js        OLD app (frozen)
   Components read it with `useMotion()` / `useMoment()`; exam screens wrap in `<ExamMode>`.
 - **Exams: nothing moves except the timer and save indicator.**
 - Motion must mean something (feedback, progress, hierarchy, sync), and slide
-  directions flip for RTL. One approved exception: the subject-pattern drift
-  (`patternDrift`, DECISIONS #47); no other looping decoration.
+  directions flip for RTL. Approved exceptions: the subject-pattern drift
+  (`patternDrift`, DECISIONS #47) and the mosaic tile morph (`shapeMorph`, #126); no other looping decoration.
 
 ## Performance budget (cheap 4 GB Chromebook)
 Cold start < 5 s · question switch < 150 ms · no dropped frames on screen

@@ -55,6 +55,8 @@ the words in this table if they do, and record what they approve. "Yellow button
 
 ## B. Sound effects (3 clips, done)
 
+**Being replaced (2026-11-25, DECISIONS #127):** Hassan wants softer sounds. The v2 spec (4 clips, adds `tap` for card taps) is in the project files: `audio/sfx-v2-script.md`. Swap the files in when he sends them.
+
 **Done 2026-11-25.** Hassan's ElevenLabs takes are in `apps/mobile/assets/sfx/`: `pop.wav`
 (soft bubble, first 0.18 s, raised 25 dB because the take was very quiet), `ding.wav` (two-note
 chime, 0.45 s) and `tada.wav` (cheerful flourish, 1.0 s, its silent tail cut). Each is mono

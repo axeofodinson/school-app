@@ -129,6 +129,10 @@
       "sound": "Sounds",
       "soundOn": "On",
       "soundOff": "Off",
+      "theme": "Theme",
+      "themeLight": "Light",
+      "themeDark": "Dark",
+      "themeHelp": "Light is the default. Dark only turns on if you pick it here.",
       "soundHelp": "Little sounds and spoken prompts for young learners. Never during tests and exams."
     },
     "cards": {
