@@ -1,7 +1,8 @@
 // GENERATED: do not edit by hand.
-// Source: local DB harness (TEST_PLAN DB-1) with db/setup.sql + db/002–016 (024,
-// applied 2026-11-24, adds only a trigger: no type change) (the
-// migrations applied in production; drafts 017/022 excluded), via
+// Source: local DB harness (TEST_PLAN DB-1) with db/setup.sql + db/002–016 + 024 +
+// 025 + 026 (applied in production 2026-11-25) + 018 (draft, prompt 13: the app
+// calls its student_paper / student_paper_levels RPCs; run it at the cut-over).
+// Drafts 017/022/023 excluded. Via
 //   npx supabase@3.3.0 gen types typescript --db-url <harness> --schema public
 // Regenerate after each migration Hassan runs (see packages/core/README.md).
 
@@ -735,6 +736,8 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      answer_text_norm: { Args: { p: string }; Returns: string };
+      auto_mark_item: { Args: { p_answer: Json; p_type: string; p_value: Json }; Returns: boolean };
       dearmor: { Args: { '': string }; Returns: string };
       dev_hard_delete_student: { Args: { p_student_id: string }; Returns: Json };
       gen_random_uuid: { Args: Record<PropertyKey, never>; Returns: string };
@@ -774,6 +777,25 @@ export type Database = {
       };
       student_login_email: { Args: { p_student_code: string }; Returns: string };
       student_login_handle: { Args: { p_student_id: string }; Returns: string };
+      student_paper: {
+        Args: { p_assessment_id: string };
+        Returns: {
+          body: Json;
+          cognitive_level: string;
+          marks: number;
+          question_id: string;
+          sort_order: number;
+          type: string;
+        }[];
+      };
+      student_paper_levels: {
+        Args: { p_assessment_ids: string[] };
+        Returns: {
+          assessment_id: string;
+          cognitive_level: string;
+          marks: number;
+        }[];
+      };
       sync_student_login_access: { Args: { p_student_id: string }; Returns: undefined };
       teaches_chapter: { Args: { cid: string }; Returns: boolean };
       teaches_class: { Args: { cid: string }; Returns: boolean };

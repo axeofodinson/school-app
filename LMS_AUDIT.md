@@ -115,7 +115,7 @@ Legend: ✅ works as planned · ⚠️ works with changes · ❌ won't work as w
 - **Push Edge Function** — `supabase/functions/send-message-push/`.
 
 ### 2.2 Blockers / problems found
-1. **Security hole (pre-existing):** `p_questions_read` (`db/setup.sql:263`) is `using (auth.uid() is not null)` — any student can read **every question with its answer key** through the API. Confirmed in the dry-run (student role read all 9 questions incl. `answer`). Exams are meaningless until closed. Fix drafted in 017 Part 10 (commented: the old app's `AssessmentAttemptScreen` reads `questions` directly, so it must be enabled at the Phase 1 cut-over).
+1. **Security hole (pre-existing):** `p_questions_read` (`db/setup.sql:263`) is `using (auth.uid() is not null)` — any student can read **every question with its answer key** through the API. Confirmed in the dry-run (student role read all 9 questions incl. `answer`). Exams are meaningless until closed. Fix drafted in 017 Part 10 (commented: the old app's `AssessmentAttemptScreen` reads `questions` directly, so it must be enabled at the Phase 1 cut-over). **Fixed in `db/018_close_answer_key_read.sql` (prompt 13, 2026-11-25; draft, run at the cut-over, TEST_PLAN CO-3).**
 2. No web dependencies; never built for web.
 3. `orientation: portrait` lock (`app.json`).
 4. No navigation library (`src/navigation/RootNavigator.js` is a conditional render) — fine for today, not for a tabbed LMS with deep links. expo-router in the remake.

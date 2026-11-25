@@ -54,7 +54,11 @@ unit-tested in Node, the same habit as today's `scripts/verify-*.mjs`.
 - RLS is the boundary (CLAUDE.md rule 4). Every new table has RLS on.
 - Students never read answer keys for exam items: exam papers come from
   `start_exam_session()` (security definer, strips answers). Practice items are
-  readable only when approved for practice.
+  readable only when approved for practice. Since `db/018` students can't read
+  the `questions` table at all: assessment papers come from `student_paper()`
+  and the report card's levels from `student_paper_levels()` (no answers), and
+  the server marks a submitted attempt (`t_submissions_auto_mark`), so answer
+  keys never need to reach a student's device.
 - Derived state (mastery, follow-ups) is written only by server RPCs.
 - No API keys in the app. AI calls (later) go through an Edge Function.
 

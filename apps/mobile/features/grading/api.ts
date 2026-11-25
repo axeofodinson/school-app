@@ -5,6 +5,7 @@
 // RLS: staff see everything, a teacher only classes they teach; students never
 // read the history.
 import {
+  AUTO_MARK_REASON,
   buildOverdueDashboard,
   buildRoster,
   gradeRpcError,
@@ -119,6 +120,8 @@ export interface GradeEdit {
   new_score: number | null;
   reason: string;
   edited_at: string;
+  /** The server's auto-mark on submit (db/018), not a person. */
+  auto: boolean;
 }
 
 /** Every change to one grade, newest first (staff + the class's teacher only). */
@@ -126,15 +129,18 @@ export async function loadHistory(submissionId: string): Promise<Result<GradeEdi
   if (!supabase) return notConfigured;
   const { data, error } = await supabase
     .from('submission_grade_edits')
-    .select('id, prev_score, new_score, reason, edited_at')
+    .select('id, prev_score, new_score, reason, edited_at, edited_by')
     .eq('submission_id', submissionId)
     .order('edited_at', { ascending: false });
   if (error) return fail(error);
   return ok(
     (data ?? []).map((r) => ({
-      ...r,
+      id: r.id,
+      reason: r.reason,
+      edited_at: r.edited_at,
       prev_score: r.prev_score == null ? null : Number(r.prev_score),
       new_score: r.new_score == null ? null : Number(r.new_score),
+      auto: r.edited_by == null && r.reason === AUTO_MARK_REASON,
     })),
   );
 }
@@ -237,9 +243,9 @@ export interface CognitiveRow {
 }
 
 /**
- * The cognitive make-up of the student's tests (marks per question + level).
- * Readable while the paper is published (db/005 p_aq_student_read); never reads
- * questions.answer.
+ * The cognitive make-up of the student's tests (marks per question + level),
+ * from the server's student_paper_levels() (db/018): published or closed tests
+ * of the student's own class. Students can't read `questions` directly.
  */
 export async function loadCognitive(
   assessmentIds: readonly string[],
@@ -247,10 +253,14 @@ export async function loadCognitive(
   if (!supabase) return notConfigured;
   if (!assessmentIds.length) return ok([]);
   const { data, error } = await supabase
-    .from('assessment_questions')
-    .select('assessment_id, marks, question:questions(cognitive_level)')
-    .in('assessment_id', assessmentIds)
-    .retry(false)
-    .overrideTypes<CognitiveRow[], { merge: false }>();
-  return error ? fail(error) : ok(data ?? []);
+    .rpc('student_paper_levels', { p_assessment_ids: [...assessmentIds] })
+    .retry(false);
+  if (error) return fail(error);
+  return ok(
+    (data ?? []).map((r) => ({
+      assessment_id: r.assessment_id,
+      marks: r.marks,
+      question: { cognitive_level: r.cognitive_level },
+    })),
+  );
 }

@@ -1,0 +1,228 @@
+[
+  {
+    "note": "mcq right",
+    "type": "mcq",
+    "value": "B",
+    "answer": { "correct": "B" },
+    "expect": true
+  },
+  {
+    "note": "mcq wrong",
+    "type": "mcq",
+    "value": "A",
+    "answer": { "correct": "B" },
+    "expect": false
+  },
+  {
+    "note": "mcq is case-sensitive key",
+    "type": "mcq",
+    "value": "b",
+    "answer": { "correct": "B" },
+    "expect": false
+  },
+  {
+    "note": "mcq blank",
+    "type": "mcq",
+    "value": null,
+    "answer": { "correct": "B" },
+    "expect": false
+  },
+  {
+    "note": "mcq key with worked solution",
+    "type": "mcq",
+    "value": "A",
+    "answer": { "correct": "A", "worked": "s = 80 m" },
+    "expect": true
+  },
+  { "note": "mcq no key", "type": "mcq", "value": "A", "answer": {}, "expect": null },
+  { "note": "mcq null answer", "type": "mcq", "value": "A", "answer": null, "expect": null },
+  {
+    "note": "tap_image right",
+    "type": "tap_image",
+    "value": "right",
+    "answer": { "correct": "right" },
+    "expect": true
+  },
+  {
+    "note": "tap_image wrong",
+    "type": "tap_image",
+    "value": "left",
+    "answer": { "correct": "right" },
+    "expect": false
+  },
+  {
+    "note": "true_false right",
+    "type": "true_false",
+    "value": false,
+    "answer": { "correct": false },
+    "expect": true
+  },
+  {
+    "note": "true_false wrong",
+    "type": "true_false",
+    "value": true,
+    "answer": { "correct": false },
+    "expect": false
+  },
+  {
+    "note": "true_false string value",
+    "type": "true_false",
+    "value": "true",
+    "answer": { "correct": true },
+    "expect": false
+  },
+  {
+    "note": "true_false string key",
+    "type": "true_false",
+    "value": true,
+    "answer": { "correct": "true" },
+    "expect": null
+  },
+  {
+    "note": "numeric right",
+    "type": "numeric",
+    "value": "42",
+    "answer": { "correct": 42 },
+    "expect": true
+  },
+  {
+    "note": "numeric trailing zero",
+    "type": "numeric",
+    "value": "42.0",
+    "answer": { "correct": 42 },
+    "expect": true
+  },
+  {
+    "note": "numeric decimal",
+    "type": "numeric",
+    "value": "0.5",
+    "answer": { "correct": 0.5 },
+    "expect": true
+  },
+  {
+    "note": "numeric leading dot",
+    "type": "numeric",
+    "value": ".5",
+    "answer": { "correct": "0.5" },
+    "expect": true
+  },
+  {
+    "note": "numeric negative",
+    "type": "numeric",
+    "value": "-3",
+    "answer": { "correct": -3 },
+    "expect": true
+  },
+  {
+    "note": "numeric urdu digits",
+    "type": "numeric",
+    "value": "۴۲",
+    "answer": { "correct": 42 },
+    "expect": true
+  },
+  {
+    "note": "numeric arabic digits + separator",
+    "type": "numeric",
+    "value": "٣٫٥",
+    "answer": { "correct": 3.5 },
+    "expect": true
+  },
+  {
+    "note": "numeric spaces",
+    "type": "numeric",
+    "value": " 1 000 ",
+    "answer": { "correct": 1000 },
+    "expect": true
+  },
+  {
+    "note": "numeric wrong",
+    "type": "numeric",
+    "value": "41",
+    "answer": { "correct": 42 },
+    "expect": false
+  },
+  {
+    "note": "numeric junk",
+    "type": "numeric",
+    "value": "42m",
+    "answer": { "correct": 42 },
+    "expect": false
+  },
+  {
+    "note": "numeric blank",
+    "type": "numeric",
+    "value": null,
+    "answer": { "correct": 42 },
+    "expect": false
+  },
+  {
+    "note": "numeric bad key",
+    "type": "numeric",
+    "value": "42",
+    "answer": { "correct": "forty" },
+    "expect": null
+  },
+  {
+    "note": "short_text right",
+    "type": "short_text",
+    "value": "Lahore",
+    "answer": { "correct": "Lahore" },
+    "expect": true
+  },
+  {
+    "note": "short_text case + spaces",
+    "type": "short_text",
+    "value": "  LAHORE   city ",
+    "answer": { "correct": "Lahore", "also": ["lahore city"] },
+    "expect": true
+  },
+  {
+    "note": "short_text urdu",
+    "type": "short_text",
+    "value": "لاہور",
+    "answer": { "correct": "لاہور" },
+    "expect": true
+  },
+  {
+    "note": "short_text digits",
+    "type": "short_text",
+    "value": "۷ دن",
+    "answer": { "correct": "7 دن" },
+    "expect": true
+  },
+  {
+    "note": "short_text wrong",
+    "type": "short_text",
+    "value": "Karachi",
+    "answer": { "correct": "Lahore", "also": ["lahore city"] },
+    "expect": false
+  },
+  {
+    "note": "short_text blank",
+    "type": "short_text",
+    "value": "   ",
+    "answer": { "correct": "Lahore" },
+    "expect": false
+  },
+  {
+    "note": "short_text empty key",
+    "type": "short_text",
+    "value": "x",
+    "answer": { "correct": "  " },
+    "expect": null
+  },
+  {
+    "note": "multi_select not auto",
+    "type": "multi_select",
+    "value": "A",
+    "answer": { "correct": ["A", "B"] },
+    "expect": null
+  },
+  {
+    "note": "match not auto",
+    "type": "match",
+    "value": null,
+    "answer": { "correct": { "1": "a" } },
+    "expect": null
+  }
+]

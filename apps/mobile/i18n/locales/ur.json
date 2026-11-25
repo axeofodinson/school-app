@@ -480,6 +480,7 @@
       "historyChange": "%{prev} → %{new}",
       "historyFirst": "پہلا گریڈ: %{new}",
       "historyMeta": "%{reason} · %{date}",
+      "historyAuto": "Marked by the app when the student sent it // TODO: ur",
       "errors": {
         "scoreRequired": "نمبر لکھیں۔",
         "scoreInvalid": "نمبر ایک عدد ہونا چاہیے (زیادہ سے زیادہ دو اعشاریہ)۔",

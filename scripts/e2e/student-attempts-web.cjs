@@ -163,6 +163,7 @@ const db = {
 const net = { down: false, loseNextFor: 'a-lost' };
 const posts = []; // every POST to submissions that reached the "server"
 const selects = []; // select= strings sent for assessment_questions
+const paperCalls = []; // student_paper() calls (db/018: the paper without answers)
 const log = [];
 const foreign = new Set();
 
@@ -234,6 +235,29 @@ async function mock(page) {
           : json(406, { code: 'PGRST116' })
         : json(200, rows);
     if (p === '/rest/v1/rpc/student_login_email') return json(200, handle(STUDENT.code));
+    if (p === '/rest/v1/rpc/student_paper') {
+      // Like db/018: id, type, body, marks, order, level of a paper; never the answer.
+      const { p_assessment_id: aid } = req.postDataJSON();
+      paperCalls.push(aid);
+      const rows = db.assessment_questions
+        .filter((i) => i.assessment_id === aid)
+        .sort((a, b) => a.sort_order - b.sort_order)
+        .map((i) => {
+          const q = db.questions.find((x) => x.id === i.question_id);
+          return q
+            ? {
+                question_id: q.id,
+                type: q.type,
+                body: q.body,
+                marks: i.marks,
+                sort_order: i.sort_order,
+                cognitive_level: 'recall',
+              }
+            : null;
+        })
+        .filter(Boolean);
+      return json(200, rows);
+    }
     if (p === '/auth/v1/token') return json(200, sessionFor());
     if (p === '/auth/v1/logout') return route.fulfill({ status: 204 });
     if (p === '/rest/v1/profiles')
@@ -344,8 +368,8 @@ const radio = (page, name) => page.getByRole('radio', { name, exact: true });
   await page.waitForURL('**/tests/a-quiz');
   check(await seen(page, 'Which set has no elements?'), 'paper renders');
   check(
-    selects.length > 0 && selects.every((s) => !/answer/.test(s)),
-    'paper select never asks for answer: ' + selects[0],
+    paperCalls.includes('a-quiz') && selects.every((s) => !/question|answer/.test(s)),
+    'paper comes from student_paper(), never a questions/answer select: ' + selects.join(' | '),
   );
   check(
     (await page.getByRole('button', { name: 'Hear the question' }).count()) === 1,

@@ -90,7 +90,7 @@ function History({ submissionId }: { submissionId: string }) {
           </Text>
           <Text variant="bodySm" tone="textMuted">
             {t('console.grading.historyMeta', {
-              reason: h.reason,
+              reason: h.auto ? t('console.grading.historyAuto') : h.reason,
               date: fmtDate(h.edited_at, locale),
             })}
           </Text>

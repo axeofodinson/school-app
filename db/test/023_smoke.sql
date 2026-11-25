@@ -202,7 +202,13 @@ set request.jwt.claim.sub = '00000000-0000-0000-0000-00000000000b';
 do $$ begin
   assert public.is_school_member(), 'school student not a member';
   assert (select count(*) from assessments) >= 1, 'school student lost assessments';
-  assert (select count(*) from questions) >= 1, 'school student lost questions (old app reads them)';
+  -- Before 018 any signed-in student reads questions (old app); after 018 none
+  -- do (papers come from student_paper()). Either way 023 doesn't change it.
+  if exists (select 1 from pg_proc where proname = 'student_paper') then
+    assert (select count(*) from questions) = 0, 'school student reads answer keys after 018';
+  else
+    assert (select count(*) from questions) >= 1, 'school student lost questions (old app reads them)';
+  end if;
   assert (select count(*) from messages) >= 1, 'school student lost messages';
   assert (select count(*) from exam_sessions) >= 1, 'school student lost own exam session';
   begin
