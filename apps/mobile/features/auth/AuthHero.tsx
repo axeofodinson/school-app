@@ -1,36 +1,40 @@
 // The top of the sign-in screens: the school's mark, the language pill, a big title,
-// and a small cluster of mosaic tiles that settle into place as the page opens
-// (listEnter cascade; lite fades, off still). The pattern drifts behind (patternDrift).
+// and a row of mosaic tiles that settle into place as the page opens (listEnter
+// cascade), then keep turning calmly between square, star, diamond and rosette in a
+// rolling wave (shapeMorph: full loops, lite one pass, off still). The mark morphs too.
+// The pattern drifts behind (patternDrift).
 import { StyleSheet, View } from 'react-native';
 
 import { useI18n } from '../../i18n';
-import { HeroBand, HeroLanguageButton, Icon, Reveal, Text, useHeroTone, useTheme } from '../../ui';
+import {
+  HeroBand,
+  HeroLanguageButton,
+  MorphTile,
+  MosaicMark,
+  Reveal,
+  Text,
+  useHeroTone,
+  useMorphClock,
+  useTheme,
+} from '../../ui';
+import { morphPhaseStep } from '@school/core/design';
 import { space, subjectHues, type SubjectHue } from '../../ui/tokens';
 
-const TILES: { hue: SubjectHue; diamond?: boolean }[] = [
-  { hue: 'sky' },
-  { hue: 'mint', diamond: true },
-  { hue: 'coral' },
-  { hue: 'sunflower' },
-  { hue: 'lilac', diamond: true },
-  { hue: 'lagoon' },
-];
+const HUES: SubjectHue[] = ['sky', 'mint', 'coral', 'sunflower', 'lilac', 'lagoon'];
 
 function Tiles() {
   const { colours, scheme } = useTheme();
+  const morph = useMorphClock();
   return (
     <View style={styles.tiles} accessible={false} importantForAccessibility="no-hide-descendants">
-      {TILES.map((tile, i) => (
-        <Reveal key={i} index={i + 2} rise={18}>
-          <View
-            style={[
-              styles.tile,
-              {
-                backgroundColor: subjectHues[tile.hue][scheme],
-                borderColor: colours.ink,
-                transform: tile.diamond ? [{ rotate: '45deg' }, { scale: 0.8 }] : undefined,
-              },
-            ]}
+      {HUES.map((hue, i) => (
+        <Reveal key={hue} index={i + 2} rise={18}>
+          <MorphTile
+            morph={morph}
+            phase={i * morphPhaseStep}
+            size={26}
+            fill={subjectHues[hue][scheme]}
+            outline={colours.ink}
           />
         </Reveal>
       ))}
@@ -41,11 +45,12 @@ function Tiles() {
 function Inner({ title, subtitle }: { title: string; subtitle: string }) {
   const { t } = useI18n();
   const tone = useHeroTone();
+  const { colours } = useTheme();
   return (
     <>
       <View style={styles.top}>
         <View style={[styles.mark, { borderColor: 'transparent' }]}>
-          <Icon name="mosaic" size={28} tone={tone} />
+          <MosaicMark size={26} colour={colours[tone]} fill={colours.primary} />
         </View>
         <Text variant="label" tone={tone} style={styles.flex} numberOfLines={2}>
           {t('auth.school')}
@@ -78,5 +83,4 @@ const styles = StyleSheet.create({
   mark: { width: 36, height: 36, alignItems: 'center', justifyContent: 'center' },
   flex: { flex: 1 },
   tiles: { flexDirection: 'row', gap: space.sm, marginTop: space.lg, marginBottom: space.sm },
-  tile: { width: 26, height: 26, borderRadius: 7, borderWidth: 2 },
 });

@@ -6,6 +6,7 @@ import {
   duration,
   examAllowedMoments,
   liteMovementExceptions,
+  loopingMoments,
   mirrorX,
   moments,
   choreography,
@@ -57,18 +58,21 @@ describe('choreography table', () => {
     }
   });
 
-  it('only the full-tier pattern drift loops, and it stops in exams and off', () => {
+  it('only the approved decorations loop, full tier only, and they stop in exams and off', () => {
     for (const name of names) {
       for (const tier of tiers) {
         const b: Behaviour = moments[name][tier];
         const loops = b.kind === 'timing' && b.repeat === 'loop';
-        expect(loops, `${name}.${tier}`).toBe(name === 'patternDrift' && tier === 'full');
+        expect(loops, `${name}.${tier}`).toBe(loopingMoments.includes(name) && tier === 'full');
       }
     }
-    expect(liteMovementExceptions).toEqual(['patternDrift']);
-    for (const tier of tiers)
-      expect(resolveMoment('patternDrift', tier, { inExam: true }).kind).toBe('none');
-    expect(resolveMoment('patternDrift', 'off').kind).toBe('none');
+    expect(loopingMoments).toEqual(['patternDrift', 'shapeMorph']);
+    expect(liteMovementExceptions).toEqual(['patternDrift', 'shapeMorph']);
+    for (const name of loopingMoments) {
+      for (const tier of tiers)
+        expect(resolveMoment(name, tier, { inExam: true }).kind).toBe('none');
+      expect(resolveMoment(name, 'off').kind).toBe('none');
+    }
   });
 
   it('tabs never move', () => {

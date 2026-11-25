@@ -2,6 +2,12 @@
 
 Newest first. Each: decision — reason — who/when.
 
+## 2026-11-25 — Light theme default, morphing mosaic tiles, softer sounds (Hassan)
+
+125. **Light is the theme; dark is opt-in only.** The app no longer follows the OS colour scheme. The root `SchemeProvider` (`apps/mobile/ui/theme.tsx`) starts light and switches to dark only when the user picks it in **Settings → Theme** (saved per device, `app.scheme`). Hassan prefers the light theme and saw a dark phone pull the app into dark mode. Sign-in screens are always light until a choice is saved on that device.
+126. **The mosaic tiles morph (second approved looping decoration, after #47).** The sign-in tile row and the mosaic mark turn calmly between square → 8-point star → diamond → 12-lobe rosette in a rolling wave (`shapeMorph`). Each shape is three rounded squares rotated/scaled about the centre, so it is transform-only on the UI thread (one shared clock per group, no re-renders); petals only turn forward and every loop ends a multiple of 90° on, so the restart is invisible; each step holds 40 % then turns with smootherstep (no kick at either end). Full: loops while the screen is focused; lite: one pass when it opens (with `patternDrift`, the lite movement exceptions); off/reduce-motion/exams: still, resting on a mix of shapes. Not used in persistent chrome (tab bar, staff sidebar) where a loop would distract on every screen. Hassan asked for "really good, very smooth" shape animation, 2026-11-25.
+127. **Softer sound effects (spec only).** Card taps today play Android's system click; the app's own `pop`/`ding`/`tada` felt too sharp. New spec `audio/sfx-v2-script.md` (project files): felt-mallet/marimba, low and rounded, plus a new `tap` for card taps. Files are swapped in, and the system click turned off on those cards (`android_disableSound`), only once Hassan sends the new takes.
+
 ## 2026-11-25 — Teacher review queue (prompt 22)
 
 107. **Approvals and reviews are written only through the review RPCs (db/032).** 017 let any teacher insert an approval for any question; now `review_question()`, `review_approve_many()` and `review_edit_question()` are the only writers, and a teacher may decide only on a question whose concept is in a subject they teach this year (`teaches_concept`, the same scope as the curriculum editors, #96); staff any. Untagged questions can't be approved; only staff can tag them from the queue (a teacher can't prove it's theirs). An approval row can only be revoked, once.

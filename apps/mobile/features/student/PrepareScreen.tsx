@@ -5,6 +5,7 @@ import { useRouter } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 
 import { useI18n } from '../../i18n';
+import { MosaicMark } from '../../ui/MorphTile';
 import { Button, Card, Icon, Reveal, Screen, Text, useTheme, type IconName } from '../../ui';
 import { PatternFill } from '../../ui/Pattern';
 import { space, subjectHues, type SubjectHue } from '../../ui/tokens';
@@ -43,7 +44,7 @@ export function PrepareScreen() {
         >
           <PatternFill name="hexFlower" animated />
           <View style={[styles.badge, { backgroundColor: colours.surface, borderColor: outline }]}>
-            <Icon name="mosaic" size={36} colour={colours.ink} />
+            <MosaicMark size={34} colour={colours.ink} fill={colours.surface} />
           </View>
           <Text variant="heading" tone="ink" style={styles.centre} accessibilityRole="header">
             {t('student.prepare.soonTitle')}
