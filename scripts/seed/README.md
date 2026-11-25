@@ -18,6 +18,18 @@ LMS part (question bank + history) needs `npm run seed:dev` once 017 is applied.
 They are generated: after changing the generators run `npm run seed:sql`
 (a test fails while they are stale).
 
+## Optional: PG play quizzes (something to attempt)
+
+The seed makes classes but no tests. After `seed-dev.sql`, paste
+[`sql/pg-play-quizzes-dev.sql`](sql/pg-play-quizzes-dev.sql) into the **dev**
+project's SQL Editor and Run. It adds 20 questions (15 tap-the-picture with
+read-aloud, 2 true/false, 2 multiple choice, 1 number) in English + Urdu, as two
+published quizzes for each of `TEST PG-A` and `TEST PG-B`: "Play Quiz 1: Numbers
+& Shapes" and "Play Quiz 2: Letters & Sounds". The last result shows 4 rows of
+`published | 10 | 10`. Sign in as `TEST-0001` (PG-A) / PIN `1234` to take them.
+Running it twice adds nothing; `remove-dev.sql` removes it with the rest. The
+Urdu is a first draft for testing: a teacher should check it (prompt C2).
+
 ## From a terminal
 
 | Command (from the repo root)             | What it does                                                                   |
