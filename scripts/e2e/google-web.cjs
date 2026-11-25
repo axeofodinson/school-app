@@ -131,6 +131,8 @@ async function mock(page, scenario) {
           : [],
       );
     }
+    // The admin home (UI remake) reads the school's scope; no year here keeps it simple.
+    if (p === '/rest/v1/academic_years') return json(200, []);
     if (p === '/rest/v1/students') {
       return json(200, { id: 's-9', full_name: 'Prep Kid (enrolled)', student_code: '2026-001' });
     }

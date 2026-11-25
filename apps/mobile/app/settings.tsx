@@ -5,7 +5,16 @@ import { StyleSheet, View } from 'react-native';
 
 import { useAuth } from '../features/auth/AuthProvider';
 import { useI18n } from '../i18n';
-import { Button, Card, LanguageToggle, Screen, SegmentedControl, Text, useMotion } from '../ui';
+import {
+  Button,
+  Card,
+  LanguageToggle,
+  Screen,
+  SegmentedControl,
+  Text,
+  useMotion,
+  useSoundSetting,
+} from '../ui';
 
 // Settings for any signed-in user: language and motion (full / lite / off / auto,
 // DECISIONS #47 needs a way to stop motion). Admins also see the per-device
@@ -14,6 +23,7 @@ export default function Settings() {
   const { t } = useI18n();
   const router = useRouter();
   const { setting, setSetting } = useMotion();
+  const sound = useSoundSetting();
   const { destination, sharedMode, setSharedMode, signOut } = useAuth();
   const [saving, setSaving] = useState(false);
   const isAdmin = destination === 'admin';
@@ -61,6 +71,23 @@ export default function Settings() {
           />
           <Text variant="bodySm" tone="textMuted">
             {t('auth.settings.motionHelp')}
+          </Text>
+        </View>
+      </Card>
+      <Card>
+        <View style={styles.section}>
+          <Text variant="label">{t('auth.settings.sound')}</Text>
+          <SegmentedControl
+            segments={[
+              { value: 'on', label: t('auth.settings.soundOn') },
+              { value: 'off', label: t('auth.settings.soundOff') },
+            ]}
+            value={sound.enabled ? 'on' : 'off'}
+            onChange={(v) => sound.setEnabled(v === 'on')}
+            accessibilityLabel={t('auth.settings.sound')}
+          />
+          <Text variant="bodySm" tone="textMuted">
+            {t('auth.settings.soundHelp')}
           </Text>
         </View>
       </Card>

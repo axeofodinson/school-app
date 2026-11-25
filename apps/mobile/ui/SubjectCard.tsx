@@ -26,10 +26,16 @@ export function SubjectCard({
   subject,
   onPress,
   justSet,
+  label: labelOverride,
+  countLabel,
 }: {
   subject: SubjectSummary;
   onPress?: () => void;
   justSet?: number;
+  /** Screen-reader label for the mosaic when tiles mean something else (e.g. tests done). */
+  label?: string;
+  /** The line under the mosaic (default: "N of M concepts"). */
+  countLabel?: string;
 }) {
   const { t } = useI18n();
   const { colours, presentation } = useTheme();
@@ -37,11 +43,13 @@ export function SubjectCard({
   const r = radiusFor('lg', presentation);
   // Lite tier: the pattern glides again on press and when a tile is set.
   const [presses, setPresses] = useState(0);
-  const label = t('ui.mosaic.label', {
-    subject: subject.name,
-    count: subject.mastered,
-    total: subject.total,
-  });
+  const label =
+    labelOverride ??
+    t('ui.mosaic.label', {
+      subject: subject.name,
+      count: subject.mastered,
+      total: subject.total,
+    });
   return (
     <PressableSticker
       onPressIn={() => setPresses((n) => n + 1)}
@@ -73,7 +81,7 @@ export function SubjectCard({
         />
         <View style={styles.row}>
           <Text variant="bodySm" tone="textMuted" style={styles.flex}>
-            {t('ui.mosaic.count', { count: subject.mastered, total: subject.total })}
+            {countLabel ?? t('ui.mosaic.count', { count: subject.mastered, total: subject.total })}
           </Text>
           {subject.band ? <MasteryChip band={subject.band} /> : null}
         </View>

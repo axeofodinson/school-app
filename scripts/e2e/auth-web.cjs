@@ -186,7 +186,7 @@ async function studentLogin(page, code, pin) {
       !page.url().endsWith('/school'),
       'student cannot open admin route (guard redirects) -> ' + new URL(page.url()).pathname,
     );
-    await page.goto(BASE + '/learn');
+    await page.goto(BASE + '/me'); // UI remake: sign out lives on the Me tab
     await page.getByText('Sign out', { exact: true }).click();
     await page.waitForURL('**/login', { timeout: 8000 }).catch(() => {});
     check(

@@ -230,6 +230,16 @@ Libraries and tier model: ARCHITECTURE §6b, CLAUDE.md Motion rules. This sectio
 4. **Haptics:** one per user action, same frame as the visual, never the only feedback; a setting turns them off.
 5. **Budget:** every moment above must hold 60 fps on the reference phone and the cheapest Chromebook in lite tier (TEST_PLAN P-4/P-6). If one does not, its lite behaviour becomes the full behaviour.
 
+### 6.2 Choreography added in the UI remake (DECISIONS #94)
+| Moment | Full | Lite | Off / exam |
+|---|---|---|---|
+| `listEnter` | gentle spring, rise 14 px + fade, 45 ms cascade (≤ 8 steps) | the cascade as quick fades | there at once |
+| `scoreReveal` | snappy pop from 0.7 + fade; tile burst at 80 %+ | fade | none |
+| `kidPick` | bouncy pop from 0.82 + 9 mosaic chips from the tile (kid band) | fade | none |
+| celebrations | `TileBurst`: 10–28 chips, ≤ 1.4 s, transform + opacity | words + still icon | words + still icon |
+
+Sounds (DECISIONS #95) follow the same rule as motion in exams: none.
+
 ## 7. Screen wireframes (low fi)
 
 Annotations: `[ ]` button, `( )` chip, `▦` mosaic tiles, `▒` content area. These text sketches give the layout; the v0.2 look (colour, pattern, stickers) is in the canvas. Drawn left-to-right (English); Urdu mirrors the whole layout. Interactive, themed versions are in the review Artifact. Each screen also needs an empty state and an offline state (listed under it).

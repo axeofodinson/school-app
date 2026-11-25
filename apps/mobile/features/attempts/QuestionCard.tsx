@@ -75,6 +75,36 @@ function Choice({
   );
 }
 
+/** An MCQ option (wireframe "Exam"): a letter key box, then the text, start-aligned. */
+function OptionFace({
+  letter,
+  text,
+  selected,
+}: {
+  letter: string;
+  text: string;
+  selected: boolean;
+}) {
+  const { colours } = useTheme();
+  return (
+    <View style={styles.option}>
+      <View
+        style={[
+          styles.letter,
+          { backgroundColor: selected ? colours.primary : colours.surfaceAlt },
+        ]}
+      >
+        <Text variant="label" tone={selected ? 'onPrimary' : 'text'} script="latin">
+          {letter}
+        </Text>
+      </View>
+      <Text variant="label" tone={selected ? 'onPrimarySoft' : 'text'} style={styles.optionText}>
+        {text}
+      </Text>
+    </View>
+  );
+}
+
 function TapTile({ c, index }: { c: TapChoice; index: number }) {
   const { t } = useI18n();
   if (c.kind === 'emoji') {
@@ -135,7 +165,9 @@ export function QuestionCard({
               selected={value === key}
               onPress={() => onChange(key)}
               disabled={disabled}
-            />
+            >
+              <OptionFace letter={key} text={String(o.text ?? '')} selected={value === key} />
+            </Choice>
           );
         })}
       </View>
@@ -230,6 +262,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: space.md,
     paddingVertical: space.sm,
   },
+  option: { flexDirection: 'row', alignItems: 'center', gap: space.md, alignSelf: 'stretch' },
+  letter: {
+    width: 32,
+    height: 32,
+    borderRadius: 9,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  optionText: { flex: 1 },
   tapGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: space.md },
   tapCell: { flexGrow: 1, flexBasis: 140 },
   emoji: { textAlign: 'center' },

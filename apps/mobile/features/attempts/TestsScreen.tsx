@@ -10,13 +10,19 @@ import {
   Badge,
   Button,
   EmptyState,
-  ListItem,
+  Icon,
+  Reveal,
   Screen,
   SkeletonLines,
   Text,
+  useTheme,
   type BadgeTone,
+  type IconName,
 } from '../../ui';
-import { space } from '../../ui/tokens';
+import { PressableSticker } from '../../ui/Sticker';
+import { hueForSubject, radiusFor, space, subjectHues } from '../../ui/tokens';
+import { useStudentNav } from '../student/StudentNav';
+import { useGradePresentation } from '../student/StudentPresentation';
 import { useAttemptSync } from './AttemptSync';
 import type { StudentAssessment } from './api';
 import { StudentHeader } from './Header';
@@ -34,6 +40,68 @@ const STATE: Record<RowState, { key: TKey; tone: BadgeTone }> = {
   closed: { key: 'student.assessments.status.closed', tone: 'neutral' },
 };
 
+const STATE_ICON: Record<RowState, IconName> = {
+  worksheet: 'book',
+  todo: 'pencil',
+  started: 'pencil',
+  waiting: 'cloudOff',
+  problem: 'warning',
+  submitted: 'checkCircle',
+  closed: 'lock',
+};
+
+/** One test as a sticker card: a subject-hue tile at the start edge, title, meta, status. */
+function TestCard({
+  a,
+  s,
+  meta,
+  onPress,
+}: {
+  a: StudentAssessment;
+  s: RowState;
+  meta: string;
+  onPress: () => void;
+}) {
+  const { t } = useI18n();
+  const { colours, scheme, presentation } = useTheme();
+  const hue = hueForSubject(a.subjectId ?? a.subjectName ?? a.id);
+  const open = s === 'todo' || s === 'started' || s === 'problem' || s === 'worksheet';
+  return (
+    <PressableSticker
+      radius={radiusFor('lg', presentation)}
+      depth={open ? 'sticker' : 'stickerSm'}
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={`${a.title}, ${t(STATE[s].key)}`}
+      faceStyle={(pressed) => [
+        styles.card,
+        { backgroundColor: pressed ? colours.surfaceAlt : colours.surface },
+      ]}
+    >
+      <View
+        style={[
+          styles.hue,
+          {
+            backgroundColor: subjectHues[hue][scheme],
+            borderColor: scheme === 'dark' ? colours.borderStrong : colours.ink,
+          },
+        ]}
+      >
+        <Icon name={STATE_ICON[s]} colour={colours.ink} size={22} />
+      </View>
+      <View style={styles.flex}>
+        <Text variant="heading" numberOfLines={2}>
+          {a.title}
+        </Text>
+        <Text variant="bodySm" tone="textMuted" numberOfLines={2}>
+          {meta}
+        </Text>
+      </View>
+      <Badge label={t(STATE[s].key)} tone={STATE[s].tone} />
+    </PressableSticker>
+  );
+}
+
 const TYPE_KEYS: Record<string, TKey> = {
   assignment: 'student.assessments.types.assignment',
   test: 'student.assessments.types.test',
@@ -47,6 +115,9 @@ export function TestsScreen() {
   const router = useRouter();
   const { state, reload } = useHome();
   const { items, drafts } = useAttemptSync();
+  const nav = useStudentNav('tests');
+  const ready = state?.status === 'ready' ? state.data.enrollment : null;
+  useGradePresentation(ready && typeof ready !== 'string' ? (ready.gradeLevel ?? null) : undefined);
   const [draftKeys, setDraftKeys] = useState<ReadonlySet<string>>(new Set());
   useEffect(() => {
     let live = true;
@@ -61,6 +132,7 @@ export function TestsScreen() {
 
   const header = (
     <StudentHeader
+      tab
       title={t('student.assessments.title')}
       subtitle={t('student.assessments.subtitle')}
     />
@@ -68,16 +140,14 @@ export function TestsScreen() {
 
   if (!state || state.status === 'loading') {
     return (
-      <Screen>
-        {header}
+      <Screen header={header} {...nav}>
         <SkeletonLines lines={4} />
       </Screen>
     );
   }
   if (state.status === 'error') {
     return (
-      <Screen>
-        {header}
+      <Screen header={header} {...nav}>
         <EmptyState
           icon="cloudOff"
           title={t(
@@ -93,8 +163,7 @@ export function TestsScreen() {
   const home = state.data;
   if (typeof home.enrollment === 'string') {
     return (
-      <Screen>
-        {header}
+      <Screen header={header} {...nav}>
         <EmptyState icon="info" title={t(`student.assessments.${home.enrollment}`)} />
       </Screen>
     );
@@ -123,7 +192,7 @@ export function TestsScreen() {
   );
   const rest = rows.filter((r) => !todo.includes(r));
 
-  const row = ({ a, s }: { a: StudentAssessment; s: RowState }) => {
+  const row = ({ a, s }: { a: StudentAssessment; s: RowState }, i: number) => {
     const meta = [
       a.subjectName,
       TYPE_KEYS[a.type] ? t(TYPE_KEYS[a.type]!) : null,
@@ -134,19 +203,19 @@ export function TestsScreen() {
       a.scheduledOn,
     ].filter(Boolean);
     return (
-      <ListItem
-        key={a.id}
-        title={a.title}
-        subtitle={meta.join(' · ')}
-        trailing={<Badge label={t(STATE[s].key)} tone={STATE[s].tone} />}
-        onPress={() => router.push(`/tests/${a.id}`)}
-      />
+      <Reveal key={a.id} index={i}>
+        <TestCard
+          a={a}
+          s={s}
+          meta={meta.join(' · ')}
+          onPress={() => router.push(`/tests/${a.id}`)}
+        />
+      </Reveal>
     );
   };
 
   return (
-    <Screen>
-      {header}
+    <Screen header={header} {...nav}>
       {home.fromCache ? (
         <Badge
           icon="cloudOff"
@@ -160,13 +229,17 @@ export function TestsScreen() {
       ) : (
         <View style={styles.list}>
           {todo.length ? (
-            <Text variant="label" tone="textMuted">
+            <Text variant="heading" accessibilityRole="header">
               {t('student.assessments.todoCount', { count: todo.length })}
             </Text>
           ) : null}
-          {todo.map(row)}
-          {rest.length && todo.length ? <View style={styles.gap} /> : null}
-          {rest.map(row)}
+          {todo.map((r, i) => row(r, i + 1))}
+          {rest.length ? (
+            <Text variant="heading" accessibilityRole="header" style={styles.gap}>
+              {t('student.assessments.doneHeading')}
+            </Text>
+          ) : null}
+          {rest.map((r, i) => row(r, todo.length + i + 2))}
         </View>
       )}
     </Screen>
@@ -174,7 +247,17 @@ export function TestsScreen() {
 }
 
 const styles = StyleSheet.create({
-  list: { gap: space.sm },
-  gap: { height: space.md },
+  list: { gap: space.md },
+  gap: { marginTop: space.md },
+  flex: { flex: 1, gap: 2 },
+  card: { flexDirection: 'row', alignItems: 'center', gap: space.md, padding: space.md },
+  hue: {
+    width: 48,
+    height: 48,
+    borderRadius: 12,
+    borderWidth: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   banner: { marginBottom: space.md, alignSelf: 'flex-start' },
 });

@@ -12,13 +12,26 @@ import {
   pruneAnswers,
   type AnswerValue,
   type Answers,
+  type AttemptQuestion,
 } from '@school/core';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { useI18n, type TKey } from '../../i18n';
-import { Badge, Button, EmptyState, ExamMode, Screen, SkeletonLines, Text } from '../../ui';
+import {
+  Badge,
+  Button,
+  EmptyState,
+  ExamMode,
+  Screen,
+  SkeletonLines,
+  Text,
+  TileBurst,
+  useCues,
+  useTheme,
+} from '../../ui';
+import { useGradePresentation } from '../student/StudentPresentation';
 import { space } from '../../ui/tokens';
 import { useAuth } from '../auth/AuthProvider';
 import { FileViewer } from '../files/FileViewer';
@@ -51,6 +64,7 @@ export function AttemptScreen() {
   const enrollment = data && typeof data.enrollment !== 'string' ? data.enrollment : null;
   const assessment = data?.assessments.find((a) => a.id === id) ?? null;
   const onServer = !!data?.submissions.some((s) => s.assessmentId === id);
+  useGradePresentation(enrollment ? (enrollment.gradeLevel ?? null) : undefined);
 
   const title = assessment?.title ?? t('student.assessments.title');
   const subtitle = assessment
@@ -63,16 +77,14 @@ export function AttemptScreen() {
 
   if (!st || st.status === 'loading') {
     return (
-      <Screen>
-        {header}
+      <Screen header={header}>
         <SkeletonLines lines={5} />
       </Screen>
     );
   }
   if (st.status === 'error') {
     return (
-      <Screen>
-        {header}
+      <Screen header={header}>
         <EmptyState
           icon="cloudOff"
           title={t('student.attempt.loadError')}
@@ -85,8 +97,7 @@ export function AttemptScreen() {
   }
   if (!enrollment || !assessment) {
     return (
-      <Screen>
-        {header}
+      <Screen header={header}>
         <EmptyState
           icon="info"
           title={t('student.attempt.notAvailable')}
@@ -98,8 +109,7 @@ export function AttemptScreen() {
   if (assessment.type === 'file') {
     // A worksheet: read (or open) the teacher's file; the work is done on paper.
     return (
-      <Screen>
-        {header}
+      <Screen header={header}>
         <View style={styles.worksheet}>
           <Text tone="textMuted">{t('student.worksheet.howTo')}</Text>
           <FileViewer file={assessment.file ?? { path: null, name: null, mime: null }} />
@@ -111,13 +121,36 @@ export function AttemptScreen() {
   return (
     // Formal tests and exams: nothing moves except the save indicator (CLAUDE.md motion rules).
     <ExamMode active={assessment.type === 'exam' || assessment.type === 'test'}>
-      <Screen>
+      <Screen header={header}>
         {/* A message arriving mid-test waits in the inbox instead of popping up. */}
         <HoldMessageToasts active={assessment.type === 'exam' || assessment.type === 'test'} />
-        {header}
         <Attempt enrollmentId={enrollment.id} assessment={assessment} onServer={onServer} />
       </Screen>
     </ExamMode>
+  );
+}
+
+/** Which questions have an answer, as a row of tiles (set = answered). Never moves. */
+function AnsweredTiles({ questions, answers }: { questions: AttemptQuestion[]; answers: Answers }) {
+  const { colours } = useTheme();
+  if (questions.length < 2) return null;
+  return (
+    <View style={styles.tiles} accessible={false} importantForAccessibility="no-hide-descendants">
+      {questions.map((q) => {
+        const on = answeredCount([q], answers) > 0;
+        return (
+          <View
+            key={q.id}
+            style={[
+              styles.tile,
+              on
+                ? { backgroundColor: colours.primarySoft, borderColor: colours.primary }
+                : { borderColor: colours.borderStrong, borderStyle: 'dashed' },
+            ]}
+          />
+        );
+      })}
+    </View>
   );
 }
 
@@ -170,6 +203,7 @@ function Attempt({
   const [confirmBlank, setConfirmBlank] = useState(false);
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<SubmitResult | null>(null);
+  const { cue, say } = useCues();
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   // Latest answers for the change handler (quick taps never lose an earlier answer).
   const answersRef = useRef<Answers | null>(null);
@@ -224,7 +258,9 @@ function Attempt({
     const r = await submit(enrollmentId, assessment.id, buildResponses(questions, answers));
     setBusy(false);
     setResult(r);
-  }, [questions, answers, drafts, key, submit, enrollmentId, assessment.id]);
+    // A quiz just went off (never sounds in tests/exams: useCues is silent in ExamMode).
+    if (r === 'submitted' && questions && !isPreReaderSet(questions)) cue('ding');
+  }, [questions, answers, drafts, key, submit, enrollmentId, assessment.id, cue]);
 
   // A pre-reader paper just finished: celebrate (full tier) and say where the work is.
   if (
@@ -236,11 +272,15 @@ function Attempt({
   // Already on the server (before this visit, or after a queued send went through).
   if (onServer || result === 'submitted' || (result && !queued && result !== 'error')) {
     return (
-      <EmptyState
-        icon="checkCircle"
-        title={result ? t('student.attempt.submitted') : t('student.attempt.alreadyDone')}
-        action={<BackToTests />}
-      />
+      <View>
+        {/* Just sent (not on a revisit): a short tile burst in the full tier, never in a test/exam. */}
+        {result === 'submitted' ? <TileBurst moment="scoreReveal" count={20} radius={170} /> : null}
+        <EmptyState
+          icon="checkCircle"
+          title={result ? t('student.attempt.submitted') : t('student.attempt.alreadyDone')}
+          action={<BackToTests />}
+        />
+      </View>
     );
   }
   // While the first send is in flight, keep the form (with its spinner): the item is
@@ -294,6 +334,7 @@ function Attempt({
 
   const status = (
     <>
+      <AnsweredTiles questions={qs} answers={a} />
       <Text tone="textMuted" accessibilityLiveRegion="polite">
         {t('student.attempt.answeredSummary', { answered: done, total: qs.length })}
         {saved ? ` · ${t('student.attempt.draftSaved')}` : ''}
@@ -307,8 +348,11 @@ function Attempt({
     </>
   );
   const finish = () => {
-    if (blank > 0 && !confirmBlank) setConfirmBlank(true);
-    else doSubmit();
+    if (blank > 0 && !confirmBlank) {
+      setConfirmBlank(true);
+      // A pre-reader can't read the warning: say it (recorded clip, if there is one).
+      if (preReader) say('missedOne');
+    } else doSubmit();
   };
   const offlineBadge = paper.state.data.fromCache ? (
     <Badge
@@ -373,5 +417,7 @@ const styles = StyleSheet.create({
   wrap: { gap: space.md },
   start: { alignSelf: 'flex-start' },
   footer: { gap: space.sm, marginTop: space.sm },
+  tiles: { flexDirection: 'row', flexWrap: 'wrap', gap: space.xs },
+  tile: { width: 22, height: 22, borderRadius: 6, borderWidth: 2 },
   actions: { gap: space.sm, alignItems: 'center' },
 });

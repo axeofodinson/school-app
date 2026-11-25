@@ -3,10 +3,11 @@ import { Link } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import { AuthHero } from '../../features/auth/AuthHero';
 import { useAuth } from '../../features/auth/AuthProvider';
 import { useI18n } from '../../i18n';
 import { isSupabaseConfigured } from '../../lib/supabase';
-import { Button, Card, LanguageToggle, Screen, Text, TextField, ThemeProvider } from '../../ui';
+import { Button, Card, Screen, Text, TextField, ThemeProvider } from '../../ui';
 
 // Staff sign-in: email + password (admins and teachers). Students never get an
 // email account (CLAUDE.md); they use the admission number + PIN screen.
@@ -29,14 +30,9 @@ export default function StaffLogin() {
 
   return (
     <ThemeProvider presentation="staff">
-      <Screen>
-        <LanguageToggle />
-        <View style={styles.header}>
-          <Text variant="title" accessibilityRole="header">
-            {t('auth.login.title')}
-          </Text>
-          <Text>{t('auth.login.subtitle')}</Text>
-        </View>
+      <Screen
+        header={<AuthHero title={t('auth.login.title')} subtitle={t('auth.login.subtitle')} />}
+      >
         {!isSupabaseConfigured ? <Text tone="wrong">{t('auth.errors.notConfigured')}</Text> : null}
         {lastSignOut === 'idle' ? (
           <Text tone="textMuted">{t('auth.shared.idleSignedOut')}</Text>
@@ -94,7 +90,6 @@ export default function StaffLogin() {
 }
 
 const styles = StyleSheet.create({
-  header: { gap: 4 },
   form: { gap: 16 },
   student: { alignItems: 'center', gap: 4, paddingVertical: 8 },
   link: { paddingVertical: 8 },

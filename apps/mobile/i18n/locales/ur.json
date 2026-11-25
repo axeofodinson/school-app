@@ -33,7 +33,8 @@
       "d4": "Fri // TODO: ur",
       "d5": "Sat // TODO: ur",
       "d6": "Sun // TODO: ur"
-    }
+    },
+    "retry": "دوبارہ کوشش کرو"
   },
   "auth": {
     "login": {
@@ -124,7 +125,11 @@
       "sharedOn": "Shared // TODO: ur",
       "sharedOff": "Personal // TODO: ur",
       "adminOnly": "Only an admin can change this. // TODO: ur",
-      "back": "Back // TODO: ur"
+      "back": "Back // TODO: ur",
+      "sound": "آوازیں",
+      "soundOn": "آن",
+      "soundOff": "آف",
+      "soundHelp": "چھوٹے بچوں کے لیے ہلکی آوازیں اور بولے ہوئے اشارے۔ ٹیسٹ اور امتحان میں کبھی نہیں۔"
     },
     "cards": {
       "title": "Login cards // TODO: ur",
@@ -156,7 +161,8 @@
         "cancelled": "Google sign-in was cancelled. // TODO: ur",
         "unknown": "Google sign-in didn’t work. Try again. // TODO: ur"
       }
-    }
+    },
+    "school": "السید ہائی اسکول"
   },
   "student": {
     "home": {
@@ -172,7 +178,25 @@
       "reportNote": "سال بھر کے نتیجے ایک جگہ",
       "attendance": "میری حاضری",
       "attendanceNote": "دیکھو کن دنوں تم آئے",
-      "signOut": "لاگ آؤٹ"
+      "signOut": "لاگ آؤٹ",
+      "weekDone": {
+        "one": "اس ہفتے تم نے %{count} ٹیسٹ مکمل کیا۔",
+        "other": "اس ہفتے تم نے %{count} ٹیسٹ مکمل کیے۔"
+      },
+      "weekStart": "چلو، شروع کریں!",
+      "testOpen": "ایک ٹیسٹ کھلا ہے",
+      "testsOpen": {
+        "one": "%{count} ٹیسٹ کھلا ہے",
+        "other": "%{count} ٹیسٹ کھلے ہیں"
+      },
+      "start": "شروع کرو",
+      "openTestA11y": "%{title} شروع کرو، %{subject}",
+      "allDone": "شاباش! کوئی ٹیسٹ باقی نہیں۔",
+      "subjects": "میرے مضامین",
+      "noSubjects": "ابھی کسی مضمون میں ٹیسٹ نہیں۔ جب ٹیچر ٹیسٹ دیں گے تو یہاں نظر آئیں گے۔",
+      "subjectCount": "%{total} میں سے %{count} ٹیسٹ ہو گئے",
+      "subjectA11y": "%{subject}: %{total} میں سے %{count} ٹیسٹ ہو گئے",
+      "more": "اور بھی"
     },
     "journey": {
       "title": "میرا سفر",
@@ -249,7 +273,8 @@
         "network": "انٹرنیٹ نہیں ہے۔ کنکشن چیک کر کے دوبارہ کوشش کرو۔",
         "unknown": "کچھ گڑبڑ ہو گئی۔ دوبارہ کوشش کرو۔"
       },
-      "offline": "You’re offline: showing your saved list. // TODO: ur"
+      "offline": "You’re offline: showing your saved list. // TODO: ur",
+      "doneHeading": "ہو گئے اور بند"
     },
     "fileAssessment": {
       "back": "واپس",
@@ -318,7 +343,8 @@
       "progress": "Question %{number} of %{total} // TODO: ur",
       "picked": "Picked // TODO: ur",
       "listenFirst": "Tap the speaker to hear the question // TODO: ur",
-      "done": "All done? Finish here // TODO: ur"
+      "done": "All done? Finish here // TODO: ur",
+      "listenShort": "سنو"
     },
     "results": {
       "title": "میرے نمبر",
@@ -342,7 +368,8 @@
         "unknown": "کچھ گڑبڑ ہو گئی۔ دوبارہ کوشش کرو۔"
       },
       "notSent": "Not sent yet // TODO: ur",
-      "unknownTest": "A test // TODO: ur"
+      "unknownTest": "A test // TODO: ur",
+      "overallLabel": "کُل ملا کر"
     },
     "report": {
       "title": "میرا رپورٹ کارڈ",
@@ -446,8 +473,8 @@
       "markAllRead": "Mark all as read // TODO: ur",
       "offline": "You’re offline. These are the messages saved on this phone. // TODO: ur",
       "newCount": {
-        "one": "%{count} new // TODO: ur",
-        "other": "%{count} new // TODO: ur"
+        "one": "%{count} نیا",
+        "other": "%{count} نئے"
       },
       "unsupported": "Messages pop up here while the app is open. // TODO: ur"
     },
@@ -460,6 +487,35 @@
     "worksheet": {
       "open": "Worksheet // TODO: ur",
       "howTo": "Do this worksheet on paper and give it to your teacher. // TODO: ur"
+    },
+    "nav": {
+      "home": "ہوم",
+      "prepare": "تیاری",
+      "tests": "ٹیسٹ",
+      "me": "میں"
+    },
+    "me": {
+      "title": "میں",
+      "settingsNote": "زبان، حرکت اور آوازیں"
+    },
+    "prepare": {
+      "title": "تیاری",
+      "subtitle": "جو مشکل لگا اسے ٹھیک کرو، پھر پریکٹس کرو۔",
+      "soonTitle": "تیاری والا حصہ جلد آ رہا ہے",
+      "soonBody": "جب ٹیچر سبق ڈالیں گے تو تمہارے فالو اپ اور پریکٹس یہاں ملیں گے۔",
+      "followUps": {
+        "title": "فالو اپ",
+        "body": "ٹیسٹ میں جو چیز دوبارہ دیکھنی ہو، اس کے چھوٹے چھوٹے کام۔"
+      },
+      "practice": {
+        "title": "پریکٹس",
+        "body": "ایسے سوال جو بتائیں کہ جواب غلط کیوں ہے۔"
+      },
+      "revise": {
+        "title": "دہرائی",
+        "body": "پرانے سبق بھولنے سے پہلے پھر سامنے آئیں گے۔"
+      },
+      "goTests": "میرے ٹیسٹ پر جاؤ"
     }
   },
   "console": {
@@ -1297,6 +1353,10 @@
       "kid": "Kid // TODO: ur",
       "student": "Student // TODO: ur",
       "staff": "Staff // TODO: ur"
+    },
+    "language": {
+      "toUrdu": "اردو میں بدلو",
+      "toEnglish": "انگلش میں بدلو"
     }
   },
   "dev": {
@@ -1388,7 +1448,30 @@
       "overdueHint": "Homework past due, and who hasn't handed it in // TODO: ur",
       "attendanceHint": "Mark today's attendance in a few taps, or fix a past day // TODO: ur",
       "attendanceSummaryHint": "Each class's day, and each student's month // TODO: ur",
-      "messagesHint": "Send news to a class, one student or the whole school // TODO: ur"
+      "messagesHint": "Send news to a class, one student or the whole school // TODO: ur",
+      "morning": "صبح بخیر، %{name}",
+      "afternoon": "سہ پہر بخیر، %{name}",
+      "evening": "شام بخیر، %{name}",
+      "year": "تعلیمی سال %{year}",
+      "myClasses": "میری کلاسیں",
+      "allClasses": "اس سال کی کلاسیں",
+      "classesError": "کلاسیں لوڈ نہیں ہو سکیں۔",
+      "noClassesTeacher": "اس سال ابھی آپ کو کوئی کلاس نہیں ملی۔ ایڈمن سے کلاس لگوائیں۔",
+      "noClassesAdmin": "اس سال ابھی کوئی کلاس نہیں۔ پہلے ایک کلاس بنائیں۔",
+      "wholeClass": "پوری کلاس",
+      "subjectCount": {
+        "one": "%{count} مضمون",
+        "other": "%{count} مضامین"
+      },
+      "takeAttendance": "حاضری",
+      "newTest": "نیا ٹیسٹ",
+      "grade": "نمبر لگائیں",
+      "tools": "باقی سب",
+      "classesStat": "کلاسیں",
+      "yearStat": "تعلیمی سال",
+      "current": "موجودہ",
+      "cardsHint": "کلاس کے لیے QR لاگ اِن کارڈ پرنٹ کریں",
+      "settingsHint": "زبان، حرکت، یہ ڈیوائس"
     },
     "scope": {
       "class": "Class // TODO: ur",
@@ -1580,6 +1663,12 @@
       "loadError": "Couldn't load the summary // TODO: ur",
       "rangeEmpty": "No students in this class this year // TODO: ur",
       "rateNote": "At school = present + late, out of present + late + absent. Leave isn't counted. // TODO: ur"
+    },
+    "nav": {
+      "home": "ہوم",
+      "messages": "پیغامات",
+      "brandTeacher": "السید · ٹیچر",
+      "brandAdmin": "السید · ایڈمن"
     }
   }
 }

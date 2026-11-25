@@ -172,6 +172,93 @@ export const iconData = {
     { t: 'path', d: 'm22 22-5-10-5 10' },
     { t: 'path', d: 'M14 18h6' },
   ],
+  // Added in the UI remake (Lucide shapes, ISC; `mosaic` is our own 4-tile mark).
+  mail: [
+    { t: 'rect', x: 2, y: 4, width: 20, height: 16, rx: 2 },
+    { t: 'path', d: 'm22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7' },
+  ],
+  calendar: [
+    { t: 'path', d: 'M8 2v4' },
+    { t: 'path', d: 'M16 2v4' },
+    { t: 'rect', x: 3, y: 4, width: 18, height: 18, rx: 2 },
+    { t: 'path', d: 'M3 10h18' },
+  ],
+  chart: [
+    { t: 'path', d: 'M3 3v16a2 2 0 0 0 2 2h16' },
+    { t: 'path', d: 'M18 17V9' },
+    { t: 'path', d: 'M13 17V5' },
+    { t: 'path', d: 'M8 17v-3' },
+  ],
+  mosaic: [
+    { t: 'rect', x: 3, y: 3, width: 7, height: 7, rx: 1.5 },
+    { t: 'path', d: 'M17.5 2.5 21.5 6.5 17.5 10.5 13.5 6.5z' },
+    { t: 'rect', x: 3, y: 14, width: 7, height: 7, rx: 1.5 },
+    { t: 'rect', x: 14, y: 14, width: 7, height: 7, rx: 1.5 },
+  ],
+  clipboard: [
+    { t: 'rect', x: 8, y: 2, width: 8, height: 4, rx: 1 },
+    {
+      t: 'path',
+      d: 'M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2',
+    },
+    { t: 'path', d: 'M12 11h4' },
+    { t: 'path', d: 'M12 16h4' },
+    { t: 'path', d: 'M8 11h.01' },
+    { t: 'path', d: 'M8 16h.01' },
+  ],
+  users: [
+    { t: 'path', d: 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2' },
+    { t: 'circle', cx: 9, cy: 7, r: 4 },
+    { t: 'path', d: 'M22 21v-2a4 4 0 0 0-3-3.87' },
+    { t: 'path', d: 'M16 3.13a4 4 0 0 1 0 7.75' },
+  ],
+  award: [
+    {
+      t: 'path',
+      d: 'm15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.197 0l-3.586 2.686a.5.5 0 0 1-.81-.469l1.514-8.526',
+    },
+    { t: 'circle', cx: 12, cy: 8, r: 6 },
+  ],
+  qr: [
+    { t: 'rect', x: 3, y: 3, width: 5, height: 5, rx: 1 },
+    { t: 'rect', x: 16, y: 3, width: 5, height: 5, rx: 1 },
+    { t: 'rect', x: 3, y: 16, width: 5, height: 5, rx: 1 },
+    { t: 'path', d: 'M21 16h-3a2 2 0 0 0-2 2v3' },
+    { t: 'path', d: 'M21 21v.01' },
+    { t: 'path', d: 'M12 7v3a2 2 0 0 1-2 2H7' },
+    { t: 'path', d: 'M3 12h.01' },
+    { t: 'path', d: 'M12 3h.01' },
+    { t: 'path', d: 'M12 16v.01' },
+    { t: 'path', d: 'M16 12h1' },
+    { t: 'path', d: 'M21 12v.01' },
+    { t: 'path', d: 'M12 21v-1' },
+  ],
+  sliders: [
+    { t: 'path', d: 'M21 4h-7' },
+    { t: 'path', d: 'M10 4H3' },
+    { t: 'path', d: 'M21 12h-9' },
+    { t: 'path', d: 'M8 12H3' },
+    { t: 'path', d: 'M21 20h-5' },
+    { t: 'path', d: 'M12 20H3' },
+    { t: 'path', d: 'M14 2v4' },
+    { t: 'path', d: 'M8 10v4' },
+    { t: 'path', d: 'M16 18v4' },
+  ],
+  timer: [
+    { t: 'path', d: 'M10 2h4' },
+    { t: 'path', d: 'm12 14 3-3' },
+    { t: 'circle', cx: 12, cy: 14, r: 8 },
+  ],
+  sparkles: [
+    {
+      t: 'path',
+      d: 'M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z',
+    },
+  ],
+  plus: [
+    { t: 'path', d: 'M5 12h14' },
+    { t: 'path', d: 'M12 5v14' },
+  ],
 } as const satisfies Record<string, readonly IconShape[]>;
 
 export type IconName = keyof typeof iconData;

@@ -33,6 +33,8 @@ export interface MyEnrollment {
   yearId: string;
   className: string;
   yearLabel: string;
+  /** classes.grade_level: PG–5 get the kid presentation (presentationForGrade). */
+  gradeLevel?: number | null;
 }
 
 /** Why there is no enrollment to show tests for. */
@@ -77,7 +79,7 @@ interface EnrollmentRow {
   id: string;
   class_id: string;
   year_id: string;
-  class: { name: string } | null;
+  class: { name: string; grade_level?: number | null } | null;
 }
 interface AssessmentRow {
   id: string;
@@ -127,7 +129,7 @@ async function fetchHome(): Promise<Omit<Home, 'fromCache'>> {
 
   const enr = await db
     .from('enrollments')
-    .select('id, class_id, year_id, class:classes(name)')
+    .select('id, class_id, year_id, class:classes(name, grade_level)')
     .eq('year_id', year.data.id)
     .eq('status', 'active')
     .maybeSingle()
@@ -168,6 +170,7 @@ async function fetchHome(): Promise<Omit<Home, 'fromCache'>> {
       classId: e.class_id,
       yearId: e.year_id,
       className: e.class?.name ?? '',
+      gradeLevel: e.class?.grade_level ?? null,
       yearLabel: year.data.label,
     },
     assessments: (as.data ?? []).map((a) => ({

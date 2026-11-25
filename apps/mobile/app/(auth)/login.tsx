@@ -6,7 +6,8 @@ import { StyleSheet, View } from 'react-native';
 import { useAuth } from '../../features/auth/AuthProvider';
 import { useI18n } from '../../i18n';
 import { isSupabaseConfigured } from '../../lib/supabase';
-import { Button, Card, LanguageToggle, PinField, Screen, Text, TextField } from '../../ui';
+import { AuthHero } from '../../features/auth/AuthHero';
+import { Button, Card, PinField, Reveal, Screen, Text, TextField } from '../../ui';
 
 // Off until the Google provider is set up on the Supabase project
 // (docs/environment.md "Google sign-in"); then build with EXPO_PUBLIC_GOOGLE_SIGNIN=1.
@@ -68,63 +69,60 @@ export default function StudentLogin() {
   const formError = error && !codeError && !pinError;
 
   return (
-    <Screen>
-      <LanguageToggle />
-      <View style={styles.header}>
-        <Text variant="title" accessibilityRole="header">
-          {t('auth.student.title')}
-        </Text>
-        <Text>{t('auth.student.subtitle')}</Text>
-      </View>
+    <Screen
+      header={<AuthHero title={t('auth.student.title')} subtitle={t('auth.student.subtitle')} />}
+    >
       {!isSupabaseConfigured ? <Text tone="wrong">{t('auth.errors.notConfigured')}</Text> : null}
       {lastSignOut === 'idle' || lastSignOut === 'switch' ? (
         <Text tone="textMuted" accessibilityLiveRegion="polite">
           {t(lastSignOut === 'idle' ? 'auth.shared.idleSignedOut' : 'auth.shared.switched')}
         </Text>
       ) : null}
-      <Card>
-        <View style={styles.form}>
-          <Button
-            title={t('auth.student.scan')}
-            icon="eye"
-            variant="secondary"
-            onPress={() => router.push('/scan')}
-          />
-          <TextField
-            label={t('auth.student.admissionNumber')}
-            placeholder={t('auth.student.admissionNumberPlaceholder')}
-            value={code}
-            onChangeText={setCode}
-            script="latin"
-            autoCapitalize="characters"
-            autoCorrect={false}
-            autoComplete="off"
-            maxLength={32}
-            editable={!busy}
-            error={codeError ? t(`auth.studentErrors.${error}`) : undefined}
-          />
-          <PinField
-            label={t('auth.student.pin')}
-            value={pin}
-            onChange={setPin}
-            length={PIN_MAX}
-            minLength={PIN_MIN}
-            error={pinError ? t(`auth.studentErrors.${error}`) : undefined}
-          />
-          {formError ? (
-            <Text tone="onWrongSoft" accessibilityLiveRegion="polite">
-              {t(`auth.studentErrors.${error}`)}
-            </Text>
-          ) : null}
-          <Button
-            title={busy ? t('auth.student.submitting') : t('auth.student.submit')}
-            size="lg"
-            loading={busy}
-            disabled={busy || !isSupabaseConfigured}
-            onPress={submit}
-          />
-        </View>
-      </Card>
+      <Reveal index={2}>
+        <Card>
+          <View style={styles.form}>
+            <Button
+              title={t('auth.student.scan')}
+              icon="eye"
+              variant="secondary"
+              onPress={() => router.push('/scan')}
+            />
+            <TextField
+              label={t('auth.student.admissionNumber')}
+              placeholder={t('auth.student.admissionNumberPlaceholder')}
+              value={code}
+              onChangeText={setCode}
+              script="latin"
+              autoCapitalize="characters"
+              autoCorrect={false}
+              autoComplete="off"
+              maxLength={32}
+              editable={!busy}
+              error={codeError ? t(`auth.studentErrors.${error}`) : undefined}
+            />
+            <PinField
+              label={t('auth.student.pin')}
+              value={pin}
+              onChange={setPin}
+              length={PIN_MAX}
+              minLength={PIN_MIN}
+              error={pinError ? t(`auth.studentErrors.${error}`) : undefined}
+            />
+            {formError ? (
+              <Text tone="onWrongSoft" accessibilityLiveRegion="polite">
+                {t(`auth.studentErrors.${error}`)}
+              </Text>
+            ) : null}
+            <Button
+              title={busy ? t('auth.student.submitting') : t('auth.student.submit')}
+              size="lg"
+              loading={busy}
+              disabled={busy || !isSupabaseConfigured}
+              onPress={submit}
+            />
+          </View>
+        </Card>
+      </Reveal>
       {sharedMode || !GOOGLE_ENABLED ? null : (
         <Card>
           <View style={styles.form}>
@@ -165,7 +163,6 @@ export default function StudentLogin() {
 }
 
 const styles = StyleSheet.create({
-  header: { gap: 4 },
   form: { gap: 16 },
   staff: { alignItems: 'center', gap: 4, paddingVertical: 8 },
   link: { paddingVertical: 8 },

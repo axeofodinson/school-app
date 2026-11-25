@@ -10,12 +10,22 @@ import {
   tallyStatuses,
   type AttendanceStatus,
 } from '@school/core';
-import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { useI18n } from '../../i18n';
-import { Button, Card, EmptyState, Icon, Screen, SkeletonLines, Text, useTheme } from '../../ui';
+import {
+  Button,
+  Card,
+  EmptyState,
+  Icon,
+  Reveal,
+  Screen,
+  SkeletonLines,
+  Text,
+  useTheme,
+} from '../../ui';
+import { StudentHeader } from '../attempts/Header';
 import { radius, space } from '../../ui/tokens';
 import { useAuth } from '../auth/AuthProvider';
 import { useResult } from '../scope/useResult';
@@ -101,7 +111,6 @@ function Legend() {
 
 export function MyAttendanceScreen() {
   const { t } = useI18n();
-  const router = useRouter();
   const { session, userStorage } = useAuth();
   const uid = session?.user.id ?? null;
   const res = useResult(uid ? `my-att:${uid}` : null, () => loadMyAttendance(userStorage));
@@ -204,19 +213,8 @@ export function MyAttendanceScreen() {
   }
 
   return (
-    <Screen>
-      <Button
-        title={t('student.attendance.back')}
-        icon="back"
-        variant="ghost"
-        size="sm"
-        onPress={() => (router.canGoBack() ? router.back() : router.replace('/'))}
-        style={styles.start}
-      />
-      <Text variant="title" accessibilityRole="header">
-        {t('student.attendance.title')}
-      </Text>
-      {body}
+    <Screen header={<StudentHeader title={t('student.attendance.title')} hue="sky" />}>
+      <Reveal index={1}>{body}</Reveal>
     </Screen>
   );
 }

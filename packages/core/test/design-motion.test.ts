@@ -8,6 +8,8 @@ import {
   liteMovementExceptions,
   mirrorX,
   moments,
+  choreography,
+  staggerDelay,
   pickMotionTier,
   resolveMoment,
   spring,
@@ -159,5 +161,22 @@ describe('helpers', () => {
   });
   it('behaviourProps: none moves nothing', () => {
     expect(behaviourProps({ kind: 'none' })).toEqual([]);
+  });
+});
+
+describe('choreography (UI remake, DECISIONS #94)', () => {
+  it('cascades siblings by stepMs, capped, and never delays in off', () => {
+    expect(staggerDelay(0, 'full')).toBe(0);
+    expect(staggerDelay(1, 'full')).toBe(choreography.stepMs);
+    expect(staggerDelay(3, 'lite')).toBe(3 * choreography.stepMs);
+    expect(staggerDelay(50, 'full')).toBe(choreography.maxSteps * choreography.stepMs);
+    expect(staggerDelay(5, 'off')).toBe(0);
+  });
+  it('the longest cascade stays under half a second', () => {
+    expect(choreography.maxSteps * choreography.stepMs).toBeLessThan(500);
+  });
+  it('list entrance and score pop stop in exams', () => {
+    expect(resolveMoment('listEnter', 'full', { inExam: true }).kind).toBe('none');
+    expect(resolveMoment('scoreReveal', 'full', { inExam: true }).kind).toBe('none');
   });
 });

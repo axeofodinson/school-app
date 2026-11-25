@@ -3,12 +3,24 @@
 // state is kept on the server (db/029) so it matches on every device. Opens
 // offline from the device copy.
 import type { InboxMessage } from '@school/core';
-import { useRouter } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 
 import { useI18n, type TKey } from '../../i18n';
-import { Badge, Button, Card, EmptyState, Screen, SkeletonLines, Text, useTheme } from '../../ui';
+import {
+  Badge,
+  Button,
+  Card,
+  EmptyState,
+  Icon,
+  Reveal,
+  Screen,
+  SkeletonLines,
+  Text,
+  useTheme,
+  type IconName,
+} from '../../ui';
 import { space } from '../../ui/tokens';
+import { StudentHeader } from '../attempts/Header';
 import { useMessages } from './MessagesProvider';
 import { PUSH_SUPPORTED } from './push';
 import { formatWhen } from './when';
@@ -17,6 +29,12 @@ const SCOPE_LABEL: Record<InboxMessage['scope'], TKey> = {
   school: 'student.inbox.scopes.school',
   class: 'student.inbox.scopes.class',
   student: 'student.inbox.scopes.student',
+};
+
+const SCOPE_ICON: Record<InboxMessage['scope'], IconName> = {
+  school: 'home',
+  class: 'users',
+  student: 'user',
 };
 
 function MessageCard({ m, unread, onRead }: { m: InboxMessage; unread: boolean; onRead(): void }) {
@@ -28,6 +46,18 @@ function MessageCard({ m, unread, onRead }: { m: InboxMessage; unread: boolean; 
       style={unread ? { borderColor: colours.primary, borderWidth: 2 } : undefined}
     >
       <View style={styles.meta}>
+        <View
+          style={[
+            styles.scopeIcon,
+            { backgroundColor: unread ? colours.primarySoft : colours.surfaceAlt },
+          ]}
+        >
+          <Icon
+            name={SCOPE_ICON[m.scope] ?? 'home'}
+            size={18}
+            tone={unread ? 'onPrimarySoft' : 'textMuted'}
+          />
+        </View>
         {unread ? <Badge label={t('student.inbox.new')} tone="primary" icon="star" /> : null}
         <Badge label={t(SCOPE_LABEL[m.scope] ?? SCOPE_LABEL.school)} tone="neutral" />
         <Text variant="caption" tone="textMuted">
@@ -42,19 +72,15 @@ function MessageCard({ m, unread, onRead }: { m: InboxMessage; unread: boolean; 
 
 export function InboxScreen() {
   const { t } = useI18n();
-  const router = useRouter();
   const inbox = useMessages();
   const { messages, readIds, unreadCount } = inbox;
   return (
-    <Screen>
+    <Screen
+      header={
+        <StudentHeader title={t('student.inbox.title')} subtitle={t('student.inbox.subtitle')} />
+      }
+    >
       <View style={styles.top}>
-        <Button
-          title={t('student.inbox.back')}
-          icon="back"
-          variant="ghost"
-          size="sm"
-          onPress={() => (router.canGoBack() ? router.back() : router.replace('/'))}
-        />
         {unreadCount > 0 ? (
           <Button
             title={t('student.inbox.markAllRead')}
@@ -65,10 +91,6 @@ export function InboxScreen() {
           />
         ) : null}
       </View>
-      <Text variant="title" accessibilityRole="header">
-        {t('student.inbox.title')}
-      </Text>
-      <Text tone="textMuted">{t('student.inbox.subtitle')}</Text>
       {PUSH_SUPPORTED && inbox.push === 'denied' ? (
         <Text variant="caption" tone="textMuted">
           {t('student.inbox.permissionOff')}
@@ -91,13 +113,14 @@ export function InboxScreen() {
         <EmptyState icon="info" title={t('student.inbox.empty')} />
       ) : (
         <View style={styles.list}>
-          {messages.map((m) => (
-            <MessageCard
-              key={m.id}
-              m={m}
-              unread={!readIds.has(m.id)}
-              onRead={() => void inbox.markOneRead(m.id)}
-            />
+          {messages.map((m, i) => (
+            <Reveal key={m.id} index={i}>
+              <MessageCard
+                m={m}
+                unread={!readIds.has(m.id)}
+                onRead={() => void inbox.markOneRead(m.id)}
+              />
+            </Reveal>
           ))}
         </View>
       )}
@@ -112,6 +135,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: space.sm,
+  },
+  scopeIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   meta: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: space.xs },
   list: { gap: space.md },
