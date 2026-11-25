@@ -1,10 +1,9 @@
 // GENERATED: do not edit by hand.
-// Source: local DB harness (TEST_PLAN DB-1) with db/setup.sql + db/002–016 + 024 +
-// 025 + 026 (applied in production 2026-11-25) + 018 (draft, prompt 13: the app
-// calls its student_paper / student_paper_levels RPCs; run it at the cut-over) +
-// 028 (draft, prompt 14: attendance audit + record_attendance / summaries) +
-// 029 (draft, prompt 15: message_reads, mark_messages_read, message_read_counts).
-// Drafts 017/022/023 excluded. Via
+// Source: local DB harness (TEST_PLAN DB-1) in the dev order: db/setup.sql +
+// db/002–016 + 024–026 (production 2026-11-25) + 018 (cut-over, dev) + 028
+// (attendance) + 029 (messaging) + 030 (question audio) + 017 + 023 (prompt 20:
+// curriculum, question bank versions, learner state, access tiers). Draft 022
+// excluded. Via
 //   npx supabase@3.3.0 gen types typescript --db-url <harness> --schema public
 // Regenerate after each migration Hassan runs (see packages/core/README.md).
 
@@ -38,11 +37,75 @@ export type Database = {
         };
         Relationships: [];
       };
+      account_links: {
+        Row: {
+          created_at: string;
+          id: string;
+          linked_by: string | null;
+          moved: NonNullable<Json>;
+          prep_profile_id: string;
+          reason: string;
+          school_profile_id: string;
+          student_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          id?: string;
+          linked_by?: string | null;
+          moved?: NonNullable<Json>;
+          prep_profile_id: string;
+          reason: string;
+          school_profile_id: string;
+          student_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          linked_by?: string | null;
+          moved?: NonNullable<Json>;
+          prep_profile_id?: string;
+          reason?: string;
+          school_profile_id?: string;
+          student_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'account_links_linked_by_fkey';
+            columns: ['linked_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'account_links_prep_profile_id_fkey';
+            columns: ['prep_profile_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'account_links_school_profile_id_fkey';
+            columns: ['school_profile_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'account_links_student_id_fkey';
+            columns: ['student_id'];
+            isOneToOne: false;
+            referencedRelation: 'students';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       assessment_questions: {
         Row: {
           assessment_id: string;
           marks: number;
           question_id: string;
+          question_version: number | null;
           sort_order: number;
         };
         ComputedFields: never;
@@ -50,12 +113,14 @@ export type Database = {
           assessment_id: string;
           marks?: number;
           question_id: string;
+          question_version?: number | null;
           sort_order?: number;
         };
         Update: {
           assessment_id?: string;
           marks?: number;
           question_id?: string;
+          question_version?: number | null;
           sort_order?: number;
         };
         Relationships: [
@@ -77,14 +142,23 @@ export type Database = {
       };
       assessments: {
         Row: {
+          blueprint: Json | null;
           class_id: string;
+          closes_at: string | null;
           created_at: string;
           created_by: string | null;
+          duration_seconds: number | null;
           file_mime: string | null;
           file_name: string | null;
           file_path: string | null;
           id: string;
+          join_code: string | null;
+          mode: string;
+          opens_at: string | null;
+          results_confirmed_at: string | null;
+          results_confirmed_by: string | null;
           scheduled_on: string | null;
+          settings: NonNullable<Json>;
           status: string;
           subject_id: string;
           title: string;
@@ -95,14 +169,23 @@ export type Database = {
         };
         ComputedFields: never;
         Insert: {
+          blueprint?: Json | null;
           class_id: string;
+          closes_at?: string | null;
           created_at?: string;
           created_by?: string | null;
+          duration_seconds?: number | null;
           file_mime?: string | null;
           file_name?: string | null;
           file_path?: string | null;
           id?: string;
+          join_code?: string | null;
+          mode?: string;
+          opens_at?: string | null;
+          results_confirmed_at?: string | null;
+          results_confirmed_by?: string | null;
           scheduled_on?: string | null;
+          settings?: NonNullable<Json>;
           status?: string;
           subject_id: string;
           title: string;
@@ -112,14 +195,23 @@ export type Database = {
           year_id: string;
         };
         Update: {
+          blueprint?: Json | null;
           class_id?: string;
+          closes_at?: string | null;
           created_at?: string;
           created_by?: string | null;
+          duration_seconds?: number | null;
           file_mime?: string | null;
           file_name?: string | null;
           file_path?: string | null;
           id?: string;
+          join_code?: string | null;
+          mode?: string;
+          opens_at?: string | null;
+          results_confirmed_at?: string | null;
+          results_confirmed_by?: string | null;
           scheduled_on?: string | null;
+          settings?: NonNullable<Json>;
           status?: string;
           subject_id?: string;
           title?: string;
@@ -139,6 +231,13 @@ export type Database = {
           {
             foreignKeyName: 'assessments_created_by_fkey';
             columns: ['created_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'assessments_results_confirmed_by_fkey';
+            columns: ['results_confirmed_by'];
             isOneToOne: false;
             referencedRelation: 'profiles';
             referencedColumns: ['id'];
@@ -256,25 +355,44 @@ export type Database = {
       };
       chapters: {
         Row: {
+          curriculum_id: string | null;
           id: string;
           sort_order: number;
+          status: string;
           subject_id: string;
+          textbook_ref: string | null;
           title: string;
+          title_ur: string | null;
         };
         ComputedFields: never;
         Insert: {
+          curriculum_id?: string | null;
           id?: string;
           sort_order?: number;
+          status?: string;
           subject_id: string;
+          textbook_ref?: string | null;
           title: string;
+          title_ur?: string | null;
         };
         Update: {
+          curriculum_id?: string | null;
           id?: string;
           sort_order?: number;
+          status?: string;
           subject_id?: string;
+          textbook_ref?: string | null;
           title?: string;
+          title_ur?: string | null;
         };
         Relationships: [
+          {
+            foreignKeyName: 'chapters_curriculum_id_fkey';
+            columns: ['curriculum_id'];
+            isOneToOne: false;
+            referencedRelation: 'curricula';
+            referencedColumns: ['id'];
+          },
           {
             foreignKeyName: 'chapters_subject_id_fkey';
             columns: ['subject_id'];
@@ -303,6 +421,177 @@ export type Database = {
           id?: string;
           name?: string;
           sort_order?: number;
+        };
+        Relationships: [];
+      };
+      concept_mastery: {
+        Row: {
+          concept_id: string;
+          evidence: NonNullable<Json>;
+          last_attempt_at: string | null;
+          learner_id: string;
+          mastered_at: string | null;
+          n_attempted: number;
+          n_correct: number;
+          n_distinct_q: number;
+          next_review_at: string | null;
+          review_stage: number;
+          state: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          concept_id: string;
+          evidence?: NonNullable<Json>;
+          last_attempt_at?: string | null;
+          learner_id: string;
+          mastered_at?: string | null;
+          n_attempted?: number;
+          n_correct?: number;
+          n_distinct_q?: number;
+          next_review_at?: string | null;
+          review_stage?: number;
+          state?: string;
+          updated_at?: string;
+        };
+        Update: {
+          concept_id?: string;
+          evidence?: NonNullable<Json>;
+          last_attempt_at?: string | null;
+          learner_id?: string;
+          mastered_at?: string | null;
+          n_attempted?: number;
+          n_correct?: number;
+          n_distinct_q?: number;
+          next_review_at?: string | null;
+          review_stage?: number;
+          state?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'concept_mastery_concept_id_fkey';
+            columns: ['concept_id'];
+            isOneToOne: false;
+            referencedRelation: 'concepts';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'concept_mastery_learner_id_fkey';
+            columns: ['learner_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      concept_prerequisites: {
+        Row: {
+          concept_id: string;
+          requires_concept_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          concept_id: string;
+          requires_concept_id: string;
+        };
+        Update: {
+          concept_id?: string;
+          requires_concept_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'concept_prerequisites_concept_id_fkey';
+            columns: ['concept_id'];
+            isOneToOne: false;
+            referencedRelation: 'concepts';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'concept_prerequisites_requires_concept_id_fkey';
+            columns: ['requires_concept_id'];
+            isOneToOne: false;
+            referencedRelation: 'concepts';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      concepts: {
+        Row: {
+          created_at: string;
+          id: string;
+          is_test_data: boolean;
+          sort_order: number;
+          status: string;
+          summary_en: string | null;
+          summary_ur: string | null;
+          title_en: string;
+          title_ur: string | null;
+          topic_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          id?: string;
+          is_test_data?: boolean;
+          sort_order?: number;
+          status?: string;
+          summary_en?: string | null;
+          summary_ur?: string | null;
+          title_en: string;
+          title_ur?: string | null;
+          topic_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          is_test_data?: boolean;
+          sort_order?: number;
+          status?: string;
+          summary_en?: string | null;
+          summary_ur?: string | null;
+          title_en?: string;
+          title_ur?: string | null;
+          topic_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'concepts_topic_id_fkey';
+            columns: ['topic_id'];
+            isOneToOne: false;
+            referencedRelation: 'topics';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      curricula: {
+        Row: {
+          board: string;
+          code: string;
+          created_at: string;
+          effective_from: string | null;
+          id: string;
+          name: string;
+          status: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          board: string;
+          code: string;
+          created_at?: string;
+          effective_from?: string | null;
+          id?: string;
+          name: string;
+          status?: string;
+        };
+        Update: {
+          board?: string;
+          code?: string;
+          created_at?: string;
+          effective_from?: string | null;
+          id?: string;
+          name?: string;
+          status?: string;
         };
         Relationships: [];
       };
@@ -390,6 +679,570 @@ export type Database = {
           },
         ];
       };
+      exam_events: {
+        Row: {
+          at: string;
+          detail: Json | null;
+          id: number;
+          kind: string;
+          session_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          at?: string;
+          detail?: Json | null;
+          id?: never;
+          kind: string;
+          session_id: string;
+        };
+        Update: {
+          at?: string;
+          detail?: Json | null;
+          id?: never;
+          kind?: string;
+          session_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'exam_events_session_id_fkey';
+            columns: ['session_id'];
+            isOneToOne: false;
+            referencedRelation: 'exam_sessions';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      exam_session_answers: {
+        Row: {
+          answer: Json | null;
+          client_answered_at: string | null;
+          is_correct: boolean | null;
+          late: boolean;
+          question_id: string;
+          question_version: number;
+          received_at: string;
+          session_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          answer?: Json | null;
+          client_answered_at?: string | null;
+          is_correct?: boolean | null;
+          late?: boolean;
+          question_id: string;
+          question_version: number;
+          received_at?: string;
+          session_id: string;
+        };
+        Update: {
+          answer?: Json | null;
+          client_answered_at?: string | null;
+          is_correct?: boolean | null;
+          late?: boolean;
+          question_id?: string;
+          question_version?: number;
+          received_at?: string;
+          session_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'exam_session_answers_question_id_question_version_fkey';
+            columns: ['question_id', 'question_version'];
+            isOneToOne: false;
+            referencedRelation: 'question_versions';
+            referencedColumns: ['question_id', 'version'];
+          },
+          {
+            foreignKeyName: 'exam_session_answers_session_id_fkey';
+            columns: ['session_id'];
+            isOneToOne: false;
+            referencedRelation: 'exam_sessions';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      exam_sessions: {
+        Row: {
+          assessment_id: string;
+          client_elapsed_ms: number | null;
+          created_at: string;
+          deadline_at: string;
+          delivery: string;
+          enrollment_id: string;
+          id: string;
+          last_seen_at: string | null;
+          learner_id: string;
+          paper: NonNullable<Json>;
+          score: number | null;
+          started_at: string;
+          status: string;
+          submitted_at: string | null;
+          total: number | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          assessment_id: string;
+          client_elapsed_ms?: number | null;
+          created_at?: string;
+          deadline_at: string;
+          delivery?: string;
+          enrollment_id: string;
+          id?: string;
+          last_seen_at?: string | null;
+          learner_id: string;
+          paper: NonNullable<Json>;
+          score?: number | null;
+          started_at?: string;
+          status?: string;
+          submitted_at?: string | null;
+          total?: number | null;
+        };
+        Update: {
+          assessment_id?: string;
+          client_elapsed_ms?: number | null;
+          created_at?: string;
+          deadline_at?: string;
+          delivery?: string;
+          enrollment_id?: string;
+          id?: string;
+          last_seen_at?: string | null;
+          learner_id?: string;
+          paper?: NonNullable<Json>;
+          score?: number | null;
+          started_at?: string;
+          status?: string;
+          submitted_at?: string | null;
+          total?: number | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'exam_sessions_assessment_id_fkey';
+            columns: ['assessment_id'];
+            isOneToOne: false;
+            referencedRelation: 'assessments';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'exam_sessions_enrollment_id_fkey';
+            columns: ['enrollment_id'];
+            isOneToOne: false;
+            referencedRelation: 'enrollments';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'exam_sessions_learner_id_fkey';
+            columns: ['learner_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      follow_ups: {
+        Row: {
+          assigned_by: string | null;
+          close_reason: string | null;
+          closed_at: string | null;
+          concept_id: string;
+          created_at: string;
+          id: string;
+          kind: string;
+          learner_id: string;
+          rounds: number;
+          source_attempt_id: string | null;
+          source_exam_session_id: string | null;
+          status: string;
+          subject_id: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          assigned_by?: string | null;
+          close_reason?: string | null;
+          closed_at?: string | null;
+          concept_id: string;
+          created_at?: string;
+          id?: string;
+          kind: string;
+          learner_id: string;
+          rounds?: number;
+          source_attempt_id?: string | null;
+          source_exam_session_id?: string | null;
+          status?: string;
+          subject_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          assigned_by?: string | null;
+          close_reason?: string | null;
+          closed_at?: string | null;
+          concept_id?: string;
+          created_at?: string;
+          id?: string;
+          kind?: string;
+          learner_id?: string;
+          rounds?: number;
+          source_attempt_id?: string | null;
+          source_exam_session_id?: string | null;
+          status?: string;
+          subject_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'follow_ups_assigned_by_fkey';
+            columns: ['assigned_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'follow_ups_concept_id_fkey';
+            columns: ['concept_id'];
+            isOneToOne: false;
+            referencedRelation: 'concepts';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'follow_ups_learner_id_fkey';
+            columns: ['learner_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'follow_ups_subject_id_fkey';
+            columns: ['subject_id'];
+            isOneToOne: false;
+            referencedRelation: 'subjects';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      gate_overrides: {
+        Row: {
+          action: string;
+          actor_id: string | null;
+          created_at: string;
+          follow_up_id: string | null;
+          id: string;
+          learner_id: string;
+          reason: string;
+          subject_id: string | null;
+          topic_id: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          action: string;
+          actor_id?: string | null;
+          created_at?: string;
+          follow_up_id?: string | null;
+          id?: string;
+          learner_id: string;
+          reason: string;
+          subject_id?: string | null;
+          topic_id?: string | null;
+        };
+        Update: {
+          action?: string;
+          actor_id?: string | null;
+          created_at?: string;
+          follow_up_id?: string | null;
+          id?: string;
+          learner_id?: string;
+          reason?: string;
+          subject_id?: string | null;
+          topic_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'gate_overrides_actor_id_fkey';
+            columns: ['actor_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'gate_overrides_follow_up_id_fkey';
+            columns: ['follow_up_id'];
+            isOneToOne: false;
+            referencedRelation: 'follow_ups';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'gate_overrides_learner_id_fkey';
+            columns: ['learner_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'gate_overrides_subject_id_fkey';
+            columns: ['subject_id'];
+            isOneToOne: false;
+            referencedRelation: 'subjects';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'gate_overrides_topic_id_fkey';
+            columns: ['topic_id'];
+            isOneToOne: false;
+            referencedRelation: 'topics';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      import_batches: {
+        Row: {
+          created_at: string;
+          id: string;
+          imported_by: string;
+          origin: string;
+          report: Json | null;
+          source_note: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          id?: string;
+          imported_by: string;
+          origin: string;
+          report?: Json | null;
+          source_note?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          imported_by?: string;
+          origin?: string;
+          report?: Json | null;
+          source_note?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'import_batches_imported_by_fkey';
+            columns: ['imported_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      item_approvals: {
+        Row: {
+          approved_at: string;
+          approved_by: string;
+          id: string;
+          item_id: string;
+          item_kind: string;
+          note: string | null;
+          revoked_at: string | null;
+          revoked_by: string | null;
+          scope: string;
+          version: number;
+        };
+        ComputedFields: never;
+        Insert: {
+          approved_at?: string;
+          approved_by: string;
+          id?: string;
+          item_id: string;
+          item_kind: string;
+          note?: string | null;
+          revoked_at?: string | null;
+          revoked_by?: string | null;
+          scope: string;
+          version: number;
+        };
+        Update: {
+          approved_at?: string;
+          approved_by?: string;
+          id?: string;
+          item_id?: string;
+          item_kind?: string;
+          note?: string | null;
+          revoked_at?: string | null;
+          revoked_by?: string | null;
+          scope?: string;
+          version?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'item_approvals_approved_by_fkey';
+            columns: ['approved_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'item_approvals_revoked_by_fkey';
+            columns: ['revoked_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      item_reviews: {
+        Row: {
+          created_at: string;
+          decision: string;
+          id: string;
+          item_id: string;
+          item_kind: string;
+          notes: string | null;
+          reviewer_id: string;
+          translation_ok: boolean | null;
+          version: number;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          decision: string;
+          id?: string;
+          item_id: string;
+          item_kind: string;
+          notes?: string | null;
+          reviewer_id: string;
+          translation_ok?: boolean | null;
+          version: number;
+        };
+        Update: {
+          created_at?: string;
+          decision?: string;
+          id?: string;
+          item_id?: string;
+          item_kind?: string;
+          notes?: string | null;
+          reviewer_id?: string;
+          translation_ok?: boolean | null;
+          version?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'item_reviews_reviewer_id_fkey';
+            columns: ['reviewer_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      learning_content: {
+        Row: {
+          concept_id: string | null;
+          created_at: string;
+          created_by: string | null;
+          current_version: number;
+          id: string;
+          is_test_data: boolean;
+          kind: string;
+          origin: string;
+          scope_class_id: string | null;
+          status: string;
+          topic_id: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          concept_id?: string | null;
+          created_at?: string;
+          created_by?: string | null;
+          current_version?: number;
+          id?: string;
+          is_test_data?: boolean;
+          kind?: string;
+          origin?: string;
+          scope_class_id?: string | null;
+          status?: string;
+          topic_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          concept_id?: string | null;
+          created_at?: string;
+          created_by?: string | null;
+          current_version?: number;
+          id?: string;
+          is_test_data?: boolean;
+          kind?: string;
+          origin?: string;
+          scope_class_id?: string | null;
+          status?: string;
+          topic_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'learning_content_concept_id_fkey';
+            columns: ['concept_id'];
+            isOneToOne: false;
+            referencedRelation: 'concepts';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'learning_content_created_by_fkey';
+            columns: ['created_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'learning_content_scope_class_id_fkey';
+            columns: ['scope_class_id'];
+            isOneToOne: false;
+            referencedRelation: 'classes';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'learning_content_topic_id_fkey';
+            columns: ['topic_id'];
+            isOneToOne: false;
+            referencedRelation: 'topics';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      learning_content_versions: {
+        Row: {
+          blocks: NonNullable<Json>;
+          content_id: string;
+          created_at: string;
+          created_by: string | null;
+          version: number;
+        };
+        ComputedFields: never;
+        Insert: {
+          blocks: NonNullable<Json>;
+          content_id: string;
+          created_at?: string;
+          created_by?: string | null;
+          version: number;
+        };
+        Update: {
+          blocks?: NonNullable<Json>;
+          content_id?: string;
+          created_at?: string;
+          created_by?: string | null;
+          version?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'learning_content_versions_content_id_fkey';
+            columns: ['content_id'];
+            isOneToOne: false;
+            referencedRelation: 'learning_content';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'learning_content_versions_created_by_fkey';
+            columns: ['created_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       message_reads: {
         Row: {
           message_id: string;
@@ -469,11 +1322,79 @@ export type Database = {
           },
         ];
       };
+      practice_attempts: {
+        Row: {
+          device_id: string | null;
+          finished_at: string | null;
+          follow_up_id: string | null;
+          id: string;
+          is_test_data: boolean;
+          items: NonNullable<Json>;
+          kind: string;
+          learner_id: string;
+          n_correct: number;
+          n_total: number;
+          received_at: string;
+          started_at: string;
+          topic_id: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          device_id?: string | null;
+          finished_at?: string | null;
+          follow_up_id?: string | null;
+          id: string;
+          is_test_data?: boolean;
+          items: NonNullable<Json>;
+          kind: string;
+          learner_id: string;
+          n_correct?: number;
+          n_total?: number;
+          received_at?: string;
+          started_at: string;
+          topic_id?: string | null;
+        };
+        Update: {
+          device_id?: string | null;
+          finished_at?: string | null;
+          follow_up_id?: string | null;
+          id?: string;
+          is_test_data?: boolean;
+          items?: NonNullable<Json>;
+          kind?: string;
+          learner_id?: string;
+          n_correct?: number;
+          n_total?: number;
+          received_at?: string;
+          started_at?: string;
+          topic_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'practice_attempts_learner_id_fkey';
+            columns: ['learner_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'practice_attempts_topic_id_fkey';
+            columns: ['topic_id'];
+            isOneToOne: false;
+            referencedRelation: 'topics';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       profiles: {
         Row: {
+          access_tier: string;
           created_at: string;
           full_name: string | null;
           id: string;
+          is_test_data: boolean;
+          merged_at: string | null;
+          merged_into: string | null;
           phone: string | null;
           role: string;
           student_id: string | null;
@@ -481,24 +1402,39 @@ export type Database = {
         };
         ComputedFields: never;
         Insert: {
+          access_tier?: string;
           created_at?: string;
           full_name?: string | null;
           id: string;
+          is_test_data?: boolean;
+          merged_at?: string | null;
+          merged_into?: string | null;
           phone?: string | null;
           role?: string;
           student_id?: string | null;
           updated_at?: string;
         };
         Update: {
+          access_tier?: string;
           created_at?: string;
           full_name?: string | null;
           id?: string;
+          is_test_data?: boolean;
+          merged_at?: string | null;
+          merged_into?: string | null;
           phone?: string | null;
           role?: string;
           student_id?: string | null;
           updated_at?: string;
         };
         Relationships: [
+          {
+            foreignKeyName: 'profiles_merged_into_fkey';
+            columns: ['merged_into'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
           {
             foreignKeyName: 'profiles_student_id_fkey';
             columns: ['student_id'];
@@ -547,16 +1483,92 @@ export type Database = {
           },
         ];
       };
+      question_versions: {
+        Row: {
+          answer: Json | null;
+          body: NonNullable<Json>;
+          cognitive_level: string;
+          concept_id: string | null;
+          created_at: string;
+          created_by: string | null;
+          difficulty: number;
+          explanation: Json | null;
+          question_id: string;
+          type: string;
+          version: number;
+        };
+        ComputedFields: never;
+        Insert: {
+          answer?: Json | null;
+          body: NonNullable<Json>;
+          cognitive_level: string;
+          concept_id?: string | null;
+          created_at?: string;
+          created_by?: string | null;
+          difficulty: number;
+          explanation?: Json | null;
+          question_id: string;
+          type: string;
+          version: number;
+        };
+        Update: {
+          answer?: Json | null;
+          body?: NonNullable<Json>;
+          cognitive_level?: string;
+          concept_id?: string | null;
+          created_at?: string;
+          created_by?: string | null;
+          difficulty?: number;
+          explanation?: Json | null;
+          question_id?: string;
+          type?: string;
+          version?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'question_versions_concept_id_fkey';
+            columns: ['concept_id'];
+            isOneToOne: false;
+            referencedRelation: 'concepts';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'question_versions_created_by_fkey';
+            columns: ['created_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'question_versions_question_id_fkey';
+            columns: ['question_id'];
+            isOneToOne: false;
+            referencedRelation: 'questions';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       questions: {
         Row: {
           answer: Json | null;
           body: NonNullable<Json>;
           chapter_id: string;
           cognitive_level: string;
+          concept_id: string | null;
           created_at: string;
           created_by: string | null;
+          current_version: number;
           default_marks: number;
+          difficulty: number;
+          explanation: Json | null;
           id: string;
+          import_batch_id: string | null;
+          is_test_data: boolean;
+          language_complete: boolean;
+          origin: string;
+          scope_class_id: string | null;
+          source: Json | null;
+          status: string;
           type: string;
           updated_at: string;
         };
@@ -566,10 +1578,21 @@ export type Database = {
           body: NonNullable<Json>;
           chapter_id: string;
           cognitive_level?: string;
+          concept_id?: string | null;
           created_at?: string;
           created_by?: string | null;
+          current_version?: number;
           default_marks?: number;
+          difficulty?: number;
+          explanation?: Json | null;
           id?: string;
+          import_batch_id?: string | null;
+          is_test_data?: boolean;
+          language_complete?: boolean;
+          origin?: string;
+          scope_class_id?: string | null;
+          source?: Json | null;
+          status?: string;
           type?: string;
           updated_at?: string;
         };
@@ -578,10 +1601,21 @@ export type Database = {
           body?: NonNullable<Json>;
           chapter_id?: string;
           cognitive_level?: string;
+          concept_id?: string | null;
           created_at?: string;
           created_by?: string | null;
+          current_version?: number;
           default_marks?: number;
+          difficulty?: number;
+          explanation?: Json | null;
           id?: string;
+          import_batch_id?: string | null;
+          is_test_data?: boolean;
+          language_complete?: boolean;
+          origin?: string;
+          scope_class_id?: string | null;
+          source?: Json | null;
+          status?: string;
           type?: string;
           updated_at?: string;
         };
@@ -594,10 +1628,31 @@ export type Database = {
             referencedColumns: ['id'];
           },
           {
+            foreignKeyName: 'questions_concept_id_fkey';
+            columns: ['concept_id'];
+            isOneToOne: false;
+            referencedRelation: 'concepts';
+            referencedColumns: ['id'];
+          },
+          {
             foreignKeyName: 'questions_created_by_fkey';
             columns: ['created_by'];
             isOneToOne: false;
             referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'questions_import_batch_id_fkey';
+            columns: ['import_batch_id'];
+            isOneToOne: false;
+            referencedRelation: 'import_batches';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'questions_scope_class_id_fkey';
+            columns: ['scope_class_id'];
+            isOneToOne: false;
+            referencedRelation: 'classes';
             referencedColumns: ['id'];
           },
         ];
@@ -611,6 +1666,7 @@ export type Database = {
           guardian_name: string | null;
           guardian_phone: string | null;
           id: string;
+          is_test_data: boolean;
           student_code: string;
         };
         ComputedFields: never;
@@ -622,6 +1678,7 @@ export type Database = {
           guardian_name?: string | null;
           guardian_phone?: string | null;
           id?: string;
+          is_test_data?: boolean;
           student_code: string;
         };
         Update: {
@@ -632,6 +1689,7 @@ export type Database = {
           guardian_name?: string | null;
           guardian_phone?: string | null;
           id?: string;
+          is_test_data?: boolean;
           student_code?: string;
         };
         Relationships: [];
@@ -828,6 +1886,51 @@ export type Database = {
           },
         ];
       };
+      topics: {
+        Row: {
+          chapter_id: string;
+          created_at: string;
+          diagnostic_size: number | null;
+          id: string;
+          is_test_data: boolean;
+          sort_order: number;
+          status: string;
+          title_en: string;
+          title_ur: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          chapter_id: string;
+          created_at?: string;
+          diagnostic_size?: number | null;
+          id?: string;
+          is_test_data?: boolean;
+          sort_order?: number;
+          status?: string;
+          title_en: string;
+          title_ur?: string | null;
+        };
+        Update: {
+          chapter_id?: string;
+          created_at?: string;
+          diagnostic_size?: number | null;
+          id?: string;
+          is_test_data?: boolean;
+          sort_order?: number;
+          status?: string;
+          title_en?: string;
+          title_ur?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'topics_chapter_id_fkey';
+            columns: ['chapter_id'];
+            isOneToOne: false;
+            referencedRelation: 'chapters';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
     };
     Views: {
       [_ in never]: never;
@@ -861,23 +1964,46 @@ export type Database = {
       auto_mark_item: { Args: { p_answer: Json; p_type: string; p_value: Json }; Returns: boolean };
       dearmor: { Args: { '': string }; Returns: string };
       dev_hard_delete_student: { Args: { p_student_id: string }; Returns: Json };
+      disable_push_token: { Args: { p_token: string }; Returns: undefined };
+      find_prep_accounts: {
+        Args: { p_query: string };
+        Returns: {
+          attempts: number;
+          created_at: string;
+          email: string;
+          full_name: string;
+          id: string;
+          merged_into: string;
+        }[];
+      };
       gen_random_uuid: { Args: Record<PropertyKey, never>; Returns: string };
       gen_salt: { Args: { '': string }; Returns: string };
+      grade_exam_session: { Args: { p_session: string }; Returns: undefined };
+      is_approved: { Args: { iid: string; kind: string; sc: string }; Returns: boolean };
       is_dev: { Args: Record<PropertyKey, never>; Returns: boolean };
+      is_oauth_provider: { Args: { p: string }; Returns: boolean };
+      is_prep_provider: { Args: { p: string }; Returns: boolean };
+      is_school_member: { Args: Record<PropertyKey, never>; Returns: boolean };
       is_staff: { Args: Record<PropertyKey, never>; Returns: boolean };
       is_teacher: { Args: Record<PropertyKey, never>; Returns: boolean };
-      my_role: { Args: Record<PropertyKey, never>; Returns: string };
-      my_student_id: { Args: Record<PropertyKey, never>; Returns: string };
-      register_push_token: {
-        Args: { p_device_info?: Json; p_token: string };
+      link_prep_account: {
+        Args: { p_prep_profile: string; p_reason: string; p_student_id: string };
+        Returns: Json;
+      };
+      log_exam_event: {
+        Args: { p_detail?: Json; p_kind: string; p_session: string };
         Returns: undefined;
       };
-      disable_push_token: { Args: { p_token: string }; Returns: undefined };
       mark_messages_read: { Args: { p_ids: string[] }; Returns: number };
       message_read_counts: {
         Args: { p_ids: string[] };
-        Returns: { message_id: string; read_count: number }[];
+        Returns: {
+          message_id: string;
+          read_count: number;
+        }[];
       };
+      my_role: { Args: Record<PropertyKey, never>; Returns: string };
+      my_student_id: { Args: Record<PropertyKey, never>; Returns: string };
       pgp_armor_headers: { Args: { '': string }; Returns: Record<string, unknown>[] };
       provision_student_login: { Args: { p_pin: string; p_student_id: string }; Returns: string };
       record_attendance: {
@@ -916,6 +2042,12 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      register_push_token: { Args: { p_device_info?: Json; p_token: string }; Returns: undefined };
+      save_exam_answer: {
+        Args: { p_answer: Json; p_client_at?: string; p_question: string; p_session: string };
+        Returns: Json;
+      };
+      start_exam_session: { Args: { p_assessment: string }; Returns: Json };
       student_login_email: { Args: { p_student_code: string }; Returns: string };
       student_login_handle: { Args: { p_student_id: string }; Returns: string };
       student_paper: {
@@ -937,9 +2069,14 @@ export type Database = {
           marks: number;
         }[];
       };
+      submit_exam_session: { Args: { p_session: string }; Returns: Json };
       sync_student_login_access: { Args: { p_student_id: string }; Returns: undefined };
       teaches_chapter: { Args: { cid: string }; Returns: boolean };
+      teaches_chapter_subject: { Args: { cid: string }; Returns: boolean };
       teaches_class: { Args: { cid: string }; Returns: boolean };
+      teaches_concept: { Args: { cid: string }; Returns: boolean };
+      teaches_learner: { Args: { lid: string }; Returns: boolean };
+      teaches_topic: { Args: { tid: string }; Returns: boolean };
     };
     Enums: {
       [_ in never]: never;

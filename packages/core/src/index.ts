@@ -14,3 +14,4 @@ export * from './attendance';
 export * from './messages';
 export * from './prereaderAudio';
 export * from './readAloud';
+export * from './curriculum';

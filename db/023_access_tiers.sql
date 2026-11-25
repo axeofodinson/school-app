@@ -1,9 +1,12 @@
 -- ============================================================
 --  023 — Access tiers: school vs prep-only (Google sign-in)
---                                              *** DRAFT — NOT YET RUN ***
+--                                *** FINAL (prompt 20) — NOT YET RUN ***
 --
---  Prompt 05, DECISIONS #23 / #57–#60. Needs 017 applied first (learning
---  tables); refuses to run otherwise. Additive + idempotent: new columns are
+--  Prompt 05, DECISIONS #23 / #57–#60; re-reviewed in prompt 20 against
+--  018 and 024–030. RUN STRAIGHT AFTER 017 (it refuses to run without it),
+--  dev first; production only on a day the nightly backup has succeeded.
+--  Works with or without 018, 028, 029, 030 (their tables are covered when
+--  present; re-run 023 after applying any of them later, or 022). Additive + idempotent: new columns are
 --  IF NOT EXISTS, functions CREATE OR REPLACE, policies drop-then-create.
 --  Never touches db/setup.sql or an applied migration (the old
 --  handle_new_user() stays in place; the auth trigger now calls a NEW
@@ -241,15 +244,15 @@ revoke all on function public.profiles_guard()       from public, anon, authenti
 -- ============================================================
 -- Restrictive policies AND with the existing permissive ones, so school users
 -- are unaffected and prep-only users get nothing, whatever later permissive
--- policies say. Tables from drafts that aren't applied yet are skipped:
--- re-run 023 after applying them (022).
+-- policies say. Tables from migrations that aren't applied yet are skipped:
+-- re-run 023 after applying them (022, 028, 029).
 do $$
 declare t text;
 begin
   foreach t in array array[
     'students','enrollments','teacher_assignments',
     'assessments','assessment_questions','submissions','submission_grade_edits',
-    'attendance','messages','push_tokens',
+    'attendance','attendance_edits','messages','message_reads','push_tokens',
     'exam_sessions','exam_session_answers','exam_events',
     'project_teams','project_team_members','project_scores'
   ] loop

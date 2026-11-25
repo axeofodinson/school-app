@@ -1669,6 +1669,155 @@
       "messages": "پیغامات",
       "brandTeacher": "السید · ٹیچر",
       "brandAdmin": "السید · ایڈمن"
+    },
+    "curriculum": {
+      "title": "Curriculum // TODO: ur",
+      "kicker": "Content map // TODO: ur",
+      "subtitle": "Chapters, topics and concepts: the map every lesson, practice question and follow-up hangs on. // TODO: ur",
+      "subtitleTeacher": "Topics and concepts for the subjects you teach this year. // TODO: ur",
+      "navHint": "Topics, concepts and prerequisites for each chapter // TODO: ur",
+      "tabs": {
+        "map": "Chapters and topics // TODO: ur",
+        "editions": "Textbook editions // TODO: ur",
+        "label": "Curriculum section // TODO: ur"
+      },
+      "showRetired": "Show retired // TODO: ur",
+      "chapters": "Chapters // TODO: ur",
+      "chapterMeta": "Topics: %{topics} · Concepts: %{concepts} // TODO: ur",
+      "chapterMetaEmpty": "No topics yet // TODO: ur",
+      "noEdition": "No edition // TODO: ur",
+      "addChapter": "Add chapter // TODO: ur",
+      "editChapter": "Edit chapter // TODO: ur",
+      "pickChapter": "Pick a chapter // TODO: ur",
+      "pickChapterBody": "Its topics and concepts open here. // TODO: ur",
+      "noChapters": "No chapters in this subject yet // TODO: ur",
+      "noChaptersAdmin": "Add the first chapter, in textbook order. // TODO: ur",
+      "noChaptersTeacher": "Ask the admin to add this subject's chapters first. // TODO: ur",
+      "chapterHeader": "Chapter %{n} // TODO: ur",
+      "textbookRef": "Textbook: %{ref} // TODO: ur",
+      "topics": "Topics // TODO: ur",
+      "addTopic": "Add topic // TODO: ur",
+      "editTopic": "Edit topic // TODO: ur",
+      "noTopics": "No topics in this chapter yet // TODO: ur",
+      "noTopicsBody": "Split the chapter into the topics you teach. Each topic gets a short diagnostic and its own concepts. // TODO: ur",
+      "topicNumber": "Topic %{n} // TODO: ur",
+      "diagnostic": "Diagnostic: %{n} questions // TODO: ur",
+      "diagnosticDefault": "Diagnostic: %{n} questions (default) // TODO: ur",
+      "tilesLabel": {
+        "one": "Students fill %{count} tile in this topic // TODO: ur",
+        "other": "Students fill %{count} tiles in this topic // TODO: ur"
+      },
+      "concepts": "Concepts // TODO: ur",
+      "addConcept": "Add concept // TODO: ur",
+      "editConcept": "Edit concept // TODO: ur",
+      "noConcepts": "No concepts yet. A concept is one idea a student can master, like \"adding fractions with the same bottom number\". // TODO: ur",
+      "needs": "Needs // TODO: ur",
+      "needsCount": "Needs %{count} // TODO: ur",
+      "retired": "Retired // TODO: ur",
+      "retire": "Retire // TODO: ur",
+      "restore": "Bring back // TODO: ur",
+      "retireTopicHint": "Students stop seeing it. Its history stays. // TODO: ur",
+      "moveUp": "Move %{name} up // TODO: ur",
+      "moveDown": "Move %{name} down // TODO: ur",
+      "readOnly": "You can read this chapter. Only its subject's teachers this year and admins can change it. // TODO: ur",
+      "fields": {
+        "titleEn": "Title (English) // TODO: ur",
+        "titleUr": "Title (Urdu) // TODO: ur",
+        "titleUrHelper": "Type it the way you'd say it in class. Leave empty to show the English. // TODO: ur",
+        "summaryEn": "What the student learns (English) // TODO: ur",
+        "summaryUr": "What the student learns (Urdu) // TODO: ur",
+        "summaryHelper": "One or two sentences. Shown above the lesson. // TODO: ur",
+        "diagnostic": "Diagnostic size // TODO: ur",
+        "diagnosticHelper": "Questions in this topic's first check, %{min} to %{max}. Leave empty for %{def}. // TODO: ur",
+        "textbookRef": "Textbook reference // TODO: ur",
+        "textbookRefHelper": "For example \"Unit 3, pages 41 to 58\". // TODO: ur",
+        "edition": "Textbook edition // TODO: ur",
+        "code": "Code // TODO: ur",
+        "codeHelper": "Short and unique, for example PTB-2025. // TODO: ur",
+        "board": "Board // TODO: ur",
+        "name": "Name // TODO: ur",
+        "effectiveFrom": "In use from // TODO: ur",
+        "effectiveFromHelper": "Date as YYYY-MM-DD, for example 2025-04-01. Optional. // TODO: ur"
+      },
+      "prereqs": {
+        "title": "Prerequisites // TODO: ur",
+        "help": "Concepts a student should master before this one. Follow-ups send students back to these. // TODO: ur",
+        "none": "None yet. // TODO: ur",
+        "edit": "Choose prerequisites // TODO: ur",
+        "sheetTitle": "Prerequisites for %{name} // TODO: ur",
+        "search": "Search concepts // TODO: ur",
+        "thisSubject": "This subject // TODO: ur",
+        "earlier": "Earlier classes // TODO: ur",
+        "noneFound": "No concepts match. // TODO: ur",
+        "noneEarlier": "No earlier class has %{subject} concepts yet. // TODO: ur",
+        "loop": "Can't pick: it already needs this concept, so that would make a loop. // TODO: ur",
+        "selected": {
+          "one": "%{count} picked // TODO: ur",
+          "other": "%{count} picked // TODO: ur"
+        },
+        "where": "%{class} · %{chapter} · %{topic} // TODO: ur"
+      },
+      "save": "Save // TODO: ur",
+      "cancel": "Cancel // TODO: ur",
+      "saved": "Saved // TODO: ur",
+      "topicAdded": "Topic added // TODO: ur",
+      "conceptAdded": "Concept added // TODO: ur",
+      "chapterAdded": "Chapter added // TODO: ur",
+      "retiredToast": "Retired. Turn on \"Show retired\" to bring it back. // TODO: ur",
+      "restoredToast": "Back in use // TODO: ur",
+      "errors": {
+        "titleRequired": "Write the English title. // TODO: ur",
+        "titleTooLong": "Keep the title under 200 letters. // TODO: ur",
+        "summaryTooLong": "Keep it under 1,000 letters. // TODO: ur",
+        "diagnosticNotNumber": "Type a whole number, or leave it empty. // TODO: ur",
+        "diagnosticRange": "Use a number from 5 to 60. // TODO: ur",
+        "codeRequired": "Give the edition a short code. // TODO: ur",
+        "codeTooLong": "Keep the code under 40 letters. // TODO: ur",
+        "boardRequired": "Name the board, for example Punjab Textbook Board. // TODO: ur",
+        "nameRequired": "Give the edition a name. // TODO: ur",
+        "textTooLong": "That's too long. // TODO: ur",
+        "dateInvalid": "Use a real date as YYYY-MM-DD. // TODO: ur",
+        "cycle": "That would make a loop of prerequisites. Nothing was changed. // TODO: ur",
+        "duplicate": "That code is already used by another edition. // TODO: ur",
+        "loadError": "Couldn't load the curriculum // TODO: ur"
+      },
+      "editions": {
+        "heading": "Textbook editions // TODO: ur",
+        "body": "Each chapter belongs to one edition (for example the Punjab Textbook Board books in use from April 2025). When the board prints new books, add a new edition and keep the old one for history. // TODO: ur",
+        "add": "Add edition // TODO: ur",
+        "edit": "Edit edition // TODO: ur",
+        "empty": "No textbook editions yet // TODO: ur",
+        "emptyBody": "Add the edition your books are from (for example PTB-2025), then attach your chapters to it. // TODO: ur",
+        "chapters": {
+          "one": "%{count} chapter // TODO: ur",
+          "other": "%{count} chapters // TODO: ur"
+        },
+        "from": "From %{date} // TODO: ur",
+        "added": "Edition added // TODO: ur",
+        "retireHint": "A retired edition stays on its chapters but isn't offered for new ones. // TODO: ur"
+      },
+      "attach": {
+        "heading": "Chapters without an edition // TODO: ur",
+        "body": "Chapters made before editions existed. Pick the edition, tick the chapters, attach. // TODO: ur",
+        "pickEdition": "Attach to // TODO: ur",
+        "needEdition": "Add an edition first, then attach chapters to it. // TODO: ur",
+        "none": "Every chapter has an edition. // TODO: ur",
+        "selectAll": "Select all %{count} // TODO: ur",
+        "selectNone": "Clear // TODO: ur",
+        "selectGroup": "All of %{group} // TODO: ur",
+        "attach": {
+          "one": "Attach %{count} chapter // TODO: ur",
+          "other": "Attach %{count} chapters // TODO: ur"
+        },
+        "done": {
+          "one": "%{count} chapter attached to %{edition} // TODO: ur",
+          "other": "%{count} chapters attached to %{edition} // TODO: ur"
+        },
+        "skipped": {
+          "one": "%{count} already had an edition and was left as it was. // TODO: ur",
+          "other": "%{count} already had an edition and were left as they were. // TODO: ur"
+        }
+      }
     }
   }
 }

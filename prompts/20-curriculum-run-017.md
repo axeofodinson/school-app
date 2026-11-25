@@ -1,6 +1,6 @@
 # 20 — Curriculum: apply 017 and build topic/concept editors
 
-**Model:** Opus · **Phase:** 2 · **Depends on:** 13 · **Blocked by:** Hassan runs 017 on Supabase
+**Model:** Opus · **Phase:** 2 · **Depends on:** 13 · **Blocked by:** — (the session finalises 017/023 and builds against the local harness; Hassan runs them on dev afterwards, production only after a same-day backup)
 
 Paste everything below the line into a new Claude Code session on the `school-app` repo.
 

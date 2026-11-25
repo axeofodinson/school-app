@@ -1,11 +1,27 @@
 -- ============================================================
 --  017 — LMS foundation (curriculum, concepts, versioned bank, learner state,
---        exams)                                  *** DRAFT — NOT YET RUN ***
+--        exams)                       *** FINAL (prompt 20) — NOT YET RUN ***
 --
---  Status: DRAFT for review (LMS_AUDIT.md §5, DATABASE_DESIGN.md). Do not run
---  against the Supabase project until Phase 2 of the build order is approved.
---  It has only been dry-run against a throwaway local Postgres with stubbed
---  auth/storage schemas (see TEST_PLAN.md §DB-1).
+--  Status: final, reviewed in prompt 20 against everything applied since it
+--  was drafted (018, 024–030). Dry-run on a throwaway local Postgres with
+--  stubbed auth/storage (TEST_PLAN DB-1, DB-2 RLS matrix, CU-1).
+--
+--  RUN ORDER: dev first, then production.
+--    * Needs setup.sql + 002–016 + 024–026. Works with or without 018, 028,
+--      029, 030 (dev has them, production may not).
+--    * Then run db/023_access_tiers.sql straight after it.
+--    * PRODUCTION: only on a day the nightly backup has succeeded
+--      (docs/backup-restore.md). CHECK FIRST (read-only, paste on its own):
+--        select table_name from information_schema.tables
+--         where table_schema = 'public' and table_name in
+--          ('curricula','topics','concepts','concept_prerequisites',
+--           'question_versions','item_approvals','item_reviews','import_batches',
+--           'learning_content','learning_content_versions','practice_attempts',
+--           'concept_mastery','follow_ups','gate_overrides','exam_sessions',
+--           'exam_session_answers','exam_events');
+--      Zero rows is the normal answer. If any table is listed, it was made by
+--      hand: PART 0 below stops with its name if its shape doesn't match, and
+--      nothing is changed (the whole script is one transaction).
 --
 --  Additive + idempotent: no drops of tables/columns, no data loss. Every
 --  CREATE uses IF NOT EXISTS; every policy is dropped-then-created. Safe to
@@ -30,6 +46,56 @@
 --    flow into the existing submissions + grade audit (record_grade, 013)
 --    only when the teacher confirms.
 -- ============================================================
+
+
+-- ============================================================
+--  PART 0 — Preflight: refuse to build on a hand-made table of the same name
+-- ============================================================
+-- CREATE TABLE IF NOT EXISTS silently keeps an existing table, so a table
+-- someone made by hand in the dashboard would be kept with the wrong columns
+-- and break later (or worse, half-work). Stop with a clear message instead. A
+-- table left by an earlier run of this file passes (re-running is safe).
+do $$
+declare
+  want jsonb := '{
+    "curricula": ["id","code","board","name","effective_from","status","created_at"],
+    "topics": ["id","chapter_id","title_en","title_ur","sort_order","status","diagnostic_size","created_at"],
+    "concepts": ["id","topic_id","title_en","title_ur","summary_en","summary_ur","sort_order","status","created_at"],
+    "concept_prerequisites": ["concept_id","requires_concept_id"],
+    "question_versions": ["question_id","version","type","cognitive_level","difficulty","concept_id","body","answer","explanation","created_by","created_at"],
+    "item_approvals": ["id","item_kind","item_id","version","scope","approved_by","approved_at","revoked_by","revoked_at","note"],
+    "item_reviews": ["id","item_kind","item_id","version","reviewer_id","decision","translation_ok","notes","created_at"],
+    "import_batches": ["id","imported_by","origin","source_note","report","created_at"],
+    "learning_content": ["id","topic_id","concept_id","kind","current_version","status","origin","scope_class_id","created_by","is_test_data","created_at","updated_at"],
+    "learning_content_versions": ["content_id","version","blocks","created_by","created_at"],
+    "practice_attempts": ["id","learner_id","kind","topic_id","follow_up_id","started_at","finished_at","items","n_correct","n_total","device_id","received_at","is_test_data"],
+    "concept_mastery": ["learner_id","concept_id","state","n_attempted","n_correct","n_distinct_q","evidence","last_attempt_at","mastered_at","next_review_at","review_stage","updated_at"],
+    "follow_ups": ["id","learner_id","concept_id","subject_id","kind","status","source_attempt_id","source_exam_session_id","assigned_by","rounds","created_at","updated_at","closed_at","close_reason"],
+    "gate_overrides": ["id","learner_id","subject_id","topic_id","follow_up_id","action","actor_id","reason","created_at"],
+    "exam_sessions": ["id","assessment_id","enrollment_id","learner_id","delivery","status","paper","started_at","deadline_at","submitted_at","client_elapsed_ms","score","total","last_seen_at","created_at"],
+    "exam_session_answers": ["session_id","question_id","question_version","answer","is_correct","client_answered_at","received_at","late"],
+    "exam_events": ["id","session_id","kind","at","detail"]
+  }';
+  t text;
+  missing text;
+begin
+  if not exists (select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+                  where n.nspname = 'public' and p.proname = 'teaches_chapter') then
+    raise exception '017 needs db/003 (teaches_chapter) applied first';
+  end if;
+  for t in select jsonb_object_keys(want) loop
+    if to_regclass('public.' || t) is not null then
+      select string_agg(c, ', ') into missing
+        from jsonb_array_elements_text(want->t) c
+       where not exists (select 1 from information_schema.columns ic
+                          where ic.table_schema = 'public' and ic.table_name = t
+                            and ic.column_name = c);
+      if missing is not null then
+        raise exception '017 stopped, nothing changed: public.% already exists but was not made by this file (missing: %). Send this message to Claude before going on.', t, missing;
+      end if;
+    end if;
+  end loop;
+end $$;
 
 
 -- ============================================================
@@ -90,6 +156,50 @@ create table if not exists public.concept_prerequisites (
 );
 create index if not exists ix_cprereq_requires
   on public.concept_prerequisites(requires_concept_id);
+
+-- Editors (prompt 20) rely on these; added separately so a re-run (or a table
+-- from an earlier draft run) gets them too.
+alter table public.curricula drop constraint if exists curricula_text_check;
+alter table public.curricula add constraint curricula_text_check
+  check (length(trim(code)) between 1 and 40 and length(trim(board)) between 1 and 120
+         and length(trim(name)) between 1 and 160);
+alter table public.topics drop constraint if exists topics_title_check;
+alter table public.topics add constraint topics_title_check
+  check (length(trim(title_en)) between 1 and 200 and length(coalesce(title_ur, '')) <= 200);
+alter table public.topics drop constraint if exists topics_diagnostic_size_check;
+alter table public.topics add constraint topics_diagnostic_size_check
+  check (diagnostic_size is null or diagnostic_size between 5 and 60);
+alter table public.concepts drop constraint if exists concepts_title_check;
+alter table public.concepts add constraint concepts_title_check
+  check (length(trim(title_en)) between 1 and 200 and length(coalesce(title_ur, '')) <= 200
+         and length(coalesce(summary_en, '')) <= 1000 and length(coalesce(summary_ur, '')) <= 1000);
+create index if not exists ix_chapters_curriculum on public.chapters(curriculum_id);
+
+-- Prerequisites must never form a loop (A needs B needs … needs A): the
+-- follow-up engine walks this graph (prompt 41). Checked on the server, so a
+-- second editor in another tab can't close a loop either.
+create or replace function public.concept_prereq_no_cycle()
+returns trigger language plpgsql set search_path = public as $$
+begin
+  -- Serialise prerequisite writes so two concurrent inserts can't each miss
+  -- the other's half of a loop.
+  perform pg_advisory_xact_lock(hashtext('concept_prerequisites'));
+  if exists (
+    with recursive up(id) as (
+      select new.requires_concept_id
+      union
+      select cp.requires_concept_id from public.concept_prerequisites cp join up on cp.concept_id = up.id
+    )
+    select 1 from up where id = new.concept_id
+  ) then
+    raise exception 'prerequisite_cycle: that would make a loop of prerequisites'
+      using errcode = '23514';
+  end if;
+  return new;
+end $$;
+drop trigger if exists t_cprereq_no_cycle on public.concept_prerequisites;
+create trigger t_cprereq_no_cycle before insert or update on public.concept_prerequisites
+  for each row execute function public.concept_prereq_no_cycle();
 
 
 -- ============================================================
@@ -441,10 +551,29 @@ alter table public.concepts   add column if not exists is_test_data boolean not 
 -- ============================================================
 --  PART 7 — Helper functions
 -- ============================================================
+-- Curriculum write scope (prompt 20): a teacher edits topics/concepts only in
+-- chapters of a SUBJECT they teach this year (a class-wide assignment, subject
+-- null, covers every subject of that class). Stricter than teaches_chapter()
+-- (db/003, any subject of any class they ever taught), which still governs
+-- questions.
+create or replace function public.teaches_chapter_subject(cid uuid)
+returns boolean language sql stable security definer set search_path = public as $$
+  select exists (
+    select 1
+      from public.chapters ch
+      join public.subjects s on s.id = ch.subject_id
+      join public.teacher_assignments ta
+        on ta.class_id = s.class_id
+       and (ta.subject_id is null or ta.subject_id = s.id)
+      join public.academic_years y on y.id = ta.year_id and y.is_current
+     where ch.id = cid and ta.teacher_id = auth.uid()
+  )
+$$;
+
 create or replace function public.teaches_topic(tid uuid)
 returns boolean language sql stable security definer set search_path = public as $$
   select exists (select 1 from public.topics t
-                 where t.id = tid and public.teaches_chapter(t.chapter_id))
+                 where t.id = tid and public.teaches_chapter_subject(t.chapter_id))
 $$;
 
 create or replace function public.teaches_concept(cid uuid)
@@ -646,20 +775,32 @@ create policy p_curricula_staff on public.curricula  for all using (public.is_st
 
 drop policy if exists p_topics_read on public.topics;
 create policy p_topics_read on public.topics for select using (auth.uid() is not null);
+-- No DELETE policy on topics/concepts: retire, never delete (CLAUDE.md rule 3).
 drop policy if exists p_topics_write on public.topics;
-create policy p_topics_write on public.topics for all
-  using (public.is_staff() or (public.is_teacher() and public.teaches_chapter(chapter_id)))
-  with check (public.is_staff() or (public.is_teacher() and public.teaches_chapter(chapter_id)));
+drop policy if exists p_topics_insert on public.topics;
+create policy p_topics_insert on public.topics for insert
+  with check (public.is_staff() or (public.is_teacher() and public.teaches_chapter_subject(chapter_id)));
+drop policy if exists p_topics_update on public.topics;
+create policy p_topics_update on public.topics for update
+  using (public.is_staff() or (public.is_teacher() and public.teaches_chapter_subject(chapter_id)))
+  with check (public.is_staff() or (public.is_teacher() and public.teaches_chapter_subject(chapter_id)));
 
 drop policy if exists p_concepts_read on public.concepts;
 create policy p_concepts_read on public.concepts for select using (auth.uid() is not null);
 drop policy if exists p_concepts_write on public.concepts;
-create policy p_concepts_write on public.concepts for all
+drop policy if exists p_concepts_insert on public.concepts;
+create policy p_concepts_insert on public.concepts for insert
+  with check (public.is_staff() or (public.is_teacher() and public.teaches_topic(topic_id)));
+drop policy if exists p_concepts_update on public.concepts;
+create policy p_concepts_update on public.concepts for update
   using (public.is_staff() or (public.is_teacher() and public.teaches_topic(topic_id)))
   with check (public.is_staff() or (public.is_teacher() and public.teaches_topic(topic_id)));
 
 drop policy if exists p_cprereq_read on public.concept_prerequisites;
 create policy p_cprereq_read on public.concept_prerequisites for select using (auth.uid() is not null);
+-- A prerequisite link is structure, not history: removing a wrong one is fine.
+-- The concept that NEEDS the prerequisite must be one the teacher edits; the
+-- required concept can be anywhere (e.g. an earlier class).
 drop policy if exists p_cprereq_write on public.concept_prerequisites;
 create policy p_cprereq_write on public.concept_prerequisites for all
   using (public.is_staff() or (public.is_teacher() and public.teaches_concept(concept_id)))
@@ -681,29 +822,51 @@ create policy p_qv_student_read on public.question_versions for select
 -- Approvals / reviews / imports: staff all; teachers for concepts they teach.
 drop policy if exists p_approvals_read on public.item_approvals;
 create policy p_approvals_read on public.item_approvals for select using (auth.uid() is not null);
+-- Approvals: insert as yourself; only revoke (update) your own, or any as
+-- staff; never delete (the history of what was approved stays). Teacher
+-- approval is narrowed to their own concepts by the review RPC (prompt 22).
 drop policy if exists p_approvals_write on public.item_approvals;
-create policy p_approvals_write on public.item_approvals for all
-  using (public.is_staff() or public.is_teacher())
+drop policy if exists p_approvals_insert on public.item_approvals;
+create policy p_approvals_insert on public.item_approvals for insert
+  with check ((public.is_staff() or public.is_teacher()) and approved_by = auth.uid());
+drop policy if exists p_approvals_revoke on public.item_approvals;
+create policy p_approvals_revoke on public.item_approvals for update
+  using (public.is_staff() or (public.is_teacher() and approved_by = auth.uid()))
   with check (public.is_staff() or (public.is_teacher() and approved_by = auth.uid()));
--- NOTE: teacher approval is limited to their own concepts in the review RPC
--- (Phase 2); this policy is intentionally coarse until then.
 
+-- Review log: insert-only.
 drop policy if exists p_reviews_staff on public.item_reviews;
-create policy p_reviews_staff on public.item_reviews for all
-  using (public.is_staff() or public.is_teacher())
-  with check (reviewer_id = auth.uid());
+drop policy if exists p_reviews_read on public.item_reviews;
+create policy p_reviews_read on public.item_reviews for select
+  using (public.is_staff() or public.is_teacher());
+drop policy if exists p_reviews_insert on public.item_reviews;
+create policy p_reviews_insert on public.item_reviews for insert
+  with check ((public.is_staff() or public.is_teacher()) and reviewer_id = auth.uid());
 
+-- Import batches: staff/teachers only; read your own (staff all); the importer
+-- may write its report back; never delete (a bad batch is retired as a unit).
 drop policy if exists p_imports_staff on public.import_batches;
-create policy p_imports_staff on public.import_batches for all
-  using (public.is_staff() or imported_by = auth.uid())
-  with check (imported_by = auth.uid());
+drop policy if exists p_imports_read on public.import_batches;
+create policy p_imports_read on public.import_batches for select
+  using (public.is_staff() or (public.is_teacher() and imported_by = auth.uid()));
+drop policy if exists p_imports_insert on public.import_batches;
+create policy p_imports_insert on public.import_batches for insert
+  with check ((public.is_staff() or public.is_teacher()) and imported_by = auth.uid());
+drop policy if exists p_imports_update on public.import_batches;
+create policy p_imports_update on public.import_batches for update
+  using (public.is_staff() or (public.is_teacher() and imported_by = auth.uid()))
+  with check (public.is_staff() or (public.is_teacher() and imported_by = auth.uid()));
 
 -- Learn content: students read approved; staff/teachers manage.
 drop policy if exists p_lc_read on public.learning_content;
 create policy p_lc_read on public.learning_content for select
   using (public.is_staff() or public.is_teacher() or status = 'approved');
 drop policy if exists p_lc_write on public.learning_content;
-create policy p_lc_write on public.learning_content for all
+drop policy if exists p_lc_insert on public.learning_content;
+create policy p_lc_insert on public.learning_content for insert
+  with check (public.is_staff() or (public.is_teacher() and public.teaches_topic(topic_id)));
+drop policy if exists p_lc_update on public.learning_content;
+create policy p_lc_update on public.learning_content for update
   using (public.is_staff() or (public.is_teacher() and public.teaches_topic(topic_id)))
   with check (public.is_staff() or (public.is_teacher() and public.teaches_topic(topic_id)));
 
@@ -713,7 +876,11 @@ create policy p_lcv_read on public.learning_content_versions for select
          or public.is_approved('content', content_id, 'learn'));
 drop policy if exists p_lcv_insert on public.learning_content_versions;
 create policy p_lcv_insert on public.learning_content_versions for insert
-  with check (public.is_staff() or public.is_teacher());
+  with check (public.is_staff()
+              or (public.is_teacher() and exists (
+                    select 1 from public.learning_content lc
+                     where lc.id = learning_content_versions.content_id
+                       and public.teaches_topic(lc.topic_id))));
 
 -- Learner state: a learner reads/writes their own; teachers read learners they
 -- teach; staff all. No student UPDATE on attempts (append-only from client).

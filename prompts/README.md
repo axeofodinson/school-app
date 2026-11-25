@@ -74,7 +74,7 @@ Deferred: parents (81) and iOS (82).
 
 | ✓ | Prompt | Model | Depends on | Blocked by | Notes |
 |---|---|---|---|---|---|
-| [ ] | [20 Curriculum: apply 017 and build topic/concept editors](20-curriculum-run-017.md) | Opus | 13 | Hassan runs 017 on Supabase | |
+| [x] | [20 Curriculum: apply 017 and build topic/concept editors](20-curriculum-run-017.md) | Opus | 13 | — | 2026-11-25: 017 + 023 final (hand-made table check, no-delete curriculum, loop-proof prerequisites, subject-level teacher scope; CU-1 RLS matrix), `/curriculum` editors + editions + backfill helper (CU-2 63/63). Hassan: run 017 then 023 on dev; production after a working same-day backup |
 | [ ] | [21 Content importer (JSON → draft) with validation report](21-importer.md) | Opus | 20 | — | |
 | [ ] | [22 Teacher review queue: approve / edit / reject](22-review-queue.md) | Opus | 21 | —  (decided: each subject's teachers review Urdu, DECISIONS #28) | |
 

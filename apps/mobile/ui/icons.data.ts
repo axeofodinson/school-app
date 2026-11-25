@@ -259,6 +259,35 @@ export const iconData = {
     { t: 'path', d: 'M5 12h14' },
     { t: 'path', d: 'M12 5v14' },
   ],
+  arrowUp: [
+    { t: 'path', d: 'm5 12 7-7 7 7' },
+    { t: 'path', d: 'M12 19V5' },
+  ],
+  arrowDown: [
+    { t: 'path', d: 'M12 5v14' },
+    { t: 'path', d: 'm19 12-7 7-7-7' },
+  ],
+  layers: [
+    {
+      t: 'path',
+      d: 'M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z',
+    },
+    { t: 'path', d: 'm22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65' },
+    { t: 'path', d: 'm22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65' },
+  ],
+  archive: [
+    { t: 'rect', x: 2, y: 3, width: 20, height: 5, rx: 1 },
+    { t: 'path', d: 'M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8' },
+    { t: 'path', d: 'M10 12h4' },
+  ],
+  restore: [
+    { t: 'path', d: 'M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8' },
+    { t: 'path', d: 'M3 3v5h5' },
+  ],
+  link: [
+    { t: 'path', d: 'M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71' },
+    { t: 'path', d: 'M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71' },
+  ],
 } as const satisfies Record<string, readonly IconShape[]>;
 
 export type IconName = keyof typeof iconData;
