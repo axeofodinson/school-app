@@ -20,7 +20,7 @@ import { voiceClips, type VoiceLine } from '../assets/voice/manifest';
 import { useMotion } from './motion';
 import { useTheme } from './theme';
 
-/** Short effects (synthesised by scripts/generate-sfx.mjs; replaceable, same names). */
+/** Short effects (ElevenLabs takes, trimmed: docs/audio-scripts.md B; replaceable, same names). */
 const sfx = {
   pop: require('../assets/sfx/pop.wav'),
   ding: require('../assets/sfx/ding.wav'),

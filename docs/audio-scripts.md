@@ -5,7 +5,7 @@ Three kinds of audio. Only the first two need you; the third is made by a script
 | Kind | How many | Where it plays | Who makes it |
 |---|---|---|---|
 | A. Kid voice lines | 5 lines × English + Urdu = **10 clips** | PG–Class 5 only, outside tests/exams | You (ElevenLabs website or app) |
-| B. Sound effects | **3 clips** (replace the synthesised placeholders) | Kid taps, quiz sent, finishing a paper | You (ElevenLabs Sound Effects), optional |
+| B. Sound effects | **3 clips**: done 2026-11-25 (ElevenLabs takes in the app) | Kid taps, quiz sent, finishing a paper | Done |
 | C. Question read-aloud | one clip per junior maths question × 2 languages | The speaker button on PG–5 questions | `scripts/audio/generate-prereader-audio.mjs` (already built, prompt 16) |
 
 Rules the app already follows, so the clips don't need to: sounds never play in a
@@ -53,7 +53,13 @@ the words in this table if they do, and record what they approve. "Yellow button
 
 ---
 
-## B. Sound effects (3 clips, optional upgrade)
+## B. Sound effects (3 clips, done)
+
+**Done 2026-11-25.** Hassan's ElevenLabs takes are in `apps/mobile/assets/sfx/`: `pop.wav`
+(soft bubble, first 0.18 s, raised 25 dB because the take was very quiet), `ding.wav` (two-note
+chime, 0.45 s) and `tada.wav` (cheerful flourish, 1.0 s, its silent tail cut). Each is mono
+22 kHz 16-bit with a short fade-out and a peak limit of -4.4 dB (RMS about -22 dB, so they sit
+evenly). The steps below are kept for re-recording one.
 
 The app ships with small synthesised placeholders (`apps/mobile/assets/sfx/*.wav`,
 made by `scripts/generate-sfx.mjs`). To replace them, generate in **ElevenLabs →
