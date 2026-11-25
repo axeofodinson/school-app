@@ -20,6 +20,11 @@ export default function AdminHome() {
         <Text>{t('console.home.welcome', { name: profile.full_name })}</Text>
       ) : null}
       <ListItem
+        title={t('console.home.openMessages')}
+        subtitle={t('staff.home.messagesHint')}
+        onPress={() => router.push('/messages')}
+      />
+      <ListItem
         title={t('staff.attendanceSummary.title')}
         subtitle={t('staff.home.attendanceSummaryHint')}
         onPress={() => router.push('/attendance-summary')}

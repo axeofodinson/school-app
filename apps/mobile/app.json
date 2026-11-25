@@ -45,6 +45,13 @@
       ],
       "expo-web-browser",
       [
+        "expo-notifications",
+        {
+          "color": "#55a049",
+          "defaultChannel": "messages"
+        }
+      ],
+      [
         "expo-build-properties",
         {
           "android": {

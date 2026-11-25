@@ -115,6 +115,29 @@ Prep-only Google sign-in needs `db/017` and `db/023` applied on the project and:
 
 The Android app uses a browser tab (Custom Tab) to show Google's sign-in page, so it needs no SHA-1 or Android OAuth client.
 
+## Push notifications on Android (prompt 15)
+
+Messages always reach the inbox and, while the app is open, an in-app toast. A
+notification on a closed Android app also needs Firebase Cloud Messaging, set up
+once per Expo project (dev and production builds use the same Firebase app):
+
+1. **Firebase console** → Add project (free Spark plan) → Add app → Android, package
+   `com.school.app` → download `google-services.json`. It is a config file, not a
+   secret, but keep it out of the repo.
+2. **expo.dev** → project → Environment variables → add `GOOGLE_SERVICES_JSON` as a
+   **file** variable (upload the file) for development, preview and production.
+   `apps/mobile/app.config.js` points the build at it.
+3. **Firebase** → Project settings → Service accounts → *Generate new private key*
+   (FCM V1). **expo.dev** → project → Credentials → Android → `com.school.app` →
+   *FCM V1 service account key* → upload it. This one **is** a secret: upload it there
+   only, never paste it into chat or the repo.
+4. Rebuild the APK (new native module `expo-notifications`; an OTA update is not enough).
+5. **Supabase** (dev first): run `db/029`, `supabase functions deploy send-message-push`,
+   and check Database → Webhooks has the `messages` INSERT hook calling it
+   (supabase/functions/send-message-push/README.md).
+
+Without steps 1–3 the app still builds and runs; push registration just fails quietly.
+
 ## Backups (GitHub Actions settings)
 
 Nightly backups and the keep-alive read these `school-app` repo settings

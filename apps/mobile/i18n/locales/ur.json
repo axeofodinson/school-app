@@ -436,7 +436,14 @@
         "school": "اسکول",
         "class": "تمہاری کلاس",
         "student": "تمہارے لیے"
-      }
+      },
+      "markAllRead": "Mark all as read // TODO: ur",
+      "offline": "You’re offline. These are the messages saved on this phone. // TODO: ur",
+      "newCount": {
+        "one": "%{count} new // TODO: ur",
+        "other": "%{count} new // TODO: ur"
+      },
+      "unsupported": "Messages pop up here while the app is open. // TODO: ur"
     },
     "battery": {
       "title": "میسجز آتے رہیں",
@@ -1044,7 +1051,8 @@
         "searchStudents": "نام یا ایڈمشن نمبر سے تلاش کریں",
         "changeStudent": "بدلیں",
         "send": "بھیجیں",
-        "sending": "بھیجا جا رہا ہے…"
+        "sending": "بھیجا جا رہا ہے…",
+        "count": "%{n} / %{max} // TODO: ur"
       },
       "errors": {
         "titleRequired": "عنوان لکھیں۔",
@@ -1053,7 +1061,20 @@
         "studentRequired": "بھیجنے کے لیے طالبِ علم منتخب کریں۔",
         "notAllowed": "آپ صرف اُن کلاسوں اور طلبہ کو میسج بھیج سکتے ہیں جو آپ پڑھاتے ہیں۔",
         "network": "انٹرنیٹ نہیں ہے۔ کنکشن چیک کر کے دوبارہ کوشش کریں۔",
-        "unknown": "بھیجا نہیں جا سکا۔ دوبارہ کوشش کریں۔"
+        "unknown": "بھیجا نہیں جا سکا۔ دوبارہ کوشش کریں۔",
+        "titleLong": "Keep the title to %{max} characters. // TODO: ur",
+        "bodyLong": "Keep the message to %{max} characters. // TODO: ur"
+      },
+      "sentTitle": "Sent messages // TODO: ur",
+      "sentEmpty": "Nothing sent yet. Messages you send show up here, with how many students have read them. // TODO: ur",
+      "sentLoadError": "Couldn’t load the messages you sent. // TODO: ur",
+      "readBy": {
+        "one": "Read by %{count} student // TODO: ur",
+        "other": "Read by %{count} students // TODO: ur"
+      },
+      "reach": {
+        "one": "Goes to %{count} student // TODO: ur",
+        "other": "Goes to %{count} students // TODO: ur"
       }
     },
     "dev": {
@@ -1360,7 +1381,8 @@
       "gradingHint": "Enter and correct grades, with the reason kept // TODO: ur",
       "overdueHint": "Homework past due, and who hasn't handed it in // TODO: ur",
       "attendanceHint": "Mark today's attendance in a few taps, or fix a past day // TODO: ur",
-      "attendanceSummaryHint": "Each class's day, and each student's month // TODO: ur"
+      "attendanceSummaryHint": "Each class's day, and each student's month // TODO: ur",
+      "messagesHint": "Send news to a class, one student or the whole school // TODO: ur"
     },
     "scope": {
       "class": "Class // TODO: ur",

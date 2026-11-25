@@ -2,7 +2,8 @@
 // Source: local DB harness (TEST_PLAN DB-1) with db/setup.sql + db/002–016 + 024 +
 // 025 + 026 (applied in production 2026-11-25) + 018 (draft, prompt 13: the app
 // calls its student_paper / student_paper_levels RPCs; run it at the cut-over) +
-// 028 (draft, prompt 14: attendance audit + record_attendance / summaries).
+// 028 (draft, prompt 14: attendance audit + record_attendance / summaries) +
+// 029 (draft, prompt 15: message_reads, mark_messages_read, message_read_counts).
 // Drafts 017/022/023 excluded. Via
 //   npx supabase@3.3.0 gen types typescript --db-url <harness> --schema public
 // Regenerate after each migration Hassan runs (see packages/core/README.md).
@@ -389,11 +390,47 @@ export type Database = {
           },
         ];
       };
+      message_reads: {
+        Row: {
+          message_id: string;
+          read_at: string;
+          student_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          message_id: string;
+          read_at?: string;
+          student_id: string;
+        };
+        Update: {
+          message_id?: string;
+          read_at?: string;
+          student_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'message_reads_message_id_fkey';
+            columns: ['message_id'];
+            isOneToOne: false;
+            referencedRelation: 'messages';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'message_reads_student_id_fkey';
+            columns: ['student_id'];
+            isOneToOne: false;
+            referencedRelation: 'students';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       messages: {
         Row: {
           body: string;
           created_at: string;
           id: string;
+          push_claimed_at: string | null;
+          push_result: Json | null;
           scope: string;
           sender_id: string | null;
           target_id: string | null;
@@ -404,6 +441,8 @@ export type Database = {
           body: string;
           created_at?: string;
           id?: string;
+          push_claimed_at?: string | null;
+          push_result?: Json | null;
           scope: string;
           sender_id?: string | null;
           target_id?: string | null;
@@ -413,6 +452,8 @@ export type Database = {
           body?: string;
           created_at?: string;
           id?: string;
+          push_claimed_at?: string | null;
+          push_result?: Json | null;
           scope?: string;
           sender_id?: string | null;
           target_id?: string | null;
@@ -827,6 +868,16 @@ export type Database = {
       is_teacher: { Args: Record<PropertyKey, never>; Returns: boolean };
       my_role: { Args: Record<PropertyKey, never>; Returns: string };
       my_student_id: { Args: Record<PropertyKey, never>; Returns: string };
+      register_push_token: {
+        Args: { p_device_info?: Json; p_token: string };
+        Returns: undefined;
+      };
+      disable_push_token: { Args: { p_token: string }; Returns: undefined };
+      mark_messages_read: { Args: { p_ids: string[] }; Returns: number };
+      message_read_counts: {
+        Args: { p_ids: string[] };
+        Returns: { message_id: string; read_count: number }[];
+      };
       pgp_armor_headers: { Args: { '': string }; Returns: Record<string, unknown>[] };
       provision_student_login: { Args: { p_pin: string; p_student_id: string }; Returns: string };
       record_attendance: {
