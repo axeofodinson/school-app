@@ -150,6 +150,7 @@ Deferred: parents (81) and iOS (82).
 | — | [C1 Generate topic content](C1-generate-topic-content.md) | Opus (claude.ai chat) | From Phase 2 on, one topic at a time (pilot: Class 9 Math/Science) |
 
 ## Changelog
+- 2026-11-25: Android size fix (DECISIONS #82): `expo-build-properties` adds three ABIs, compressed native libs, R8 + resource shrinking. New native config: the next Android build (preview or dev client) picks it up; check its size and smoke-test every screen once, since R8 is new.
 - 2026-11-25: 13 code done. `db/018_close_answer_key_read.sql` runs AFTER 026 (dev first; production only once students have the new app, TEST_PLAN CO-3). The server now auto-marks fully auto-markable attempts (DECISIONS #79), so 14–16 and 50 can rely on scores appearing without a teacher; 50/51 should add a "hold results" setting if teachers want it (DECISIONS #81). 025 + 026 are applied on both databases.
 - 2026-11-24: 11 done. `db/025_student_attempts_own_class.sql` is a draft for Hassan to run (dev, then production, after 024). New native module `expo-speech`: rebuild the dev client. Prompt 61 inherits the logout "N not sent" warning; 12 should show attempts that a grade-first `record_grade` turned into duplicates.
 - 2026-11-24: OPS-backup done (DECISIONS #63). Before OPS-remove-legacy, run the backup workflow by hand with `keep_label` so that backup is never pruned. Storage file contents aren't in the dump yet.
