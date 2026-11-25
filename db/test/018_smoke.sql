@@ -290,6 +290,15 @@ begin
   -- The teacher marks the mixed paper by hand as before (first grade, no reason).
   s := record_grade('01800000-0000-0000-0000-000000000061', '01800000-0000-0000-0000-0000000000b2', 3, '');
   assert s.score = 3, 'teacher marks mixed paper';
+  -- A teacher inserting responses for a student gets no system mark (it must be
+  -- their own grade via record_grade, under their name).
+  insert into submissions(id, enrollment_id, assessment_id, responses, submitted_at) values
+   ('01800000-0000-0000-0000-00000000aaa8', '01800000-0000-0000-0000-000000000063',
+    '01800000-0000-0000-0000-0000000000b2',
+    '{"answers":[{"question_id":"01800000-0000-0000-0000-0000000000f1","type":"mcq","value":"B"}],"version":1}',
+    now());
+  assert (select score from submissions where id = '01800000-0000-0000-0000-00000000aaa8') is null,
+    'TEACHER_INSERT_AUTO_MARKED';
   -- Grade first (no attempt yet), then the student's attempt arrives: duplicate, grade kept.
   s := record_grade('01800000-0000-0000-0000-000000000064', '01800000-0000-0000-0000-0000000000b1', 5, '');
   -- Teachers get nothing from the student functions (they read the tables).

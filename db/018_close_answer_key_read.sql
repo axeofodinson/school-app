@@ -39,8 +39,8 @@
 --     year; no bodies, no answers).
 --  4. Server-side marking. auto_mark_item(type, value, answer) is the pure
 --     rule (same as packages/core autoMark.ts, pinned by the same cases).
---     An AFTER INSERT trigger on submissions marks a new, ungraded attempt
---     when EVERY question in its paper is auto-markable (mcq, true_false,
+--     An AFTER INSERT trigger on submissions marks a student's own new,
+--     ungraded attempt when EVERY question in its paper is auto-markable (mcq, true_false,
 --     numeric, short_text, tap_image with an answer key): score = sum of the
 --     marks of the correct answers, graded_at = now(), graded_by = null
 --     (system), plus one submission_grade_edits row ("Auto-marked"), so the
@@ -221,6 +221,15 @@ declare
 begin
   if new.score is not null or new.graded_at is not null
      or jsonb_typeof(new.responses -> 'answers') is distinct from 'array' then
+    return null;
+  end if;
+
+  -- Only the student's own attempt is auto-marked. A teacher or admin who
+  -- inserts a row with responses (their FOR ALL policies allow it) gets no
+  -- system mark: they grade through record_grade(), under their own name.
+  perform 1 from public.enrollments e
+   where e.id = new.enrollment_id and e.student_id = public.my_student_id();
+  if not found then
     return null;
   end if;
 
