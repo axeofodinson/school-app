@@ -473,8 +473,8 @@
       "markAllRead": "Mark all as read // TODO: ur",
       "offline": "You’re offline. These are the messages saved on this phone. // TODO: ur",
       "newCount": {
-        "one": "%{count} new // TODO: ur",
-        "other": "%{count} new // TODO: ur"
+        "one": "%{count} نیا",
+        "other": "%{count} نئے"
       },
       "unsupported": "Messages pop up here while the app is open. // TODO: ur"
     },

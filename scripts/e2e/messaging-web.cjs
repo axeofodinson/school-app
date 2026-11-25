@@ -450,8 +450,18 @@ const joined = (sock) => [...sock.topics.keys()].some((t) => t.includes('inbox')
 
   // 2. Teacher sends to Class 9-A.
   const { ctx: tctx, page: tpage } = await staffLogin(browser, T);
-  check(await seen(tpage, 'Send a message', true), 'teacher home links Send a message');
-  await tpage.getByText('Send a message', { exact: true }).click();
+  // Phone: the "Send a message" card; desktop: the sidebar's "Messages" (UI remake).
+  const toMessages = (pg) => pg.getByText(/^(Send a message|Messages)$/).first();
+  check(
+    await toMessages(tpage)
+      .waitFor({ timeout: 8000 })
+      .then(
+        () => true,
+        () => false,
+      ),
+    'teacher home links messages',
+  );
+  await toMessages(tpage).click();
   check(await seen(tpage, 'Send a notification to a class you teach'), 'teacher compose opens');
   check(
     !(await tpage.getByText('Whole school', { exact: true }).count()),
@@ -498,7 +508,7 @@ const joined = (sock) => [...sock.topics.keys()].some((t) => t.includes('inbox')
 
   // 4. A Class 8 message never reaches 9-A (RLS on the socket + the inbox).
   const { ctx: actx, page: apage } = await staffLogin(browser, A);
-  await apage.getByText('Send a message', { exact: true }).click();
+  await toMessages(apage).click();
   check(
     await apage
       .getByRole('radio', { name: 'Whole school' })

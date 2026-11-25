@@ -75,9 +75,12 @@ export function PatternFill({
   colour,
   animated = false,
   trigger,
+  opacity,
 }: {
   name: PatternName;
   colour?: string;
+  /** Override the token opacity (lighter on the brand hero, as in the wireframe). */
+  opacity?: number;
   animated?: boolean;
   /** Change this value to replay the lite-tier glide (press, tile set). */
   trigger?: string | number;
@@ -137,7 +140,7 @@ export function PatternFill({
               width={size.w + p.tile}
               height={size.h + p.tile}
               fill={`url(#${id})`}
-              opacity={p.opacity[scheme]}
+              opacity={opacity ?? p.opacity[scheme]}
             />
           </Svg>
         </Animated.View>

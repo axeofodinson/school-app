@@ -598,8 +598,10 @@ const MD =
   // 2. Student sees the worksheet: listed, rendered, not counted as a test to do.
   {
     const { ctx, page } = await studentLogin(browser);
-    check(await seen(page, 'My report card', true), 'student home links the report card');
-    await page.getByText('My tests', { exact: true }).first().click();
+    // UI remake: the report card lives on the Me tab.
+    await page.getByRole('tab', { name: /^Me/ }).click();
+    check(await seen(page, 'My report card', true), 'Me tab links the report card');
+    await page.getByRole('tab', { name: /^Tests/ }).click();
     await page.waitForURL('**/tests');
     check(await seen(page, 'Worksheet 3', true), 'worksheet listed for the student');
     await page.getByText('Worksheet 3', { exact: true }).click();
@@ -755,6 +757,7 @@ const MD =
   // 5. Student report card: weighted overall from the corrected grade; scores show the clean value.
   {
     const { ctx, page } = await studentLogin(browser);
+    await page.getByRole('tab', { name: /^Me/ }).click();
     await page.getByText('My report card', { exact: true }).first().click();
     await page.waitForURL('**/report');
     // Sets test 8.5/10 = 85 % (w30), homework 15/20 = 75 % (w10): (30·85 + 10·75)/40 = 82.5 → 83.

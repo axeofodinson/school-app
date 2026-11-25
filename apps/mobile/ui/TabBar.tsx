@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
     gap: space.sm,
     alignItems: 'stretch',
   },
-  railItem: { flex: 0, paddingVertical: space.sm },
+  railItem: { flexGrow: 0, flexShrink: 0, flexBasis: 'auto', paddingVertical: space.sm },
   railMark: {
     width: 44,
     height: 44,

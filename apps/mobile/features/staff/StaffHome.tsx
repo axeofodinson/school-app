@@ -16,6 +16,7 @@ import {
   Screen,
   SkeletonLines,
   Text,
+  useLayout,
   useTheme,
 } from '../../ui';
 import { PressableSticker } from '../../ui/Sticker';
@@ -133,6 +134,7 @@ export function StaffHome() {
   const { profile, destination } = useAuth();
   const { colours } = useTheme();
   const { state, reload } = useScope();
+  const { twoPane } = useLayout();
   const isAdmin = destination === 'admin';
   const name = profile?.full_name?.trim();
   const scope = state?.status === 'ready' ? state.data : null;
@@ -171,22 +173,18 @@ export function StaffHome() {
   return (
     <Screen>
       <View style={styles.top}>
-        <View style={styles.flex}>
-          {scope?.year ? (
-            <Text variant="caption" tone="textMuted" style={styles.kicker}>
-              {t('staff.home.year', { year: scope.year.label })}
-            </Text>
-          ) : null}
-          <Reveal index={0}>
-            <Text variant="title" accessibilityRole="header">
-              {name
-                ? t(`${greetingKey(new Date().getHours())}`, { name })
-                : t(isAdmin ? 'console.home.title' : 'teacher.home.title')}
-            </Text>
-          </Reveal>
-        </View>
+        <Text variant="caption" tone="textMuted" style={[styles.kicker, styles.flex]}>
+          {scope?.year ? t('staff.home.year', { year: scope.year.label }) : ' '}
+        </Text>
         <AccountActions />
       </View>
+      <Reveal index={0}>
+        <Text variant="title" accessibilityRole="header">
+          {name
+            ? t(greetingKey(new Date().getHours()), { name })
+            : t(isAdmin ? 'console.home.title' : 'teacher.home.title')}
+        </Text>
+      </Reveal>
 
       {isAdmin && scope ? (
         <Reveal index={1}>
@@ -225,28 +223,33 @@ export function StaffHome() {
       </Text>
       {classes}
 
-      <Text variant="heading" accessibilityRole="header" style={styles.section}>
-        {t('staff.home.tools')}
-      </Text>
-      <View style={styles.toolGrid}>
-        {places.map((p, i) => (
-          <Reveal key={p.key} index={i + 4} style={styles.toolCellWrap}>
-            <ToolCard
-              icon={p.icon}
-              title={t(p.title)}
-              hint={p.hint ? t(p.hint) : undefined}
-              onPress={() => router.navigate(p.href)}
-            />
-          </Reveal>
-        ))}
-      </View>
+      {/* From desktop width the sidebar already lists every place (StaffFrame). */}
+      {twoPane ? null : (
+        <Text variant="heading" accessibilityRole="header" style={styles.section}>
+          {t('staff.home.tools')}
+        </Text>
+      )}
+      {twoPane ? null : (
+        <View style={styles.toolGrid}>
+          {places.map((p, i) => (
+            <Reveal key={p.key} index={i + 4} style={styles.toolCellWrap}>
+              <ToolCard
+                icon={p.icon}
+                title={t(p.cardTitle ?? p.title)}
+                hint={p.hint ? t(p.hint) : undefined}
+                onPress={() => router.navigate(p.href)}
+              />
+            </Reveal>
+          ))}
+        </View>
+      )}
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
   flex: { flex: 1 },
-  top: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'flex-start', gap: space.sm },
+  top: { flexDirection: 'row', alignItems: 'center', gap: space.sm },
   kicker: { fontWeight: '800', letterSpacing: 0.6, textTransform: 'uppercase' },
   section: { marginTop: space.md },
   stats: { flexDirection: 'row', flexWrap: 'wrap', gap: space.md },

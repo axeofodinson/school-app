@@ -485,7 +485,10 @@ const radio = (page, name) => page.getByRole('radio', { name, exact: true });
   check(await seen(page, '8 / 10', true), 'marked score');
   check(await seen(page, 'Not marked yet', true), 'unmarked submission');
   check(await seen(page, 'Not sent yet', true), 'unsent attempt in results');
-  check(await seen(page, 'Overall: 80%'), 'overall from marked tests');
+  check(
+    (await seen(page, '80%', true)) && (await seen(page, 'Overall', true)),
+    'overall from marked tests',
+  );
   await page.screenshot({ path: SHOTS + '/results.png', fullPage: true });
 
   // 9. Blank answers ask once; Urdu is RTL; phone width.

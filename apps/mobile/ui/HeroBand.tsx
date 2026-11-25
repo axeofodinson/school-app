@@ -68,7 +68,13 @@ export function HeroBand({
         ]}
       >
         {quiet ? null : (
-          <PatternFill name={pattern} colour={patternColour} animated trigger={trigger} />
+          <PatternFill
+            name={pattern}
+            colour={patternColour}
+            opacity={hue ? undefined : 0.14}
+            animated
+            trigger={trigger}
+          />
         )}
         <View style={[styles.inner, { paddingHorizontal: gutter, maxWidth: maxContentWidth }]}>
           {children}

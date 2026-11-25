@@ -9,9 +9,9 @@ import { useMessages } from '../messages/MessagesProvider';
 
 export type StudentTab = 'home' | 'prepare' | 'tests' | 'me';
 
-const HREF: Record<StudentTab, '/learn' | '/prepare' | '/tests' | '/me'> = {
+const HREF: Record<StudentTab, '/learn' | '/study' | '/tests' | '/me'> = {
   home: '/learn',
-  prepare: '/prepare',
+  prepare: '/study',
   tests: '/tests',
   me: '/me',
 };

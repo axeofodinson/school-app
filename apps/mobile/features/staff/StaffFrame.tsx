@@ -23,6 +23,8 @@ export type StaffPlace = {
   icon: IconName;
   title: TKey;
   hint?: TKey;
+  /** Title on the home screen's tool card, when it reads better as an action. */
+  cardTitle?: TKey;
   adminOnly?: boolean;
 };
 
@@ -77,6 +79,7 @@ export function staffPlaces(isAdmin: boolean): StaffPlace[] {
       href: '/messages',
       icon: 'mail',
       title: 'staff.nav.messages',
+      cardTitle: 'teacher.home.openMessages',
       hint: 'staff.home.messagesHint',
     },
     {
@@ -128,7 +131,7 @@ export function StaffFrame({ children }: { children: ReactNode }) {
     key: p.key,
     label: t(p.title),
     icon: p.icon,
-    onPress: () => router.navigate(p.href),
+    onPress: () => router.replace(p.href),
   }));
   return (
     <View style={[styles.row, { backgroundColor: colours.bg, direction: isRTL ? 'rtl' : 'ltr' }]}>

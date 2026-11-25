@@ -5,7 +5,7 @@
 // Prepare (follow-ups) arrives with prompt 41; its tab already has a real empty state.
 import { attemptKey, SUBMISSION_KIND } from '@school/core';
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { useI18n } from '../../i18n';
@@ -40,18 +40,49 @@ import { useAttemptSync } from './AttemptSync';
 import { useHome } from './useHome';
 
 const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+/** The kid greeting plays once per app run, not on every visit to Home. */
+let greeted = false;
+
+/** PG–5 only: a spoken hello (recorded clip; silent until the clips exist). */
+function useKidHello(ready: boolean, testWaiting: boolean) {
+  const { presentation } = useTheme();
+  const { say } = useCues();
+  useEffect(() => {
+    if (!ready || greeted || presentation !== 'kid') return;
+    greeted = true;
+    const timer = setTimeout(() => say(testWaiting ? 'testOpen' : 'welcomeBack'), 600);
+    return () => clearTimeout(timer);
+  }, [ready, presentation, testWaiting, say]);
+}
 
 function HomeHero({ home, firstName }: { home: Home | null; firstName: string | null }) {
-  const { t } = useI18n();
-  const tone = useHeroTone();
-  const { status, pending, flushNow } = useAttemptSync();
-  const enr = home && typeof home.enrollment !== 'string' ? home.enrollment : null;
   const [since] = useState(() => Date.now() - WEEK_MS);
   const thisWeek = home
     ? home.submissions.filter((s) => s.submittedAt && Date.parse(s.submittedAt) >= since).length
     : 0;
   return (
     <HeroBand trigger={thisWeek}>
+      <HomeHeroInner home={home} firstName={firstName} thisWeek={thisWeek} />
+    </HeroBand>
+  );
+}
+
+/** Inside the band, so it reads the band's text tone (onPrimary on indigo). */
+function HomeHeroInner({
+  home,
+  firstName,
+  thisWeek,
+}: {
+  home: Home | null;
+  firstName: string | null;
+  thisWeek: number;
+}) {
+  const { t } = useI18n();
+  const tone = useHeroTone();
+  const { status, pending, flushNow } = useAttemptSync();
+  const enr = home && typeof home.enrollment !== 'string' ? home.enrollment : null;
+  return (
+    <>
       <View style={styles.heroTop}>
         <Text variant="label" tone={tone} style={styles.flex} numberOfLines={1}>
           {enr ? enr.className : ' '}
@@ -71,7 +102,7 @@ function HomeHero({ home, firstName }: { home: Home | null; firstName: string | 
             : t('student.home.weekStart')}
         </Text>
       </Reveal>
-    </HeroBand>
+    </>
   );
 }
 
@@ -238,6 +269,7 @@ export function StudentHome() {
       : [];
   const subjects = home && enr ? subjectsOf(home, (a) => done.has(a.id) || queued(a)) : [];
   const cols = breakpoint === 'phone' ? 2 : breakpoint === 'tablet' ? 3 : 4;
+  useKidHello(!!enr, todo.length > 0);
 
   let body: React.ReactNode;
   if (!state || state.status === 'loading') {
@@ -339,7 +371,7 @@ export function StudentHome() {
               icon="clipboard"
               soft="accentSoft"
               fg="onAccentSoft"
-              onPress={() => router.push('/tests')}
+              onPress={() => router.replace('/tests')}
             />
             <QuickTile
               title={t('student.inbox.title')}
@@ -412,7 +444,7 @@ const styles = StyleSheet.create({
   grid: { flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: -space.xs },
   quickGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: space.md },
   quickCell: { flexGrow: 1, flexBasis: 150 },
-  quick: { padding: space.md, gap: space.xs, minHeight: 132 },
+  quick: { flexGrow: 1, padding: space.md, gap: space.xs, minHeight: 132 },
   quickTop: {
     flexDirection: 'row',
     alignItems: 'center',

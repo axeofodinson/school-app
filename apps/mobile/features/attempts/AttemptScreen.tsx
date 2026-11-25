@@ -28,6 +28,7 @@ import {
   SkeletonLines,
   Text,
   TileBurst,
+  useCues,
   useTheme,
 } from '../../ui';
 import { useGradePresentation } from '../student/StudentPresentation';
@@ -202,6 +203,7 @@ function Attempt({
   const [confirmBlank, setConfirmBlank] = useState(false);
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<SubmitResult | null>(null);
+  const { cue, say } = useCues();
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   // Latest answers for the change handler (quick taps never lose an earlier answer).
   const answersRef = useRef<Answers | null>(null);
@@ -256,7 +258,9 @@ function Attempt({
     const r = await submit(enrollmentId, assessment.id, buildResponses(questions, answers));
     setBusy(false);
     setResult(r);
-  }, [questions, answers, drafts, key, submit, enrollmentId, assessment.id]);
+    // A quiz just went off (never sounds in tests/exams: useCues is silent in ExamMode).
+    if (r === 'submitted' && questions && !isPreReaderSet(questions)) cue('ding');
+  }, [questions, answers, drafts, key, submit, enrollmentId, assessment.id, cue]);
 
   // A pre-reader paper just finished: celebrate (full tier) and say where the work is.
   if (
@@ -344,8 +348,11 @@ function Attempt({
     </>
   );
   const finish = () => {
-    if (blank > 0 && !confirmBlank) setConfirmBlank(true);
-    else doSubmit();
+    if (blank > 0 && !confirmBlank) {
+      setConfirmBlank(true);
+      // A pre-reader can't read the warning: say it (recorded clip, if there is one).
+      if (preReader) say('missedOne');
+    } else doSubmit();
   };
   const offlineBadge = paper.state.data.fromCache ? (
     <Badge
