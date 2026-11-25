@@ -253,6 +253,28 @@ function TopicBody({ data, mode, base }: { data: LessonData; mode: LearnMode; ba
           />
         ) : null}
 
+        {mode === 'student' ? (
+          <Reveal index={2}>
+            <Card
+              onPress={() => router.push(`${base}/practice` as Href)}
+              accessibilityLabel={t('student.practice.cta')}
+            >
+              <View style={styles.cardHead}>
+                <View style={[styles.cardIcon, { backgroundColor: colours.primary }]}>
+                  <Icon name="pencil" size={18} tone="onPrimary" />
+                </View>
+                <View style={styles.flex}>
+                  <Text variant="heading">{t('student.practice.cta')}</Text>
+                  <Text variant="bodySm" tone="textMuted">
+                    {t('student.practice.ctaBody')}
+                  </Text>
+                </View>
+                <Icon name="chevronEnd" size={20} tone="textMuted" />
+              </View>
+            </Card>
+          </Reveal>
+        ) : null}
+
         {objectives.length || (lesson && data.concepts.length) ? (
           <Reveal index={2}>
             <Card>

@@ -83,7 +83,7 @@ Deferred: parents (81) and iOS (82).
 | ✓ | Prompt | Model | Depends on | Blocked by | Notes |
 |---|---|---|---|---|---|
 | [x] | [30 Learn: lesson reader](30-learn-renderer.md) | Opus | 22 | — | Done (own PR). Draft `db/033` runs on dev after 017 → 023 → 031 → 032. LS-1 SQL + LS-2 web e2e pass; LS-3 (Android/Chromebook) unverified. Scenes/charts/widgets show placeholders until 33 |
-| [ ] | [31 Practice engine (port prep.html ideas)](31-practice-engine.md) | Opus | 22 | — | |
+| [x] | [31 Practice engine (port prep.html ideas)](31-practice-engine.md) | Opus | 22 | — | Code done 2026-11-25 (PR #55): core `practice` (+31 tests), `/lesson/<topic>/practice` + `/topic/<topic>/practice` (4 modes, feedback, summary, sync queue). No new migration. PE-2 web e2e 50/50; PE-3 (dev + devices) unverified |
 | [ ] | [33 Visual blocks: scenes, charts, widgets](33-visual-blocks.md) | Opus | 30 | — | Visual-first lessons (DECISIONS #36) |
 | [ ] | [32 Offline Learn and question packs](32-offline-learn-packs.md) | Opus | 30, 31, 33 | — | |
 

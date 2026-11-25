@@ -27,6 +27,8 @@ export interface QueueRunner {
 export function useQueueRunner(
   queue: SyncQueue | null,
   senders: Record<string, Sender>,
+  /** Kinds this surface's pill counts; default = every kind it sends. */
+  countKinds?: readonly string[],
 ): QueueRunner {
   // Tagged with the queue they came from, so another user's list never shows.
   const [loaded, setLoaded] = useState<{ owner: object; items: readonly SyncItem[] } | null>(null);
@@ -97,7 +99,7 @@ export function useQueueRunner(
   }, [flush]);
 
   // Only this surface's kinds count towards its pill and timer.
-  const kinds = Object.keys(senders).join('|');
+  const kinds = (countKinds ?? Object.keys(senders)).join('|');
   const mine = useMemo(() => {
     const own = new Set(kinds.split('|'));
     return items.filter((i) => own.has(i.kind));
