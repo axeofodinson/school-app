@@ -2,11 +2,11 @@
 
 Three kinds of audio. Only the first two need you; the third is made by a script.
 
-| Kind | How many | Where it plays | Who makes it |
-|---|---|---|---|
-| A. Kid voice lines | 5 lines × English + Urdu = **10 clips** | PG–Class 5 only, outside tests/exams | You (ElevenLabs website or app) |
-| B. Sound effects | **3 clips**: done 2026-11-25 (ElevenLabs takes in the app) | Kid taps, quiz sent, finishing a paper | Done |
-| C. Question read-aloud | one clip per junior maths question × 2 languages | The speaker button on PG–5 questions | `scripts/audio/generate-prereader-audio.mjs` (already built, prompt 16) |
+| Kind                   | How many                                                   | Where it plays                         | Who makes it                                                            |
+| ---------------------- | ---------------------------------------------------------- | -------------------------------------- | ----------------------------------------------------------------------- |
+| A. Kid voice lines     | 5 lines × English + Urdu = **10 clips**                    | PG–Class 5 only, outside tests/exams   | You (ElevenLabs website or app)                                         |
+| B. Sound effects       | **3 clips**: done 2026-11-25 (ElevenLabs takes in the app) | Kid taps, quiz sent, finishing a paper | Done                                                                    |
+| C. Question read-aloud | one clip per junior maths question × 2 languages           | The speaker button on PG–5 questions   | `scripts/audio/generate-prereader-audio.mjs` (already built, prompt 16) |
 
 Rules the app already follows, so the clips don't need to: sounds never play in a
 test or exam (ExamMode), never on teacher/admin screens, never when the student turns
@@ -38,13 +38,13 @@ node scripts/audio/build-voice-manifest.mjs
 The script wires them into the app (it prints how many it found). Commit the mp3s
 and the updated `manifest.ts`; a new build (or web deploy) carries them.
 
-| File name | When it plays | English (say exactly) | Urdu (say exactly) |
-|---|---|---|---|
-| `welcomeBack.mp3` | Kid opens Home, nothing waiting (once per app start) | "Welcome back! Let's learn something new." | "خوش آمدید! چلو، آج کچھ نیا سیکھیں۔" |
-| `testOpen.mp3` | Kid opens Home and a quiz is waiting (once per app start) | "A quiz is waiting for you. Tap the yellow button to start!" | "تمہارے لیے ایک کوئز تیار ہے۔ شروع کرنے کے لیے پیلے بٹن پر ہاتھ لگاؤ!" |
-| `missedOne.mp3` | Kid taps Finish with a question left blank | "Oops, you missed one. Go back, or tap Finish again." | "اوہو، ایک سوال رہ گیا۔ واپس جاؤ، یا دوبارہ ختم پر ہاتھ لگاؤ۔" |
-| `allDone.mp3` | Kid finishes a picture quiz and it is sent | "You did it! Your stars are saved." | "شاباش! تم نے کر دکھایا۔ تمہارے ستارے محفوظ ہو گئے۔" |
-| `willSend.mp3` | Kid finishes with no internet (it sends later) | "You did it! Your answers will go to your teacher soon." | "شاباش! تمہارے جواب جلد ہی ٹیچر تک پہنچ جائیں گے۔" |
+| File name         | When it plays                                             | English (say exactly)                                        | Urdu (say exactly)                                                     |
+| ----------------- | --------------------------------------------------------- | ------------------------------------------------------------ | ---------------------------------------------------------------------- |
+| `welcomeBack.mp3` | Kid opens Home, nothing waiting (once per app start)      | "Welcome back! Let's learn something new."                   | "خوش آمدید! چلو، آج کچھ نیا سیکھیں۔"                                   |
+| `testOpen.mp3`    | Kid opens Home and a quiz is waiting (once per app start) | "A quiz is waiting for you. Tap the yellow button to start!" | "تمہارے لیے ایک کوئز تیار ہے۔ شروع کرنے کے لیے پیلے بٹن پر ہاتھ لگاؤ!" |
+| `missedOne.mp3`   | Kid taps Finish with a question left blank                | "Oops, you missed one. Go back, or tap Finish again."        | "اوہو، ایک سوال رہ گیا۔ واپس جاؤ، یا دوبارہ ختم پر ہاتھ لگاؤ۔"         |
+| `allDone.mp3`     | Kid finishes a picture quiz and it is sent                | "You did it! Your stars are saved."                          | "شاباش! تم نے کر دکھایا۔ تمہارے ستارے محفوظ ہو گئے۔"                   |
+| `willSend.mp3`    | Kid finishes with no internet (it sends later)            | "You did it! Your answers will go to your teacher soon."     | "شاباش! تمہارے جواب جلد ہی ٹیچر تک پہنچ جائیں گے۔"                     |
 
 Urdu check before recording: these are my first drafts in the casual kid register the
 app uses ("ہاتھ لگاؤ", "شاباش"). Ask a PG/primary teacher to read them once; change
@@ -67,11 +67,11 @@ Sound Effects** with the prompts below, pick the best of the four takes, trim, a
 save as **WAV, mono, 22 kHz, 16-bit** with the same name (overwrite the file).
 Keep each under 50 KB. Loudness: gentle; they play at 60 % volume over speech.
 
-| File | When | Length | Prompt to paste |
-|---|---|---|---|
-| `pop.wav` | A kid taps a picture tile; a student taps Start on Home | 0.15–0.25 s | "Soft, rounded bubble pop, wooden toy xylophone tick, single short friendly UI tap sound, no reverb, children's app" |
-| `ding.wav` | A quiz is sent | 0.5–0.8 s | "Gentle two-note rising chime, warm marimba, positive confirmation sound for a children's learning app, clean, no reverb tail" |
-| `tada.wav` | A kid finishes a picture quiz | 1.0–1.5 s | "Short cheerful celebration flourish, playful marimba and soft glockenspiel arpeggio ending on a sparkle, children's game success jingle, not loud" |
+| File       | When                                                    | Length      | Prompt to paste                                                                                                                                     |
+| ---------- | ------------------------------------------------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pop.wav`  | A kid taps a picture tile; a student taps Start on Home | 0.15–0.25 s | "Soft, rounded bubble pop, wooden toy xylophone tick, single short friendly UI tap sound, no reverb, children's app"                                |
+| `ding.wav` | A quiz is sent                                          | 0.5–0.8 s   | "Gentle two-note rising chime, warm marimba, positive confirmation sound for a children's learning app, clean, no reverb tail"                      |
+| `tada.wav` | A kid finishes a picture quiz                           | 1.0–1.5 s   | "Short cheerful celebration flourish, playful marimba and soft glockenspiel arpeggio ending on a sparkle, children's game success jingle, not loud" |
 
 If you'd rather keep MP3, tell the next session: the three `require(...)` lines in
 `apps/mobile/ui/sound.tsx` need the new extension.
