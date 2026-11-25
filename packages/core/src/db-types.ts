@@ -3,7 +3,8 @@
 // db/002–016 + 024–026 (production 2026-11-25) + 018 (cut-over, dev) + 028
 // (attendance) + 029 (messaging) + 030 (question audio) + 017 + 023 (prompt 20:
 // curriculum, question bank versions, learner state, access tiers) + 031
-// (prompt 21: importer batches, math_svgs, import RPCs). Draft 022 excluded. Via
+// (prompt 21: importer batches, math_svgs, import RPCs) + 032 (prompt 22: review
+// queue RPCs). Draft 022 excluded. Via
 //   npx supabase@3.3.0 gen types typescript --db-url <harness> --schema public
 // Regenerate after each migration Hassan runs (see packages/core/README.md).
 
@@ -2053,6 +2054,7 @@ export type Database = {
         }[];
       };
       auto_mark_item: { Args: { p_answer: Json; p_type: string; p_value: Json }; Returns: boolean };
+      can_review_question: { Args: { p_concept: string }; Returns: boolean };
       dearmor: { Args: { '': string }; Returns: string };
       dev_hard_delete_student: { Args: { p_student_id: string }; Returns: Json };
       disable_push_token: { Args: { p_token: string }; Returns: undefined };
@@ -2147,6 +2149,64 @@ export type Database = {
       };
       register_push_token: { Args: { p_device_info?: Json; p_token: string }; Returns: undefined };
       retire_import_batch: { Args: { p_batch: string; p_note: string }; Returns: Json };
+      review_approve_many: {
+        Args: { p_items: Json; p_scopes: string[]; p_translation_ok?: boolean };
+        Returns: Json;
+      };
+      review_counts: {
+        Args: { p_batch?: string; p_chapter?: string; p_subject: string; p_topic?: string };
+        Returns: Json;
+      };
+      review_edit_question: {
+        Args: { p_patch: Json; p_question: string; p_version: number };
+        Returns: Json;
+      };
+      review_question: {
+        Args: {
+          p_decision: string;
+          p_notes?: string;
+          p_question: string;
+          p_scopes?: string[];
+          p_translation_ok?: boolean;
+          p_version: number;
+        };
+        Returns: Json;
+      };
+      review_queue: {
+        Args: {
+          p_batch?: string;
+          p_chapter?: string;
+          p_limit?: number;
+          p_status?: string;
+          p_subject: string;
+          p_topic?: string;
+        };
+        Returns: {
+          answer: Json;
+          body: Json;
+          can_review: boolean;
+          chapter_id: string;
+          cognitive_level: string;
+          concept_id: string;
+          created_at: string;
+          difficulty: number;
+          explanation: Json;
+          id: string;
+          import_batch_id: string;
+          in_use: boolean;
+          last_decision: string;
+          last_notes: string;
+          last_reviewed_at: string;
+          last_translation: boolean;
+          origin: string;
+          scopes: string[];
+          source: Json;
+          status: string;
+          topic_id: string;
+          type: string;
+          version: number;
+        }[];
+      };
       save_exam_answer: {
         Args: { p_answer: Json; p_client_at?: string; p_question: string; p_session: string };
         Returns: Json;

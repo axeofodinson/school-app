@@ -50,6 +50,67 @@ export function extractMath(text: string): MathSegment[] {
   return out;
 }
 
+export type MathPart =
+  { kind: 'text'; text: string } | { kind: 'math'; tex: string; display: boolean; key: string };
+
+/**
+ * Text cut into plain runs and maths, in order, for showing a stored question
+ * (review queue): each maths part is drawn from its `math_svgs` row by `key`,
+ * or shown as its TeX when there is none. `\$` in plain runs becomes `$`.
+ */
+export function splitMath(text: string): MathPart[] {
+  const out: MathPart[] = [];
+  const push = (t: string) => {
+    const clean = t.replace(/\\\$/g, '$');
+    if (!clean) return;
+    const last = out[out.length - 1];
+    if (last?.kind === 'text') last.text += clean;
+    else out.push({ kind: 'text', text: clean });
+  };
+  const d = dollars(text);
+  let k = 0;
+  let from = 0;
+  while (k < d.length) {
+    const at = d[k]!;
+    const display = d[k + 1] === at + 1;
+    const open = display ? k + 2 : k + 1;
+    let close = -1;
+    for (let j = open; j < d.length; j++) {
+      if (!display || d[j + 1] === d[j]! + 1) {
+        close = j;
+        break;
+      }
+    }
+    if (close < 0) break;
+    const tex = text.slice(at + (display ? 2 : 1), d[close]).trim();
+    const end = d[close]! + (display ? 2 : 1);
+    if (tex && (display || !tex.includes('\n'))) {
+      push(text.slice(from, at));
+      out.push({ kind: 'math', tex, display, key: mathKey({ tex, display }) });
+      from = end;
+    }
+    k = close + (display ? 2 : 1);
+  }
+  push(text.slice(from));
+  return out;
+}
+
+/** A MathJax SVG's size in ex (its width/height attributes), for laying it out in text. */
+export function mathSvgSizeEx(svg: string): { width: number; height: number; valign: number } {
+  const num = (re: RegExp) => {
+    const m = re.exec(svg);
+    return m ? Number(m[1]) : NaN;
+  };
+  const w = num(/\swidth="(-?[\d.]+)ex"/);
+  const h = num(/\sheight="(-?[\d.]+)ex"/);
+  const v = num(/vertical-align:\s*(-?[\d.]+)ex/);
+  return {
+    width: Number.isFinite(w) && w > 0 ? w : 4,
+    height: Number.isFinite(h) && h > 0 ? h : 2,
+    valign: Number.isFinite(v) ? v : 0,
+  };
+}
+
 /** An odd number of unescaped `$` usually means a missing closing `$`. */
 export function mathUnbalanced(text: string): boolean {
   return dollars(text).length % 2 === 1;

@@ -145,6 +145,13 @@ retired, `retired_by/at` + `retire_note`. Questions and `learning_content` carry
 `import_batch_id`, so `retire_import_batch()` pulls a bad batch as a unit
 without deleting anything.
 
+**Review (db/032):** a decision is one `item_reviews` row (decision, version,
+`translation_ok` = the separate "Urdu reads naturally" check, notes). Approve
+sets the live `item_approvals` scopes to exactly the chosen ones; request
+changes keeps the question `draft` (it shows in the "Changes asked" tab while its
+latest review on the current version says so); reject sets it `retired`. A
+question's queue state is derived, never stored twice.
+
 **practice_attempts.items:** `[{"q": uuid, "v": 3, "a": "B", "c": true, "ms": 8200}]`.
 
 ## 5. Migration plan
@@ -160,6 +167,7 @@ without deleting anything.
 | `026_grade_write_guard.sql` | 1 (with prompt 12; draft) | trigger `submissions_grade_guard`: client roles can't write scores/graded_*/responses/submitted_at or delete submissions; grades only via `record_grade()` (DECISIONS #73) |
 | `024_profiles_self_update_guard.sql` | applied to production 2026-11-24 | trigger: non-staff clients edit only their own `full_name`/`phone` (closes the self-promote hole, DECISIONS #62) |
 | `031_content_importer.sql` | 2 (prompt 21; draft, runs after 017 + 023) | import batch status/file/chapter/topic/counts + `learning_content.import_batch_id`; `math_svgs` (one pre-rendered SVG per TeX, insert-only, unsafe markup refused by CHECK); pg_trgm + `question_match_text(body)` + GIN index; `import_find_matches(subject, texts[])`, `import_content(chunk)` (invoker, chunked, client ids = retry-safe), `retire_import_batch(batch, reason)` (DECISIONS #102–106) |
+| `032_review_queue.sql` | 2 (prompt 22; draft, runs after 031) | approvals/reviews written only by `review_question()` / `review_approve_many()` / `review_edit_question()` (security definer; teacher scope = `teaches_concept`, staff any; stale version refused; reason required to send back or reject); `item_approvals` guard trigger (revoke once, never change or delete) + `item_reviews` immutable; `t_questions_review_reset` (new version of an approved question → draft, `ai` → `ai_edited`) + `t_questions_review_revoke` (new version or retire → approvals revoked); `is_approved()` version-aware; `review_queue()` / `review_counts()` (invoker) (DECISIONS #107–111) |
 | `023_access_tiers.sql` | 0/2 (after 017; before Google sign-in is switched on) | `profiles.access_tier` (`school`/`prep_only`), `merged_into`/`merged_at`; `handle_new_user_v2` + `auth.identities` guard; `profiles_guard` (self-edit = name/phone only); `is_school_member()` + restrictive policies; `account_links` (insert-only); `find_prep_accounts()`, `link_prep_account()` (draft, dry-run verified; DECISIONS #57–61). Re-run after applying 022 so project tables get their policy |
 
 Every migration: idempotent, dry-run with `db/test/` harness before Supabase.

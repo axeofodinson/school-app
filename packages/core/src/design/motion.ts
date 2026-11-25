@@ -385,6 +385,25 @@ export const moments = {
     lite: fade('fast'),
     off: none,
   },
+
+  // Teacher review queue (prompt 22). The item card glides out toward the list's reading
+  // direction as the next one comes in (progress through the queue), and a decision
+  // lands as a stamp (feedback). Both are short: a teacher does this hundreds of times.
+  reviewAdvance: {
+    purpose: 'progress',
+    frequency: 'often',
+    rtlFlip: true,
+    full: { kind: 'timing', duration: 'fast', ease: 'out', props: ['translateX', 'opacity'] },
+    lite: fade('fast'),
+    off: none,
+  },
+  reviewVerdict: {
+    purpose: 'feedback',
+    frequency: 'often',
+    full: { kind: 'spring', spring: 'snappy', props: ['scale', 'opacity'] },
+    lite: fade('fast'),
+    off: none,
+  },
 } as const satisfies Record<string, Moment>;
 
 export type MomentName = keyof typeof moments;
