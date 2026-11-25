@@ -1,10 +1,10 @@
 // One question of a student's paper, answered in place. Types: mcq, true_false,
 // numeric, short_text (typed), tap_image (big picture tiles + read-aloud). Any
 // other type says it can't be answered here yet and is recorded as blank.
-// The paged, audio-first pre-reader experience is prompt 16.
+// A paper of only tap_image questions uses the paged pre-reader instead
+// (features/prereader); a mixed paper shows tap_image here with the same read-aloud.
 import {
   isAnswerable,
-  promptAudio,
   promptText,
   questionLabel,
   tapChoices,
@@ -18,7 +18,7 @@ import { useI18n } from '../../i18n';
 import { Card, IconButton, Text, TextField, useTheme } from '../../ui';
 import { PressableSticker } from '../../ui/Sticker';
 import { radiusFor, space } from '../../ui/tokens';
-import { speak, speechAvailable } from './speech';
+import { canReadAloud, readAloud } from '../prereader/readAloud';
 
 /** Picture tiles: a big target for small fingers. */
 const TAP_TILE_MIN = 120;
@@ -199,19 +199,14 @@ export function QuestionCard({
         <Text variant="label" tone="textMuted" style={styles.flex}>
           {fieldLabel} · {t('student.attempt.marks', { count: question.marks })}
         </Text>
-        {tap && speechAvailable() ? (
+        {tap && canReadAloud(body, locale) ? (
           <IconButton
             icon="speaker"
             label={t('student.prereader.listen')}
             variant="secondary"
-            onPress={() =>
-              speak({
-                locale,
-                text: stem,
-                fallbackEn: promptText(body, 'en'),
-                audio: promptAudio(body, locale),
-              })
-            }
+            onPress={() => {
+              readAloud(body, locale).catch(() => undefined);
+            }}
           />
         ) : null}
       </View>

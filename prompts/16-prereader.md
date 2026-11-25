@@ -35,8 +35,8 @@ A joyful, accessible tap-the-picture question experience for children who can't 
 - features/prereader
 
 ## Done when
-- [ ] Works with touch and mouse on a Chromebook; audio plays offline from bundled/cached files.
-- [ ] Type-check, lint and `packages/core` tests pass (once they exist).
+- [x] Works with touch and mouse on a Chromebook; audio plays offline from bundled/cached files. (Web: PR-2. Android/real Chromebook: PR-3, unverified.)
+- [x] Type-check, lint and `packages/core` tests pass (once they exist).
 
 ## Finish
 Follow the session protocol in `CLAUDE.md`: update `MODULE_STATUS.md`, tick **16** in `prompts/README.md` with a one-line note, update other docs you changed the truth of, commit, push, and report what Hassan must do next (e.g. run a migration, install a build).

@@ -311,8 +311,14 @@
       "offline": "Offline — using your saved test",
       "celebrate": {
         "title": "You did it!",
-        "saved": "Your stars are saved!"
-      }
+        "saved": "Your stars are saved!",
+        "queued": "Saved on this device. It will send by itself."
+      },
+      "back": "Back",
+      "progress": "Question %{number} of %{total}",
+      "picked": "Picked",
+      "listenFirst": "Tap the speaker to hear the question",
+      "done": "All done? Finish here"
     },
     "results": {
       "title": "My scores",
@@ -1438,7 +1444,14 @@
       "readOnlyType": "Picture questions for young learners can't be edited here yet. You can still add them to an assessment.",
       "readOnlyInUse": "This question is in a published assessment, so it can't change. Make a copy to write a new version.",
       "readOnlyOthers": "Another teacher wrote this question. Make a copy if you want your own version.",
-      "backToList": "All questions"
+      "backToList": "All questions",
+      "audio": {
+        "title": "Read-aloud clip",
+        "playEn": "Play English clip",
+        "playUr": "Play Urdu clip",
+        "none": "No recorded clip yet. Students hear the device voice.",
+        "failed": "This clip couldn’t play. Check the internet and try again."
+      }
     },
     "assessments": {
       "new": "New assessment",

@@ -149,7 +149,7 @@ The speaker button plays, in order of preference:
 2. **Device speech** (expo-speech / Web SpeechSynthesis): English everywhere; Urdu only on devices where the Urdu voice test passes.
 3. Nothing (button hidden) if neither exists.
 
-Rules: the ElevenLabs key never ships in the app; audio is made server-side (an Edge Function or a generation script in a session, with the key saved as an environment secret) and stored as small Opus/MP3 files (≈ 10–30 KB each) that go into offline packs. A teacher hears the clip in the review queue before the item is approved (it is part of the item version). Urdu voice quality and cost per clip are **unverified**: test with ten junior maths questions first (prompt 16).
+Rules: the ElevenLabs key never ships in the app; audio is made server-side (an Edge Function or a generation script in a session, with the key saved as an environment secret) and stored as small Opus/MP3 files (≈ 10–30 KB each) that go into offline packs. A teacher hears the clip in the review queue before the item is approved (it is part of the item version). Built in prompt 16: `readAloudPlan` (core) decides the order, `features/prereader` plays and caches clips, `db/030` holds them, `scripts/audio/generate-prereader-audio.mjs` makes them (format `mp3_22050_32`, ≈ 4 KB per second of speech). Urdu voice quality and real cost per clip are still **unverified** until the first run with the key (TEST_PLAN PR-3).
 
 Tone examples (en; Urdu TODO with teachers): kid correct → "Yes! Well done."; student correct → "Correct."; kid wrong → "Not quite. Let's look."; student wrong → "Not quite. Here's why."
 

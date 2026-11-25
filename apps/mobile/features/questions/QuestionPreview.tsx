@@ -4,6 +4,7 @@ import { StyleSheet, View } from 'react-native';
 import { useI18n, type TKey } from '../../i18n';
 import { Badge, Icon, Text } from '../../ui';
 import { space } from '../../ui/tokens';
+import { ClipPreview } from '../prereader/ClipPreview';
 import type { BankQuestion } from './api';
 
 const TYPE_KEYS: Record<string, TKey> = {
@@ -103,6 +104,7 @@ export function QuestionPreview({ question }: { question: BankQuestion }) {
           {t('staff.questions.correctAnswer')}: {ans}
         </Text>
       ) : null}
+      {question.type === 'tap_image' ? <ClipPreview body={question.body} /> : null}
     </View>
   );
 }
