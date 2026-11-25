@@ -1817,7 +1817,10 @@
           "one": "%{count} already had an edition and was left as it was. // TODO: ur",
           "other": "%{count} already had an edition and were left as they were. // TODO: ur"
         }
-      }
+      },
+      "notReady": "The curriculum isn't switched on yet // TODO: ur",
+      "notReadyAdmin": "The database update for chapters, topics and concepts (db/017, then db/023) hasn't been run on this project yet. Once it has, this screen fills in by itself. // TODO: ur",
+      "notReadyTeacher": "The school hasn't switched on topics and concepts yet. Ask the admin; nothing is lost in the meantime. // TODO: ur"
     }
   }
 }

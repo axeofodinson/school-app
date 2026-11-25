@@ -47,6 +47,7 @@ import { ScopeGate, type ReadyScope } from '../scope/ScopeGate';
 import { ScopePicker, type ScopeValue } from '../scope/ScopePicker';
 import { useResult } from '../scope/useResult';
 import {
+  curriculumReady,
   insertChapter,
   insertConcept,
   insertTopic,
@@ -81,6 +82,8 @@ export function CurriculumScreen() {
   const { destination } = useAuth();
   const isAdmin = destination === 'admin';
   const [section, setSection] = useState<Section>('map');
+  const ready = useResult('curriculum-ready', curriculumReady);
+  const live = ready.state?.status === 'ready' ? ready.state.data : null;
   return (
     <>
       <Button
@@ -102,7 +105,19 @@ export function CurriculumScreen() {
           {t(isAdmin ? 'staff.curriculum.subtitle' : 'staff.curriculum.subtitleTeacher')}
         </Text>
       </Reveal>
-      {isAdmin ? (
+      <LoadState
+        state={ready.state}
+        title={t('staff.curriculum.errors.loadError')}
+        onRetry={ready.reload}
+      />
+      {live === false ? (
+        <EmptyState
+          icon="layers"
+          title={t('staff.curriculum.notReady')}
+          body={t(isAdmin ? 'staff.curriculum.notReadyAdmin' : 'staff.curriculum.notReadyTeacher')}
+        />
+      ) : null}
+      {live && isAdmin ? (
         <Reveal index={1}>
           <SegmentedControl<Section>
             accessibilityLabel={t('staff.curriculum.tabs.label')}
@@ -115,7 +130,7 @@ export function CurriculumScreen() {
           />
         </Reveal>
       ) : null}
-      {section === 'editions' && isAdmin ? (
+      {!live ? null : section === 'editions' && isAdmin ? (
         <EditionsPanel />
       ) : (
         <ScopeGate>{(scope) => <MapEditor scope={scope} />}</ScopeGate>

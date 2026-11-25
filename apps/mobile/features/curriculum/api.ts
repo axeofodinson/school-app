@@ -107,6 +107,27 @@ const asStatus = (s: string): Status => (s === 'retired' ? 'retired' : 'active')
 
 // ---- Reads ----------------------------------------------------------------------
 
+/**
+ * Is db/017 on this project? Before it runs, `curricula` doesn't exist and the
+ * screen says so plainly instead of showing a load error.
+ */
+export async function curriculumReady(): Promise<Result<boolean>> {
+  if (!supabase) return notConfigured;
+  const { error } = await supabase.from('curricula').select('id').limit(1);
+  if (!error) return ok(true);
+  const msg = (error.message ?? '').toLowerCase();
+  if (
+    error.code === '42P01' ||
+    error.code === 'PGRST205' ||
+    error.code === '42703' ||
+    msg.includes('could not find the table') ||
+    msg.includes('does not exist')
+  ) {
+    return ok(false);
+  }
+  return fail(error);
+}
+
 export async function listEditions(): Promise<Result<Edition[]>> {
   if (!supabase) return notConfigured;
   const { data, error } = await supabase
