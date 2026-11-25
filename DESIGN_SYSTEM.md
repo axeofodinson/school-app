@@ -222,6 +222,8 @@ Libraries and tier model: ARCHITECTURE §6b, CLAUDE.md Motion rules. This sectio
 | Question switch (practice) | — | — | **none** (budget < 150 ms; content swaps, the feedback panel handles the motion) | | | — |
 | Live view tile status | state · often (teacher) | `liveTileStatus` | colour cross-fade 120 | same | instant | — |
 | Live event row | state · often (teacher) | `liveEventRow` | fade-in 220 (no slide, 40 tiles) | fade 120 | instant | — |
+| Review: next item | progress · often (teacher) | `reviewAdvance` | card glides 24 px toward the reading direction + fade, 120 (mirrors in RTL) | fade 120 | instant | — |
+| Review: decision stamp | feedback · often (teacher) | `reviewVerdict` | stamp pops from 0.85 (snappy spring); list row flashes its new state | fade 120 | instant (icon + word still change) | — |
 
 **Rules from the table:**
 1. **Exams:** with `inExam` set, `resolveMoment` returns `none` for everything except `examTimerTick` and `examSaveIndicator`, identical in all three tiers. No transitions between exam questions, no confetti, no toasts that slide; submit confirmation is an instant dialog. The post-submit **Result** screen is not an exam screen and may use `answerCorrect`-level motion only if the tier allows.

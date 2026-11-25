@@ -275,6 +275,14 @@ export function draftFromQuestion(q: StoredQuestion): QuestionDraft | null {
 export function questionLabel(body: unknown, locale: 'en' | 'ur' = 'en'): string {
   if (!isObj(body)) return '';
   if (typeof body.stem === 'string' && body.stem.trim()) return body.stem.trim();
+  // Imported questions (prompt 21) carry a bilingual stem {en, ur}.
+  if (isObj(body.stem)) {
+    const s = body.stem;
+    const pick = [s[locale], s[locale === 'en' ? 'ur' : 'en']].find(
+      (x): x is string => typeof x === 'string' && x.trim() !== '',
+    );
+    if (pick) return pick.trim();
+  }
   const p = body.prompt;
   if (isObj(p)) {
     const first = p[locale] ?? p[locale === 'en' ? 'ur' : 'en'];
