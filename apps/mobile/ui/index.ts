@@ -29,5 +29,13 @@ export { SyncStatusPill, type SyncStatus } from './SyncStatusPill';
 export { Tabs, type TabItem } from './Tabs';
 export { Text, type AppTextProps } from './Text';
 export { TextField, type TextFieldHandle } from './TextField';
-export { ThemeProvider, useTheme, type Scheme, type Theme } from './theme';
+export {
+  SchemeProvider,
+  ThemeProvider,
+  useSchemeSetting,
+  useTheme,
+  type Scheme,
+  type Theme,
+} from './theme';
 export { ToastProvider, useToast, type ToastTone } from './Toast';
+export { MorphTile, MosaicMark, useMorphClock, type MorphClock } from './MorphTile';

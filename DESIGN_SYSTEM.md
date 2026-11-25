@@ -213,6 +213,7 @@ Libraries and tier model: ARCHITECTURE §6b, CLAUDE.md Motion rules. This sectio
 | Toast | feedback · occasional | `toast` | rises + fade, gentle; auto-dismiss 4 s | fade 120 | instant | — |
 | Empty state | state · occasional | `emptyState` | art fades in and rises 8 px, 220 | fade 220 | instant | — |
 | Subject pattern drift (DECISIONS #47) | delight · often | `patternDrift` | pattern moves diagonally by one tile every 8 s, looping (seamless), mirrors in RTL; stops when the screen is hidden | one 2 s glide on screen focus, card press and tile set, then still | still | — |
+| Mosaic tile morph (DECISIONS #126) | delight · occasional | `shapeMorph` | sign-in tile row + mosaic mark turn square → star → diamond → rosette, 2.6 s per step (40 % hold, smootherstep turn), neighbours 1.25 steps apart (rolling wave), loops while focused, mirrors in RTL | one pass through the four shapes on screen focus, then still | still (mixed shapes) | — |
 | Skeleton | state · often | `skeleton` | slow opacity pulse | static `surfaceAlt` | static | — |
 | **Celebration: pattern complete** (chapter, student) | delight · rare | `celebrationMastery` | one bundled Lottie burst ≤ 1.5 s in the subject hue, once | badge scale-in (gentle) + fade | static badge | success |
 | **Celebration: kid** | delight · rare | `celebrationKid` | bouncy badge pop, big | fade 220 | static badge | success |
@@ -222,11 +223,13 @@ Libraries and tier model: ARCHITECTURE §6b, CLAUDE.md Motion rules. This sectio
 | Question switch (practice) | — | — | **none** (budget < 150 ms; content swaps, the feedback panel handles the motion) | | | — |
 | Live view tile status | state · often (teacher) | `liveTileStatus` | colour cross-fade 120 | same | instant | — |
 | Live event row | state · often (teacher) | `liveEventRow` | fade-in 220 (no slide, 40 tiles) | fade 120 | instant | — |
+| Review: next item | progress · often (teacher) | `reviewAdvance` | card glides 24 px toward the reading direction + fade, 120 (mirrors in RTL) | fade 120 | instant | — |
+| Review: decision stamp | feedback · often (teacher) | `reviewVerdict` | stamp pops from 0.85 (snappy spring); list row flashes its new state | fade 120 | instant (icon + word still change) | — |
 
 **Rules from the table:**
 1. **Exams:** with `inExam` set, `resolveMoment` returns `none` for everything except `examTimerTick` and `examSaveIndicator`, identical in all three tiers. No transitions between exam questions, no confetti, no toasts that slide; submit confirmation is an instant dialog. The post-submit **Result** screen is not an exam screen and may use `answerCorrect`-level motion only if the tier allows.
 2. **Transform + opacity only, no exceptions.** v0.1 needed an SVG-stroke exception for the mastery ring; v0.2's mosaic tiles animate with scale + opacity.
-3. **No parallax, shared-element hero transitions or looping decoration**, with one exception Hassan approved: the subject pattern drift (`patternDrift`, DECISIONS #47). (ARCHITECTURE §6b lists parallax and shared elements under *full*: this spec does not use them, as they carry no meaning on study screens; revisit only with a use case).
+3. **No parallax, shared-element hero transitions or looping decoration**, with two exceptions Hassan approved: the subject pattern drift (`patternDrift`, DECISIONS #47) and the mosaic tile morph (`shapeMorph`, DECISIONS #126). (ARCHITECTURE §6b lists parallax and shared elements under *full*: this spec does not use them, as they carry no meaning on study screens; revisit only with a use case).
 4. **Haptics:** one per user action, same frame as the visual, never the only feedback; a setting turns them off.
 5. **Budget:** every moment above must hold 60 fps on the reference phone and the cheapest Chromebook in lite tier (TEST_PLAN P-4/P-6). If one does not, its lite behaviour becomes the full behaviour.
 

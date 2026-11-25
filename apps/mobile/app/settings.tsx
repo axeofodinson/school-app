@@ -13,10 +13,11 @@ import {
   SegmentedControl,
   Text,
   useMotion,
+  useSchemeSetting,
   useSoundSetting,
 } from '../ui';
 
-// Settings for any signed-in user: language and motion (full / lite / off / auto,
+// Settings for any signed-in user: language, theme (light default, DECISIONS #125), motion (full / lite / off / auto,
 // DECISIONS #47 needs a way to stop motion). Admins also see the per-device
 // shared mode toggle (LMS_AUDIT §3.4).
 export default function Settings() {
@@ -24,6 +25,7 @@ export default function Settings() {
   const router = useRouter();
   const { setting, setSetting } = useMotion();
   const sound = useSoundSetting();
+  const theme = useSchemeSetting();
   const { destination, sharedMode, setSharedMode, signOut } = useAuth();
   const [saving, setSaving] = useState(false);
   const isAdmin = destination === 'admin';
@@ -58,6 +60,23 @@ export default function Settings() {
         <View style={styles.section}>
           <Text variant="label">{t('common.language')}</Text>
           <LanguageToggle />
+        </View>
+      </Card>
+      <Card>
+        <View style={styles.section}>
+          <Text variant="label">{t('auth.settings.theme')}</Text>
+          <SegmentedControl
+            segments={[
+              { value: 'light' as const, label: t('auth.settings.themeLight') },
+              { value: 'dark' as const, label: t('auth.settings.themeDark') },
+            ]}
+            value={theme.scheme}
+            onChange={theme.setScheme}
+            accessibilityLabel={t('auth.settings.theme')}
+          />
+          <Text variant="bodySm" tone="textMuted">
+            {t('auth.settings.themeHelp')}
+          </Text>
         </View>
       </Card>
       <Card>

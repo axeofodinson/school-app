@@ -16,6 +16,8 @@ export const duration = {
   glide: 2000,
   /** Full-tier pattern loop: one tile of drift per cycle, linear, seamless. */
   drift: 8000,
+  /** One step of the tile shape morph (hold + morph), DECISIONS #126. */
+  morph: 2600,
 } as const;
 
 /**
@@ -352,6 +354,25 @@ export const moments = {
     off: none,
   },
 
+  // Mosaic tile shapes (Hassan 2026-11-25, DECISIONS #126): the sign-in tile row and the
+  // mosaic mark turn calmly between square, star, diamond and rosette. Transform only, on
+  // the UI thread. `duration` is one step. Full: loops while the screen is visible. Lite:
+  // one pass through the shapes when the screen opens, then rests. Off and exams: still.
+  shapeMorph: {
+    purpose: 'delight',
+    frequency: 'occasional',
+    rtlFlip: true,
+    full: {
+      kind: 'timing',
+      duration: 'morph',
+      ease: 'linear',
+      props: ['rotate', 'scale'],
+      repeat: 'loop',
+    },
+    lite: { kind: 'timing', duration: 'morph', ease: 'linear', props: ['rotate', 'scale'] },
+    off: none,
+  },
+
   // Exam: identical in every tier. Nothing else moves.
   examTimerTick: {
     purpose: 'state',
@@ -385,15 +406,38 @@ export const moments = {
     lite: fade('fast'),
     off: none,
   },
+
+  // Teacher review queue (prompt 22). The item card glides out toward the list's reading
+  // direction as the next one comes in (progress through the queue), and a decision
+  // lands as a stamp (feedback). Both are short: a teacher does this hundreds of times.
+  reviewAdvance: {
+    purpose: 'progress',
+    frequency: 'often',
+    rtlFlip: true,
+    full: { kind: 'timing', duration: 'fast', ease: 'out', props: ['translateX', 'opacity'] },
+    lite: fade('fast'),
+    off: none,
+  },
+  reviewVerdict: {
+    purpose: 'feedback',
+    frequency: 'often',
+    full: { kind: 'spring', spring: 'snappy', props: ['scale', 'opacity'] },
+    lite: fade('fast'),
+    off: none,
+  },
 } as const satisfies Record<string, Moment>;
 
 export type MomentName = keyof typeof moments;
 
 /**
- * Moments allowed to move (not just fade) in the lite tier. Only the subject-pattern glide,
- * by Hassan's decision (DECISIONS #47); every other lite behaviour is a fade.
+ * Moments allowed to move (not just fade) in the lite tier: the subject-pattern glide
+ * (DECISIONS #47) and one pass of the tile shape morph (DECISIONS #126), both by
+ * Hassan's decision; every other lite behaviour is a fade.
  */
-export const liteMovementExceptions: ReadonlyArray<MomentName> = ['patternDrift'];
+export const liteMovementExceptions: ReadonlyArray<MomentName> = ['patternDrift', 'shapeMorph'];
+
+/** The approved looping decorations (full tier only). Nothing else may loop. */
+export const loopingMoments: ReadonlyArray<MomentName> = ['patternDrift', 'shapeMorph'];
 
 /** Moments allowed while an exam screen is mounted. Everything else resolves to `none`. */
 export const examAllowedMoments: ReadonlyArray<MomentName> = ['examTimerTick', 'examSaveIndicator'];

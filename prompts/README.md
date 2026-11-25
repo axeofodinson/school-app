@@ -76,7 +76,7 @@ Deferred: parents (81) and iOS (82).
 |---|---|---|---|---|---|
 | [x] | [20 Curriculum: apply 017 and build topic/concept editors](20-curriculum-run-017.md) | Opus | 13 | — | 2026-11-25: 017 + 023 final (hand-made table check, no-delete curriculum, loop-proof prerequisites, subject-level teacher scope; CU-1 RLS matrix), `/curriculum` editors + editions + backfill helper (CU-2 63/63). Hassan: run 017 then 023 on dev; production after a working same-day backup |
 | [x] | [21 Content importer (JSON → draft) with validation report](21-importer.md) | Opus | 20 | — | 2026-11-25: core importer + visuals checks, `db/031` (draft), `/importer` screen (report → drafts, retire a batch). Needs 017 + 023 + 031 on dev (IM-3) |
-| [ ] | [22 Teacher review queue: approve / edit / reject](22-review-queue.md) | Opus | 21 | —  (decided: each subject's teachers review Urdu, DECISIONS #28) | |
+| [x] | [22 Teacher review queue: approve / edit / reject](22-review-queue.md) | Opus | 21 | —  (decided: each subject's teachers review Urdu, DECISIONS #28) | Code done 2026-11-25: `db/032` (draft, after 031: RPC-only approvals scoped to concepts a teacher teaches, edit/retire revokes, version-checked decisions), `/review` two-pane queue (keyboard A/E/R/C/J/K/1–4/V/U/X, bilingual side by side, maths, edit → new version, send back, reject, bulk), core `review.ts` (+24 tests). RQ-1 SQL pass, RQ-2 web e2e 50/50. Hassan: run 017 → 023 → 031 → 032 on dev |
 
 ### Phase 3 — Learn and Practice
 
