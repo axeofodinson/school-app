@@ -17,4 +17,5 @@ export * from './readAloud';
 export * from './curriculum';
 export * from './importer';
 export * from './visuals';
+export * from './learn';
 export * from './review';
