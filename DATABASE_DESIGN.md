@@ -160,7 +160,7 @@ changes keeps the question `draft` (it shows in the "Changes asked" tab while it
 latest review on the current version says so); reject sets it `retired`. A
 question's queue state is derived, never stored twice.
 
-**practice_attempts.items:** `[{"q": uuid, "v": 3, "a": "B", "c": true, "ms": 8200}]`.
+**practice_attempts.items:** `[{"q": uuid, "v": 3, "a": "B", "c": true, "ms": 8200}]`, plus `"f": 1` (flagged) and `"t": 1` (tip opened first) only when set (prompt 31, DECISIONS #119). Built by `buildAttemptRow` in `packages/core/src/practice`; `kind` is `practice` (practice, drill, retry) or `revision` (smart review). `c`/`n_correct` are client-marked: prompt 40 re-scores from `a`.
 
 ## 5. Migration plan
 | File | Phase | Contents |

@@ -19,3 +19,4 @@ export * from './importer';
 export * from './visuals';
 export * from './learn';
 export * from './review';
+export * from './practice';

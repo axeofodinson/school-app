@@ -20,7 +20,7 @@ import { LessonText } from './LessonText';
 type Obj = Record<string, unknown>;
 const isObj = (v: unknown): v is Obj => typeof v === 'object' && v !== null && !Array.isArray(v);
 
-function Option({
+export function Option({
   letter,
   text,
   selected,
