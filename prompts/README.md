@@ -84,7 +84,7 @@ Deferred: parents (81) and iOS (82).
 |---|---|---|---|---|---|
 | [x] | [30 Learn: lesson reader](30-learn-renderer.md) | Opus | 22 | — | Done (own PR). Draft `db/033` runs on dev after 017 → 023 → 031 → 032. LS-1 SQL + LS-2 web e2e pass; LS-3 (Android/Chromebook) unverified. Scenes/charts/widgets show placeholders until 33 |
 | [x] | [31 Practice engine (port prep.html ideas)](31-practice-engine.md) | Opus | 22 | — | Code done 2026-11-25 (PR #55): core `practice` (+31 tests), `/lesson/<topic>/practice` + `/topic/<topic>/practice` (4 modes, feedback, summary, sync queue). No new migration. PE-2 web e2e 50/50; PE-3 (dev + devices) unverified |
-| [ ] | [33 Visual blocks: scenes, charts, widgets](33-visual-blocks.md) | Opus | 30 | — | Visual-first lessons (DECISIONS #36) |
+| [x] | [33 Visual blocks: scenes, charts, widgets](33-visual-blocks.md) | Opus | 30 | — | Code done 2026-11-25 (stacked on 30's PR): scene/chart/widget renderers, 4 widgets, sample Physics topic, gallery entries, no migration. LS-2 web e2e 74/74. **Unverified:** V-1 on the reference Chromebook |
 | [ ] | [32 Offline Learn and question packs](32-offline-learn-packs.md) | Opus | 30, 31, 33 | — | |
 
 ### Phase 4 — Mastery loop
@@ -151,6 +151,7 @@ Deferred: parents (81) and iOS (82).
 | — | [C1 Generate topic content](C1-generate-topic-content.md) | Opus (claude.ai chat) | From Phase 2 on, one topic at a time (pilot: Class 9 Math/Science) |
 
 ## Changelog
+- 2026-11-25: 33 code done, stacked on 30 (PR #54); no migration. Sample topic to try on dev: import `packages/core/samples/class9-physics-motion.json` in `/importer`, approve the lesson in `/lessons`. Next: 32 (offline packs) or 31 once merged.
 - 2026-11-25: 16 code done. `db/030_question_audio.sql` is independent (dev first, production any time). The ElevenLabs step needs the `school-app` environment (key + network to api.elevenlabs.io); this session's environment had neither, so no clips exist yet. Android needs a new build (`expo-audio`).
 - 2026-11-25: Android size fix (DECISIONS #82): `expo-build-properties` adds three ABIs, compressed native libs, R8 + resource shrinking. New native config: the next Android build (preview or dev client) picks it up; check its size and smoke-test every screen once, since R8 is new.
 - 2026-11-25: 13 code done. `db/018_close_answer_key_read.sql` runs AFTER 026 (dev first; production only once students have the new app, TEST_PLAN CO-3). The server now auto-marks fully auto-markable attempts (DECISIONS #79), so 14–16 and 50 can rely on scores appearing without a teacher; 50/51 should add a "hold results" setting if teachers want it (DECISIONS #81). 025 + 026 are applied on both databases.

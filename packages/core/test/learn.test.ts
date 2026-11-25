@@ -138,6 +138,17 @@ describe('assignQuickChecks', () => {
       5: null,
     });
   });
+  it("never reuses a visual's predict question as a quick check", () => {
+    const p = buildLesson([
+      { type: 'scene', concept_id: 'k1', predict_question_id: 'q-p', steps: [] },
+      { type: 'quick_check', en: 'by concept', concept_id: 'k1' },
+    ]);
+    const map = assignQuickChecks(p, [
+      { questionId: 'q-p', conceptId: 'k1' },
+      { questionId: 'q-z', conceptId: 'k1' },
+    ]);
+    expect([...map.values()]).toEqual(['q-z']);
+  });
   it('an empty pool shows every check as a prompt', () => {
     expect([...assignQuickChecks(m, []).values()].every((v) => v === null)).toBe(true);
   });
@@ -230,6 +241,8 @@ describe('controls', () => {
   it('stage shapes', () => {
     expect(stageAspect('figure')).toBe(1);
     expect(stageAspect('video')).toBe(1.6);
+    expect(stageAspect('widget', 'motion_graph')).toBe(1);
+    expect(stageAspect('widget', 'number_line')).toBe(1.6);
   });
 });
 

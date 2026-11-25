@@ -604,7 +604,34 @@
       "false": "غلط",
       "doneTitle": "سبق مکمل!",
       "doneBody": "شاباش! جب چاہو پھر سے پڑھو، یا ٹاپک پر واپس جاؤ۔",
-      "backToTopic": "ٹاپک پر واپس"
+      "backToTopic": "ٹاپک پر واپس",
+      "predict": "پہلے اندازہ لگاؤ",
+      "predictFirst": "پہلے اندازہ لگاؤ: نیچے والے سوال کا جواب دو",
+      "justWatch": "چھوڑو، بس دیکھو",
+      "justTry": "چھوڑو، بس خود کر کے دیکھو",
+      "replay": "دوبارہ دیکھو",
+      "nextStep": "اگلا قدم",
+      "prevStep": "پچھلا قدم",
+      "sceneStep": "قدم %{n} از %{total}",
+      "series": "لکیر %{n}",
+      "showSeries": "%{name} بھی دکھاؤ",
+      "yourTurn": "اب تمہاری باری",
+      "asText": "لکھائی میں دکھایا گیا",
+      "widget": {
+        "fewerParts": "کم حصے",
+        "moreParts": "زیادہ حصے",
+        "same": "دونوں برابر ہیں!",
+        "notSame": "دونوں برابر نہیں",
+        "tapParts": "حصوں پر ٹیپ کر کے رنگ بھرو، پھر دونوں پٹیوں کا موازنہ کرو۔",
+        "motionNow": "t = %{t} s · فاصلہ %{s} m · رفتار %{v} m/s",
+        "timeAxis": "وقت (s)",
+        "speedAxis": "رفتار (%{unit})",
+        "distanceAxis": "فاصلہ (%{unit})",
+        "numberLine": "نمبر لائن",
+        "found": "شاباش! %{n} مل گیا!",
+        "findIt": "لائن پر %{n} ڈھونڈو",
+        "dragMarker": "نشان کو کھینچو، یا ایرو کیز استعمال کرو۔"
+      }
     },
     "practice": {
       "title": "پریکٹس",
@@ -1551,7 +1578,8 @@
         "feedback": "Feedback: empty state, skeleton, toast, sync // TODO: ur",
         "navigation": "Tabs and sheet // TODO: ur",
         "layout": "Layout: two-pane // TODO: ur",
-        "motion": "Motion moments (resolved) // TODO: ur"
+        "motion": "Motion moments (resolved) // TODO: ur",
+        "visuals": "سبق کے تصویری حصے"
       },
       "sample": {
         "subject": "ریاضی",
@@ -1567,7 +1595,9 @@
         "loading": "Toggle loading // TODO: ur"
       },
       "examHint": "Only the exam timer and save dot may move. // TODO: ur",
-      "memoryGb": "%{count} GB // TODO: ur"
+      "memoryGb": "%{count} GB // TODO: ur",
+      "visualsIntro": "سبق کے ڈیٹا سے بنے ہوئے تصویری حصے۔ سین میں آگے بڑھو، چارٹ کے نقطوں پر ٹیپ کرو، سلائیڈر کھینچو۔",
+      "sampleTopic": "نمونہ ٹاپک سے: نویں جماعت فزکس، حرکت (ٹیسٹ ڈیٹا)"
     }
   },
   "prep": {

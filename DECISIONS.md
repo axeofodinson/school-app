@@ -2,6 +2,15 @@
 
 Newest first. Each: decision — reason — who/when.
 
+## 2026-11-25 — Visual blocks: scenes, charts, widgets (prompt 33)
+
+128. **A scene is split into a stack of standalone SVGs, one per layer, and each layer moves as a composited view.** `sliceScene()` (core) cuts the authored SVG at each layer, keeping paint order, re-opening the layer's ancestors (their transforms and styles) and copying `<defs>`/`<style>` into every slice. Each layer then tweens only transform + opacity on the UI thread, with no SVG re-render per frame, which is the cheapest path on a 4 GB Chromebook and the same on web and Android. Turning point = the layer's estimated box centre, or `pivots` in the block. — Claude, prompt 33.
+129. **Widget geometry is redrawn on the UI thread from a compiled expression program, never `eval`.** The safe parser (prompt 21) builds a tree; `compileExpr()` flattens it to numbers and a 20-line stack machine runs it inside a worklet (`widgets/vm.ts`, a copy of core's `runProgram`, checked for parity in core tests). Sliders write snapped values into shared values; React only hears when a snapped value changes. — Claude, prompt 33.
+130. **On a scene, ← → walk its steps before moving to the next part; Play never starts by itself.** Like builds on a slide. Off tier: Play shows one step per tap. Playback holds each caption long enough to read (1.6–4 s) and always has Pause (WCAG 2.2.2). — Claude, prompt 33.
+131. **Predict questions veil the visual until answered (or skipped) and are never reused as a quick check.** The `predict_question_id` item shows under the stage as "Predict first"; answering lifts the veil (`predictReveal`). "Skip, just watch / try it" is always there, so nobody is stuck. — Claude, prompt 33.
+132. **Chart `reveal: "series"` reveals on tap, not on a timer.** The first series shows; a "Show …" button grows the next from the baseline (`chartReveal`). Exams show the whole chart. Pie charts list values and percentages beside the pie; series differ by marker shape as well as colour. — Claude, prompt 33.
+133. **Visual text on the stage is always diagram ink, and graph axes stay left-to-right in Urdu.** The stage is paper-white in both themes (§7b.2), so theme text colours would vanish in dark mode. Readouts use symbols + units (`t = 2 s`, `v = 4 m/s`), the same in both languages; spoken labels are translated. — Claude, prompt 33.
+
 ## 2026-11-25 — Practice engine (prompt 31)
 
 117. **One engine, four modes, no new migration.** `packages/core/src/practice` selects (practice, topic drill, smart review, retry-wrong), scores (autoMark, so practice and exams can never disagree) and builds the row; modes are configs. Practice reads `question_versions` through the 017 + 032 student policy (only the version with a live practice approval, so its key is meant for instant feedback); exam items never come this way. Smart review maps to `kind = 'revision'`, the rest to `'practice'`. Types the device can't mark (long answer, file, tap_image for now) are left out of sets. — Claude, prompt 31.

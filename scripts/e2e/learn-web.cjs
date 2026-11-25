@@ -2,10 +2,20 @@
 // Supabase (in-memory PostgREST; nothing but localhost and the fake project is
 // allowed: YouTube is blocked and must not be asked for before Play). RLS and
 // review_lesson() themselves are checked in SQL by db/test/033_smoke.sql (LS-1).
-// Build: cd apps/mobile && EXPO_PUBLIC_SUPABASE_URL=https://fakedevproject.supabase.co EXPO_PUBLIC_SUPABASE_ANON_KEY=fake npx expo export -p web
+// Build: cd apps/mobile && EXPO_PUBLIC_DEV_GALLERY=1 EXPO_PUBLIC_SUPABASE_URL=https://fakedevproject.supabase.co EXPO_PUBLIC_SUPABASE_ANON_KEY=fake npx expo export -p web
 // Serve: node scripts/e2e/serve-dist.mjs "$PWD/apps/mobile/dist" 8089
 // Run:   node scripts/e2e/learn-web.cjs <screenshot-dir>
 const { chromium } = require('playwright');
+const path = require('path');
+// Prompt 33: the sample Class 9 Physics topic (scene, chart, widget), as stored.
+const SAMPLE = require(
+  path.join(__dirname, '../../packages/core/samples/class9-physics-motion.json'),
+);
+const motionBlocks = SAMPLE.lesson.blocks.map((b) => ({
+  ...b,
+  concept_id: b.concept_id ? 'k9' : null,
+  ...(b.type === 'scene' ? { predict_question_id: 'qp' } : {}),
+}));
 const BASE = 'http://localhost:8089';
 const SB = 'https://fakedevproject.supabase.co';
 const SHOTS = process.argv[2];
@@ -111,6 +121,14 @@ function freshDb() {
         status: 'active',
       },
       {
+        id: 't3',
+        chapter_id: 'ch1',
+        title_en: 'TEST Motion: speed and graphs',
+        title_ur: 'TEST حرکت: رفتار اور گراف',
+        sort_order: 3,
+        status: 'active',
+      },
+      {
         id: 't2',
         chapter_id: 'ch1',
         title_en: 'Cell division',
@@ -174,6 +192,17 @@ function freshDb() {
         created_at: '2',
       },
       {
+        id: 'L4',
+        topic_id: 't3',
+        kind: 'lesson',
+        concept_id: null,
+        current_version: 1,
+        status: 'approved',
+        origin: 'human',
+        updated_at: null,
+        created_at: '4',
+      },
+      {
         id: 'L3',
         topic_id: 't2',
         kind: 'lesson',
@@ -200,12 +229,32 @@ function freshDb() {
         ],
       },
       { content_id: 'L3', version: 1, blocks: [{ type: 'simple', en: 'Cells split in two.' }] },
+      { content_id: 'L4', version: 1, blocks: motionBlocks },
     ],
     item_approvals: [
       { item_kind: 'content', item_id: 'L1', version: 2, scope: 'learn', revoked_at: null },
       { item_kind: 'content', item_id: 'L2', version: 1, scope: 'learn', revoked_at: null },
+      { item_kind: 'content', item_id: 'L4', version: 1, scope: 'learn', revoked_at: null },
     ],
     question_versions: [
+      {
+        question_id: 'qp',
+        version: 1,
+        type: 'mcq',
+        concept_id: null,
+        body: {
+          stem: {
+            en: 'The car goes 10 m every second. Where is it after 3 seconds?',
+            ur: 'گاڑی ہر سیکنڈ 10 m چلتی ہے۔ 3 سیکنڈ بعد کہاں ہوگی؟',
+          },
+          options: [
+            { key: 'A', text: { en: '30 m', ur: '30 m' } },
+            { key: 'B', text: { en: '13 m', ur: '13 m' } },
+          ],
+        },
+        answer: { correct: 'A' },
+        explanation: { en: '10 m + 10 m + 10 m = 30 m.', ur: '10 m + 10 m + 10 m = 30 m۔' },
+      },
       {
         question_id: 'q1',
         version: 1,
@@ -470,7 +519,7 @@ async function studentLogin(page) {
   await page.getByRole('button', { name: /Go to part 3/ }).click();
 
   // 6. Placeholder scene, then video only after Play.
-  check(await seen(page, 'Coming soon'), 'scene placeholder (prompt 33)');
+  check(await seen(page, 'Shown as text'), 'a scene without its drawing shows as text');
   check(await seen(page, 'The nucleus splits'), 'scene step captions still shown as text');
   await blur(page);
   await page.keyboard.press('ArrowRight');
@@ -570,6 +619,93 @@ async function studentLogin(page) {
   await page.goto(BASE + '/lesson/t1');
   check(await seen(page, 'Saved copy'), 'offline: topic opens from the device copy');
   await page.unroute(SB + '/rest/**');
+
+  // 11b. Visual blocks (prompt 33): the sample Physics topic's scene, chart and widget.
+  await page.setViewportSize({ width: 1280, height: 860 });
+  await page.goto(BASE + '/lesson/t3/read?s=0');
+  check(await seen(page, 'Watch the car'), 'visual lesson opens on the scene part');
+  check(await seen(page, 'Step 1 of 4'), 'scene step caption beside the stage');
+  check(await seen(page, 'The car waits at the start post'), 'step 1 caption');
+  check(await seen(page, 'Guess first'), 'predict veil before play');
+  check(await seen(page, 'Where is it after 3 seconds?'), 'predict question under the stage');
+  await page.screenshot({ path: SHOTS + '/scene-predict-1280.png' });
+  await page.getByRole('radio', { name: /30 m/ }).click();
+  await page.getByRole('button', { name: 'Check', exact: true }).first().click();
+  await page.waitForTimeout(600);
+  check(
+    (await page.getByText(/Guess first/).count()) === 0,
+    'answering the prediction lifts the veil',
+  );
+  await page.getByRole('button', { name: 'Next step' }).click();
+  check(await seen(page, 'After 1 second, the car has gone 10 m.'), 'next step: caption 2');
+  await blur(page);
+  await page.keyboard.press('ArrowRight');
+  check(await seen(page, 'Step 3 of 4'), '→ walks the scene steps first');
+  await page.getByRole('button', { name: 'Play' }).first().click();
+  check(await seen(page, 'Step 4 of 4'), 'Play runs to the last step');
+  check(
+    await page
+      .getByRole('button', { name: 'Watch again' })
+      .waitFor({ timeout: 8000 })
+      .then(() => true)
+      .catch(() => false),
+    'last step offers Replay',
+  );
+  await page.waitForTimeout(1200);
+  await page.screenshot({ path: SHOTS + '/scene-end-1280.png' });
+  await blur(page);
+  await page.keyboard.press('ArrowRight');
+  check(await seen(page, 'Car A (steady)'), '→ on the last scene step moves to the chart part');
+  check(await seen(page, 'Show Car B (speeding up)'), 'series reveal button');
+  await page.getByRole('button', { name: /Show Car B/ }).click();
+  check(await seen(page, 'Car B (speeding up)', true), 'second series revealed');
+  await page.getByRole('button', { name: 'Car A (steady) · 3 s: 30 m' }).click();
+  check(await seen(page, 'Car A (steady) · 3 s: 30 m', true), 'tap a point for its value');
+  await page.screenshot({ path: SHOTS + '/chart-1280.png' });
+  await page.goto(BASE + '/lesson/t3/read?s=2');
+  check(await seen(page, 'Make the line straight'), 'widget task under "Your turn"');
+  const u = page.getByRole('slider', { name: 'u' });
+  await u.focus();
+  await page.keyboard.press('ArrowRight');
+  check(await seen(page, 'u = 3 m/s'), 'slider: → moves one step and says the value');
+  await page.getByRole('button', { name: 'Play' }).first().click();
+  await page.waitForTimeout(1600);
+  check(
+    (await page.getByText(/^t = 0 s /).count()) === 0 &&
+      (await page.getByText(/^t = [\d.]+ s /).count()) > 0,
+    'Play runs the clock',
+  );
+  await page.screenshot({ path: SHOTS + '/widget-1280.png' });
+  await page.getByRole('button', { name: /Text version/ }).click();
+  check(await seen(page, 'Car A (steady): (Time) 0 s: 0 m'), 'text version lists chart values');
+  check(
+    (await seen(page, 'Every second, the same')) ||
+      (await seen(page, 'Same distance every second')),
+    'text version lists scene captions',
+  );
+  await page.getByRole('button', { name: /Text version/ }).click();
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(BASE + '/lesson/t3/read?s=0');
+  check(await seen(page, 'Step 1 of 4'), 'phone: scene renders');
+  check(await noHScroll(page), 'phone: no sideways scroll on the scene');
+  await page.screenshot({ path: SHOTS + '/scene-390.png', fullPage: true });
+  await page.setViewportSize({ width: 1280, height: 860 });
+  for (const q of ['lang=en&tier=full', 'lang=ur&tier=lite&theme=dark', 'lang=en&tier=off&p=kid']) {
+    await page.goto(BASE + '/dev/gallery?' + q);
+    const head = page.getByRole('heading', { name: /Lesson visuals|سبق کے تصویری حصے/ });
+    const ok = await head
+      .waitFor({ timeout: 8000 })
+      .then(() => true)
+      .catch(() => false);
+    check(ok, `gallery shows the visual blocks (${q})`);
+    if (!ok) continue;
+    await head.scrollIntoViewIfNeeded();
+    await page.waitForTimeout(800);
+    await page.screenshot({ path: `${SHOTS}/gallery-visuals-${q.replace(/[=&]/g, '-')}.png` });
+    await page.mouse.wheel(0, 900);
+    await page.waitForTimeout(800);
+    await page.screenshot({ path: `${SHOTS}/gallery-visuals-2-${q.replace(/[=&]/g, '-')}.png` });
+  }
 
   // 12. Teacher: preview a draft, approve it.
   student = false;

@@ -223,7 +223,13 @@ export function assignQuickChecks(
   pool: PoolItem[],
 ): Map<number, string | null> {
   const inPool = new Set(pool.map((p) => p.questionId));
-  const used = new Set<string>();
+  // A visual's predict question is asked before it plays: never reuse it as a quick check.
+  const used = new Set<string>(
+    model.sections.flatMap((s) => {
+      const id = s.visual?.block.predict_question_id;
+      return typeof id === 'string' && id ? [id] : [];
+    }),
+  );
   const out = new Map<number, string | null>();
   const checks = model.sections.flatMap((s) => s.checks);
   for (const c of checks)
@@ -462,8 +468,12 @@ export function clampStep(i: number, count: number): number {
   return Math.min(count - 1, Math.max(0, Math.trunc(Number.isFinite(i) ? i : 0)));
 }
 
-/** Stage shape (§7b.2): figures and widgets square, everything else 16:10. */
-export function stageAspect(type: string): number {
+/**
+ * Stage shape (§7b.2): figures and widgets square, everything else 16:10. One-line
+ * widgets (number line, fraction bars) are wide too, so they don't float in white.
+ */
+export function stageAspect(type: string, widget?: unknown): number {
+  if (type === 'widget' && (widget === 'number_line' || widget === 'fraction_bars')) return 16 / 10;
   return type === 'figure' || type === 'widget' ? 1 : 16 / 10;
 }
 

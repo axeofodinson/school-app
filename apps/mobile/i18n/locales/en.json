@@ -604,7 +604,34 @@
       "false": "False",
       "doneTitle": "Lesson done!",
       "doneBody": "Nice work. Read it again any time, or go back to the topic.",
-      "backToTopic": "Back to the topic"
+      "backToTopic": "Back to the topic",
+      "predict": "Predict first",
+      "predictFirst": "Guess first: answer the question below",
+      "justWatch": "Skip, just watch",
+      "justTry": "Skip, just try it",
+      "replay": "Watch again",
+      "nextStep": "Next step",
+      "prevStep": "Previous step",
+      "sceneStep": "Step %{n} of %{total}",
+      "series": "Series %{n}",
+      "showSeries": "Show %{name}",
+      "yourTurn": "Your turn",
+      "asText": "Shown as text",
+      "widget": {
+        "fewerParts": "Fewer parts",
+        "moreParts": "More parts",
+        "same": "Same amount!",
+        "notSame": "Not the same amount",
+        "tapParts": "Tap the parts to shade them, then compare the two bars.",
+        "motionNow": "t = %{t} s · distance %{s} m · speed %{v} m/s",
+        "timeAxis": "time (s)",
+        "speedAxis": "speed (%{unit})",
+        "distanceAxis": "distance (%{unit})",
+        "numberLine": "Number line",
+        "found": "You found %{n}!",
+        "findIt": "Find %{n} on the line",
+        "dragMarker": "Drag the marker, or use the arrow keys."
+      }
     },
     "practice": {
       "title": "Practice",
@@ -1551,7 +1578,8 @@
         "feedback": "Feedback: empty state, skeleton, toast, sync",
         "navigation": "Tabs and sheet",
         "layout": "Layout: two-pane",
-        "motion": "Motion moments (resolved)"
+        "motion": "Motion moments (resolved)",
+        "visuals": "Lesson visuals"
       },
       "sample": {
         "subject": "Mathematics",
@@ -1567,7 +1595,9 @@
         "loading": "Toggle loading"
       },
       "examHint": "Only the exam timer and save dot may move.",
-      "memoryGb": "%{count} GB"
+      "memoryGb": "%{count} GB",
+      "visualsIntro": "Lesson visuals drawn from lesson data. Tap through scenes, tap chart points, drag the sliders.",
+      "sampleTopic": "From the sample topic: Class 9 Physics, motion (test data)"
     }
   },
   "prep": {

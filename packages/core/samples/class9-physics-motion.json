@@ -1,0 +1,316 @@
+{
+  "curriculum": "PTB-2024",
+  "class": "Class 9",
+  "subject": "Physics",
+  "chapter": "Kinematics",
+  "test_data": true,
+  "topic": {
+    "title_en": "TEST Motion: speed and graphs",
+    "title_ur": "TEST حرکت: رفتار اور گراف"
+  },
+  "concepts": [
+    {
+      "key": "speed",
+      "title_en": "Speed = distance ÷ time",
+      "title_ur": "رفتار = فاصلہ ÷ وقت",
+      "requires": []
+    },
+    {
+      "key": "graphs",
+      "title_en": "Distance–time graphs",
+      "title_ur": "فاصلہ–وقت گراف",
+      "requires": ["speed"]
+    },
+    {
+      "key": "accel",
+      "title_en": "Speeding up",
+      "title_ur": "رفتار بڑھنا",
+      "requires": ["graphs"]
+    }
+  ],
+  "lesson": {
+    "blocks": [
+      {
+        "type": "objectives",
+        "concept_id": null,
+        "en": "- Work out speed from distance and time.\n- Read a distance–time graph.\n- Tell steady speed from speeding up.",
+        "ur": "- فاصلے اور وقت سے رفتار نکالنا۔\n- فاصلہ–وقت گراف پڑھنا۔\n- ایک جیسی رفتار اور بڑھتی رفتار میں فرق پہچاننا۔"
+      },
+      {
+        "type": "intro",
+        "concept_id": "speed",
+        "en": "Watch the car. Count how far it goes **every second**.",
+        "ur": "گاڑی کو دیکھیں۔ گنیں کہ یہ **ہر سیکنڈ** میں کتنا آگے جاتی ہے۔"
+      },
+      {
+        "type": "scene",
+        "concept_id": "speed",
+        "alt": {
+          "en": "A blue car drives along a road marked every 10 m. Each second it moves one more mark, so its speed is 10 m/s.",
+          "ur": "نیلی گاڑی سڑک پر چلتی ہے جس پر ہر 10 m پر نشان ہے۔ ہر سیکنڈ میں گاڑی ایک نشان آگے جاتی ہے، اس لیے اس کی رفتار 10 m/s ہے۔"
+        },
+        "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 320 180\"><rect x=\"0\" y=\"132\" width=\"320\" height=\"48\" fill=\"#DDD8EC\"/><line x1=\"0\" y1=\"132\" x2=\"320\" y2=\"132\" stroke=\"#1B1A3A\" stroke-width=\"2\"/><line x1=\"8\" y1=\"158\" x2=\"312\" y2=\"158\" stroke=\"#FFFFFF\" stroke-width=\"3\" stroke-dasharray=\"14 10\" stroke-linecap=\"round\"/><g stroke=\"#77729A\" stroke-width=\"2\" stroke-linecap=\"round\"><line x1=\"40\" y1=\"132\" x2=\"40\" y2=\"142\"/><line x1=\"100\" y1=\"132\" x2=\"100\" y2=\"142\"/><line x1=\"160\" y1=\"132\" x2=\"160\" y2=\"142\"/><line x1=\"220\" y1=\"132\" x2=\"220\" y2=\"142\"/><line x1=\"280\" y1=\"132\" x2=\"280\" y2=\"142\"/></g><g font-family=\"Nunito-Bold, Nunito, sans-serif\" font-weight=\"700\" font-size=\"11\" fill=\"#77729A\" text-anchor=\"middle\"><text x=\"40\" y=\"154\">0 m</text><text x=\"100\" y=\"154\">10 m</text><text x=\"160\" y=\"154\">20 m</text><text x=\"220\" y=\"154\">30 m</text><text x=\"280\" y=\"154\">40 m</text></g><line x1=\"40\" y1=\"62\" x2=\"40\" y2=\"132\" stroke=\"#1B1A3A\" stroke-width=\"3\" stroke-linecap=\"round\"/><path d=\"M40 62 L62 69 L40 76 Z\" fill=\"#11865B\" stroke=\"#1B1A3A\" stroke-width=\"2\" stroke-linejoin=\"round\"/><g id=\"t1\"><path d=\"M44 46 Q70.0 30 96 46\" fill=\"none\" stroke=\"#FFB627\" stroke-width=\"3\" stroke-linecap=\"round\"/><rect x=\"53.0\" y=\"20\" width=\"34\" height=\"20\" rx=\"10\" fill=\"#FFB627\" stroke=\"#1B1A3A\" stroke-width=\"2\"/><text x=\"70.0\" y=\"34\" font-family=\"Nunito-Bold, Nunito, sans-serif\" font-weight=\"700\" font-size=\"12\" fill=\"#1B1A3A\" text-anchor=\"middle\">1 s</text></g><g id=\"t2\"><path d=\"M104 46 Q130.0 30 156 46\" fill=\"none\" stroke=\"#FFB627\" stroke-width=\"3\" stroke-linecap=\"round\"/><rect x=\"113.0\" y=\"20\" width=\"34\" height=\"20\" rx=\"10\" fill=\"#FFB627\" stroke=\"#1B1A3A\" stroke-width=\"2\"/><text x=\"130.0\" y=\"34\" font-family=\"Nunito-Bold, Nunito, sans-serif\" font-weight=\"700\" font-size=\"12\" fill=\"#1B1A3A\" text-anchor=\"middle\">2 s</text></g><g id=\"t3\"><path d=\"M164 46 Q190.0 30 216 46\" fill=\"none\" stroke=\"#FFB627\" stroke-width=\"3\" stroke-linecap=\"round\"/><rect x=\"173.0\" y=\"20\" width=\"34\" height=\"20\" rx=\"10\" fill=\"#FFB627\" stroke=\"#1B1A3A\" stroke-width=\"2\"/><text x=\"190.0\" y=\"34\" font-family=\"Nunito-Bold, Nunito, sans-serif\" font-weight=\"700\" font-size=\"12\" fill=\"#1B1A3A\" text-anchor=\"middle\">3 s</text></g><g id=\"car\"><path d=\"M14 114 L14 100 Q16 94 24 94 L32 94 L40 82 L58 82 L66 94 Q70 96 70 102 L70 114 Z\" fill=\"#4434D4\" stroke=\"#1B1A3A\" stroke-width=\"2\" stroke-linejoin=\"round\"/><path d=\"M43 86 L56 86 L61 94 L38 94 Z\" fill=\"#E6E2FF\" stroke=\"#1B1A3A\" stroke-width=\"2\" stroke-linejoin=\"round\"/><circle cx=\"26\" cy=\"118\" r=\"9\" fill=\"#1B1A3A\"/><circle cx=\"26\" cy=\"118\" r=\"3.5\" fill=\"#FFFFFF\"/><circle cx=\"58\" cy=\"118\" r=\"9\" fill=\"#1B1A3A\"/><circle cx=\"58\" cy=\"118\" r=\"3.5\" fill=\"#FFFFFF\"/></g><g id=\"speed\"><rect x=\"256\" y=\"88\" width=\"60\" height=\"26\" rx=\"9\" fill=\"#11865B\" stroke=\"#1B1A3A\" stroke-width=\"2\"/><text x=\"286\" y=\"106\" font-family=\"Nunito-Bold, Nunito, sans-serif\" font-weight=\"700\" font-size=\"13\" fill=\"#FFFFFF\" text-anchor=\"middle\">10 m/s</text></g></svg>",
+        "layers": ["car", "t1", "t2", "t3", "speed"],
+        "steps": [
+          {
+            "caption": {
+              "en": "The car waits at the start post. The clock says 0 s.",
+              "ur": "گاڑی شروع والے کھمبے پر کھڑی ہے۔ گھڑی پر 0 s ہے۔"
+            },
+            "ms": 600,
+            "set": {
+              "t1": {
+                "opacity": 0
+              },
+              "t2": {
+                "opacity": 0
+              },
+              "t3": {
+                "opacity": 0
+              },
+              "speed": {
+                "opacity": 0,
+                "scale": 0.8
+              }
+            }
+          },
+          {
+            "caption": {
+              "en": "After 1 second, the car has gone 10 m.",
+              "ur": "1 سیکنڈ بعد گاڑی 10 m چل چکی ہے۔"
+            },
+            "ms": 900,
+            "set": {
+              "car": {
+                "x": 60
+              },
+              "t1": {
+                "opacity": 1
+              }
+            }
+          },
+          {
+            "caption": {
+              "en": "After 2 seconds: 20 m. Another 10 m in the same time.",
+              "ur": "2 سیکنڈ بعد: 20 m۔ اتنے ہی وقت میں پھر 10 m۔"
+            },
+            "ms": 900,
+            "set": {
+              "car": {
+                "x": 120
+              },
+              "t2": {
+                "opacity": 1
+              }
+            }
+          },
+          {
+            "caption": {
+              "en": "Same distance every second means a steady speed: 10 m ÷ 1 s = 10 m/s.",
+              "ur": "ہر سیکنڈ میں اتنا ہی فاصلہ، یعنی رفتار ایک جیسی ہے: 10 m ÷ 1 s = 10 m/s۔"
+            },
+            "ms": 900,
+            "set": {
+              "car": {
+                "x": 180
+              },
+              "t3": {
+                "opacity": 1
+              },
+              "speed": {
+                "opacity": 1,
+                "scale": 1
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "detailed",
+        "concept_id": "speed",
+        "en": "**Speed = distance ÷ time.** The unit is metres per second (m/s). If a car goes 30 m in 3 s, its speed is 30 ÷ 3 = 10 m/s.",
+        "ur": "**رفتار = فاصلہ ÷ وقت۔** اس کی اکائی میٹر فی سیکنڈ (m/s) ہے۔ اگر گاڑی 3 s میں 30 m چلے تو رفتار 30 ÷ 3 = 10 m/s ہے۔"
+      },
+      {
+        "type": "simple",
+        "concept_id": "graphs",
+        "en": "Now draw it. Time goes along, distance goes up. A **straight** line means a steady speed.",
+        "ur": "اب اسے گراف پر بنائیں۔ وقت ساتھ ساتھ، فاصلہ اوپر کی طرف۔ **سیدھی** لکیر کا مطلب ہے رفتار ایک جیسی ہے۔"
+      },
+      {
+        "type": "chart",
+        "concept_id": "graphs",
+        "kind": "line",
+        "alt": {
+          "en": "Distance–time graph. Car A is a straight line from 0 to 50 m in 5 s. Car B curves upwards and also reaches 50 m at 5 s.",
+          "ur": "فاصلہ–وقت گراف۔ گاڑی A کی لکیر سیدھی ہے: 5 s میں 0 سے 50 m۔ گاڑی B کی لکیر اوپر کو مڑتی ہے اور یہ بھی 5 s پر 50 m پہنچتی ہے۔"
+        },
+        "x": {
+          "label": {
+            "en": "Time",
+            "ur": "وقت"
+          },
+          "unit": "s",
+          "values": [0, 1, 2, 3, 4, 5]
+        },
+        "y": {
+          "label": {
+            "en": "Distance",
+            "ur": "فاصلہ"
+          },
+          "unit": "m"
+        },
+        "series": [
+          {
+            "name": {
+              "en": "Car A (steady)",
+              "ur": "گاڑی A (ایک جیسی رفتار)"
+            },
+            "values": [0, 10, 20, 30, 40, 50],
+            "role": "focus"
+          },
+          {
+            "name": {
+              "en": "Car B (speeding up)",
+              "ur": "گاڑی B (رفتار بڑھ رہی ہے)"
+            },
+            "values": [0, 2, 8, 18, 32, 50],
+            "role": "highlight"
+          }
+        ],
+        "reveal": "series"
+      },
+      {
+        "type": "misconception",
+        "concept_id": "graphs",
+        "en": "Both cars reach 50 m at 5 s, but that does **not** mean they always had the same speed. Look at the shape, not just the end.",
+        "ur": "دونوں گاڑیاں 5 s پر 50 m پہنچتی ہیں، لیکن اس کا مطلب یہ **نہیں** کہ ان کی رفتار ہمیشہ ایک جیسی تھی۔ صرف آخر نہیں، لکیر کی شکل دیکھیں۔"
+      },
+      {
+        "type": "simple",
+        "concept_id": "accel",
+        "en": "Your turn. Change the starting speed and the push, press Play, and watch the graph draw itself.",
+        "ur": "اب آپ کی باری۔ شروع کی رفتار اور دھکا بدلیں، Play دبائیں، اور گراف کو خود بنتے دیکھیں۔"
+      },
+      {
+        "type": "widget",
+        "concept_id": "accel",
+        "widget": "motion_graph",
+        "alt": {
+          "en": "A car on a track with a distance–time graph that draws as it moves. Sliders set the starting speed u and the acceleration a.",
+          "ur": "ٹریک پر گاڑی اور ساتھ فاصلہ–وقت گراف جو گاڑی کے چلنے کے ساتھ بنتا ہے۔ سلائیڈر سے شروع کی رفتار u اور اسراع a بدلیں۔"
+        },
+        "params": {
+          "u": 2,
+          "a": 1,
+          "t": 8,
+          "sliders": {
+            "u": [0, 6, 1, 2],
+            "a": [-1, 2, 0.5, 1]
+          },
+          "graph": "distance"
+        },
+        "task": {
+          "en": "Make the line straight. What does a have to be?",
+          "ur": "لکیر کو سیدھا کریں۔ a کتنا ہونا چاہیے؟"
+        }
+      },
+      {
+        "type": "quick_check",
+        "concept_id": "speed",
+        "en": "A runner goes 100 m in 20 s at a steady speed. What is the speed?",
+        "ur": "ایک دوڑنے والا ایک جیسی رفتار سے 20 s میں 100 m دوڑتا ہے۔ اس کی رفتار کتنی ہے؟"
+      },
+      {
+        "type": "summary",
+        "concept_id": null,
+        "en": "- Speed = distance ÷ time (m/s).\n- Straight line on a distance–time graph: steady speed.\n- Line curving up: speeding up.",
+        "ur": "- رفتار = فاصلہ ÷ وقت (m/s)۔\n- فاصلہ–وقت گراف پر سیدھی لکیر: رفتار ایک جیسی۔\n- اوپر کو مڑتی لکیر: رفتار بڑھ رہی ہے۔"
+      }
+    ]
+  },
+  "questions": [
+    {
+      "concept": "speed",
+      "type": "mcq",
+      "difficulty": 1,
+      "cognitive_level": "apply",
+      "body": {
+        "stem": {
+          "en": "A bike goes 60 m in 6 s at a steady speed. What is its speed?",
+          "ur": "ایک سائیکل ایک جیسی رفتار سے 6 s میں 60 m چلتی ہے۔ اس کی رفتار کتنی ہے؟"
+        },
+        "options": [
+          {
+            "key": "A",
+            "text": {
+              "en": "10 m/s",
+              "ur": "10 m/s"
+            }
+          },
+          {
+            "key": "B",
+            "text": {
+              "en": "360 m/s",
+              "ur": "360 m/s"
+            }
+          },
+          {
+            "key": "C",
+            "text": {
+              "en": "6 m/s",
+              "ur": "6 m/s"
+            }
+          },
+          {
+            "key": "D",
+            "text": {
+              "en": "66 m/s",
+              "ur": "66 m/s"
+            }
+          }
+        ]
+      },
+      "answer": {
+        "correct": "A"
+      },
+      "explanation": {
+        "en": "Speed = 60 m ÷ 6 s = 10 m/s.",
+        "ur": "رفتار = 60 m ÷ 6 s = 10 m/s۔",
+        "why_wrong": {
+          "B": {
+            "en": "You multiplied. Speed is distance divided by time.",
+            "ur": "آپ نے ضرب کر دی۔ رفتار میں فاصلے کو وقت سے تقسیم کرتے ہیں۔"
+          }
+        }
+      },
+      "source": {
+        "book": "PTB Physics 9 (synthetic)",
+        "page": 1
+      }
+    },
+    {
+      "concept": "graphs",
+      "type": "true_false",
+      "difficulty": 2,
+      "cognitive_level": "understand",
+      "body": {
+        "stem": {
+          "en": "A curved line on a distance–time graph means the speed is changing.",
+          "ur": "فاصلہ–وقت گراف پر مڑی ہوئی لکیر کا مطلب ہے کہ رفتار بدل رہی ہے۔"
+        }
+      },
+      "answer": {
+        "correct": true
+      },
+      "explanation": {
+        "en": "Steady speed gives a straight line; a curve means the speed changes.",
+        "ur": "ایک جیسی رفتار سے سیدھی لکیر بنتی ہے؛ مڑی ہوئی لکیر کا مطلب ہے رفتار بدل رہی ہے۔"
+      },
+      "source": {
+        "book": "PTB Physics 9 (synthetic)",
+        "page": 1
+      }
+    }
+  ]
+}

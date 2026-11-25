@@ -85,10 +85,15 @@ export function QuickCheck({
   item,
   block,
   lang,
+  predict = false,
+  onResult,
 }: {
   item: QuickItem | null;
   block: LessonBlock;
   lang: LessonLang;
+  /** Asked before a scene/widget plays (predict → observe → explain, §7b.1). */
+  predict?: boolean;
+  onResult?: (ok: boolean) => void;
 }) {
   const { t } = useI18n();
   const { colours } = useTheme();
@@ -103,10 +108,10 @@ export function QuickCheck({
   const head = (
     <View style={styles.head}>
       <View style={[styles.badge, { backgroundColor: colours.accent }]}>
-        <Icon name="lightbulb" size={18} colour={colours.onAccent} />
+        <Icon name={predict ? 'sparkles' : 'lightbulb'} size={18} colour={colours.onAccent} />
       </View>
       <Text variant="label" tone="textMuted">
-        {t('student.learn.quickCheck')}
+        {t(predict ? 'student.learn.predict' : 'student.learn.quickCheck')}
       </Text>
     </View>
   );
@@ -146,6 +151,7 @@ export function QuickCheck({
     const ok = autoMarkItem(item.type, value, item.answer) === true;
     setResult(ok);
     cue(ok ? 'ding' : 'pop');
+    onResult?.(ok);
   };
   const retry = () => {
     setResult(null);
