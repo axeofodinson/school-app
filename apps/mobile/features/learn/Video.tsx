@@ -19,7 +19,8 @@ import { PatternFill } from '../../ui/Pattern';
 import { PressableSticker } from '../../ui/Sticker';
 import { colours as palette, diagram, radius, space } from '../../ui/tokens';
 import { VideoFrame, opensOutside } from './VideoFrame';
-import { FigureView, LaterVisual } from './visuals';
+import { StageVisual } from './StageVisual';
+import { LaterVisual } from './visuals';
 
 export async function openVideo(block: LessonBlock): Promise<boolean> {
   const url = youtubeWatchUrl(block.youtube_id);
@@ -57,11 +58,7 @@ export function VideoView({
         </View>
         <View style={styles.fill}>
           {fb ? (
-            fb.type === 'figure' ? (
-              <FigureView block={fb} lang={lang} />
-            ) : (
-              <LaterVisual block={fb} lang={lang} />
-            )
+            <StageVisual block={fb} lang={lang} />
           ) : (
             <LaterVisual
               block={block}

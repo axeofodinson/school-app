@@ -1,8 +1,9 @@
 // Renderers for the visual blocks of prompt 30 (DESIGN_SYSTEM.md §7b.1):
 // figure (SVG + numbered hotspots, pinch/drag or ± zoom), compare (two panels),
-// a text stage for sections without a visual, and a placeholder for scene,
-// chart, widget and lottie (prompt 33), which still shows everything they say
-// as text so nothing is lost. Lesson visuals move by transform + opacity only.
+// a text stage for sections without a visual, and a text card for a visual
+// that can't be drawn (lottie, a widget not built yet, or a broken block), which
+// still shows everything it says as text so nothing is lost. Scenes, charts and
+// widgets live in SceneView / ChartView / widgets (prompt 33). Lesson visuals move by transform + opacity only.
 import {
   fitBox,
   pickLang,
@@ -304,7 +305,7 @@ export function TextStage({ n, title, summary }: { n: number; title: string; sum
   );
 }
 
-// ───────────────────────────── placeholder (prompt 33) ─────────────────────────────
+// ───────────────────────────── text card (can't draw this one) ─────────────────────────────
 
 const LATER: Record<string, { icon: IconName; key: 'scene' | 'chart' | 'widget' | 'lottie' }> = {
   scene: { icon: 'play', key: 'scene' },
@@ -318,11 +319,14 @@ export function LaterVisual({
   lang,
   icon,
   title,
+  broken = false,
 }: {
   block: LessonBlock;
   lang: LessonLang;
   icon?: IconName;
   title?: string;
+  /** Built, but this block's data couldn't be read: say it's shown as text, not "coming soon". */
+  broken?: boolean;
 }) {
   const { t } = useI18n();
   const kind = LATER[block.type];
@@ -336,7 +340,11 @@ export function LaterVisual({
       <Text variant="heading" style={[styles.centre, { color: ink }]}>
         {title ?? (kind ? t(`student.learn.later.${kind.key}`) : t('student.learn.picture'))}
       </Text>
-      <Badge label={t('student.learn.comingSoon')} tone="accent" icon="clock" />
+      <Badge
+        label={t(broken ? 'student.learn.asText' : 'student.learn.comingSoon')}
+        tone={broken ? 'neutral' : 'accent'}
+        icon={broken ? 'fileText' : 'clock'}
+      />
       {alt ? (
         <Text
           variant="bodySm"

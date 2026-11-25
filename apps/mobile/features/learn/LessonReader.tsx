@@ -5,6 +5,8 @@
 // stage sticky on the start side (60 %), the words on the end side.
 // Keys (web): ← → step (mirrored in Urdu), Space play/pause, F fullscreen,
 // Home/End, Esc leaves fullscreen. "Text version" shows everything as text.
+// On a scene, ← → walk its steps first, then move to the next part (like
+// builds on a slide); Space plays the scene or a widget's clock.
 //
 // Motion: a new section enters with `listEnter` from the direction of travel
 // (mirrored in RTL; lite fades; off is instant), a newly seen part sets its
@@ -17,8 +19,11 @@ import {
   plainLabel,
   stageAspect,
   visualText,
-  LATER_VISUAL_TYPES,
+  BUILT_WIDGETS,
   assignQuickChecks,
+  parseChart,
+  parseScene,
+  parseWidget,
   type LessonBlock,
   type LessonLang,
   type LessonSection,
@@ -59,7 +64,9 @@ import { QuickCheck } from './QuickCheck';
 import { Stage, StageControls } from './Stage';
 import { useOnline } from './useOnline';
 import { openVideo, VideoView } from './Video';
-import { CompareView, FigureView, LaterVisual, TextStage } from './visuals';
+import { StageVisual } from './StageVisual';
+import { TextStage } from './visuals';
+import { useVisualSessionState, VisualSessionProvider, type VisualSession } from './visualState';
 import { HeaderBack } from './HeaderBack';
 
 // ───────────────────────────── small parts ─────────────────────────────
@@ -166,6 +173,7 @@ function StageContent({
   onPlay,
   n,
   title,
+  predictReady,
 }: {
   section: LessonSection;
   blocks: unknown[];
@@ -175,28 +183,41 @@ function StageContent({
   onPlay: () => void;
   n: number;
   title: string;
+  predictReady: boolean;
 }) {
   const v = section.visual?.block;
   if (!v) return <TextStage n={n} title={title} summary={section.kind === 'summary'} />;
-  switch (v.type) {
-    case 'figure':
-      return <FigureView block={v} lang={lang} />;
-    case 'compare':
-      return <CompareView block={v} lang={lang} />;
-    case 'video':
-      return (
-        <VideoView
-          block={v}
-          blocks={blocks}
-          lang={lang}
-          online={online}
-          playing={playing}
-          onPlay={onPlay}
-        />
-      );
-    default:
-      return <LaterVisual block={v} lang={lang} />;
+  if (v.type === 'video')
+    return (
+      <VideoView
+        block={v}
+        blocks={blocks}
+        lang={lang}
+        online={online}
+        playing={playing}
+        onPlay={onPlay}
+      />
+    );
+  return <StageVisual block={v} lang={lang} predictReady={predictReady} />;
+}
+
+/** The predict question of a scene/widget, when the reader may read its item. */
+function predictId(v: LessonBlock | null | undefined, data: LessonData): string | null {
+  const id = v && (v.type === 'scene' || v.type === 'widget') ? v.predict_question_id : null;
+  return typeof id === 'string' && data.items[id] ? id : null;
+}
+
+/** A visual this build can't draw: its text lines go under the stage. */
+function drawnAsText(v: LessonBlock | null): boolean {
+  if (!v) return false;
+  if (v.type === 'lottie') return true;
+  if (v.type === 'scene') return !parseScene(v);
+  if (v.type === 'chart') return !parseChart(v);
+  if (v.type === 'widget') {
+    const w = parseWidget(v);
+    return !w?.spec || !(BUILT_WIDGETS as readonly string[]).includes(w.widget);
   }
+  return false;
 }
 
 // ───────────────────────────── the words of a section ─────────────────────────────
@@ -207,12 +228,14 @@ function SectionWords({
   lang,
   checks,
   count,
+  visual: vs,
 }: {
   section: LessonSection;
   data: LessonData;
   lang: LessonLang;
   checks: Map<number, string | null>;
   count: number;
+  visual: VisualSession;
 }) {
   const { t } = useI18n();
   const { colours } = useTheme();
@@ -221,7 +244,11 @@ function SectionWords({
   const v = section.visual?.block ?? null;
   const visualLines = v ? visualText(v, lang) : [];
   const hasHotspots = v?.type === 'figure' && Array.isArray(v.hotspots) && v.hotspots.length > 0;
-  const later = v && (LATER_VISUAL_TYPES as readonly string[]).includes(v.type);
+  const later = drawnAsText(v);
+  const pid = predictId(v, data);
+  const sceneCaptions = v?.type === 'scene' ? visualLines.filter((l) => l.kind === 'caption') : [];
+  const sceneLine = sceneCaptions[Math.min(vs.step, Math.max(0, sceneCaptions.length - 1))];
+  const task = v?.type === 'widget' && !later ? visualLines.find((l) => l.kind === 'text') : null;
   const transcript = v?.type === 'video' ? visualLines.find((l) => l.kind === 'transcript') : null;
   // No lead text: the visual's alt is the caption (every visual has one).
   const caption =
@@ -247,6 +274,50 @@ function SectionWords({
         <LessonText key={i} source={l.text} variant={i === 0 ? 'heading' : 'body'} />
       ))}
       {caption ? <LessonText source={caption} variant="heading" /> : null}
+      {sceneLine ? (
+        <View
+          style={[
+            styles.stepCaption,
+            { backgroundColor: colours.surface, borderColor: colours.borderStrong },
+          ]}
+          accessibilityLiveRegion="polite"
+        >
+          <Text variant="label" tone="textMuted">
+            {t('student.learn.sceneStep', {
+              n: Math.min(vs.step, sceneCaptions.length - 1) + 1,
+              total: sceneCaptions.length,
+            })}
+          </Text>
+          <Enter key={`cap-${vs.step}`} dir={0}>
+            <LessonText source={sceneLine.text} />
+          </Enter>
+        </View>
+      ) : null}
+      {pid ? (
+        <QuickCheck
+          block={{ type: 'quick_check' }}
+          item={data.items[pid] ?? null}
+          lang={lang}
+          predict
+          onResult={() => vs.setPredicted(true)}
+        />
+      ) : null}
+      {task ? (
+        <View
+          style={[
+            styles.task,
+            { backgroundColor: colours.primarySoft, borderColor: colours.primary },
+          ]}
+        >
+          <View style={styles.hint}>
+            <Icon name="sliders" size={18} tone="onPrimarySoft" />
+            <Text variant="label" tone="onPrimarySoft">
+              {t('student.learn.yourTurn')}
+            </Text>
+          </View>
+          <LessonText source={task.text} tone="onPrimarySoft" />
+        </View>
+      ) : null}
       {hasHotspots ? (
         <View style={styles.hint}>
           <Icon name="info" size={18} tone="textMuted" />
@@ -418,6 +489,7 @@ export function LessonReader({
   const [fullscreen, setFullscreen] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [done, setDone] = useState(false);
+  const vs = useVisualSessionState();
   const scroll = useRef<ComponentRef<typeof ScrollView>>(null);
 
   // Parts seen on this device (students only; a preview leaves no trace).
@@ -455,6 +527,17 @@ export function LessonReader({
   const section = model.sections[step];
   const visual = section?.visual?.block ?? null;
   const playable = Boolean(visual && visual.type === 'video' && online && !done);
+  // Scenes and the motion widget have their own Play; Space reaches them through the session.
+  const visualPlays =
+    visual?.type === 'scene' || (visual?.type === 'widget' && visual.widget === 'motion_graph');
+
+  // Each part starts its visual fresh: first step, paused, predict not yet answered.
+  const { setStep: setVisualStep, setPlaying: setVisualPlaying, setPredicted } = vs;
+  useEffect(() => {
+    setVisualStep(0);
+    setVisualPlaying(false);
+    setPredicted(false);
+  }, [step, setVisualStep, setVisualPlaying, setPredicted]);
   const play = useCallback(() => {
     if (!visual || visual.type !== 'video') return;
     if (Platform.OS === 'web') setPlaying((p) => !p);
@@ -486,9 +569,17 @@ export function LessonReader({
       }
       const a = lessonKeyAction(e.key, isRTL);
       if (!a || textMode) return;
-      if (a === 'play' && !playable) return;
+      if (a === 'play' && !playable && !visualPlays) return;
       e.preventDefault();
-      if (a === 'next') go(step + 1);
+      const scene = visual?.type === 'scene' && vs.count > 1;
+      if (a === 'next' && scene && vs.step < vs.count - 1) {
+        vs.setPlaying(false);
+        vs.setStep(vs.step + 1);
+      } else if (a === 'prev' && scene && vs.step > 0) {
+        vs.setPlaying(false);
+        vs.setStep(vs.step - 1);
+      } else if (a === 'play' && visualPlays) vs.requestPlay();
+      else if (a === 'next') go(step + 1);
       else if (a === 'prev') go(step - 1);
       else if (a === 'first') go(0);
       else if (a === 'last') go(count - 1);
@@ -497,7 +588,7 @@ export function LessonReader({
     };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
-  }, [go, step, count, isRTL, fullscreen, textMode, playable, play]);
+  }, [go, step, count, isRTL, fullscreen, textMode, playable, play, visual, visualPlays, vs]);
 
   // Opening full screen on a playing video: the modal's focus trap lands on the
   // YouTube frame, which would swallow Esc and the arrows. Hand focus back.
@@ -569,7 +660,7 @@ export function LessonReader({
       ? null
       : visual.type === 'video'
         ? 16 / 9
-        : stageAspect(visual.type);
+        : stageAspect(visual.type, visual.widget);
   const stage = (full: boolean) => (
     <Stage hue={hue} aspect={aspect} paper={Boolean(visual)} fullscreen={full} label={secTitle}>
       <Enter key={`${step}-${full}`} dir={dir} style={styles.fill}>
@@ -582,6 +673,7 @@ export function LessonReader({
           onPlay={play}
           n={n}
           title={secTitle}
+          predictReady={Boolean(predictId(visual, data))}
         />
       </Enter>
     </Stage>
@@ -666,75 +758,84 @@ export function LessonReader({
     <TextVersion sections={model.sections} objectives={model.objectives} lang={lang} />
   ) : (
     <Enter key={step} dir={dir}>
-      <SectionWords section={section} data={data} lang={lang} checks={checks} count={count} />
+      <SectionWords
+        section={section}
+        data={data}
+        lang={lang}
+        checks={checks}
+        count={count}
+        visual={vs}
+      />
     </Enter>
   );
 
   return (
-    <MathContext.Provider value={data.math}>
-      <SafeAreaView
-        style={[styles.root, { backgroundColor: colours.bg, direction: isRTL ? 'rtl' : 'ltr' }]}
-      >
-        {twoPane ? (
-          <>
-            {header}
-            {topBar}
-            <View style={[styles.panes, { paddingHorizontal: gutter, gap: gutter }]}>
-              <View style={styles.stagePane}>
-                {textMode ? null : stage(false)}
-                {controls}
-              </View>
-              <View style={styles.wordPane}>
-                <ScrollView ref={scroll} contentContainerStyle={styles.wordScroll}>
-                  {finishCard ?? words}
-                </ScrollView>
-                {nav}
-              </View>
-            </View>
-          </>
-        ) : (
-          <>
-            <ScrollView ref={scroll} style={styles.fill} contentContainerStyle={styles.grow}>
+    <VisualSessionProvider value={vs}>
+      <MathContext.Provider value={data.math}>
+        <SafeAreaView
+          style={[styles.root, { backgroundColor: colours.bg, direction: isRTL ? 'rtl' : 'ltr' }]}
+        >
+          {twoPane ? (
+            <>
               {header}
               {topBar}
-              <View style={[styles.phoneBody, { paddingHorizontal: gutter }]}>
-                {textMode ? null : stage(false)}
-                {controls}
-                {finishCard ?? words}
-              </View>
-            </ScrollView>
-            {nav}
-          </>
-        )}
-        <Modal
-          visible={fullscreen}
-          animationType="none"
-          onRequestClose={() => setFullscreen(false)}
-          supportedOrientations={['portrait', 'landscape']}
-        >
-          <MathContext.Provider value={data.math}>
-            <SafeAreaView
-              style={[
-                styles.root,
-                styles.fullRoot,
-                { backgroundColor: colours.bg, direction: isRTL ? 'rtl' : 'ltr' },
-              ]}
-            >
-              <View style={styles.fill}>{stage(true)}</View>
-              {controls}
-              {section.lead[0] ? (
-                <View style={styles.fullCaption}>
-                  <LessonText
-                    source={textOf(section.lead[0], lang)?.text ?? ''}
-                    numberOfLines={3}
-                  />
+              <View style={[styles.panes, { paddingHorizontal: gutter, gap: gutter }]}>
+                <View style={styles.stagePane}>
+                  {textMode ? null : stage(false)}
+                  {controls}
                 </View>
-              ) : null}
-            </SafeAreaView>
-          </MathContext.Provider>
-        </Modal>
-      </SafeAreaView>
-    </MathContext.Provider>
+                <View style={styles.wordPane}>
+                  <ScrollView ref={scroll} contentContainerStyle={styles.wordScroll}>
+                    {finishCard ?? words}
+                  </ScrollView>
+                  {nav}
+                </View>
+              </View>
+            </>
+          ) : (
+            <>
+              <ScrollView ref={scroll} style={styles.fill} contentContainerStyle={styles.grow}>
+                {header}
+                {topBar}
+                <View style={[styles.phoneBody, { paddingHorizontal: gutter }]}>
+                  {textMode ? null : stage(false)}
+                  {controls}
+                  {finishCard ?? words}
+                </View>
+              </ScrollView>
+              {nav}
+            </>
+          )}
+          <Modal
+            visible={fullscreen}
+            animationType="none"
+            onRequestClose={() => setFullscreen(false)}
+            supportedOrientations={['portrait', 'landscape']}
+          >
+            <MathContext.Provider value={data.math}>
+              <SafeAreaView
+                style={[
+                  styles.root,
+                  styles.fullRoot,
+                  { backgroundColor: colours.bg, direction: isRTL ? 'rtl' : 'ltr' },
+                ]}
+              >
+                <View style={styles.fill}>{stage(true)}</View>
+                {controls}
+                {section.lead[0] ? (
+                  <View style={styles.fullCaption}>
+                    <LessonText
+                      source={textOf(section.lead[0], lang)?.text ?? ''}
+                      numberOfLines={3}
+                    />
+                  </View>
+                ) : null}
+              </SafeAreaView>
+            </MathContext.Provider>
+          </Modal>
+        </SafeAreaView>
+      </MathContext.Provider>
+    </VisualSessionProvider>
   );
 }
 
@@ -758,6 +859,8 @@ const styles = StyleSheet.create({
   stepRow: { flexDirection: 'row', alignItems: 'center', gap: space.sm, flexWrap: 'wrap' },
   hint: { flexDirection: 'row', alignItems: 'center', gap: space.sm },
   lineRow: { flexDirection: 'row', gap: space.sm },
+  stepCaption: { gap: space.xs, padding: space.md, borderRadius: radius.lg, borderWidth: 2 },
+  task: { gap: space.xs, padding: space.md, borderRadius: radius.lg, borderWidth: 2 },
   collapsible: { gap: space.sm },
   moreBody: { gap: space.md },
   moreItem: { gap: space.sm },

@@ -84,7 +84,9 @@ sanitised and within `visualBudget` (≤ 60 KB, ≤ 400 elements). No schema cha
  "steps": [{"caption": {"en": "", "ur": ""}, "ms": 900,
             "set": {"car": {"x": 120, "y": 0, "scale": 1, "rotate": 0, "opacity": 1},
                     "arrow": {"opacity": 0}}}],
+ "pivots": {"car": [40, 108]},
  "predict_question_id": "uuid|null"}
+// pivots (optional): turning point per layer in SVG units for scale/rotate; default = the layer's box centre.
 
 {"type": "chart", "concept_id": "…", "alt": {…}, "kind": "bar|line|pie|scatter|table",
  "x": {"label": {"en": "", "ur": ""}, "unit": "s", "values": [0, 1, 2, 3]},
@@ -96,6 +98,12 @@ sanitised and within `visualBudget` (≤ 60 KB, ≤ 400 elements). No schema cha
  "widget": "number_line|fraction_bars|function_graph|geometry_shape|angle|balance|probability|motion_graph|circuit",
  "params": {"expr": "m*x + c", "sliders": {"m": [-5, 5, 1, 1], "c": [-10, 10, 1, 2]}, "x": [-10, 10]},
  "task": {"en": "", "ur": ""}, "predict_question_id": "uuid|null"}
+// params per built widget (prompt 33; sliders are [min, max, step, start]):
+//   function_graph {"expr", "sliders", "x": [x0, x1], "y": [y0, y1]}
+//   fraction_bars  {"bars": [{"den": 2, "shaded": 1}, …] (≤ 4), "max_den": 12}
+//   number_line    {"min", "max", "step", "start", "jump", "target"} (≤ 200 steps)
+//   motion_graph   {"u", "a", "t": seconds, "sliders": {"u": […], "a": […]}, "graph": "distance|speed"}
+// Other catalogue widgets show their text version until built.
 
 {"type": "compare", "concept_id": "…", "alt": {…},
  "left":  {"title": {"en": "", "ur": ""}, "svg": "…", "text": {"en": "", "ur": ""}, "tone": "wrong_idea"},

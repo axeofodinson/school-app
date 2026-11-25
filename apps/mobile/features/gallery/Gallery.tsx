@@ -3,6 +3,7 @@ import { useEffect, useState, type ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { translate, useI18n } from '../../i18n';
+import { VisualsSection } from './VisualsSection';
 import {
   Badge,
   Button,
@@ -206,6 +207,7 @@ function GalleryBody({ controls: c }: { controls: Controls }) {
         <NavigationSection />
         <LayoutSection />
         <MotionSection />
+        <VisualsSection />
       </View>
     </Screen>
   );
