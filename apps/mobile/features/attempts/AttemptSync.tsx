@@ -17,9 +17,13 @@ import { userQueueStores } from '../../lib/userQueue';
 import { useQueueRunner } from '../../lib/useQueueRunner';
 import type { SyncStatus } from '../../ui';
 import { useAuth } from '../auth/AuthProvider';
+import { PRACTICE_KIND, sendPracticeAttempt } from '../practice/api';
 import { sendSubmission } from './api';
 
-const SENDERS = { [SUBMISSION_KIND]: sendSubmission };
+// Practice sets ride along (sent from every student screen), but the tests pill
+// counts only test submissions.
+const SENDERS = { [SUBMISSION_KIND]: sendSubmission, [PRACTICE_KIND]: sendPracticeAttempt };
+const COUNTED = [SUBMISSION_KIND];
 
 export type SubmitResult = 'submitted' | 'queued' | 'rejected' | 'error';
 
@@ -43,6 +47,7 @@ export function AttemptSyncProvider({ children }: { children: ReactNode }) {
   const { items, status, pending, syncedTick, flush, flushNow } = useQueueRunner(
     stores?.queue ?? null,
     SENDERS,
+    COUNTED,
   );
 
   const submit = useCallback<AttemptSyncValue['submit']>(
