@@ -135,6 +135,11 @@ export const iconData = {
     { t: 'path', d: 'm3 17 2 2 4-4' },
     { t: 'path', d: 'm3 7 2 2 4-4' },
   ],
+  upload: [
+    { t: 'path', d: 'M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4' },
+    { t: 'path', d: 'm17 8-5-5-5 5' },
+    { t: 'path', d: 'M12 3v12' },
+  ],
   user: [
     { t: 'path', d: 'M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2' },
     { t: 'circle', cx: 12, cy: 7, r: 4 },

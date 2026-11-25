@@ -4,3 +4,4 @@ dist
 **/locales/*.json
 **/db-types.ts
 expo-env.d.ts
+apps/mobile/public/vendor
