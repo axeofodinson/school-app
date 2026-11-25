@@ -9,6 +9,8 @@ import { Button, Card, Icon, Reveal, Screen, Text, useTheme, type IconName } fro
 import { PatternFill } from '../../ui/Pattern';
 import { space, subjectHues, type SubjectHue } from '../../ui/tokens';
 import { StudentHeader } from '../attempts/Header';
+import { useHome } from '../attempts/useHome';
+import { LessonList } from '../learn/LessonList';
 import { useStudentNav } from './StudentNav';
 
 const STEPS: { icon: IconName; key: 'followUps' | 'practice' | 'revise'; hue: SubjectHue }[] = [
@@ -22,6 +24,16 @@ export function PrepareScreen() {
   const router = useRouter();
   const { colours, scheme } = useTheme();
   const nav = useStudentNav('prepare');
+  const home = useHome(false);
+  // The class whose lessons to list: undefined while loading, null = every class.
+  const classId =
+    home.state?.status === 'ready'
+      ? typeof home.state.data.enrollment === 'object'
+        ? home.state.data.enrollment.classId
+        : null
+      : home.state?.status === 'error'
+        ? null
+        : undefined;
   const outline = scheme === 'dark' ? colours.borderStrong : colours.ink;
   return (
     <Screen
@@ -35,6 +47,9 @@ export function PrepareScreen() {
       {...nav}
     >
       <Reveal index={1}>
+        <LessonList classId={classId} />
+      </Reveal>
+      <Reveal index={2}>
         <View
           style={[
             styles.soon,
@@ -54,7 +69,7 @@ export function PrepareScreen() {
         </View>
       </Reveal>
       {STEPS.map((s, i) => (
-        <Reveal key={s.key} index={i + 2}>
+        <Reveal key={s.key} index={i + 3}>
           <Card>
             <View style={styles.row}>
               <View
@@ -75,7 +90,7 @@ export function PrepareScreen() {
           </Card>
         </Reveal>
       ))}
-      <Reveal index={5}>
+      <Reveal index={6}>
         <Button
           title={t('student.prepare.goTests')}
           icon="clipboard"

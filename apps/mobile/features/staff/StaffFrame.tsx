@@ -68,6 +68,13 @@ export function staffPlaces(isAdmin: boolean): StaffPlace[] {
       hint: 'staff.curriculum.navHint',
     },
     {
+      key: 'lessons',
+      href: '/lessons',
+      icon: 'eye',
+      title: 'staff.lessons.title',
+      hint: 'staff.lessons.navHint',
+    },
+    {
       key: 'importer',
       href: '/importer',
       icon: 'upload',

@@ -2147,6 +2147,16 @@ export type Database = {
       };
       register_push_token: { Args: { p_device_info?: Json; p_token: string }; Returns: undefined };
       retire_import_batch: { Args: { p_batch: string; p_note: string }; Returns: Json };
+      review_lesson: {
+        Args: {
+          p_content: string;
+          p_decision: string;
+          p_notes?: string;
+          p_translation_ok?: boolean;
+          p_version: number;
+        };
+        Returns: Json;
+      };
       save_exam_answer: {
         Args: { p_answer: Json; p_client_at?: string; p_question: string; p_session: string };
         Returns: Json;

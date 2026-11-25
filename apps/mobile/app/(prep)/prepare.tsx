@@ -2,6 +2,7 @@ import { SCHOOL_ONLY_FEATURES, reliefPolicyFor } from '@school/core';
 import { StyleSheet, View } from 'react-native';
 
 import { AccountActions } from '../../features/auth/AccountActions';
+import { LessonList } from '../../features/learn/LessonList';
 import { useAuth } from '../../features/auth/AuthProvider';
 import { useI18n } from '../../i18n';
 import { Badge, Card, EmptyState, Icon, Screen, Text } from '../../ui';
@@ -39,6 +40,8 @@ export default function PrepHome() {
           </View>
         </Card>
       ) : null}
+
+      <LessonList classId={null} root="/topic" />
 
       <EmptyState
         icon="lightbulb"
