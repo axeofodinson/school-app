@@ -2161,6 +2161,62 @@
       "cancel": "Cancel",
       "addsToTopic": "This topic is already there: %{concepts} of its concepts are reused, and %{lessons} lessons it already has are left out."
     },
+    "lessons": {
+      "title": "Lessons",
+      "kicker": "Learn",
+      "subtitle": "Preview every lesson as students will see it, then approve it, send it back or retire it.",
+      "navHint": "Preview and approve lessons",
+      "show": "Show",
+      "filter": {
+        "all": "All",
+        "draft": "To review",
+        "approved": "Approved",
+        "retired": "Retired"
+      },
+      "status": {
+        "draft": "Draft",
+        "reviewed": "Reviewed",
+        "approved": "Approved",
+        "retired": "Retired"
+      },
+      "lesson": "Lesson",
+      "alternative": "Another way",
+      "version": "v%{v}",
+      "aiDraft": "AI draft",
+      "loadError": "Couldn't load lessons",
+      "notReady": "Lessons aren't switched on yet",
+      "notReadyBody": "Run db/017, db/023 and db/031 on this project first (see db/README.md).",
+      "none": "No lessons in this subject yet",
+      "noneBody": "Import a topic file with a lesson in it; it arrives here as a draft.",
+      "noneInFilter": "Nothing here",
+      "noneInFilterBody": "Try another filter or chapter.",
+      "openImporter": "Open the importer",
+      "preview": "Preview",
+      "approve": "Approve",
+      "approved": "Approved",
+      "sendBack": "Send back",
+      "retire": "Retire",
+      "sendBackTitle": "Send this lesson back",
+      "sendBackBody": "Say what needs to change. Students stop seeing it until it is approved again.",
+      "retireTitle": "Retire this lesson",
+      "retireBody": "Students stop seeing it. Nothing is deleted, and the history stays.",
+      "reason": "Reason",
+      "versionsOfTopic": "In this topic",
+      "gone": "This lesson isn't here",
+      "goneBody": "It may belong to a subject you don't teach.",
+      "done": {
+        "approve": "Approved. Students can read it now.",
+        "request_changes": "Sent back.",
+        "reject": "Retired."
+      },
+      "errors": {
+        "stale": "Someone changed this lesson. It has been reloaded: look again before deciding.",
+        "reason": "Write a reason first.",
+        "retired": "This lesson is retired.",
+        "notReady": "Lesson approval isn't switched on yet: run db/033 on this project.",
+        "forbidden": "Only a teacher of this subject (or an admin) can decide on this lesson."
+      }
+    },
     "review": {
       "title": "Review queue",
       "kicker": "Check before students see it",
@@ -2355,62 +2411,6 @@
         "badConcept": "That concept isn't in this chapter, or isn't yours.",
         "conceptRequired": "Tag a concept before approving.",
         "scopes": "Tick at least one place it can be used."
-      }
-    },
-    "lessons": {
-      "title": "Lessons",
-      "kicker": "Learn",
-      "subtitle": "Preview every lesson as students will see it, then approve it, send it back or retire it.",
-      "navHint": "Preview and approve lessons",
-      "show": "Show",
-      "filter": {
-        "all": "All",
-        "draft": "To review",
-        "approved": "Approved",
-        "retired": "Retired"
-      },
-      "status": {
-        "draft": "Draft",
-        "reviewed": "Reviewed",
-        "approved": "Approved",
-        "retired": "Retired"
-      },
-      "lesson": "Lesson",
-      "alternative": "Another way",
-      "version": "v%{v}",
-      "aiDraft": "AI draft",
-      "loadError": "Couldn't load lessons",
-      "notReady": "Lessons aren't switched on yet",
-      "notReadyBody": "Run db/017, db/023 and db/031 on this project first (see db/README.md).",
-      "none": "No lessons in this subject yet",
-      "noneBody": "Import a topic file with a lesson in it; it arrives here as a draft.",
-      "noneInFilter": "Nothing here",
-      "noneInFilterBody": "Try another filter or chapter.",
-      "openImporter": "Open the importer",
-      "preview": "Preview",
-      "approve": "Approve",
-      "approved": "Approved",
-      "sendBack": "Send back",
-      "retire": "Retire",
-      "sendBackTitle": "Send this lesson back",
-      "sendBackBody": "Say what needs to change. Students stop seeing it until it is approved again.",
-      "retireTitle": "Retire this lesson",
-      "retireBody": "Students stop seeing it. Nothing is deleted, and the history stays.",
-      "reason": "Reason",
-      "versionsOfTopic": "In this topic",
-      "gone": "This lesson isn't here",
-      "goneBody": "It may belong to a subject you don't teach.",
-      "done": {
-        "approve": "Approved. Students can read it now.",
-        "request_changes": "Sent back.",
-        "reject": "Retired."
-      },
-      "errors": {
-        "stale": "Someone changed this lesson. It has been reloaded: look again before deciding.",
-        "reason": "Write a reason first.",
-        "retired": "This lesson is retired.",
-        "notReady": "Lesson approval isn't switched on yet: run db/033 on this project.",
-        "forbidden": "Only a teacher of this subject (or an admin) can decide on this lesson."
       }
     }
   }

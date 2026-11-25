@@ -2161,6 +2161,62 @@
       "cancel": "Cancel // TODO: ur",
       "addsToTopic": "This topic is already there: %{concepts} of its concepts are reused, and %{lessons} lessons it already has are left out. // TODO: ur"
     },
+    "lessons": {
+      "title": "Lessons // TODO: ur",
+      "kicker": "Learn // TODO: ur",
+      "subtitle": "Preview every lesson as students will see it, then approve it, send it back or retire it. // TODO: ur",
+      "navHint": "Preview and approve lessons // TODO: ur",
+      "show": "Show // TODO: ur",
+      "filter": {
+        "all": "All // TODO: ur",
+        "draft": "To review // TODO: ur",
+        "approved": "Approved // TODO: ur",
+        "retired": "Retired // TODO: ur"
+      },
+      "status": {
+        "draft": "Draft // TODO: ur",
+        "reviewed": "Reviewed // TODO: ur",
+        "approved": "Approved // TODO: ur",
+        "retired": "Retired // TODO: ur"
+      },
+      "lesson": "Lesson // TODO: ur",
+      "alternative": "Another way // TODO: ur",
+      "version": "v%{v} // TODO: ur",
+      "aiDraft": "AI draft // TODO: ur",
+      "loadError": "Couldn't load lessons // TODO: ur",
+      "notReady": "Lessons aren't switched on yet // TODO: ur",
+      "notReadyBody": "Run db/017, db/023 and db/031 on this project first (see db/README.md). // TODO: ur",
+      "none": "No lessons in this subject yet // TODO: ur",
+      "noneBody": "Import a topic file with a lesson in it; it arrives here as a draft. // TODO: ur",
+      "noneInFilter": "Nothing here // TODO: ur",
+      "noneInFilterBody": "Try another filter or chapter. // TODO: ur",
+      "openImporter": "Open the importer // TODO: ur",
+      "preview": "Preview // TODO: ur",
+      "approve": "Approve // TODO: ur",
+      "approved": "Approved // TODO: ur",
+      "sendBack": "Send back // TODO: ur",
+      "retire": "Retire // TODO: ur",
+      "sendBackTitle": "Send this lesson back // TODO: ur",
+      "sendBackBody": "Say what needs to change. Students stop seeing it until it is approved again. // TODO: ur",
+      "retireTitle": "Retire this lesson // TODO: ur",
+      "retireBody": "Students stop seeing it. Nothing is deleted, and the history stays. // TODO: ur",
+      "reason": "Reason // TODO: ur",
+      "versionsOfTopic": "In this topic // TODO: ur",
+      "gone": "This lesson isn't here // TODO: ur",
+      "goneBody": "It may belong to a subject you don't teach. // TODO: ur",
+      "done": {
+        "approve": "Approved. Students can read it now. // TODO: ur",
+        "request_changes": "Sent back. // TODO: ur",
+        "reject": "Retired. // TODO: ur"
+      },
+      "errors": {
+        "stale": "Someone changed this lesson. It has been reloaded: look again before deciding. // TODO: ur",
+        "reason": "Write a reason first. // TODO: ur",
+        "retired": "This lesson is retired. // TODO: ur",
+        "notReady": "Lesson approval isn't switched on yet: run db/033 on this project. // TODO: ur",
+        "forbidden": "Only a teacher of this subject (or an admin) can decide on this lesson. // TODO: ur"
+      }
+    },
     "review": {
       "title": "Review queue // TODO: ur",
       "kicker": "Check before students see it // TODO: ur",
@@ -2355,62 +2411,6 @@
         "badConcept": "That concept isn't in this chapter, or isn't yours. // TODO: ur",
         "conceptRequired": "Tag a concept before approving. // TODO: ur",
         "scopes": "Tick at least one place it can be used. // TODO: ur"
-      }
-    },
-    "lessons": {
-      "title": "Lessons // TODO: ur",
-      "kicker": "Learn // TODO: ur",
-      "subtitle": "Preview every lesson as students will see it, then approve it, send it back or retire it. // TODO: ur",
-      "navHint": "Preview and approve lessons // TODO: ur",
-      "show": "Show // TODO: ur",
-      "filter": {
-        "all": "All // TODO: ur",
-        "draft": "To review // TODO: ur",
-        "approved": "Approved // TODO: ur",
-        "retired": "Retired // TODO: ur"
-      },
-      "status": {
-        "draft": "Draft // TODO: ur",
-        "reviewed": "Reviewed // TODO: ur",
-        "approved": "Approved // TODO: ur",
-        "retired": "Retired // TODO: ur"
-      },
-      "lesson": "Lesson // TODO: ur",
-      "alternative": "Another way // TODO: ur",
-      "version": "v%{v} // TODO: ur",
-      "aiDraft": "AI draft // TODO: ur",
-      "loadError": "Couldn't load lessons // TODO: ur",
-      "notReady": "Lessons aren't switched on yet // TODO: ur",
-      "notReadyBody": "Run db/017, db/023 and db/031 on this project first (see db/README.md). // TODO: ur",
-      "none": "No lessons in this subject yet // TODO: ur",
-      "noneBody": "Import a topic file with a lesson in it; it arrives here as a draft. // TODO: ur",
-      "noneInFilter": "Nothing here // TODO: ur",
-      "noneInFilterBody": "Try another filter or chapter. // TODO: ur",
-      "openImporter": "Open the importer // TODO: ur",
-      "preview": "Preview // TODO: ur",
-      "approve": "Approve // TODO: ur",
-      "approved": "Approved // TODO: ur",
-      "sendBack": "Send back // TODO: ur",
-      "retire": "Retire // TODO: ur",
-      "sendBackTitle": "Send this lesson back // TODO: ur",
-      "sendBackBody": "Say what needs to change. Students stop seeing it until it is approved again. // TODO: ur",
-      "retireTitle": "Retire this lesson // TODO: ur",
-      "retireBody": "Students stop seeing it. Nothing is deleted, and the history stays. // TODO: ur",
-      "reason": "Reason // TODO: ur",
-      "versionsOfTopic": "In this topic // TODO: ur",
-      "gone": "This lesson isn't here // TODO: ur",
-      "goneBody": "It may belong to a subject you don't teach. // TODO: ur",
-      "done": {
-        "approve": "Approved. Students can read it now. // TODO: ur",
-        "request_changes": "Sent back. // TODO: ur",
-        "reject": "Retired. // TODO: ur"
-      },
-      "errors": {
-        "stale": "Someone changed this lesson. It has been reloaded: look again before deciding. // TODO: ur",
-        "reason": "Write a reason first. // TODO: ur",
-        "retired": "This lesson is retired. // TODO: ur",
-        "notReady": "Lesson approval isn't switched on yet: run db/033 on this project. // TODO: ur",
-        "forbidden": "Only a teacher of this subject (or an admin) can decide on this lesson. // TODO: ur"
       }
     }
   }
