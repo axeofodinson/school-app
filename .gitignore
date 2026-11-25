@@ -65,3 +65,6 @@ Thumbs.db
 .vscode/*
 !.vscode/extensions.json
 scripts/audio/out/
+
+# Vendored MathJax (copied from node_modules by scripts/vendor-mathjax.mjs)
+apps/mobile/public/vendor/

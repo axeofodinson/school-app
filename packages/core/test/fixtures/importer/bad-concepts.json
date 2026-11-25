@@ -1,0 +1,9 @@
+{
+  "topic": { "title_en": "Loops" },
+  "concepts": [
+    { "key": "a", "title_en": "A", "requires": ["b"] },
+    { "key": "b", "title_en": "B", "requires": ["a"] },
+    { "key": "a", "title_en": "A again" }
+  ],
+  "questions": []
+}

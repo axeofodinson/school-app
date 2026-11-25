@@ -34,7 +34,7 @@ Targets from one codebase:
 |---|---|---|---|
 | Identity & Roster | auth, shared-device mode | session namespace | profiles, students, enrollments, teacher_assignments |
 | Curriculum | editors | tree utils | curricula, chapters, topics, concepts, concept_prerequisites |
-| Question Bank + Review | importer UI, review queue | importer validator, dedupe | questions, question_versions, item_approvals, item_reviews, import_batches |
+| Question Bank + Review | importer UI (`/importer`), review queue | `packages/core/src/importer` (validator, dedupe, maths) + `src/visuals` (SVG safety, block checks, expression parser) | questions, question_versions, item_approvals, item_reviews, import_batches, math_svgs |
 | Learning | lesson reader, visual blocks (scene, chart, widget, figure, compare, video) | block schema, SVG sanitiser, safe maths parser (`packages/core/visuals`) | learning_content(+_versions) |
 | Practice | practice/diagnostic screens | item selection, scoring | practice_attempts |
 | Mastery | Prepare tab, follow-ups | mastery rule, relief rule, revision schedule | concept_mastery, follow_ups, gate_overrides |
@@ -77,7 +77,7 @@ unit-tested in Node, the same habit as today's `scripts/verify-*.mjs`.
 - Rules for conflicts: `LMS_AUDIT.md` §3.3.
 
 ## 6. Rendering
-- Math pre-rendered to SVG at import. `react-native-svg` everywhere.
+- Math pre-rendered to SVG at import, once per distinct expression into `math_svgs` (db/031, DECISIONS #103); MathJax runs only on the importer screen, loaded from `/vendor/mathjax` (never in the app bundle, never a CDN). `react-native-svg` everywhere.
 - Urdu: Noto Nastaliq (TTF native, WOFF2 subset web). Direction from JS locale state (never sticky `I18nManager.forceRTL`, see `App.js`).
 - Video: YouTube unlisted (iframe on web, WebView on native). Online only.
 - Print: HTML → A4 (web print / `expo-print`).

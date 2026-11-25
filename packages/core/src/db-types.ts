@@ -2,8 +2,8 @@
 // Source: local DB harness (TEST_PLAN DB-1) in the dev order: db/setup.sql +
 // db/002–016 + 024–026 (production 2026-11-25) + 018 (cut-over, dev) + 028
 // (attendance) + 029 (messaging) + 030 (question audio) + 017 + 023 (prompt 20:
-// curriculum, question bank versions, learner state, access tiers). Draft 022
-// excluded. Via
+// curriculum, question bank versions, learner state, access tiers) + 031
+// (prompt 21: importer batches, math_svgs, import RPCs). Draft 022 excluded. Via
 //   npx supabase@3.3.0 gen types typescript --db-url <harness> --schema public
 // Regenerate after each migration Hassan runs (see packages/core/README.md).
 
@@ -994,36 +994,84 @@ export type Database = {
       };
       import_batches: {
         Row: {
+          chapter_id: string | null;
           created_at: string;
+          file_name: string | null;
           id: string;
           imported_by: string;
+          is_test_data: boolean;
           origin: string;
+          question_count: number;
           report: Json | null;
+          retire_note: string | null;
+          retired_at: string | null;
+          retired_by: string | null;
           source_note: string | null;
+          status: string;
+          topic_id: string | null;
         };
         ComputedFields: never;
         Insert: {
+          chapter_id?: string | null;
           created_at?: string;
+          file_name?: string | null;
           id?: string;
           imported_by: string;
+          is_test_data?: boolean;
           origin: string;
+          question_count?: number;
           report?: Json | null;
+          retire_note?: string | null;
+          retired_at?: string | null;
+          retired_by?: string | null;
           source_note?: string | null;
+          status?: string;
+          topic_id?: string | null;
         };
         Update: {
+          chapter_id?: string | null;
           created_at?: string;
+          file_name?: string | null;
           id?: string;
           imported_by?: string;
+          is_test_data?: boolean;
           origin?: string;
+          question_count?: number;
           report?: Json | null;
+          retire_note?: string | null;
+          retired_at?: string | null;
+          retired_by?: string | null;
           source_note?: string | null;
+          status?: string;
+          topic_id?: string | null;
         };
         Relationships: [
+          {
+            foreignKeyName: 'import_batches_chapter_id_fkey';
+            columns: ['chapter_id'];
+            isOneToOne: false;
+            referencedRelation: 'chapters';
+            referencedColumns: ['id'];
+          },
           {
             foreignKeyName: 'import_batches_imported_by_fkey';
             columns: ['imported_by'];
             isOneToOne: false;
             referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'import_batches_retired_by_fkey';
+            columns: ['retired_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'import_batches_topic_id_fkey';
+            columns: ['topic_id'];
+            isOneToOne: false;
+            referencedRelation: 'topics';
             referencedColumns: ['id'];
           },
         ];
@@ -1135,6 +1183,7 @@ export type Database = {
           created_by: string | null;
           current_version: number;
           id: string;
+          import_batch_id: string | null;
           is_test_data: boolean;
           kind: string;
           origin: string;
@@ -1150,6 +1199,7 @@ export type Database = {
           created_by?: string | null;
           current_version?: number;
           id?: string;
+          import_batch_id?: string | null;
           is_test_data?: boolean;
           kind?: string;
           origin?: string;
@@ -1164,6 +1214,7 @@ export type Database = {
           created_by?: string | null;
           current_version?: number;
           id?: string;
+          import_batch_id?: string | null;
           is_test_data?: boolean;
           kind?: string;
           origin?: string;
@@ -1185,6 +1236,13 @@ export type Database = {
             columns: ['created_by'];
             isOneToOne: false;
             referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'learning_content_import_batch_id_fkey';
+            columns: ['import_batch_id'];
+            isOneToOne: false;
+            referencedRelation: 'import_batches';
             referencedColumns: ['id'];
           },
           {
@@ -1236,6 +1294,39 @@ export type Database = {
           },
           {
             foreignKeyName: 'learning_content_versions_created_by_fkey';
+            columns: ['created_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      math_svgs: {
+        Row: {
+          created_at: string;
+          created_by: string | null;
+          key: string;
+          renderer: string;
+          svg: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          created_by?: string | null;
+          key: string;
+          renderer?: string;
+          svg: string;
+        };
+        Update: {
+          created_at?: string;
+          created_by?: string | null;
+          key?: string;
+          renderer?: string;
+          svg?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'math_svgs_created_by_fkey';
             columns: ['created_by'];
             isOneToOne: false;
             referencedRelation: 'profiles';
@@ -1979,6 +2070,17 @@ export type Database = {
       gen_random_uuid: { Args: Record<PropertyKey, never>; Returns: string };
       gen_salt: { Args: { '': string }; Returns: string };
       grade_exam_session: { Args: { p_session: string }; Returns: undefined };
+      import_content: { Args: { p_chunk: Json }; Returns: Json };
+      import_find_matches: {
+        Args: { p_subject: string; p_texts: string[] };
+        Returns: {
+          body: Json;
+          idx: number;
+          question_id: string;
+          similarity: number;
+          status: string;
+        }[];
+      };
       is_approved: { Args: { iid: string; kind: string; sc: string }; Returns: boolean };
       is_dev: { Args: Record<PropertyKey, never>; Returns: boolean };
       is_oauth_provider: { Args: { p: string }; Returns: boolean };
@@ -2006,6 +2108,7 @@ export type Database = {
       my_student_id: { Args: Record<PropertyKey, never>; Returns: string };
       pgp_armor_headers: { Args: { '': string }; Returns: Record<string, unknown>[] };
       provision_student_login: { Args: { p_pin: string; p_student_id: string }; Returns: string };
+      question_match_text: { Args: { body: Json }; Returns: string };
       record_attendance: {
         Args: {
           p_class_id: string;
@@ -2043,6 +2146,7 @@ export type Database = {
         };
       };
       register_push_token: { Args: { p_device_info?: Json; p_token: string }; Returns: undefined };
+      retire_import_batch: { Args: { p_batch: string; p_note: string }; Returns: Json };
       save_exam_answer: {
         Args: { p_answer: Json; p_client_at?: string; p_question: string; p_session: string };
         Returns: Json;
