@@ -153,3 +153,7 @@ assessments(type='project', project_id) ─┬─ project_teams → project_team
 storage bucket project-evidence: {assessment_id}/{enrollment_id}/{file}
 ```
 Constraints: `source <> 'school'` requires `licence_note` (third-party content only with permission); `type='project'` ⇔ `project_id` set; one team per student per assignment; scores ≤ criterion `max_points`; criteria retired, never deleted. Scores are written only through `score_project()` (teacher of the class or staff), which can apply one score to a whole team and then records each total through `record_grade()`.
+
+## 7. Attendance (`db/028_attendance_audit.sql`, draft)
+
+One row per enrollment per day (`attendance`, unique `(enrollment_id, on_date)`; status present / absent / late / leave), as in setup.sql, plus `marked_at`, `edit_count`, `last_edited_at`. `attendance_edits(attendance_id, prev_status, new_status, reason, edited_by, edited_at)` is append-only history written only by the audit trigger. The new app writes through `record_attendance(class, day, marks, reason, taken_at)`; the old app's plain upsert still works and is audited. Read functions `attendance_day_summary(year, day)` and `attendance_student_summary(class, year, from, to)` are SECURITY INVOKER (RLS scopes them). Attendance attaches to the enrollment (rule 2); nothing is deleted from the app (DECISIONS #83).

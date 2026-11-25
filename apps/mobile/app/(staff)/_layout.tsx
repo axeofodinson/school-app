@@ -1,5 +1,6 @@
 import { Stack } from 'expo-router';
 
+import { AttendanceSyncProvider } from '../../features/attendance/AttendanceSync';
 import { ThemeProvider } from '../../ui';
 
 // Screens shared by teachers and admins (question bank, assessment builder).
@@ -8,7 +9,10 @@ import { ThemeProvider } from '../../ui';
 export default function StaffLayout() {
   return (
     <ThemeProvider presentation="staff">
-      <Stack screenOptions={{ headerShown: false }} />
+      {/* Attendance saved offline sends from any staff screen. */}
+      <AttendanceSyncProvider>
+        <Stack screenOptions={{ headerShown: false }} />
+      </AttendanceSyncProvider>
     </ThemeProvider>
   );
 }

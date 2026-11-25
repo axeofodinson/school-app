@@ -20,6 +20,16 @@ export default function TeacherHome() {
         <Text>{t('teacher.home.welcome', { name: profile.full_name })}</Text>
       ) : null}
       <ListItem
+        title={t('console.attendance.title')}
+        subtitle={t('staff.home.attendanceHint')}
+        onPress={() => router.push('/attendance')}
+      />
+      <ListItem
+        title={t('staff.attendanceSummary.title')}
+        subtitle={t('staff.home.attendanceSummaryHint')}
+        onPress={() => router.push('/attendance-summary')}
+      />
+      <ListItem
         title={t('teacher.questions.title')}
         subtitle={t('staff.home.questionsHint')}
         onPress={() => router.push('/questions')}

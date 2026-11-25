@@ -33,7 +33,7 @@ Prompts that don't build features:
 | Create the dev Supabase project + add its keys (`docs/environment.md`) | 04, 62, testing from 03 on (done: project exists) |
 | Paste `scripts/seed/sql/seed-dev.sql` into the dev project's SQL Editor and Run | 03 testing, 10 onward |
 | Backups setup: age key (offline), private `school-app-backups` repo, token + 3 settings, merge to `main`, run once (`docs/backup-restore.md`) | OPS-backup (built), before OPS-remove-legacy |
-| Run migrations in the Supabase SQL Editor when a session hands them over | 05, 11 (`db/025`), 12 (`db/026`), 13 (`db/018`, at the cut-over), 20 onward |
+| Run migrations in the Supabase SQL Editor when a session hands them over | 05, 11 (`db/025`), 12 (`db/026`), 13 (`db/018`, at the cut-over), 14 (`db/028`), 20 onward |
 | Google OAuth credentials (Google Cloud console) | 05 |
 
 All open questions from `LMS_AUDIT.md` §7 are answered (DECISIONS #22–29).
@@ -65,7 +65,7 @@ Deferred: parents (81) and iOS (82).
 
 | ✓ | Prompt | Model | Depends on | Blocked by | Notes |
 |---|---|---|---|---|---|
-| [ ] | [14 Rebuild: attendance](14-attendance.md) | Opus | 13 | — | |
+| [x] | [14 Rebuild: attendance](14-attendance.md) | Opus | 13 | — | Code done 2026-11-25: `features/attendance` (teacher marks a class in one save, offline queue, past days with reason + history; admin day/class summaries; student calendar + %), core `attendance.ts` (+29 tests), `db/028` draft (`record_attendance`, audit history, guard; independent of 017/018); AD-1 SQL pass, AD-2 web e2e 68/68; **dev project + Android unverified (AD-3): Hassan runs 028 on dev first** |
 | [ ] | [15 Rebuild: messaging and push notifications](15-messaging-push.md) | Opus | 13 | — | |
 | [ ] | [16 Rebuild: pre-reader tap-image questions (PG / young kids)](16-prereader.md) | Opus | 11 | — | |
 

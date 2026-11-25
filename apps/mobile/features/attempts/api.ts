@@ -16,6 +16,7 @@ import {
   type SyncItem,
 } from '@school/core';
 
+import { readCache, writeCache } from '../../lib/cache';
 import { supabase } from '../../lib/supabase';
 import {
   classifyError,
@@ -71,20 +72,6 @@ export interface Home {
 
 const HOME_CACHE = 'cache/attempts.home';
 const paperCache = (assessmentId: string) => `cache/attempts.paper.${assessmentId}`;
-
-async function readCache<T>(store: ScopedStore | null, key: string): Promise<T | null> {
-  if (!store) return null;
-  try {
-    const raw = await store.getItem(key);
-    return raw ? (JSON.parse(raw) as T) : null;
-  } catch {
-    return null;
-  }
-}
-async function writeCache(store: ScopedStore | null, key: string, value: unknown) {
-  if (!store) return;
-  await store.setItem(key, JSON.stringify(value)).catch(() => undefined);
-}
 
 interface EnrollmentRow {
   id: string;

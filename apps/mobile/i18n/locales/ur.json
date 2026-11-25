@@ -10,6 +10,29 @@
     "toast": {
       "newMessage": "نیا میسج",
       "hint": "میسجز کھولنے کے لیے ٹیپ کرو، ہٹانے کے لیے اوپر سوائپ کرو۔"
+    },
+    "months": {
+      "m01": "January // TODO: ur",
+      "m02": "February // TODO: ur",
+      "m03": "March // TODO: ur",
+      "m04": "April // TODO: ur",
+      "m05": "May // TODO: ur",
+      "m06": "June // TODO: ur",
+      "m07": "July // TODO: ur",
+      "m08": "August // TODO: ur",
+      "m09": "September // TODO: ur",
+      "m10": "October // TODO: ur",
+      "m11": "November // TODO: ur",
+      "m12": "December // TODO: ur"
+    },
+    "weekdaysShort": {
+      "d0": "Mon // TODO: ur",
+      "d1": "Tue // TODO: ur",
+      "d2": "Wed // TODO: ur",
+      "d3": "Thu // TODO: ur",
+      "d4": "Fri // TODO: ur",
+      "d5": "Sat // TODO: ur",
+      "d6": "Sun // TODO: ur"
     }
   },
   "auth": {
@@ -383,7 +406,17 @@
       "errors": {
         "network": "انٹرنیٹ نہیں ہے۔ کنکشن چیک کر کے دوبارہ کوشش کرو۔",
         "unknown": "کچھ گڑبڑ ہو گئی۔ دوبارہ کوشش کرو۔"
-      }
+      },
+      "monthRate": "%{rate}% this month // TODO: ur",
+      "yearRate": "%{rate}% this year // TODO: ur",
+      "noRate": "No school days counted yet // TODO: ur",
+      "rateNote": "Late still counts as being at school. Leave doesn't count against you. // TODO: ur",
+      "prevMonth": "Previous month // TODO: ur",
+      "nextMonth": "Next month // TODO: ur",
+      "dayLabel": "%{day} %{month}: %{status} // TODO: ur",
+      "notMarked": "not marked // TODO: ur",
+      "offline": "No internet. This is what your device saved last time. // TODO: ur",
+      "monthEmpty": "Nothing marked this month // TODO: ur"
     },
     "inbox": {
       "title": "میسجز",
@@ -1325,7 +1358,9 @@
       "questionsHint": "Write and edit questions for your chapters // TODO: ur",
       "assessmentsHint": "Build tests, quizzes and exams, then publish them // TODO: ur",
       "gradingHint": "Enter and correct grades, with the reason kept // TODO: ur",
-      "overdueHint": "Homework past due, and who hasn't handed it in // TODO: ur"
+      "overdueHint": "Homework past due, and who hasn't handed it in // TODO: ur",
+      "attendanceHint": "Mark today's attendance in a few taps, or fix a past day // TODO: ur",
+      "attendanceSummaryHint": "Each class's day, and each student's month // TODO: ur"
     },
     "scope": {
       "class": "Class // TODO: ur",
@@ -1445,6 +1480,71 @@
       "scoreFor": "Score for %{name} // TODO: ur",
       "saved": "Saved: %{name}, %{score} // TODO: ur",
       "beforeAttempt": "This student hasn't sent an answer for this test yet. If you grade now, their online answers won't be accepted later. // TODO: ur"
+    },
+    "attendance": {
+      "hint": "Everyone starts as present. Tap only the students who are absent, late or on leave. // TODO: ur",
+      "prevDay": "Previous day // TODO: ur",
+      "nextDay": "Next day // TODO: ur",
+      "goToDate": "Go to a date // TODO: ur",
+      "goToDateHelp": "YYYY-MM-DD, then Enter // TODO: ur",
+      "go": "Go // TODO: ur",
+      "dayLabel": "%{weekday} %{day} %{month} %{year} // TODO: ur",
+      "todayTag": "Today // TODO: ur",
+      "pastDay": "This day is over. Changing a mark that was already saved needs a reason. // TODO: ur",
+      "notTaken": "Not taken yet for this day // TODO: ur",
+      "taken": "Saved for this day // TODO: ur",
+      "unsaved": "Changes not saved yet // TODO: ur",
+      "waiting": "Saved on this device. It will send when you're back online. // TODO: ur",
+      "refused": "Not saved: %{why} // TODO: ur",
+      "offlineCopy": "No connection. This is the class list saved on this device; marks already sent for this day aren't shown. // TODO: ur",
+      "reason": "Reason for the change // TODO: ur",
+      "reasonHelp": "For example: the register shows she was present // TODO: ur",
+      "reasonRequired": "Write why you're changing a day that is over. // TODO: ur",
+      "queued": "Saved on this device. It will send once you're online. // TODO: ur",
+      "rejectedToast": "The school's server didn't take this day. See the note above the list. // TODO: ur",
+      "storageFull": "This device is out of space, so nothing was saved. Free some space and try again. // TODO: ur",
+      "rowLabel": "%{name}: %{status} // TODO: ur",
+      "edited": {
+        "one": "Changed once // TODO: ur",
+        "other": "Changed %{count} times // TODO: ur"
+      },
+      "history": "History // TODO: ur",
+      "hideHistory": "Hide history // TODO: ur",
+      "historyRow": "%{from} → %{to} // TODO: ur",
+      "historyLoadError": "Couldn't load the history // TODO: ur",
+      "historyEmpty": "No changes yet // TODO: ur",
+      "reasons": {
+        "sameDay": "Changed the same day // TODO: ur",
+        "oldApp": "Changed in the old app // TODO: ur"
+      },
+      "rpc": {
+        "reason_required": "this day is over, so a reason is needed. Write one and save again. // TODO: ur",
+        "not_authorized": "you can only mark attendance for classes you teach. // TODO: ur",
+        "date_in_future": "you can't mark attendance for a future date. // TODO: ur",
+        "enrollment_class_mismatch": "a student on this list has moved class. Reload the list and save again. // TODO: ur",
+        "enrollment_not_active": "a student on this list has left the class. Reload the list and save again. // TODO: ur",
+        "other": "the server refused it. Reload the list and try again. // TODO: ur"
+      },
+      "reload": "Reload the list // TODO: ur"
+    },
+    "attendanceSummary": {
+      "title": "Attendance summary // TODO: ur",
+      "tabDay": "By day // TODO: ur",
+      "tabClass": "By class // TODO: ur",
+      "dayEmpty": "No classes with students this year // TODO: ur",
+      "dayEmptyBody": "Enrol students in a class first. Their attendance shows here once it's taken. // TODO: ur",
+      "notTaken": "Not taken // TODO: ur",
+      "markedOf": "%{marked} of %{enrolled} marked // TODO: ur",
+      "schoolTotal": "%{taken} of %{classes} classes taken · %{absent} absent · %{late} late · %{leave} on leave // TODO: ur",
+      "prevMonth": "Previous month // TODO: ur",
+      "nextMonth": "Next month // TODO: ur",
+      "rate": "%{rate}% // TODO: ur",
+      "noRate": "No days yet // TODO: ur",
+      "left": "Left the class // TODO: ur",
+      "markClass": "Mark this class // TODO: ur",
+      "loadError": "Couldn't load the summary // TODO: ur",
+      "rangeEmpty": "No students in this class this year // TODO: ur",
+      "rateNote": "At school = present + late, out of present + late + absent. Leave isn't counted. // TODO: ur"
     }
   }
 }
