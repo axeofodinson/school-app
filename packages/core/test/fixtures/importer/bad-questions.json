@@ -1,0 +1,180 @@
+{
+  "class": "Class 9",
+  "subject": "Mathematics",
+  "chapter": "Linear Equations",
+  "topic": { "title_en": "Solving linear equations" },
+  "concepts": [
+    { "key": "c1", "title_en": "Balancing both sides", "title_ur": "دونوں طرف برابر رکھنا" }
+  ],
+  "questions": [
+    {
+      "concept": "c1",
+      "type": "mcq",
+      "difficulty": 2,
+      "cognitive_level": "apply",
+      "body": {
+        "stem": { "en": "No correct key", "ur": "کوئی درست جواب نہیں" },
+        "options": [
+          { "key": "A", "text": "1" },
+          { "key": "B", "text": "2" }
+        ]
+      },
+      "answer": { "correct": "E" }
+    },
+    {
+      "concept": "c1",
+      "type": "mcq",
+      "difficulty": 2,
+      "cognitive_level": "apply",
+      "body": {
+        "stem": "Two correct keys",
+        "options": [
+          { "key": "A", "text": "1" },
+          { "key": "B", "text": "2" }
+        ]
+      },
+      "answer": { "correct": ["A", "B"] }
+    },
+    {
+      "concept": "c1",
+      "type": "mcq",
+      "difficulty": 2,
+      "body": {
+        "stem": "No thinking level",
+        "options": [
+          { "key": "A", "text": "1" },
+          { "key": "B", "text": "2" }
+        ]
+      },
+      "answer": { "correct": "A" }
+    },
+    {
+      "concept": "c9",
+      "type": "mcq",
+      "difficulty": 2,
+      "cognitive_level": "apply",
+      "body": {
+        "stem": "Unknown concept",
+        "options": [
+          { "key": "A", "text": "1" },
+          { "key": "B", "text": "2" }
+        ]
+      },
+      "answer": { "correct": "A" }
+    },
+    {
+      "concept": "c1",
+      "type": "mcq",
+      "difficulty": 5,
+      "cognitive_level": "apply",
+      "body": {
+        "stem": "Difficulty five",
+        "options": [
+          { "key": "A", "text": "1" },
+          { "key": "B", "text": "2" }
+        ]
+      },
+      "answer": { "correct": "A" }
+    },
+    {
+      "concept": "c1",
+      "type": "mcq",
+      "difficulty": 1,
+      "cognitive_level": "apply",
+      "body": {
+        "stem": "Duplicate key",
+        "options": [
+          { "key": "A", "text": "1" },
+          { "key": "A", "text": "2" }
+        ]
+      },
+      "answer": { "correct": "A" }
+    },
+    {
+      "concept": "c1",
+      "type": "mcq",
+      "difficulty": 1,
+      "cognitive_level": "apply",
+      "body": { "stem": "One option", "options": [{ "key": "A", "text": "1" }] },
+      "answer": { "correct": "A" }
+    },
+    {
+      "concept": "c1",
+      "type": "match",
+      "difficulty": 1,
+      "cognitive_level": "apply",
+      "body": { "stem": "Match type" },
+      "answer": { "correct": "x" }
+    },
+    {
+      "concept": "c1",
+      "type": "true_false",
+      "difficulty": 1,
+      "cognitive_level": "recall",
+      "body": { "stem": "True false with a string" },
+      "answer": { "correct": "true" }
+    },
+    {
+      "concept": "c1",
+      "type": "mcq",
+      "difficulty": 1,
+      "cognitive_level": "recall",
+      "body": {
+        "stem": { "en": "", "ur": "" },
+        "options": [
+          { "key": "A", "text": "1" },
+          { "key": "B", "text": "2" }
+        ]
+      },
+      "answer": { "correct": "A" }
+    },
+    {
+      "concept": "c1",
+      "type": "mcq",
+      "difficulty": 1,
+      "cognitive_level": "recall",
+      "body": {
+        "stem": "Bad maths $\\frac{1}{$ here",
+        "options": [
+          { "key": "A", "text": "1" },
+          { "key": "B", "text": "2" }
+        ]
+      },
+      "answer": { "correct": "A" }
+    },
+    {
+      "concept": "c1",
+      "type": "mcq",
+      "difficulty": 1,
+      "cognitive_level": "recall",
+      "body": {
+        "stem": "Unsafe picture",
+        "options": [
+          { "key": "A", "text": "1" },
+          { "key": "B", "text": "2" }
+        ],
+        "visual": {
+          "type": "figure",
+          "alt": { "en": "x", "ur": "x" },
+          "svg": "<svg><script>alert(1)</script></svg>"
+        }
+      },
+      "answer": { "correct": "A" }
+    },
+    {
+      "concept": "c1",
+      "type": "mcq",
+      "difficulty": 1,
+      "cognitive_level": "recall",
+      "body": {
+        "stem": { "en": "English only, otherwise fine", "ur": "" },
+        "options": [
+          { "key": "A", "text": "1" },
+          { "key": "B", "text": "2" }
+        ]
+      },
+      "answer": { "correct": "B" },
+      "explanation": { "en": "Because." }
+    }
+  ]
+}

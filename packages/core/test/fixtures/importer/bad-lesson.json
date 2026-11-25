@@ -1,0 +1,56 @@
+{
+  "topic": { "title_en": "Visual checks", "title_ur": "تصویری جانچ" },
+  "concepts": [{ "key": "c1", "title_en": "One", "title_ur": "ایک" }],
+  "lesson": {
+    "blocks": [
+      {
+        "type": "figure",
+        "concept_id": "c1",
+        "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\"><rect/></svg>"
+      },
+      {
+        "type": "scene",
+        "concept_id": "c1",
+        "alt": { "en": "a", "ur": "ا" },
+        "svg": "<svg><g id=\"car\"/></svg>",
+        "layers": ["car", "truck"],
+        "steps": [{ "caption": { "en": "", "ur": "" }, "ms": 9000, "set": { "boat": { "x": 1 } } }]
+      },
+      { "type": "widget", "concept_id": "c1", "alt": { "en": "a", "ur": "ا" }, "widget": "rocket" },
+      {
+        "type": "widget",
+        "concept_id": "c1",
+        "alt": { "en": "a", "ur": "ا" },
+        "widget": "function_graph",
+        "params": { "expr": "alert(1)", "sliders": { "m": [0, 1, 1, 1] } }
+      },
+      {
+        "type": "chart",
+        "concept_id": "c1",
+        "alt": { "en": "a", "ur": "ا" },
+        "kind": "radar",
+        "x": { "values": [1, 2, 3] },
+        "series": [{ "values": [1, 2] }]
+      },
+      {
+        "type": "figure",
+        "concept_id": "c1",
+        "alt": { "en": "a", "ur": "ا" },
+        "svg": "<svg onload=\"x()\"><image href=\"https://evil.example/x.png\"/></svg>"
+      },
+      { "type": "simple", "concept_id": "c7", "en": "text", "ur": "متن" },
+      { "type": "sparkle", "en": "?" }
+    ]
+  },
+  "questions": [
+    {
+      "concept": "c1",
+      "type": "true_false",
+      "difficulty": 1,
+      "cognitive_level": "recall",
+      "body": { "stem": { "en": "Still imports", "ur": "پھر بھی آتا ہے" } },
+      "answer": { "correct": false },
+      "explanation": { "en": "x", "ur": "ا" }
+    }
+  ]
+}

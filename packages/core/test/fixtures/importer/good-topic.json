@@ -1,0 +1,230 @@
+{
+  "curriculum": "PTB-2024",
+  "class": "Class 9",
+  "subject": "Mathematics",
+  "chapter": "Linear Equations",
+  "test_data": true,
+  "topic": { "title_en": "Solving linear equations", "title_ur": "خطی مساوات حل کرنا" },
+  "concepts": [
+    {
+      "key": "c1",
+      "title_en": "Balancing both sides",
+      "title_ur": "دونوں طرف برابر رکھنا",
+      "requires": []
+    },
+    {
+      "key": "c2",
+      "title_en": "Variables on both sides",
+      "title_ur": "دونوں طرف متغیر",
+      "requires": ["c1"]
+    },
+    {
+      "key": "c3",
+      "title_en": "Equations with brackets",
+      "title_ur": "قوسین والی مساوات",
+      "requires": ["c1", "c2"]
+    }
+  ],
+  "lesson": {
+    "blocks": [
+      {
+        "type": "objectives",
+        "concept_id": null,
+        "en": "Solve $2x + 3 = 7$ and explain each step.",
+        "ur": "$2x + 3 = 7$ حل کریں اور ہر قدم سمجھائیں۔"
+      },
+      {
+        "type": "scene",
+        "concept_id": "c1",
+        "alt": {
+          "en": "A balance with 2x + 3 on one side and 7 on the other.",
+          "ur": "ترازو: ایک طرف 2x + 3، دوسری طرف 7۔"
+        },
+        "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 200 100\"><g id=\"beam\"><rect x=\"10\" y=\"40\" width=\"180\" height=\"6\" fill=\"#1B1A3A\"/></g><g id=\"weights\"><circle cx=\"40\" cy=\"30\" r=\"8\" fill=\"#4434D4\"/></g><text id=\"lbl\" x=\"100\" y=\"90\">7</text></svg>",
+        "layers": ["beam", "weights"],
+        "steps": [
+          {
+            "caption": { "en": "Both sides weigh the same.", "ur": "دونوں طرف وزن برابر ہے۔" },
+            "ms": 900,
+            "set": { "beam": { "rotate": 0 } }
+          },
+          {
+            "caption": { "en": "Take 3 from both sides.", "ur": "دونوں طرف سے 3 نکالیں۔" },
+            "ms": 900,
+            "set": { "weights": { "opacity": 0.4, "y": 4 } }
+          }
+        ]
+      },
+      {
+        "type": "chart",
+        "concept_id": "c1",
+        "alt": { "en": "Line of y = 2x + 3.", "ur": "y = 2x + 3 کی لکیر۔" },
+        "kind": "line",
+        "x": { "label": { "en": "x", "ur": "x" }, "values": [0, 1, 2, 3] },
+        "y": { "label": { "en": "y", "ur": "y" } },
+        "series": [
+          { "name": { "en": "2x + 3", "ur": "2x + 3" }, "values": [3, 5, 7, 9], "role": "focus" }
+        ],
+        "reveal": "series"
+      },
+      {
+        "type": "widget",
+        "concept_id": "c2",
+        "alt": {
+          "en": "Graph of y = mx + c with sliders.",
+          "ur": "y = mx + c کا گراف، سلائیڈر کے ساتھ۔"
+        },
+        "widget": "function_graph",
+        "params": {
+          "expr": "m*x + c",
+          "sliders": { "m": [-5, 5, 1, 1], "c": [-10, 10, 1, 2] },
+          "x": [-10, 10]
+        },
+        "task": { "en": "Make the line steeper.", "ur": "لکیر کو زیادہ ڈھلوان بنائیں۔" }
+      },
+      {
+        "type": "worked_example",
+        "concept_id": "c3",
+        "en": "$3(x - 1) = 12$ so $x - 1 = 4$ and $x = 5$.",
+        "ur": "$3(x - 1) = 12$ تو $x - 1 = 4$ اور $x = 5$۔"
+      }
+    ],
+    "alternatives": [
+      {
+        "concept_id": "c2",
+        "blocks": [
+          {
+            "type": "simple",
+            "concept_id": "c2",
+            "en": "Move every x to one side first.",
+            "ur": "پہلے سارے x ایک طرف لے آئیں۔"
+          }
+        ]
+      }
+    ]
+  },
+  "questions": [
+    {
+      "concept": "c1",
+      "type": "mcq",
+      "difficulty": 1,
+      "cognitive_level": "recall",
+      "body": {
+        "stem": { "en": "Solve $2x + 3 = 7$.", "ur": "$2x + 3 = 7$ حل کریں۔" },
+        "options": [
+          { "key": "A", "text": { "en": "$x = 2$", "ur": "$x = 2$" } },
+          { "key": "B", "text": { "en": "$x = 5$", "ur": "$x = 5$" } },
+          { "key": "C", "text": { "en": "$x = 4$", "ur": "$x = 4$" } },
+          { "key": "D", "text": { "en": "$x = 10$", "ur": "$x = 10$" } }
+        ]
+      },
+      "answer": { "correct": "A" },
+      "explanation": {
+        "en": "Take 3 from both sides, then divide by 2.",
+        "ur": "دونوں طرف سے 3 نکالیں، پھر 2 سے تقسیم کریں۔",
+        "why_wrong": {
+          "B": { "en": "You added 3 instead of subtracting.", "ur": "آپ نے 3 جمع کر دیا۔" }
+        }
+      },
+      "source": { "book": "PTB Math 9", "page": 41 }
+    },
+    {
+      "concept": "c1",
+      "type": "true_false",
+      "difficulty": 1,
+      "cognitive_level": "understand",
+      "body": {
+        "stem": {
+          "en": "Adding 5 to both sides keeps an equation true.",
+          "ur": "دونوں طرف 5 جمع کرنے سے مساوات درست رہتی ہے۔"
+        }
+      },
+      "answer": { "correct": true },
+      "explanation": {
+        "en": "Both sides change by the same amount.",
+        "ur": "دونوں طرف ایک جیسی تبدیلی ہوتی ہے۔"
+      }
+    },
+    {
+      "concept": "c2",
+      "type": "numeric",
+      "difficulty": 2,
+      "cognitive_level": "apply",
+      "body": {
+        "stem": {
+          "en": "Solve $5x - 2 = 3x + 6$. What is x?",
+          "ur": "$5x - 2 = 3x + 6$ حل کریں۔ x کیا ہے؟"
+        }
+      },
+      "answer": { "correct": 4 },
+      "explanation": {
+        "en": "Subtract 3x, add 2: $2x = 8$.",
+        "ur": "3x منفی کریں، 2 جمع کریں: $2x = 8$۔"
+      }
+    },
+    {
+      "concept": "c2",
+      "type": "mcq",
+      "difficulty": 2,
+      "cognitive_level": "apply",
+      "body": {
+        "stem": {
+          "en": "Ali has x marbles. Sara has 2x + 4 and Bilal has 3x. Sara and Bilal have the same. Find x.",
+          "ur": "علی کے پاس x کنچے ہیں۔ سارہ کے پاس 2x + 4 اور بلال کے پاس 3x۔ دونوں برابر ہیں۔ x معلوم کریں۔"
+        },
+        "options": [
+          { "key": "A", "text": { "en": "2", "ur": "2" } },
+          { "key": "B", "text": { "en": "4", "ur": "4" } },
+          { "key": "C", "text": { "en": "6", "ur": "6" } },
+          { "key": "D", "text": { "en": "8", "ur": "8" } }
+        ]
+      },
+      "answer": { "correct": "B" },
+      "explanation": { "en": "$2x + 4 = 3x$ gives $x = 4$.", "ur": "$2x + 4 = 3x$ سے $x = 4$۔" }
+    },
+    {
+      "concept": "c3",
+      "type": "short_text",
+      "difficulty": 3,
+      "cognitive_level": "analyze",
+      "body": {
+        "stem": {
+          "en": "Name the first step to solve $3(x - 1) = 12$ without expanding.",
+          "ur": "$3(x - 1) = 12$ کو کھولے بغیر حل کرنے کا پہلا قدم بتائیں۔"
+        }
+      },
+      "answer": { "correct": "divide by 3", "also": ["divide both sides by 3"] },
+      "explanation": {
+        "en": "Dividing by 3 undoes the multiplication.",
+        "ur": "3 سے تقسیم کرنے سے ضرب ختم ہو جاتی ہے۔"
+      }
+    },
+    {
+      "concept": "c3",
+      "type": "mcq",
+      "difficulty": 2,
+      "cognitive_level": "apply",
+      "body": {
+        "stem": {
+          "en": "Which value solves $2(x + 3) = 14$?",
+          "ur": "کون سی قیمت $2(x + 3) = 14$ کو حل کرتی ہے؟"
+        },
+        "options": [
+          { "key": "A", "text": { "en": "$x = 4$", "ur": "$x = 4$" } },
+          { "key": "B", "text": { "en": "$x = 7$", "ur": "$x = 7$" } },
+          { "key": "C", "text": { "en": "$x = 11$", "ur": "$x = 11$" } }
+        ],
+        "visual": {
+          "type": "figure",
+          "alt": { "en": "Two equal bags.", "ur": "دو برابر تھیلے۔" },
+          "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 10 10\"><rect width=\"10\" height=\"10\" fill=\"#FFB627\" stroke=\"#1B1A3A\"/></svg>"
+        }
+      },
+      "answer": { "correct": "A" },
+      "explanation": {
+        "en": "Divide by 2, then subtract 3.",
+        "ur": "2 سے تقسیم کریں، پھر 3 منفی کریں۔"
+      }
+    }
+  ]
+}

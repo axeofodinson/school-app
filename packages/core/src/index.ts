@@ -15,3 +15,5 @@ export * from './messages';
 export * from './prereaderAudio';
 export * from './readAloud';
 export * from './curriculum';
+export * from './importer';
+export * from './visuals';
