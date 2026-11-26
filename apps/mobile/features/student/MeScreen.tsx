@@ -10,6 +10,7 @@ import { radiusFor, space, type ColourRoles } from '../../ui/tokens';
 import { StudentHeader } from '../attempts/Header';
 import { useHome } from '../attempts/useHome';
 import { useAuth } from '../auth/AuthProvider';
+import { useSignOut } from '../sync/SignOutGuard';
 import { useMessages } from '../messages/MessagesProvider';
 import { useStudentNav } from './StudentNav';
 
@@ -66,7 +67,8 @@ function Row({
 export function MeScreen() {
   const { t } = useI18n();
   const router = useRouter();
-  const { profile, signOut, sharedMode } = useAuth();
+  const { profile, sharedMode } = useAuth();
+  const signOut = useSignOut();
   const { unreadCount } = useMessages();
   const { state } = useHome(false);
   const nav = useStudentNav('me');

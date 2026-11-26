@@ -71,10 +71,28 @@ export async function readOffline(
   }
 }
 
+const listeners = new Set<() => void>();
+/** Called after any offline exam on this device changes (sync status, sign-out check). */
+export function onOfflineChange(fn: () => void): () => void {
+  listeners.add(fn);
+  return () => {
+    listeners.delete(fn);
+  };
+}
+const changed = () => {
+  for (const l of listeners) l();
+};
+
 export async function writeOffline(store: ScopedStore | null, copy: OfflineExamCopy) {
   if (!store) return;
   await store.setItem(key(copy.assessmentId), JSON.stringify(copy)).catch(() => undefined);
+  changed();
 }
+
+/** Started on this device and not yet accepted by the server (in progress or waiting to send). */
+export const isUnsent = (c: OfflineExamCopy) => !!c.clock && !c.result;
+/** Handed in on this device, waiting for the internet. */
+export const isWaiting = (c: OfflineExamCopy) => !!c.clock?.stoppedAt && !c.result;
 
 /** Every offline exam saved on this device for this student. */
 export async function listOffline(store: ScopedStore | null): Promise<OfflineExamCopy[]> {
@@ -90,6 +108,7 @@ export async function listOffline(store: ScopedStore | null): Promise<OfflineExa
 
 export async function removeOffline(store: ScopedStore | null, assessmentId: string) {
   await store?.removeItem(key(assessmentId)).catch(() => undefined);
+  changed();
 }
 
 /** Move the clock to now (and stop it when asked). */
@@ -183,7 +202,16 @@ export async function uploadOffline(
 }
 
 /** Send every finished, unsent offline exam on this device (Tests tab, reconnect). */
-export async function flushOffline(store: ScopedStore | null): Promise<number> {
+let flushing: Promise<number> | null = null;
+export function flushOffline(store: ScopedStore | null): Promise<number> {
+  // One pass at a time (Tests tab, sync status and sign-out may all ask at once).
+  flushing ??= flushPass(store).finally(() => {
+    flushing = null;
+  });
+  return flushing;
+}
+
+async function flushPass(store: ScopedStore | null): Promise<number> {
   let sent = 0;
   for (const c of await listOffline(store)) {
     if (c.result || !c.uploadId || !c.clock?.stoppedAt) continue;

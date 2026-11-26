@@ -74,10 +74,11 @@ unit-tested in Node, the same habit as today's `scripts/verify-*.mjs`.
 - Offline exams: Phase 6 RPC accepts uploaded answers with `client_elapsed_ms`; result after sync.
 
 ## 5. Offline
-- `packages/core/sync`: durable queue (AsyncStorage on native, IndexedDB on web), per-user namespace, client UUIDs, exponential retry, visible status.
+- `packages/core/sync`: durable queue (AsyncStorage on native, localStorage on web), per-user namespace, client UUIDs, exponential retry, visible status.
 - Content cache: Learn packs (prompt 32) per chapter from `learn_pack(chapter, have)` (db/036, runs under the learner's RLS), stored as immutable `(id, version)` entries + a per-user index (core `packs.ts`; IndexedDB on web, the documents folder on Android); delta by version (`have`), not `updated_at` (DECISIONS #156–158). Lesson and practice reads fall back to a downloaded chapter, then to the last device copy.
 - Web app shell: `public/sw.js` precaches the whole build listed by `scripts/sw-manifest.mjs` (#159); data requests are never cached by it.
 - Rules for conflicts: `LMS_AUDIT.md` §3.3.
+- Unsent work at rest (prompt 61, DECISIONS #167–169): the queue namespace (queue, drafts, offline exam copies) is sealed per learner through core `sealedStore` (web: AES-GCM key per learner, non-extractable, in IndexedDB; Android: private, OS-encrypted app storage). Sign-out goes through `features/sync/SignOutGuard` (send first, then "not sent yet"); the student pill counts every kind plus waiting offline exams.
 
 ## 6. Rendering
 - Math pre-rendered to SVG at import, once per distinct expression into `math_svgs` (db/031, DECISIONS #103); MathJax runs only on the importer screen, loaded from `/vendor/mathjax` (never in the app bundle, never a CDN). `react-native-svg` everywhere.

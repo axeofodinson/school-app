@@ -22,7 +22,6 @@ import {
   SHARED_IDLE_TIMEOUT_MS,
   staffSignIn as coreStaffSignIn,
   studentSignIn as coreStudentSignIn,
-  userQueueStore,
   userStore,
   wipeUserNamespace,
   type AuthBackend,
@@ -53,6 +52,7 @@ import * as WebBrowser from 'expo-web-browser';
 import { clearSessionCopies, deviceKV } from '../../lib/storage';
 import { supabase } from '../../lib/supabase';
 import { classifyError } from '../../lib/result';
+import { queueNamespace } from '../../lib/userQueue';
 import { unregisterPush } from '../messages/push';
 import { isSharedMode, loadDeviceSettings, saveSharedMode } from './device-settings';
 
@@ -407,7 +407,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       sharedMode,
       lastSignOut,
       userStorage: userId ? userStore(deviceKV, userId) : null,
-      queueStorage: userId ? userQueueStore(deviceKV, userId) : null,
+      queueStorage: userId ? queueNamespace(userId) : null,
       studentSignIn,
       staffSignIn,
       googleSignIn,

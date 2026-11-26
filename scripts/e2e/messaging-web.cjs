@@ -102,6 +102,10 @@ const db = {
     },
   ],
   message_reads: [{ message_id: 'm-old-1', student_id: 's-1', read_at: ago(200) }],
+  // Student home (prompts 41/42) reads these; empty here.
+  follow_ups: [],
+  concept_mastery: [],
+  concepts: [],
   assessments: [],
   assessment_questions: [],
   submissions: [],

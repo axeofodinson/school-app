@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { useAuth } from '../features/auth/AuthProvider';
+import { useSignOut } from '../features/sync/SignOutGuard';
 import { useI18n } from '../i18n';
 import {
   Button,
@@ -26,7 +27,8 @@ export default function Settings() {
   const { setting, setSetting } = useMotion();
   const sound = useSoundSetting();
   const theme = useSchemeSetting();
-  const { destination, sharedMode, setSharedMode, signOut } = useAuth();
+  const { destination, sharedMode, setSharedMode } = useAuth();
+  const signOut = useSignOut();
   const [saving, setSaving] = useState(false);
   const isAdmin = destination === 'admin';
 

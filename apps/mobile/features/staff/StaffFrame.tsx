@@ -10,12 +10,15 @@ import { useI18n, type TKey } from '../../i18n';
 import {
   Button,
   StaffSidebar,
+  SyncStatusPill,
   useLayout,
   useTheme,
   type IconName,
   type StaffNavItem,
 } from '../../ui';
 import { useAuth } from '../auth/AuthProvider';
+import { useSignOut } from '../sync/SignOutGuard';
+import { useAttendanceSync } from '../attendance/AttendanceSync';
 
 export type StaffPlace = {
   key: string;
@@ -158,7 +161,9 @@ export function StaffFrame({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const { twoPane } = useLayout();
   const { colours } = useTheme();
-  const { destination, signOut } = useAuth();
+  const { destination } = useAuth();
+  const signOut = useSignOut();
+  const sync = useAttendanceSync();
   if (!twoPane) return <>{children}</>;
   const isAdmin = destination === 'admin';
   const places = staffPlaces(isAdmin);
@@ -175,7 +180,11 @@ export function StaffFrame({ children }: { children: ReactNode }) {
         items={items}
         active={activeKey(pathname, places)}
         footer={
-          <Button title={t('auth.signOut')} variant="ghost" size="sm" onPress={() => signOut()} />
+          <View style={styles.footer}>
+            {/* Where unsent attendance is, on every staff screen (prompt 61). */}
+            <SyncStatusPill status={sync.status} pending={sync.pending} onRetry={sync.flushNow} />
+            <Button title={t('auth.signOut')} variant="ghost" size="sm" onPress={() => signOut()} />
+          </View>
         }
       />
       <View style={styles.fill}>{children}</View>
@@ -186,4 +195,5 @@ export function StaffFrame({ children }: { children: ReactNode }) {
 const styles = StyleSheet.create({
   row: { flex: 1, flexDirection: 'row' },
   fill: { flex: 1 },
+  footer: { gap: 8, alignItems: 'flex-start' },
 });

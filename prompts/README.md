@@ -107,7 +107,7 @@ Deferred: parents (81) and iOS (82).
 | ✓ | Prompt | Model | Depends on | Blocked by | Notes |
 |---|---|---|---|---|---|
 | [x] | [60 Offline (pre-downloaded) exams](60-offline-exams.md) | Opus | 50 | — | **Done 2026-11-26:** draft `db/038_offline_exams.sql` (schedule, download, one idempotent upload with server verdicts, teacher accept with a reason), core `offlineExam.ts` (monotonic device clock, verdict rule), student offline exam screen + Tests list, teacher offline option + live view flags. OX-1, OX-2, OX-3 pass; OX-4 unverified. Hassan: run 038 on dev after 020 (and 035). |
-| [ ] | [61 Sync hardening and shared-device hardening](61-sync-shared-devices.md) | Opus | 11, 32, 60 | — | |
+| [x] | [61 Sync hardening and shared-device hardening](61-sync-shared-devices.md) | Opus | 11, 32, 60 | — | **Done 2026-11-26:** per-learner sealed queue namespace on web (core `sealedStore` + IndexedDB AES-GCM key), sign-out sends first then warns "not sent yet" (keeps it locked to that student), sync pill counts all unsent work incl. offline exams, staff sidebar pill. O-1..O-6 automated parts pass, S-2 pass; S-1 on a Chromebook unverified. No migration. |
 | [ ] | [62 Scale and free-tier tests](62-load-tests.md) | Opus | 04, 50 | Dev Supabase project created by Hassan (DECISIONS #27) | |
 
 ### Phase 7 — Worksheets, assignments, projects

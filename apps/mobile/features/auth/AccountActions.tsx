@@ -4,12 +4,14 @@ import { StyleSheet, View } from 'react-native';
 import { useI18n } from '../../i18n';
 import { Button } from '../../ui';
 import { useAuth } from './AuthProvider';
+import { useSignOut } from '../sync/SignOutGuard';
 
 /** Settings + sign out, for the top of each home screen until real navigation exists. */
 export function AccountActions() {
   const { t } = useI18n();
   const router = useRouter();
-  const { signOut, sharedMode } = useAuth();
+  const { sharedMode } = useAuth();
+  const signOut = useSignOut();
   return (
     <View style={styles.row}>
       <Button

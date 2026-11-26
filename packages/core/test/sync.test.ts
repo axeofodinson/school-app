@@ -246,6 +246,30 @@ describe('createSyncQueue', () => {
     expect(server.rows.size).toBe(1);
   });
 
+  it('O-4: a week offline with many tries keeps every item, waits at most 5 min, then sends in order', async () => {
+    const device = memoryStore();
+    const server = fakeServer();
+    const c = clock(1000);
+    server.setOnline(false);
+    const q = createSyncQueue(userQueueStore(device, A), { now: c.now, rand: () => 1 });
+    const ids: string[] = [];
+    for (let i = 0; i < 5; i++) ids.push((await q.enqueue('submission', `e1:a${i}`, { i })).id);
+    let tries = 0;
+    for (let t = 0; t < 7 * 24 * 60; t += 10) {
+      c.advance(10 * 60_000); // the app wakes every 10 minutes for a week
+      tries += (await q.flush({ submission: server.send })).retrying;
+      const next = (await q.summary()).nextAt!;
+      expect(next - c.now()).toBeLessThanOrEqual(BACKOFF_MAX_MS);
+    }
+    expect(tries).toBeGreaterThan(900);
+    expect((await q.items()).map((x) => x.id)).toEqual(ids);
+    server.setOnline(true);
+    c.advance(BACKOFF_MAX_MS);
+    const r = await q.flush({ submission: server.send });
+    expect(r).toMatchObject({ sent: 5, remaining: 0 });
+    expect([...server.rows.values()].map((x) => x.id)).toEqual(ids);
+  });
+
   it('a lost response is retried and comes back as a duplicate: still one row', async () => {
     const device = memoryStore();
     const server = fakeServer();
