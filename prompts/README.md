@@ -114,7 +114,7 @@ Deferred: parents (81) and iOS (82).
 
 | ✓ | Prompt | Model | Depends on | Blocked by | Notes |
 |---|---|---|---|---|---|
-| [ ] | [70 Worksheets: printable A4 + interactive](70-worksheets.md) | Opus | 22, 31 | — | |
+| [ ] | [70 Worksheets: printable A4 + interactive](70-worksheets.md) | Opus | 22, 31 | — | **Print slice done 2026-11-26:** A4 sets A/B + key, English or Urdu, from worksheet-approved items; no migration. Left: interactive worksheet + marking queue (db/039). |
 | [ ] | [71 Assignments: typed, file and photo submissions](71-assignments.md) | Opus | 12 | — | |
 | [ ] | [72 STEM projects (draft migration 022)](72-stem-projects.md) | Opus | 71 | — | |
 

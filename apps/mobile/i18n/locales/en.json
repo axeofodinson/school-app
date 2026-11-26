@@ -1900,7 +1900,8 @@
       "yearStat": "Academic year",
       "current": "Current",
       "cardsHint": "Print QR sign-in cards for a class",
-      "settingsHint": "Language, motion, this device"
+      "settingsHint": "Language, motion, this device",
+      "worksheetsHint": "Printable A/B sheets with an answer key"
     },
     "scope": {
       "class": "Class",
@@ -2983,6 +2984,64 @@
         "acceptTitle": "Accept %{name}'s answers?",
         "acceptBody": "These answers came in after the window or over the time, so they weren't marked. Accepting marks them and counts the score. Say why.",
         "accepted": "%{name}'s answers accepted and marked"
+      }
+    },
+    "worksheets": {
+      "title": "Worksheets",
+      "subtitle": "Make a worksheet from approved questions. Print set A and set B with an answer key.",
+      "step1": "1 · Class and subject",
+      "step2": "2 · What's on it",
+      "step3": "3 · Print",
+      "topics": "Topics",
+      "kinds": "Question types",
+      "count": "Questions",
+      "paperLang": "Paper language",
+      "titleLabel": "Title (optional)",
+      "autoTitle": "%{subject} worksheet",
+      "kind": {
+        "mcq": "Multiple choice",
+        "true_false": "True or false",
+        "fill_blank": "Fill in the blank",
+        "short_answer": "Short answer"
+      },
+      "poolError": "Couldn't load the questions. Check your connection.",
+      "notReady": "Worksheets need the new question bank",
+      "notReadyBody": "Ask the admin to finish setting up the question bank on the school's server.",
+      "noTopics": "No topics in this subject yet",
+      "noTopicsBody": "Add chapters and topics first.",
+      "toCurriculum": "Open curriculum",
+      "noneApproved": "No questions approved for worksheets here",
+      "noneApprovedBody": "Approve questions for \"worksheet\" use in the review queue, then come back.",
+      "summary": {
+        "one": "%{count} question from %{available} ready",
+        "other": "%{count} questions from %{available} ready"
+      },
+      "short": {
+        "one": "%{count} question short: there are only %{got}.",
+        "other": "%{count} questions short: there are only %{got}."
+      },
+      "previewA": "Set A",
+      "newMix": "New mix",
+      "printA": "Print set A",
+      "printB": "Print set B",
+      "printKey": "Print answer key",
+      "printAll": "Print A + B + key",
+      "printError": "Couldn't open printing. Try again.",
+      "print": {
+        "set": "Set %{set}",
+        "name": "Name",
+        "roll": "Roll no.",
+        "date": "Date",
+        "sections": {
+          "mcq": "Choose the right answer",
+          "true_false": "Tick true or false",
+          "fill_blank": "Fill in the blanks",
+          "short_answer": "Answer in a few words"
+        },
+        "true": "True",
+        "false": "False",
+        "key": "Answer key · Set %{set}",
+        "also": "Also accept"
       }
     }
   }

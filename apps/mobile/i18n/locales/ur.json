@@ -150,7 +150,7 @@
       "retry": "Try again // TODO: ur",
       "footer": "Scan this card, then type your PIN. Never write your PIN on it. // TODO: ur",
       "admissionNo": "Admission no. // TODO: ur",
-      "school": "Al-Syed High School // TODO: ur"
+      "school": "Al-Syed High School"
     },
     "google": {
       "title": "Not at Al-Syed? Prepare on your own // TODO: ur",
@@ -1900,7 +1900,8 @@
       "yearStat": "تعلیمی سال",
       "current": "موجودہ",
       "cardsHint": "کلاس کے لیے QR لاگ اِن کارڈ پرنٹ کریں",
-      "settingsHint": "زبان، حرکت، یہ ڈیوائس"
+      "settingsHint": "زبان، حرکت، یہ ڈیوائس",
+      "worksheetsHint": "A/B شیٹس جوابات کے ساتھ، پرنٹ کے لیے"
     },
     "scope": {
       "class": "Class // TODO: ur",
@@ -2983,6 +2984,64 @@
         "acceptTitle": "%{name} کے جوابات قبول کریں؟",
         "acceptBody": "یہ جوابات مقررہ وقت کے بعد یا وقت سے زیادہ لگا کر آئے، اس لیے چیک نہیں ہوئے۔ قبول کرنے سے چیک ہو کر نمبر لگ جائیں گے۔ وجہ لکھیں۔",
         "accepted": "%{name} کے جوابات قبول اور چیک ہو گئے"
+      }
+    },
+    "worksheets": {
+      "title": "ورک شیٹس",
+      "subtitle": "منظور شدہ سوالوں سے ورک شیٹ بنائیں۔ سیٹ A اور سیٹ B جوابات کے ساتھ پرنٹ کریں۔",
+      "step1": "1 · کلاس اور مضمون",
+      "step2": "2 · اس میں کیا ہو",
+      "step3": "3 · پرنٹ",
+      "topics": "ٹاپکس",
+      "kinds": "سوالوں کی قسم",
+      "count": "سوال",
+      "paperLang": "پرچے کی زبان",
+      "titleLabel": "عنوان (اگر چاہیں)",
+      "autoTitle": "%{subject} ورک شیٹ",
+      "kind": {
+        "mcq": "صحیح جواب چنیں",
+        "true_false": "صحیح یا غلط",
+        "fill_blank": "خالی جگہ پُر کریں",
+        "short_answer": "مختصر جواب"
+      },
+      "poolError": "سوال نہیں آ سکے۔ انٹرنیٹ چیک کریں۔",
+      "notReady": "ورک شیٹ کے لیے نیا سوال بینک چاہیے",
+      "notReadyBody": "ایڈمن سے کہیں کہ اسکول کے سرور پر سوال بینک کی سیٹنگ مکمل کریں۔",
+      "noTopics": "اس مضمون میں ابھی کوئی ٹاپک نہیں",
+      "noTopicsBody": "پہلے چیپٹر اور ٹاپک بنائیں۔",
+      "toCurriculum": "نصاب کھولیں",
+      "noneApproved": "یہاں ورک شیٹ کے لیے کوئی سوال منظور نہیں",
+      "noneApprovedBody": "ریویو میں سوالوں کو \"ورک شیٹ\" کے لیے منظور کریں، پھر واپس آئیں۔",
+      "summary": {
+        "one": "%{available} تیار سوالوں میں سے %{count} سوال",
+        "other": "%{available} تیار سوالوں میں سے %{count} سوال"
+      },
+      "short": {
+        "one": "%{count} سوال کم ہے: صرف %{got} موجود ہیں۔",
+        "other": "%{count} سوال کم ہیں: صرف %{got} موجود ہیں۔"
+      },
+      "previewA": "سیٹ A",
+      "newMix": "نئے سوال",
+      "printA": "سیٹ A پرنٹ کریں",
+      "printB": "سیٹ B پرنٹ کریں",
+      "printKey": "جوابات پرنٹ کریں",
+      "printAll": "A + B + جوابات پرنٹ کریں",
+      "printError": "پرنٹ نہیں کھل سکا۔ دوبارہ کوشش کریں۔",
+      "print": {
+        "set": "سیٹ %{set}",
+        "name": "نام",
+        "roll": "رول نمبر",
+        "date": "تاریخ",
+        "sections": {
+          "mcq": "صحیح جواب چنیں",
+          "true_false": "صحیح یا غلط پر نشان لگائیں",
+          "fill_blank": "خالی جگہ پُر کریں",
+          "short_answer": "چند لفظوں میں جواب دیں"
+        },
+        "true": "صحیح",
+        "false": "غلط",
+        "key": "جوابات · سیٹ %{set}",
+        "also": "یہ بھی ٹھیک ہے"
       }
     }
   }

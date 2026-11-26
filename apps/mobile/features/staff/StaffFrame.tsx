@@ -57,6 +57,13 @@ export function staffPlaces(isAdmin: boolean): StaffPlace[] {
       hint: 'staff.home.assessmentsHint',
     },
     {
+      key: 'worksheets',
+      href: '/worksheets',
+      icon: 'fileText',
+      title: 'staff.worksheets.title',
+      hint: 'staff.home.worksheetsHint',
+    },
+    {
       key: 'questions',
       href: '/questions',
       icon: 'book',
