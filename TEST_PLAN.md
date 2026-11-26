@@ -146,7 +146,8 @@ Result on 2026-11-23: all pass (see `LMS_AUDIT.md` §5.3).
 - F-3 Gate: diagnostic follow-up blocks next topic in that subject only; exam follow-up blocks Prepare only; teacher override logged.
 - F-4 Exam: shuffle determinism per session; timer offset from `server_now`; auto-submit sweep.
 - F-5 Importer: rejects missing concept, zero/two correct, missing cognitive_level; flags duplicates and missing Urdu.
-- F-6 Worksheets: A/B sets differ in order, keys match.
+- F-6 Worksheets: A/B sets differ in order, keys match. **Pass 2026-11-26** (`packages/core/test/worksheets.test.ts`, 10 tests: kinds, picking across topics, A/B differ with matching keys, determinism per seed, HTML escaping, Urdu RTL, maths as image).
+- WS-1 Worksheet maker web e2e (prompt 70, `node scripts/e2e/worksheets-web.cjs`): mocked bank, builds a sheet, captures the printed HTML for set A, B, key-only and A + B + key, renders an A4 PDF, Urdu paper RTL with the bundled font, topic filter, phone width, no database writes. **Pass 31/31.** Printing from Windows Chrome to a real A4 printer is **unverified** (Hassan).
 - R-1 Report card + overdue + grading + markdown parity (prompt 12, `npm test`): `packages/core/test/reporting-*.test.ts`, `grading.test.ts`, `markdown.test.ts` carry every case of the old `scripts/verify-{report-aggregate,overdue,grading,markdown}.mjs` against the core ports, then run the frozen `src/` modules and the ports on the same fixtures (verify fixtures + 300 seeded random report cards + 200 random schools): identical output. Result 2026-11-24: pass (413 core tests); the old verify scripts still pass unchanged.
 
 ## Offline (Phase 6)

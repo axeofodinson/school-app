@@ -52,7 +52,7 @@ const mixName = (m: Blueprint['mix']): Mix =>
 type Delivery = 'tests' | 'live';
 const TYPES = ASSESSMENT_TYPES.filter((x) => x !== 'file');
 
-function Stepper({
+export function Stepper({
   label,
   value,
   min,
