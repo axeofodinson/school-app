@@ -2696,6 +2696,125 @@
         "network": "No connection. Try again.",
         "unknown": "Couldn't start the exam."
       }
+    },
+    "examLive": {
+      "open": "Open live view",
+      "openResults": "Results",
+      "subtitle": {
+        "one": "%{count} question · %{marks} marks",
+        "other": "%{count} questions · %{marks} marks"
+      },
+      "ended": "Ended",
+      "confirmedBadge": "In grades",
+      "timeLeft": "%{time} left",
+      "timeUp": "Time's up",
+      "tabs": {
+        "label": "Live or results",
+        "live": "Live",
+        "results": "Results"
+      },
+      "counts": {
+        "writing": "%{count} writing",
+        "idle": "%{count} gone quiet",
+        "notJoined": "%{count} not joined",
+        "handedIn": "%{count} handed in",
+        "void": "%{count} void"
+      },
+      "status": {
+        "notJoined": "Not joined",
+        "writing": "Writing",
+        "idle": "Quiet",
+        "handedIn": "Handed in",
+        "void": "Void"
+      },
+      "answered": "%{answered}/%{count}",
+      "score": "%{score}/%{total}",
+      "flags": {
+        "one": "Left once",
+        "other": "Left %{count}×"
+      },
+      "late": {
+        "one": "1 late answer",
+        "other": "%{count} late answers"
+      },
+      "voidedBecause": "Void: %{reason}",
+      "void": "Void",
+      "voidHint": "Void a paper to leave it out of grades, for example when a student will resit.",
+      "voidTitle": "Void %{name}'s paper?",
+      "voidBody": "It won't be graded or counted in item analysis. Say why: it's kept with the paper.",
+      "reason": "Reason",
+      "voided": "%{name}'s paper is void",
+      "noStudents": "No students in this class",
+      "noStudentsBody": "Enrol students in this class to see them here.",
+      "notReady": "Not switched on yet",
+      "notReadyBody": "The live view needs the exam results update (db/035) on this project.",
+      "loadError": "Couldn't load this exam.",
+      "noPapers": "No papers handed in yet",
+      "noPapersBody": "Results show here as students hand in.",
+      "spread": "Scores",
+      "averageLine": {
+        "one": "Average %{average} of %{total} · 1 paper",
+        "other": "Average %{average} of %{total} · %{count} papers"
+      },
+      "bandA11y": "%{band}: %{count}",
+      "confirm": "Confirm results",
+      "confirmedOn": "In grades since %{date}",
+      "notInGrades": "Not in grades yet. Check the papers, then confirm.",
+      "waitOpen": {
+        "one": "1 student is still writing. Confirm once everyone has handed in.",
+        "other": "%{count} students are still writing. Confirm once everyone has handed in."
+      },
+      "confirmTitle": "Send results to grades?",
+      "confirmBody": {
+        "one": "1 score goes into grades, with \"Exam result\" in the grade history.",
+        "other": "%{count} scores go into grades, with \"Exam result\" in the grade history."
+      },
+      "confirmFollowUps": "Students who were weak on an idea get a follow-up for it. This happens once: after confirming, papers can't be voided.",
+      "confirmVoid": {
+        "one": "1 void paper is left out.",
+        "other": "%{count} void papers are left out."
+      },
+      "confirmed": {
+        "one": "1 score in grades · %{followUps} follow-ups",
+        "other": "%{count} scores in grades · %{followUps} follow-ups"
+      },
+      "endTitle": "End the exam now?",
+      "endBody": {
+        "one": "1 student is still writing. Their paper is handed in as it is.",
+        "other": "%{count} students are still writing. Their papers are handed in as they are."
+      },
+      "items": "Question by question",
+      "fewPapers": "Fewer than 5 papers: the easy, hard and trap labels show from 5.",
+      "qNo": "Q%{n}",
+      "noText": "(picture question)",
+      "right": "Got it right",
+      "rightA11y": "%{correct} of %{papers} got it right",
+      "toMark": {
+        "one": "1 answer to mark by hand",
+        "other": "%{count} answers to mark by hand"
+      },
+      "key": "answer",
+      "true": "True",
+      "false": "False",
+      "choiceA11y": "%{option}: %{count}",
+      "choiceKeyA11y": "%{option}, the answer: %{count}",
+      "trapNote": {
+        "one": "%{option} pulled 1 student. Worth going over why.",
+        "other": "%{option} pulled %{count} students. Worth going over why."
+      },
+      "flag": {
+        "easy": "Easy",
+        "hard": "Hard",
+        "trap": "Trap"
+      },
+      "errors": {
+        "reasonRequired": "Write a reason first.",
+        "alreadyConfirmed": "Results are already in grades.",
+        "stillRunning": "Someone is still writing. End the exam or wait.",
+        "forbidden": "You can't change this exam.",
+        "network": "No connection. Nothing changed. Try again.",
+        "unknown": "Something went wrong. Nothing changed."
+      }
     }
   }
 }

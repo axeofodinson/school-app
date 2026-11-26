@@ -2,6 +2,7 @@
 // now (the server publishes it, sets the clock and issues a join code), show the
 // code big enough to read out, who has started and handed in, and end it.
 import type { AssessmentStatus } from '@school/core';
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
@@ -41,13 +42,29 @@ export function LivePanel({
 }) {
   const { t } = useI18n();
   const toast = useToast();
+  const router = useRouter();
   const res = useResult(`live:${assessmentId}:${status}`, () => loadLiveState(assessmentId));
   const [minutes, setMinutes] = useState('');
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const live =
     res.state?.status === 'ready' && res.state.data !== 'notReady' ? res.state.data : null;
-  if (!live || status === 'closed') return null;
+  if (!live) return null;
+  const openLive = () => router.push(`/exams/${assessmentId}`);
+  if (status === 'closed') {
+    // A finished exam: results, item analysis and confirm live on the exam screen.
+    if (live.mode === 'standard' || !live.started) return null;
+    return (
+      <Card>
+        <View style={styles.row}>
+          <Text variant="heading" style={styles.flex}>
+            {t('staff.quick.liveTitle')}
+          </Text>
+          <Button title={t('staff.examLive.openResults')} icon="chart" onPress={openLive} />
+        </View>
+      </Card>
+    );
+  }
   const running = live.mode === 'live_exam' && status === 'published' && !!live.joinCode;
 
   const start = async () => {
@@ -88,6 +105,7 @@ export function LivePanel({
               {t('staff.quick.progress', { started: live.started, submitted: live.submitted })}
             </Text>
             <View style={styles.row}>
+              <Button title={t('staff.examLive.open')} icon="users" size="sm" onPress={openLive} />
               <Button
                 title={t('staff.quick.refresh')}
                 variant="ghost"
