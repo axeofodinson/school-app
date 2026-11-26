@@ -3,7 +3,7 @@
 // class with many lessons stays short. Opens offline from the device copy.
 import type { Gate, TopicPos } from '@school/core';
 import { useRouter, type Href } from 'expo-router';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { useI18n } from '../../i18n';
@@ -21,9 +21,12 @@ import {
 import { PressableSticker } from '../../ui/Sticker';
 import { hueForSubject, radius, radiusFor, space, subjectHues } from '../../ui/tokens';
 import { useAuth } from '../auth/AuthProvider';
+import { ChapterDownload } from '../downloads/ChapterDownload';
+import { usePacks } from '../downloads/usePacks';
 import { ChipPicker } from '../scope/ChipPicker';
 import { useResult } from '../scope/useResult';
 import { loadLessonList, type LessonListItem } from './api';
+import { useOnline } from './useOnline';
 
 export function LessonList({
   classId,
@@ -75,6 +78,13 @@ export function LessonList({
     return m;
   }, [items, knownTopics]);
   const toast = useToast();
+  // Downloaded chapters older than a day refresh quietly (only what changed comes down).
+  const online = useOnline(false);
+  const { refreshStale, packs } = usePacks();
+  const listed = !!items;
+  useEffect(() => {
+    if (listed && online) void refreshStale();
+  }, [listed, online, refreshStale]);
   const [pick, setPick] = useState<string | null>(null);
   const group = groups.find((g) => g.key === pick) ?? groups[0] ?? null;
   const ur = locale === 'ur';
@@ -86,6 +96,15 @@ export function LessonList({
       </Text>
       {items && items.length ? (
         <Badge label={String(items.length)} tone="primary" icon="book" />
+      ) : null}
+      {packs && packs.length ? (
+        <Button
+          title={t('student.downloads.title')}
+          icon="cloud"
+          size="sm"
+          variant="ghost"
+          onPress={() => router.push('/downloads')}
+        />
       ) : null}
     </View>
   );
@@ -144,9 +163,12 @@ export function LessonList({
         return (
           <Reveal key={it.topicId} index={Math.min(i + 1, 8)}>
             {showChapter ? (
-              <Text variant="label" tone="textMuted" style={styles.chapter}>
-                {chapter}
-              </Text>
+              <View style={styles.chapterRow}>
+                <Text variant="label" tone="textMuted" style={styles.flex}>
+                  {chapter}
+                </Text>
+                <ChapterDownload chapterId={it.chapterId} title={chapter} />
+              </View>
             ) : null}
             <PressableSticker
               onPress={() =>
@@ -205,7 +227,13 @@ const styles = StyleSheet.create({
   wrap: { gap: space.sm },
   head: { flexDirection: 'row', alignItems: 'center', gap: space.sm },
   flex: { flex: 1 },
-  chapter: { marginTop: space.sm, marginBottom: space.xs },
+  chapterRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: space.sm,
+    marginTop: space.sm,
+    marginBottom: space.xs,
+  },
   row: {
     flexDirection: 'row',
     alignItems: 'center',

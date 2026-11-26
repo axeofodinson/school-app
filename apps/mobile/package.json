@@ -7,7 +7,7 @@
     "start": "expo start",
     "web": "npm run vendor:mathjax && expo start --web",
     "android": "expo run:android",
-    "export:web": "npm run vendor:mathjax && expo export -p web",
+    "export:web": "npm run vendor:mathjax && expo export -p web && node ../../scripts/sw-manifest.mjs dist",
     "typecheck": "tsc --noEmit",
     "lint": "eslint . && prettier --check . --ignore-path ../../.prettierignore",
     "vendor:mathjax": "node ../../scripts/vendor-mathjax.mjs"

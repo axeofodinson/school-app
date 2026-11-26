@@ -24,3 +24,4 @@ export * from './mastery';
 export * from './followups';
 export * from './exams';
 export * from './examResults';
+export * from './packs';

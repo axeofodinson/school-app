@@ -17,6 +17,7 @@ import {
   useMotion,
   useTheme,
 } from '../ui';
+import { registerServiceWorker } from '../lib/serviceWorker';
 import { fontAssets } from '../ui/fonts';
 
 SplashScreen.preventAutoHideAsync().catch(() => undefined);
@@ -81,12 +82,17 @@ function Root() {
         >
           <Stack.Screen name="settings" />
         </Stack.Protected>
+        <Stack.Protected guard={destination === 'student' || destination === 'prep'}>
+          <Stack.Screen name="downloads" />
+        </Stack.Protected>
       </Stack>
     </>
   );
 }
 
 export default function RootLayout() {
+  // Web: the offline app shell (public/sw.js), production builds only.
+  useEffect(() => registerServiceWorker(), []);
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>

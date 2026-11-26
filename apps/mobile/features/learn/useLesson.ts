@@ -35,7 +35,7 @@ export function useLesson(
     }
     fresh.current = false;
     let live = true;
-    loadLesson(where, mode, userStorage)
+    loadLesson(where, mode, userStorage, uid)
       .then((r) => {
         if (!live) return;
         if (r.ok) {
