@@ -295,6 +295,7 @@ describe('buildAttemptRow', () => {
         'learner_id',
         'kind',
         'topic_id',
+        'follow_up_id',
         'started_at',
         'finished_at',
         'items',

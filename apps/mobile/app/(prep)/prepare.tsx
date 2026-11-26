@@ -2,13 +2,13 @@ import { SCHOOL_ONLY_FEATURES, reliefPolicyFor } from '@school/core';
 import { StyleSheet, View } from 'react-native';
 
 import { AccountActions } from '../../features/auth/AccountActions';
-import { LessonList } from '../../features/learn/LessonList';
+import { PrepareBody } from '../../features/student/PrepareScreen';
 import { useAuth } from '../../features/auth/AuthProvider';
 import { useI18n } from '../../i18n';
 import { Badge, Card, EmptyState, Icon, Screen, Text } from '../../ui';
 
-// Home for a Google (prep-only) learner. Learn / Practice / Diagnose /
-// Follow-ups arrive with prompts 30–42; their gates use automatic relief only
+// Home for a Google (prep-only) learner: follow-ups first, then lessons (prompt
+// 41, the same PrepareBody as the student tab). Their gates use automatic relief only
 // (reliefPolicyFor('prep_only'): no teacher). School features are not hidden
 // silently: one card says what they are and how to get them.
 export default function PrepHome() {
@@ -41,7 +41,7 @@ export default function PrepHome() {
         </Card>
       ) : null}
 
-      <LessonList classId={null} root="/topic" />
+      <PrepareBody classId={null} root="/topic" />
 
       <EmptyState
         icon="lightbulb"

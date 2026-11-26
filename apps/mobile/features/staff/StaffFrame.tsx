@@ -89,6 +89,13 @@ export function staffPlaces(isAdmin: boolean): StaffPlace[] {
       hint: 'staff.review.navHint',
     },
     {
+      key: 'stuck',
+      href: '/stuck',
+      icon: 'users',
+      title: 'staff.stuck.title',
+      hint: 'staff.stuck.navHint',
+    },
+    {
       key: 'grading',
       href: '/grading',
       icon: 'award',

@@ -643,7 +643,9 @@
         "practice": "Practice",
         "drill": "Drill",
         "review": "Smart review",
-        "retry": "Retry"
+        "retry": "Retry",
+        "diagnose": "Check what I know",
+        "followup": "Follow-up"
       },
       "modes": {
         "practice": "Practice set",
@@ -709,6 +711,63 @@
         "flagged": "You flagged %{n}. Ask your teacher about them, or read the lesson again.",
         "done": "Back to the topic"
       }
+    },
+    "followUps": {
+      "title": {
+        "one": "Do this first",
+        "other": "Do these first"
+      },
+      "why": {
+        "exam": "After your test",
+        "diagnostic": "From your check",
+        "teacher": "From your teacher",
+        "revision": "Time to revise"
+      },
+      "round": "Try %{n}",
+      "roundA11y": "This is try %{n}",
+      "anotherWayHint": "Still tricky? Try the other explanation first, it often clicks.",
+      "anotherWay": "Another way",
+      "readAgain": "Read it again",
+      "practise": {
+        "one": "Practise %{count} question",
+        "other": "Practise %{count} questions"
+      },
+      "firstHint": "Starts a short set on this idea",
+      "done": "Done",
+      "unlockedTeacher": "Your teacher unlocked it",
+      "unlockedAuto": "Unlocked for you",
+      "unlockedNote": "We unlocked something for you. It will come back later for a quick revise.",
+      "unlockedTeacherNote": "Your teacher let you move on. It will come back later for a quick revise.",
+      "clearTitle": "All caught up",
+      "clearBody": "Nothing to fix right now. Pick a topic to keep learning.",
+      "gateExam": "Finish your test follow-ups first. New topics wait until they're done (your tests don't).",
+      "gateSubject": "New topics in %{subjects} wait until these are done. Other subjects are open.",
+      "gateNone": "These don't hold anything back. Do them when you can.",
+      "paused": "Paused",
+      "pausedExam": "Finish your test follow-ups first, then this opens.",
+      "pausedSubject": "Clear the follow-up above in this subject first, then this opens.",
+      "loadError": "Couldn't load your follow-ups.",
+      "diagnoseHint": "Want to see what you already know? Open a topic, tap Practise, then Check what I know.",
+      "afterDiagnose": "Check done. Anything to fix is waiting in Prepare.",
+      "afterPass": "Looks like you've got it! It clears once this syncs.",
+      "afterTooFew": "Answer at least 3 to count as a try.",
+      "afterNotYet": "Not yet, and that's okay. Read it again or try the other explanation, then have another go.",
+      "toPrepare": "Back to Prepare",
+      "diagnoseTitle": "Check what I know",
+      "diagnoseBody": {
+        "one": "%{count} question across every idea in this topic.",
+        "other": "%{count} questions across every idea in this topic."
+      },
+      "diagnoseStart": "Start the check",
+      "nextUp": {
+        "one": "%{count} follow-up to clear",
+        "other": "%{count} follow-ups to clear"
+      },
+      "nextUpA11y": {
+        "one": "%{count} follow-up to clear. Open Prepare.",
+        "other": "%{count} follow-ups to clear. Open Prepare."
+      },
+      "continue": "Continue"
     }
   },
   "console": {
@@ -2441,6 +2500,58 @@
         "badConcept": "That concept isn't in this chapter, or isn't yours.",
         "conceptRequired": "Tag a concept before approving.",
         "scopes": "Tick at least one place it can be used."
+      }
+    },
+    "stuck": {
+      "title": "Who's stuck",
+      "subtitle": "Open follow-ups by idea. Let a student move on, or open one again, with a reason.",
+      "navHint": "Follow-ups by idea, and who has tried the most",
+      "class": "Class",
+      "loadError": "Couldn't load follow-ups.",
+      "notReady": "Follow-ups aren't set up yet",
+      "notReadyBody": "They appear after migrations 019 and 034 run on this project.",
+      "empty": "Nobody is stuck",
+      "emptyBody": "No open follow-ups in this class right now.",
+      "summary": {
+        "one": "%{count} open follow-up",
+        "other": "%{count} open follow-ups, grouped by idea"
+      },
+      "kind": {
+        "exam": "after a test",
+        "diagnostic": "from a check",
+        "teacher": "set by a teacher",
+        "revision": "revision"
+      },
+      "rounds": {
+        "one": "%{count} try",
+        "other": "%{count} tries"
+      },
+      "cleared": "cleared",
+      "relaxedBy": "let move on by %{name}",
+      "autoRelieved": "unlocked automatically",
+      "stuck": "Stuck",
+      "relax": "Let them move on",
+      "restore": "Open again",
+      "openCount": {
+        "one": "%{count} open",
+        "other": "%{count} open"
+      },
+      "relaxTitle": "Let %{name} move on?",
+      "restoreTitle": "Open this again for %{name}?",
+      "relaxBody": "The follow-up closes and the idea comes back later in revision. Your name and reason are saved.",
+      "restoreBody": "The follow-up opens again with a fresh start. Your name and reason are saved.",
+      "reason": "Reason (required)",
+      "reasonRequired": "Write a short reason first.",
+      "cancel": "Cancel",
+      "relaxed": "%{name} can move on.",
+      "restored": "Opened again for %{name}.",
+      "errors": {
+        "reason": "Write a short reason first.",
+        "notYours": "Only this subject's teacher (or the office) can change this.",
+        "state": "This changed meanwhile. Pull to refresh.",
+        "alreadyOpen": "This student already has an open follow-up on this idea.",
+        "network": "No internet. Try again when you're online.",
+        "unknown": "Something went wrong. Try again."
       }
     }
   }

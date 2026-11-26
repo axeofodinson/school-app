@@ -9,6 +9,7 @@
 // Pure: no React, no I/O, randomness injected. Mastery is NOT computed here: the
 // server recomputes it from raw rows (prompt 40); the client never writes it.
 import { autoMarkItem } from '../autoMark';
+import { pickDiagnostic, type DiagnosticPoolItem } from '../mastery';
 
 /** Question types practice can mark on the device (the rest need a teacher). */
 export const PRACTICE_TYPES = ['mcq', 'true_false', 'numeric', 'short_text'] as const;
@@ -16,14 +17,29 @@ export type PracticeType = (typeof PRACTICE_TYPES)[number];
 export const isPracticeType = (t: string): t is PracticeType =>
   (PRACTICE_TYPES as readonly string[]).includes(t);
 
-export type PracticeMode = 'practice' | 'drill' | 'review' | 'retry';
+/**
+ * The four modes the picker offers, plus two the Prepare tab starts (prompt 41):
+ * `diagnose` (a topic's diagnostic, same order as the server's diagnostic_items)
+ * and `followup` (fresh items of one concept for an open follow-up).
+ */
+export type PracticeMode = 'practice' | 'drill' | 'review' | 'retry' | 'diagnose' | 'followup';
 export const PRACTICE_MODES: readonly PracticeMode[] = ['practice', 'drill', 'review', 'retry'];
+export const ALL_PRACTICE_MODES: readonly PracticeMode[] = [
+  ...PRACTICE_MODES,
+  'diagnose',
+  'followup',
+];
 export const isPracticeMode = (m: unknown): m is PracticeMode =>
-  typeof m === 'string' && (PRACTICE_MODES as readonly string[]).includes(m);
+  typeof m === 'string' && (ALL_PRACTICE_MODES as readonly string[]).includes(m);
+
+export type AttemptKind = 'practice' | 'revision' | 'diagnostic' | 'followup';
 
 /** `practice_attempts.kind` for each mode (017's check list). */
-export function practiceKind(mode: PracticeMode): 'practice' | 'revision' {
-  return mode === 'review' ? 'revision' : 'practice';
+export function practiceKind(mode: PracticeMode): AttemptKind {
+  if (mode === 'review') return 'revision';
+  if (mode === 'diagnose') return 'diagnostic';
+  if (mode === 'followup') return 'followup';
+  return 'practice';
 }
 
 export const PRACTICE_LIMITS = {
@@ -68,6 +84,8 @@ export interface SelectRules {
   conceptIds?: readonly string[];
   /** retry: the ids to retry (e.g. the last set's wrong ones). Else history's last-wrong. */
   retryIds?: readonly string[];
+  /** diagnose: concept id → its order in the topic (missing = 0). */
+  conceptOrder?: Readonly<Record<string, number>>;
   now: number;
 }
 
@@ -293,6 +311,20 @@ export function selectItems(
     return { items: out, reason: out.length ? 'ok' : 'empty' };
   }
 
+  if (rules.mode === 'diagnose') {
+    // Same order as db/019 diagnostic_pick (shared vectors), so offline = online.
+    const byId = new Map(items.map((p) => [p.questionId, p]));
+    const dpool: DiagnosticPoolItem[] = items.map((p) => ({
+      q: p.questionId,
+      concept: p.conceptId ?? '',
+      order: rules.conceptOrder?.[p.conceptId ?? ''] ?? 0,
+      d: clampDifficulty(p.difficulty),
+      seen: history[p.questionId]?.lastAt ?? null,
+    }));
+    const out = pickDiagnostic(dpool, size).map((q) => byId.get(q)!);
+    return { items: out, reason: out.length < size ? 'short' : 'ok' };
+  }
+
   if (rules.mode === 'review') {
     const out = selectReview(items, history, size, rules.now, rand);
     if (out.length) return { items: out, reason: out.length < size ? 'short' : 'ok' };
@@ -370,8 +402,9 @@ export interface AttemptItem {
 export interface PracticeAttemptRow {
   id: string;
   learner_id: string;
-  kind: 'practice' | 'revision';
+  kind: AttemptKind;
   topic_id: string | null;
+  follow_up_id: string | null;
   started_at: string;
   finished_at: string;
   items: AttemptItem[];
@@ -401,6 +434,8 @@ export function buildAttemptRow(input: {
   finishedAt: number;
   answers: readonly PracticeAnswer[];
   deviceId?: string | null;
+  /** followup mode: the follow-up this set is a round of. */
+  followUpId?: string | null;
 }): PracticeAttemptRow {
   // One row per item: if an item was somehow answered twice, the first answer counts.
   const seen = new Set<string>();
@@ -416,6 +451,7 @@ export function buildAttemptRow(input: {
     learner_id: input.learnerId,
     kind: practiceKind(input.mode),
     topic_id: input.topicId,
+    follow_up_id: input.mode === 'followup' ? (input.followUpId ?? null) : null,
     started_at: new Date(input.startedAt).toISOString(),
     finished_at: new Date(finished).toISOString(),
     items,

@@ -161,6 +161,10 @@ const db = {
   // The student layout loads the inbox (prompt 15).
   messages: [],
   message_reads: [],
+  // Home reads follow-ups, bands and class concepts (prompt 41); none here.
+  follow_ups: [],
+  concept_mastery: [],
+  concepts: [],
 };
 
 const net = { down: false, loseNextFor: 'a-lost' };

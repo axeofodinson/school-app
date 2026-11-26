@@ -1,29 +1,93 @@
-// The Prepare tab (wireframe "Prepare: follow-ups first"). Follow-ups, practice and
-// revision arrive with prompts 31/41/42; until then this is a real empty state that
-// says what will appear here and offers the one useful thing to do now.
-import { useRouter } from 'expo-router';
+// The Prepare tab (wireframe 7.2 "Prepare: follow-ups first", prompt 41): open
+// follow-ups first (exam → diagnostic → teacher → revision) with their next
+// steps, the gate in plain words, then the lessons, where a topic a follow-up
+// holds back shows as paused. Relief is automatic on the server (db/019) and a
+// teacher can relax a gate (db/034), so nobody is stuck. Shared by school
+// students (`/study`) and prep learners (root `/topic`).
+import type { TopicPos } from '@school/core';
+import { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { useI18n } from '../../i18n';
-import { MosaicMark } from '../../ui/MorphTile';
-import { Button, Card, Icon, Reveal, Screen, Text, useTheme, type IconName } from '../../ui';
-import { PatternFill } from '../../ui/Pattern';
-import { space, subjectHues, type SubjectHue } from '../../ui/tokens';
+import { Badge, Button, EmptyState, Reveal, Screen, SkeletonLines, Text } from '../../ui';
+import { space } from '../../ui/tokens';
 import { StudentHeader } from '../attempts/Header';
 import { useHome } from '../attempts/useHome';
+import { FollowUpsSection } from '../followups/FollowUpsSection';
+import { usePrepare } from '../followups/usePrepare';
 import { LessonList } from '../learn/LessonList';
 import { useStudentNav } from './StudentNav';
 
-const STEPS: { icon: IconName; key: 'followUps' | 'practice' | 'revise'; hue: SubjectHue }[] = [
-  { icon: 'warning', key: 'followUps', hue: 'coral' },
-  { icon: 'pencil', key: 'practice', hue: 'sky' },
-  { icon: 'star', key: 'revise', hue: 'sunflower' },
-];
+/** Follow-ups + lessons; used inside the student tab and the prep learner's home. */
+export function PrepareBody({
+  classId,
+  root = '/lesson',
+}: {
+  classId: string | null | undefined;
+  root?: string;
+}) {
+  const { t } = useI18n();
+  const prep = usePrepare(classId);
+  const items = useMemo(
+    () => new Map((prep.data?.followUps ?? []).map((f) => [f.id, f])),
+    [prep.data],
+  );
+  const known: TopicPos[] = useMemo(
+    () =>
+      (prep.data?.followUps ?? [])
+        .filter((f) => f.topicId)
+        .map((f) => ({
+          topicId: f.topicId!,
+          subjectId: f.subjectId,
+          chapterOrder: f.chapterOrder,
+          topicOrder: f.topicOrder,
+        })),
+    [prep.data],
+  );
+
+  let followUps: React.ReactNode = null;
+  if (prep.model) {
+    followUps = <FollowUpsSection model={prep.model} items={items} root={root} />;
+  } else if (!prep.state || prep.state.status === 'loading') {
+    followUps = <SkeletonLines lines={3} />;
+  } else if (prep.state.status === 'error') {
+    followUps = (
+      <EmptyState
+        icon="cloudOff"
+        title={t('student.followUps.loadError')}
+        action={
+          <Button title={t('student.learn.retry')} variant="secondary" onPress={prep.reload} />
+        }
+      />
+    );
+  } // notReady (no 019 on this project yet): Prepare is just the lessons.
+
+  return (
+    <>
+      {prep.data?.fromCache ? (
+        <Badge
+          label={t('student.learn.savedCopy')}
+          tone="neutral"
+          icon="cloudOff"
+          style={styles.saved}
+        />
+      ) : null}
+      {followUps}
+      <Reveal index={4}>
+        <View style={styles.divider} />
+        <Text variant="bodySm" tone="textMuted">
+          {t('student.followUps.diagnoseHint')}
+        </Text>
+      </Reveal>
+      <Reveal index={5}>
+        <LessonList classId={classId} root={root} gate={prep.gate} knownTopics={known} />
+      </Reveal>
+    </>
+  );
+}
 
 export function PrepareScreen() {
   const { t } = useI18n();
-  const router = useRouter();
-  const { colours, scheme } = useTheme();
   const nav = useStudentNav('prepare');
   const home = useHome(false);
   // The class whose lessons to list: undefined while loading, null = every class.
@@ -35,7 +99,6 @@ export function PrepareScreen() {
       : home.state?.status === 'error'
         ? null
         : undefined;
-  const outline = scheme === 'dark' ? colours.borderStrong : colours.ink;
   return (
     <Screen
       header={
@@ -47,88 +110,12 @@ export function PrepareScreen() {
       }
       {...nav}
     >
-      <Reveal index={1}>
-        <LessonList classId={classId} />
-      </Reveal>
-      <Reveal index={2}>
-        <View
-          style={[
-            styles.soon,
-            { backgroundColor: subjectHues.lilac[scheme], borderColor: outline },
-          ]}
-        >
-          <PatternFill name="hexFlower" animated />
-          <View style={[styles.badge, { backgroundColor: colours.surface, borderColor: outline }]}>
-            <MosaicMark size={34} colour={colours.ink} fill={colours.surface} />
-          </View>
-          <Text variant="heading" tone="ink" style={styles.centre} accessibilityRole="header">
-            {t('student.prepare.soonTitle')}
-          </Text>
-          <Text tone="ink" style={styles.centre}>
-            {t('student.prepare.soonBody')}
-          </Text>
-        </View>
-      </Reveal>
-      {STEPS.map((s, i) => (
-        <Reveal key={s.key} index={i + 3}>
-          <Card>
-            <View style={styles.row}>
-              <View
-                style={[
-                  styles.stepIcon,
-                  { backgroundColor: subjectHues[s.hue][scheme], borderColor: outline },
-                ]}
-              >
-                <Icon name={s.icon} size={22} colour={colours.ink} />
-              </View>
-              <View style={styles.flex}>
-                <Text variant="heading">{t(`student.prepare.${s.key}.title`)}</Text>
-                <Text variant="bodySm" tone="textMuted">
-                  {t(`student.prepare.${s.key}.body`)}
-                </Text>
-              </View>
-            </View>
-          </Card>
-        </Reveal>
-      ))}
-      <Reveal index={6}>
-        <Button
-          title={t('student.prepare.goTests')}
-          icon="clipboard"
-          onPress={() => router.replace('/tests')}
-        />
-      </Reveal>
+      <PrepareBody classId={classId} />
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  soon: {
-    overflow: 'hidden',
-    alignItems: 'center',
-    gap: space.sm,
-    padding: space.xl,
-    borderRadius: 24,
-    borderWidth: 2,
-  },
-  badge: {
-    width: 72,
-    height: 72,
-    borderRadius: 20,
-    borderWidth: 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-    transform: [{ rotate: '-6deg' }],
-  },
-  centre: { textAlign: 'center' },
-  row: { flexDirection: 'row', alignItems: 'center', gap: space.md },
-  stepIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: 12,
-    borderWidth: 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  flex: { flex: 1, gap: 2 },
+  saved: { alignSelf: 'flex-start' },
+  divider: { height: space.sm },
 });
