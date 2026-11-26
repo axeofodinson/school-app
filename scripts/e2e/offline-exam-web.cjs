@@ -5,7 +5,11 @@
 // Tests tab lists it, saves the paper while online (no answers in it), the
 // internet drops, starts and answers with no network, a reload keeps the
 // answers and the clock, hands in while offline ("waiting"), comes back online
-// and it sends itself with the SAME upload id, score shown. Teacher live view:
+// and it sends itself with the SAME upload id, score shown. Prompt 61 (O-5):
+// the copy is sealed in storage (no readable answers), the sync pill counts the
+// waiting paper, signing out offline sends first then warns "not sent yet",
+// another student on the same browser sees none of it, and the first
+// student's next sign-in sends it from Home. Teacher live view:
 // Offline badge, time taken, leaving the app, device clock changed, an
 // over-time upload accepted only with a reason. Nothing animates in the exam.
 // Build: cd apps/mobile && EXPO_PUBLIC_SUPABASE_URL=https://fakedevproject.supabase.co EXPO_PUBLIC_SUPABASE_ANON_KEY=fake npx expo export -p web
@@ -21,6 +25,12 @@ const STUDENT = {
   code: '1001',
   pin: '1234',
   name: 'Ali Raza',
+};
+const STUDENT_B = {
+  id: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+  code: '1002',
+  pin: '5678',
+  name: 'Sara Khan',
 };
 const TEACHER = {
   id: '11111111-1111-4111-8111-111111111111',
@@ -106,8 +116,11 @@ const exam = { session: null, answers: {}, upload: null };
 
 const b64 = (o) => Buffer.from(JSON.stringify(o)).toString('base64url');
 function sessionFor() {
-  const id = who === 'student' ? STUDENT.id : TEACHER.id;
-  const email = who === 'student' ? 's.1001@students.school.invalid' : TEACHER.email;
+  const id = who === 'student' ? STUDENT.id : who === 'studentB' ? STUDENT_B.id : TEACHER.id;
+  const email =
+    who === 'teacher'
+      ? TEACHER.email
+      : `s.${who === 'student' ? 1001 : 1002}@students.school.invalid`;
   const exp = Math.floor(Date.now() / 1000) + 3600;
   return {
     access_token: `${b64({ alg: 'HS256' })}.${b64({ sub: id, exp, role: 'authenticated' })}.sig`,
@@ -240,7 +253,9 @@ async function mock(page) {
       return out([
         who === 'student'
           ? { role: 'student', full_name: STUDENT.name, student_id: 's-a' }
-          : { role: 'teacher', full_name: TEACHER.name, student_id: null },
+          : who === 'studentB'
+            ? { role: 'student', full_name: STUDENT_B.name, student_id: 's-b' }
+            : { role: 'teacher', full_name: TEACHER.name, student_id: null },
       ]);
     if (p.startsWith('/rest/v1/rpc/')) {
       const fn = p.slice('/rest/v1/rpc/'.length);
@@ -260,7 +275,7 @@ async function mock(page) {
       if (fn === 'my_offline_exams')
         return json(
           200,
-          asmt().mode === 'offline_exam'
+          asmt().mode === 'offline_exam' && who === 'student'
             ? [
                 {
                   assessment_id: A,
@@ -450,14 +465,16 @@ const shot = (page, name, full = true) =>
   check(await seen(s, 'Save this exam on your device'), 'download card');
   await s.getByRole('button', { name: 'Save the exam' }).click();
   check(await seen(s, 'Ready: 20 minutes once you start'), 'saved: ready, 20 minutes');
-  const stored = await s.evaluate(() =>
-    Object.keys(localStorage)
-      .filter((k) => k.includes('offexam/'))
-      .map((k) => localStorage.getItem(k))
-      .join(''),
-  );
-  check(stored.includes('What is 1 + 1?'), 'paper stored on the device');
-  check(!/"correct"|"answer_key"|"key":"A","correct/.test(stored), 'no answer key in the copy');
+  const storedA = () =>
+    s.evaluate(() =>
+      Object.keys(localStorage)
+        .filter((k) => k.includes('/queue/'))
+        .map((k) => localStorage.getItem(k))
+        .join('\n'),
+    );
+  const stored = await storedA();
+  check(stored.startsWith('sealed1:'), 'paper stored on the device, sealed');
+  check(!stored.includes('What is'), 'no readable paper in storage');
   await shot(s, 'offline-ready-1280');
 
   // ── Internet drops. Start and answer with no network ──
@@ -521,10 +538,65 @@ const shot = (page, name, full = true) =>
   await shot(s, 'offline-waiting-390');
   await s.setViewportSize({ width: 1280, height: 900 });
 
-  // ── Back online: it sends itself, same upload id ──
+  const sealed = await storedA();
+  check(
+    sealed.split('\n').every((v) => v.startsWith('sealed1:')) && !/"[A-D]"|What is/.test(sealed),
+    'answers sealed in storage (nothing readable)',
+  );
+  check(await seen(s, '1 change waiting'), 'sync pill: 1 change waiting');
+
+  // ── O-5: sign out while offline → send first, then "not sent yet" ──
+  await s.goto(BASE + '/me');
+  await s.getByRole('button', { name: 'Sign out' }).first().click();
+  check(await seen(s, 'Not sent yet', true, 15000), 'sign out offline: "Not sent yet"');
+  check(
+    await seen(s, "1 piece of work is saved on this device but hasn't been sent yet."),
+    'says how much is waiting',
+  );
+  check(await seen(s, 'locked to you'), 'says it stays safe and private');
+  await s.waitForTimeout(600);
+  await shot(s, 'signout-unsent-1280');
+  await s.getByRole('button', { name: 'Stay signed in' }).click();
+  check(await seen(s, 'Sign out', true), 'stay: still signed in');
+  await s.getByRole('button', { name: 'Sign out' }).first().click();
+  await seen(s, 'Not sent yet', true, 15000);
+  await s.getByRole('button', { name: 'Sign out anyway' }).click();
+  check(await seen(s, 'Admission number', false, 10000), 'signed out anyway');
+  const afterOut = await s.evaluate(() => Object.keys(localStorage));
+  check(
+    afterOut.some((k) => k.includes('/queue/offexam/')),
+    'the unsent paper stays on the device (queue kept)',
+  );
+
+  // ── Student B on the same browser sees none of it ──
   net.down = false;
-  await s.evaluate(() => window.dispatchEvent(new Event('online')));
-  check(await seen(s, '3 / 3', true, 12000), 'sent by itself: score 3 / 3');
+  who = 'studentB';
+  await s.getByLabel('Admission number').fill(STUDENT_B.code);
+  await s.getByLabel('PIN', { exact: true }).fill(STUDENT_B.pin);
+  await s.getByText('Go', { exact: true }).click();
+  check(await seen(s, 'Hi, Sara Khan!'), 'student B signed in');
+  await s.goto(BASE + '/tests');
+  await s.waitForTimeout(1500);
+  check(!(await s.getByText('Sets homework test').count()), "B sees nothing of A's exam");
+  check(!(await s.getByText('Offline exams', { exact: true }).count()), 'B: no offline list');
+  check(!uploads.some((u) => !u.dropped), "B's session never sends A's paper");
+  await s.goto(BASE + '/me');
+  await s.getByRole('button', { name: 'Sign out' }).first().click();
+  check(await seen(s, 'Admission number', false, 10000), 'B signs out at once (nothing unsent)');
+
+  // ── A signs in again online: it sends itself from Home, same upload id ──
+  who = 'student';
+  await s.getByLabel('Admission number').fill(STUDENT.code);
+  await s.getByLabel('PIN', { exact: true }).fill(STUDENT.pin);
+  await s.getByText('Go', { exact: true }).click();
+  await seen(s, 'Hi, Ali Raza!');
+  for (let i = 0; i < 40 && !uploads.some((u) => !u.dropped); i++) await s.waitForTimeout(250);
+  check(
+    uploads.some((u) => !u.dropped),
+    "A's next sign-in sends the paper by itself",
+  );
+  await s.goto(BASE + '/exam/offline/' + A);
+  check(await seen(s, '3 / 3', true, 12000), 'sent: score 3 / 3');
   const sent = uploads.filter((u) => !u.dropped);
   const ids = new Set(uploads.map((u) => u.p_upload));
   check(

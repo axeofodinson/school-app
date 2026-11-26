@@ -166,7 +166,20 @@
         "unknown": "Google sign-in didn’t work. Try again."
       }
     },
-    "school": "Al-Syed High School"
+    "school": "Al-Syed High School",
+    "unsent": {
+      "sendingTitle": "Sending your work…",
+      "sendingBody": "Some of your work is still on this device. Sending it before you sign out.",
+      "title": "Not sent yet",
+      "body": {
+        "one": "1 piece of work is saved on this device but hasn't been sent yet.",
+        "other": "%{count} pieces of work are saved on this device but haven't been sent yet."
+      },
+      "safe": "It stays safe here, locked to you. Nobody else who signs in on this device can see it. It sends by itself next time you sign in here with internet.",
+      "stay": "Stay signed in",
+      "tryAgain": "Try sending",
+      "anyway": "Sign out anyway"
+    }
   },
   "student": {
     "home": {

@@ -152,6 +152,19 @@ Result on 2026-11-23: all pass (see `LMS_AUDIT.md` §5.3).
 ## Offline (Phase 6)
 O-1 … O-6 = the six cases in `LMS_AUDIT.md` §3.3, each scripted: airplane-mode on device, kill app mid-exam, two devices same student, 7-day offline then reconnect, logout with unsent queue then other student logs in (must see nothing), exam deadline while offline.
 
+**Status after prompt 61 (2026-11-26), automated parts all pass:**
+
+| Case | Automated (pass) | Still manual (unverified, Hassan) |
+|---|---|---|
+| O-1 Airplane mode | core `sync.test.ts` "airplane mode … exactly one row"; OX-3 (every request fails, paper taken, sent on reconnect); EX-2 dropped save retried; PE/AT-2 queue sends | On an Android phone: answer a test in airplane mode, turn it off, check the row |
+| O-2 Kill app mid-exam | OX-2 "app killed … counts the time away"; OX-3 reload mid-exam keeps answers and clock; EX-2 resume | Kill the Android app mid offline exam, reopen |
+| O-3 Two devices, same student | EX-1/EX-2 second device resumes the same session with answers; MA-1 the same attempt again changes nothing; core: practice attempts on two devices have different ids | — |
+| O-4 7 days offline | core `sync.test.ts` "O-4: a week offline": 5 items, a try every 10 min for a week, never more than 5 min between tries, ids and order kept, all 5 sent once on reconnect; MA-1 attempts accepted any time | A phone left offline for a few days |
+| O-5 Sign out with unsent queue, other student signs in | core `sealed.test.ts` (6): sealed values, B's key can't open A's, a moved value doesn't open, A gets queue + drafts back; OX-3: storage holds only `sealed1:` values, the pill says "1 change waiting", Sign out tries to send then says "Not sent yet" (Stay / Try sending / Sign out anyway), B on the same browser sees nothing and never sends A's paper, A's next sign-in sends it from Home with the same upload id; A-2 (auth-web) switch keeps A's queue and purges leftovers | S-1 script on a lab Chromebook |
+| O-6 Exam deadline while offline | EX-1 `late_answer`; OX-1 `late` stored not graded; OX-2 verdict rule | — |
+
+**S-2 (2026-11-26: pass).** The web export has no secret patterns (`service_role`, `sb_secret_` keys, Expo tokens, private keys, Google keys, JWTs); the only hit is supabase-js's own check for `sb_secret_` prefixes. **S-3** (`EXPLAIN ANALYZE` on seeded data) belongs with prompt 62's load tests.
+
 ## Platform
 - P-1 Android phone regression on every release.
 - P-2 Chromebook (APK): window resize, landscape, keyboard Tab/Enter, mouse, file picker, push, Urdu rendering.

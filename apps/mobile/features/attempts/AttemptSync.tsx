@@ -14,16 +14,20 @@ import {
 import { createContext, useCallback, useContext, useMemo, type ReactNode } from 'react';
 
 import { userQueueStores } from '../../lib/userQueue';
+import { useOfflineExamSync } from '../exams/useOfflineExamSync';
 import { useQueueRunner } from '../../lib/useQueueRunner';
 import type { SyncStatus } from '../../ui';
 import { useAuth } from '../auth/AuthProvider';
 import { PRACTICE_KIND, sendPracticeAttempt } from '../practice/api';
 import { sendSubmission } from './api';
 
-// Practice sets ride along (sent from every student screen), but the tests pill
-// counts only test submissions.
-const SENDERS = { [SUBMISSION_KIND]: sendSubmission, [PRACTICE_KIND]: sendPracticeAttempt };
-const COUNTED = [SUBMISSION_KIND];
+// Practice sets ride along (sent from every student screen). The status pill
+// counts everything still on this device: tests, practice sets, and offline
+// exams handed in but not sent (prompt 61: sync status visible everywhere).
+export const STUDENT_SENDERS = {
+  [SUBMISSION_KIND]: sendSubmission,
+  [PRACTICE_KIND]: sendPracticeAttempt,
+};
 
 export type SubmitResult = 'submitted' | 'queued' | 'rejected' | 'error';
 
@@ -41,14 +45,27 @@ interface AttemptSyncValue {
 const Ctx = createContext<AttemptSyncValue | null>(null);
 
 export function AttemptSyncProvider({ children }: { children: ReactNode }) {
-  const { session } = useAuth();
+  const { session, queueStorage } = useAuth();
   const userId = session?.user.id ?? null;
   const stores = useMemo(() => (userId ? userQueueStores(userId) : null), [userId]);
-  const { items, status, pending, syncedTick, flush, flushNow } = useQueueRunner(
-    stores?.queue ?? null,
-    SENDERS,
-    COUNTED,
-  );
+  const runner = useQueueRunner(stores?.queue ?? null, STUDENT_SENDERS);
+  const { items, syncedTick, flush } = runner;
+  const exams = useOfflineExamSync(queueStorage, syncedTick);
+  const pending = runner.pending + exams.waiting;
+  const status: SyncStatus =
+    runner.status === 'idle' || runner.status === 'saved'
+      ? exams.waiting > 0
+        ? 'offline'
+        : exams.justSent
+          ? 'saved'
+          : runner.status
+      : runner.status;
+  const runnerFlushNow = runner.flushNow;
+  const sendExams = exams.send;
+  const flushNow = useCallback(async () => {
+    await runnerFlushNow();
+    await sendExams();
+  }, [runnerFlushNow, sendExams]);
 
   const submit = useCallback<AttemptSyncValue['submit']>(
     async (enrollmentId, assessmentId, responses) => {

@@ -141,6 +141,10 @@ const db = {
   // The student layout loads the inbox (prompt 15).
   messages: [],
   message_reads: [],
+  // Student home (prompts 41/42) reads these; empty here.
+  follow_ups: [],
+  concept_mastery: [],
+  concepts: [],
 };
 const rpcCalls = [];
 const writes = [];

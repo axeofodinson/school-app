@@ -17,7 +17,8 @@ import type { SyncStatus } from '../../ui';
 import { useAuth } from '../auth/AuthProvider';
 import { sendAttendance } from './api';
 
-const SENDERS = { [ATTENDANCE_KIND]: sendAttendance };
+export const ATTENDANCE_SENDERS = { [ATTENDANCE_KIND]: sendAttendance };
+const SENDERS = ATTENDANCE_SENDERS;
 
 /** sent = on the server; queued = on this device, will send; rejected = the server said no. */
 export type SaveResult = 'sent' | 'queued' | 'rejected' | 'error';

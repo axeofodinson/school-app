@@ -7,11 +7,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useI18n } from '../../i18n';
 import { Button, Text, useTheme } from '../../ui';
 import { useAuth } from './AuthProvider';
+import { useSignOut } from '../sync/SignOutGuard';
 
 export function SwitchStudentBar() {
   const { t, isRTL } = useI18n();
   const { colours } = useTheme();
-  const { sharedMode, profile, signOut } = useAuth();
+  const { sharedMode, profile } = useAuth();
+  const signOut = useSignOut();
   if (!sharedMode) return null;
   return (
     <SafeAreaView

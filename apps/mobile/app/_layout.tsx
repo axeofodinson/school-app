@@ -7,6 +7,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { AuthProvider, useAuth } from '../features/auth/AuthProvider';
+import { SignOutGuardProvider } from '../features/sync/SignOutGuard';
 import { I18nProvider, useI18n } from '../i18n';
 import {
   MotionProvider,
@@ -103,7 +104,9 @@ export default function RootLayout() {
                 <SoundProvider>
                   <ToastProvider>
                     <AuthProvider>
-                      <Root />
+                      <SignOutGuardProvider>
+                        <Root />
+                      </SignOutGuardProvider>
                     </AuthProvider>
                   </ToastProvider>
                 </SoundProvider>
