@@ -74,9 +74,7 @@ export function PrepareBody({
         />
       ) : null}
       {followUps}
-      {prep.revision ? (
-        <RevisionSection model={prep.revision} now={prep.now} root={root} />
-      ) : null}
+      {prep.revision ? <RevisionSection model={prep.revision} now={prep.now} root={root} /> : null}
       <Reveal index={4}>
         <View style={styles.divider} />
         <Text variant="bodySm" tone="textMuted">

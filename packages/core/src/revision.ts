@@ -48,7 +48,9 @@ export function scheduleOnMastery(now: number, cfg = REVISION): RevisionSlot {
 /** Is a check open now (stage 1 or 2, due within the early window)? */
 export function isRevisionDue(slot: RevisionSlot, now: number, cfg = REVISION): boolean {
   return (
-    (slot.stage === 1 || slot.stage === 2) && slot.nextAt !== null && slot.nextAt <= now + cfg.earlyMs
+    (slot.stage === 1 || slot.stage === 2) &&
+    slot.nextAt !== null &&
+    slot.nextAt <= now + cfg.earlyMs
   );
 }
 

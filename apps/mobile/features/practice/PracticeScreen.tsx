@@ -194,12 +194,7 @@ function PracticeBody({
       mode,
       conceptIds: opts.conceptId ? [opts.conceptId] : undefined,
       retryIds: opts.retryIds,
-      size:
-        mode === 'followup'
-          ? FOLLOW_UP_SET_SIZE
-          : mode === 'diagnose'
-            ? diagSize
-            : opts.size,
+      size: mode === 'followup' ? FOLLOW_UP_SET_SIZE : mode === 'diagnose' ? diagSize : opts.size,
       conceptOrder,
       now: Date.now(),
     });

@@ -479,7 +479,10 @@ async function answer(page, right) {
     .first()
     .click();
   await page.waitForURL(/practice\?mode=revise&concept=k1/);
-  check(await seen(page, '1 / 4'), 'a revision set on that idea starts at once (all 4 items of k1)');
+  check(
+    await seen(page, '1 / 4'),
+    'a revision set on that idea starts at once (all 4 items of k1)',
+  );
   for (let i = 0; i < 4; i++) {
     const q = await answer(page, true);
     check(['q1', 'q3', 'q6/7'].includes(q), 'only the idea being revised: ' + q);

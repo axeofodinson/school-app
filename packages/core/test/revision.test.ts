@@ -19,7 +19,10 @@ const DAY = 24 * 60 * 60 * 1000;
 const H = 60 * 60 * 1000;
 const T0 = Date.parse('2026-12-01T09:00:00Z');
 const right = (n: number) => Array.from({ length: n }, () => ({ correct: true }));
-const mix = (r: number, w: number) => [...right(r), ...Array.from({ length: w }, () => ({ correct: false }))];
+const mix = (r: number, w: number) => [
+  ...right(r),
+  ...Array.from({ length: w }, () => ({ correct: false })),
+];
 
 /** A fake clock that only moves forward. */
 function clock(start = T0) {
