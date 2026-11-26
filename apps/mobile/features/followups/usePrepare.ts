@@ -1,7 +1,7 @@
 // The learner's follow-ups, bands and class concepts, plus the gate for each
 // topic. Shared by Prepare and Home; reloads when the screen comes back into view
 // (a practice round just synced) without blocking on it.
-import { gateFor, prepareModel, type Gate, type TopicPos } from '@school/core';
+import { gateFor, prepareModel, revisionModel, type Gate, type TopicPos } from '@school/core';
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useMemo, useRef, useState } from 'react';
 
@@ -34,6 +34,11 @@ export function usePrepare(classId: string | null | undefined) {
   const data = fresh ?? (res.state?.status === 'loading' ? kept : null);
   const [now] = useState(() => Date.now());
   const model = useMemo(() => (data ? prepareModel(data.followUps, now) : null), [data, now]);
+  // Spaced revision (prompt 42). A copy saved before 037 has no revisions.
+  const revision = useMemo(
+    () => (data ? revisionModel(data.revisions ?? [], now) : null),
+    [data, now],
+  );
 
   /** Gate for a topic given where it sits; open when nothing is known yet. */
   const gate = useCallback(
@@ -47,6 +52,8 @@ export function usePrepare(classId: string | null | undefined) {
     reload,
     data,
     model,
+    revision,
+    now,
     gate,
     notReady: res.state?.status === 'ready' && res.state.data === 'notReady',
   };

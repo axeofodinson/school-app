@@ -11,6 +11,8 @@
 import {
   diagnosticSize,
   FOLLOW_UP_SET_SIZE,
+  REVISION,
+  revisionOutcome,
   modeCounts,
   roundPreview,
   retryWrongIds,
@@ -70,11 +72,14 @@ interface Run {
   startedAt: number;
   /** followup mode: the follow-up this set is a round of. */
   followUpId: string | null;
+  /** A spaced-revision check started from Prepare (prompt 42). */
+  revise?: boolean;
 }
 
 /** Opened from Prepare: start this set at once (`?mode=followup&followUp=…&concept=…`). */
 export interface AutoStart {
-  mode: 'followup' | 'diagnose';
+  /** revise: a spaced-revision check on one idea (prompt 42), sent as kind 'revision'. */
+  mode: 'followup' | 'diagnose' | 'revise';
   followUpId: string | null;
   conceptId: string | null;
 }
@@ -177,13 +182,19 @@ function PracticeBody({
   /** A new set for a mode (no state change: start() and the auto-start share it). */
   const makeRun = (
     mode: PracticeMode,
-    opts: { conceptId?: string; retryIds?: string[]; followUpId?: string | null } = {},
+    opts: {
+      conceptId?: string;
+      retryIds?: string[];
+      followUpId?: string | null;
+      size?: number;
+      revise?: boolean;
+    } = {},
   ): { run: Run | null; fallback: boolean } => {
     const sel = selectItems(data.pool, history, {
       mode,
       conceptIds: opts.conceptId ? [opts.conceptId] : undefined,
       retryIds: opts.retryIds,
-      size: mode === 'followup' ? FOLLOW_UP_SET_SIZE : mode === 'diagnose' ? diagSize : undefined,
+      size: mode === 'followup' ? FOLLOW_UP_SET_SIZE : mode === 'diagnose' ? diagSize : opts.size,
       conceptOrder,
       now: Date.now(),
     });
@@ -199,6 +210,7 @@ function PracticeBody({
         answers: [],
         startedAt: Date.now(),
         followUpId: mode === 'followup' ? (opts.followUpId ?? null) : null,
+        revise: opts.revise,
       },
     };
   };
@@ -208,7 +220,10 @@ function PracticeBody({
       ? makeRun('followup', { conceptId: auto.conceptId, followUpId: auto.followUpId }).run
       : auto?.mode === 'diagnose'
         ? makeRun('diagnose').run
-        : null,
+        : auto?.mode === 'revise' && auto.conceptId
+          ? makeRun('review', { conceptId: auto.conceptId, size: REVISION.setSize, revise: true })
+              .run
+          : null,
   );
   const [cur, setCur] = useState<Current>(freshCurrent);
   const [done, setDone] = useState<Run | null>(null);
@@ -447,32 +462,34 @@ function PracticeBody({
   if (done) {
     const wrong = retryWrongIds(done.answers);
     const round = done.mode === 'followup' ? roundPreview(done.answers) : null;
+    // A revision check from Prepare: the same bar as the server (db/037).
+    const check = done.revise ? revisionOutcome(done.answers) : null;
+    const good = round === 'pass' || check === 'pass' || done.mode === 'diagnose';
+    const noticeKey =
+      done.mode === 'diagnose'
+        ? 'student.followUps.afterDiagnose'
+        : check
+          ? check === 'pass'
+            ? 'student.revision.afterPass'
+            : check === 'fail'
+              ? 'student.revision.afterFail'
+              : 'student.revision.afterTooFew'
+          : round === 'pass'
+            ? 'student.followUps.afterPass'
+            : round === 'tooFew'
+              ? 'student.followUps.afterTooFew'
+              : 'student.followUps.afterNotYet';
     return (
       <MathContext.Provider value={data.math}>
         <Screen header={header}>
-          {round || done.mode === 'diagnose' ? (
+          {round || check || done.mode === 'diagnose' ? (
             <View
               style={[
                 styles.notice,
-                {
-                  backgroundColor:
-                    round === 'pass' || done.mode === 'diagnose'
-                      ? colours.correctSoft
-                      : colours.accentSoft,
-                },
+                { backgroundColor: good ? colours.correctSoft : colours.accentSoft },
               ]}
             >
-              <Text variant="label">
-                {t(
-                  done.mode === 'diagnose'
-                    ? 'student.followUps.afterDiagnose'
-                    : round === 'pass'
-                      ? 'student.followUps.afterPass'
-                      : round === 'tooFew'
-                        ? 'student.followUps.afterTooFew'
-                        : 'student.followUps.afterNotYet',
-                )}
-              </Text>
+              <Text variant="label">{t(noticeKey)}</Text>
               <Button
                 title={t('student.followUps.toPrepare')}
                 icon="forward"
@@ -562,7 +579,7 @@ export function PracticeScreen({ root = '/lesson' }: { root?: string }) {
   }>();
   const auto = useMemo<AutoStart | null>(
     () =>
-      mode === 'followup' || mode === 'diagnose'
+      mode === 'followup' || mode === 'diagnose' || mode === 'revise'
         ? { mode, followUpId: followUp ?? null, conceptId: concept ?? null }
         : null,
     [mode, followUp, concept],
