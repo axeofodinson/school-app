@@ -4,7 +4,8 @@
 // (attendance) + 029 (messaging) + 030 (question audio) + 017 + 023 (prompt 20:
 // curriculum, question bank versions, learner state, access tiers) + 031
 // (prompt 21: importer batches, math_svgs, import RPCs) + 032 (prompt 22: review
-// queue RPCs). Draft 022 excluded. Via
+// queue RPCs) + 033 (prompt 30: lesson review) + 019 (prompt 40: mastery,
+// follow-ups, diagnostics). Draft 022 excluded. Via
 //   npx supabase@3.3.0 gen types typescript --db-url <harness> --schema public
 // Regenerate after each migration Hassan runs (see packages/core/README.md).
 
@@ -1302,6 +1303,72 @@ export type Database = {
           },
         ];
       };
+      mastery_config: {
+        Row: {
+          diagnostic_default: number;
+          diagnostic_max: number;
+          diagnostic_min: number;
+          first_review_days: number;
+          hard_level: number;
+          id: number;
+          mastered_pct: number;
+          need_fresh: number;
+          need_hard: number;
+          relief_rounds: number;
+          round_min: number;
+          updated_at: string;
+          updated_by: string | null;
+          weak_min: number;
+          weak_pct: number;
+          window_size: number;
+        };
+        ComputedFields: never;
+        Insert: {
+          diagnostic_default?: number;
+          diagnostic_max?: number;
+          diagnostic_min?: number;
+          first_review_days?: number;
+          hard_level?: number;
+          id?: number;
+          mastered_pct?: number;
+          need_fresh?: number;
+          need_hard?: number;
+          relief_rounds?: number;
+          round_min?: number;
+          updated_at?: string;
+          updated_by?: string | null;
+          weak_min?: number;
+          weak_pct?: number;
+          window_size?: number;
+        };
+        Update: {
+          diagnostic_default?: number;
+          diagnostic_max?: number;
+          diagnostic_min?: number;
+          first_review_days?: number;
+          hard_level?: number;
+          id?: number;
+          mastered_pct?: number;
+          need_fresh?: number;
+          need_hard?: number;
+          relief_rounds?: number;
+          round_min?: number;
+          updated_at?: string;
+          updated_by?: string | null;
+          weak_min?: number;
+          weak_pct?: number;
+          window_size?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'mastery_config_updated_by_fkey';
+            columns: ['updated_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       math_svgs: {
         Row: {
           created_at: string;
@@ -2057,6 +2124,8 @@ export type Database = {
       can_review_question: { Args: { p_concept: string }; Returns: boolean };
       dearmor: { Args: { '': string }; Returns: string };
       dev_hard_delete_student: { Args: { p_student_id: string }; Returns: Json };
+      diagnostic_items: { Args: { p_size?: number; p_topic: string }; Returns: Json };
+      diagnostic_pick: { Args: { p_n: number; p_pool: Json }; Returns: Json };
       disable_push_token: { Args: { p_token: string }; Returns: undefined };
       find_prep_accounts: {
         Args: { p_query: string };
@@ -2069,6 +2138,7 @@ export type Database = {
           merged_into: string;
         }[];
       };
+      fresh_items_left: { Args: { p_concept: string; p_learner: string }; Returns: number };
       gen_random_uuid: { Args: Record<PropertyKey, never>; Returns: string };
       gen_salt: { Args: { '': string }; Returns: string };
       grade_exam_session: { Args: { p_session: string }; Returns: undefined };
@@ -2099,6 +2169,17 @@ export type Database = {
         Returns: undefined;
       };
       mark_messages_read: { Args: { p_ids: string[] }; Returns: number };
+      mastery_apply_attempt: { Args: { p_attempt: string }; Returns: Json };
+      mastery_cfg: { Args: Record<PropertyKey, never>; Returns: Json };
+      mastery_eval: { Args: { p_cfg: Json; p_events: Json; p_prev?: string }; Returns: Json };
+      mastery_events: {
+        Args: { p_concepts: string[]; p_learner: string };
+        Returns: {
+          concept_id: string;
+          events: Json;
+          last_at: string;
+        }[];
+      };
       message_read_counts: {
         Args: { p_ids: string[] };
         Returns: {
@@ -2111,6 +2192,8 @@ export type Database = {
       pgp_armor_headers: { Args: { '': string }; Returns: Record<string, unknown>[] };
       provision_student_login: { Args: { p_pin: string; p_student_id: string }; Returns: string };
       question_match_text: { Args: { body: Json }; Returns: string };
+      recompute_all_mastery: { Args: { p_learner: string }; Returns: Json };
+      recompute_mastery: { Args: { p_concepts: string[]; p_learner: string }; Returns: Json };
       record_attendance: {
         Args: {
           p_class_id: string;
@@ -2147,7 +2230,9 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      record_practice_attempt: { Args: { p_attempt: Json }; Returns: Json };
       register_push_token: { Args: { p_device_info?: Json; p_token: string }; Returns: undefined };
+      relieve_follow_up: { Args: { p_id: string; p_why: string }; Returns: undefined };
       retire_import_batch: { Args: { p_batch: string; p_note: string }; Returns: Json };
       review_approve_many: {
         Args: { p_items: Json; p_scopes: string[]; p_translation_ok?: boolean };

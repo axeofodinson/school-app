@@ -1,0 +1,339 @@
+[
+  {
+    "note": "nothing yet",
+    "events": [],
+    "expect": {
+      "state": "learning",
+      "nAttempted": 0,
+      "nCorrect": 0,
+      "nDistinct": 0,
+      "window": { "n": 0, "right": 0, "hard": 0, "fresh": 0 },
+      "needs": ["more", "accuracy", "hard", "fresh"],
+      "masteredNow": false
+    }
+  },
+  {
+    "note": "five right first time incl. a hard one",
+    "events": [
+      { "q": "a", "c": true, "d": 1, "t": 1, "i": 0 },
+      { "q": "b", "c": true, "d": 2, "t": 1, "i": 1 },
+      { "q": "c", "c": true, "d": 2, "t": 1, "i": 2 },
+      { "q": "d", "c": true, "d": 3, "t": 1, "i": 3 },
+      { "q": "e", "c": true, "d": 1, "t": 1, "i": 4 }
+    ],
+    "expect": {
+      "state": "mastered",
+      "nAttempted": 5,
+      "nCorrect": 5,
+      "nDistinct": 5,
+      "window": { "n": 5, "right": 5, "hard": 1, "fresh": 5 },
+      "needs": [],
+      "masteredNow": true
+    }
+  },
+  {
+    "note": "4 of 5 is exactly 80 %",
+    "events": [
+      { "q": "a", "c": true, "d": 1, "t": 1, "i": 0 },
+      { "q": "b", "c": true, "d": 2, "t": 1, "i": 1 },
+      { "q": "c", "c": true, "d": 2, "t": 1, "i": 2 },
+      { "q": "d", "c": true, "d": 3, "t": 1, "i": 3 },
+      { "q": "e", "c": false, "d": 1, "t": 1, "i": 4 }
+    ],
+    "expect": {
+      "state": "mastered",
+      "nAttempted": 5,
+      "nCorrect": 4,
+      "nDistinct": 5,
+      "window": { "n": 5, "right": 4, "hard": 1, "fresh": 4 },
+      "needs": [],
+      "masteredNow": true
+    }
+  },
+  {
+    "note": "3 of 5 is not enough, and 60 % is not weak",
+    "events": [
+      { "q": "a", "c": true, "d": 1, "t": 1, "i": 0 },
+      { "q": "b", "c": true, "d": 2, "t": 1, "i": 1 },
+      { "q": "c", "c": false, "d": 2, "t": 1, "i": 2 },
+      { "q": "d", "c": true, "d": 3, "t": 1, "i": 3 },
+      { "q": "e", "c": false, "d": 1, "t": 1, "i": 4 }
+    ],
+    "expect": {
+      "state": "learning",
+      "nAttempted": 5,
+      "nCorrect": 3,
+      "nDistinct": 5,
+      "window": { "n": 5, "right": 3, "hard": 1, "fresh": 3 },
+      "needs": ["accuracy"],
+      "masteredNow": false
+    }
+  },
+  {
+    "note": "1 of 3 is weak",
+    "events": [
+      { "q": "a", "c": true, "d": 1, "t": 1, "i": 0 },
+      { "q": "b", "c": false, "d": 3, "t": 1, "i": 1 },
+      { "q": "c", "c": false, "d": 2, "t": 1, "i": 2 }
+    ],
+    "expect": {
+      "state": "weak",
+      "nAttempted": 3,
+      "nCorrect": 1,
+      "nDistinct": 3,
+      "window": { "n": 3, "right": 1, "hard": 0, "fresh": 1 },
+      "needs": ["more", "accuracy", "hard"],
+      "masteredNow": false
+    }
+  },
+  {
+    "note": "2 wrong of 2 is too little to call weak",
+    "events": [
+      { "q": "a", "c": false, "d": 1, "t": 1, "i": 0 },
+      { "q": "b", "c": false, "d": 2, "t": 1, "i": 1 }
+    ],
+    "expect": {
+      "state": "learning",
+      "nAttempted": 2,
+      "nCorrect": 0,
+      "nDistinct": 2,
+      "window": { "n": 2, "right": 0, "hard": 0, "fresh": 0 },
+      "needs": ["more", "accuracy", "hard", "fresh"],
+      "masteredNow": false
+    }
+  },
+  {
+    "note": "all right but no hard question",
+    "events": [
+      { "q": "a", "c": true, "d": 1, "t": 1, "i": 0 },
+      { "q": "b", "c": true, "d": 2, "t": 1, "i": 1 },
+      { "q": "c", "c": true, "d": 2, "t": 1, "i": 2 },
+      { "q": "d", "c": true, "d": 2, "t": 1, "i": 3 },
+      { "q": "e", "c": true, "d": 1, "t": 1, "i": 4 }
+    ],
+    "expect": {
+      "state": "learning",
+      "nAttempted": 5,
+      "nCorrect": 5,
+      "nDistinct": 5,
+      "window": { "n": 5, "right": 5, "hard": 0, "fresh": 5 },
+      "needs": ["hard"],
+      "masteredNow": false
+    }
+  },
+  {
+    "note": "a hard one answered wrong does not count as hard",
+    "events": [
+      { "q": "a", "c": true, "d": 1, "t": 1, "i": 0 },
+      { "q": "b", "c": true, "d": 2, "t": 1, "i": 1 },
+      { "q": "c", "c": true, "d": 2, "t": 1, "i": 2 },
+      { "q": "d", "c": false, "d": 3, "t": 1, "i": 3 },
+      { "q": "e", "c": true, "d": 1, "t": 1, "i": 4 }
+    ],
+    "expect": {
+      "state": "learning",
+      "nAttempted": 5,
+      "nCorrect": 4,
+      "nDistinct": 5,
+      "window": { "n": 5, "right": 4, "hard": 0, "fresh": 4 },
+      "needs": ["hard"],
+      "masteredNow": false
+    }
+  },
+  {
+    "note": "every question seen before: no fresh one",
+    "events": [
+      { "q": "a", "c": false, "d": 1, "t": 1, "i": 0 },
+      { "q": "b", "c": false, "d": 2, "t": 1, "i": 1 },
+      { "q": "c", "c": false, "d": 2, "t": 1, "i": 2 },
+      { "q": "d", "c": false, "d": 3, "t": 1, "i": 3 },
+      { "q": "e", "c": false, "d": 1, "t": 1, "i": 4 },
+      { "q": "a", "c": true, "d": 1, "t": 2, "i": 0 },
+      { "q": "b", "c": true, "d": 2, "t": 2, "i": 1 },
+      { "q": "c", "c": true, "d": 2, "t": 2, "i": 2 },
+      { "q": "d", "c": true, "d": 3, "t": 2, "i": 3 },
+      { "q": "e", "c": true, "d": 1, "t": 2, "i": 4 }
+    ],
+    "expect": {
+      "state": "learning",
+      "nAttempted": 10,
+      "nCorrect": 5,
+      "nDistinct": 5,
+      "window": { "n": 5, "right": 5, "hard": 1, "fresh": 0 },
+      "needs": ["fresh"],
+      "masteredNow": false
+    }
+  },
+  {
+    "note": "only the last 5 distinct questions count",
+    "events": [
+      { "q": "f", "c": false, "d": 1, "t": 1, "i": 0 },
+      { "q": "a", "c": true, "d": 1, "t": 2, "i": 0 },
+      { "q": "b", "c": true, "d": 2, "t": 2, "i": 1 },
+      { "q": "c", "c": true, "d": 2, "t": 2, "i": 2 },
+      { "q": "d", "c": true, "d": 3, "t": 2, "i": 3 },
+      { "q": "e", "c": true, "d": 1, "t": 2, "i": 4 }
+    ],
+    "expect": {
+      "state": "mastered",
+      "nAttempted": 6,
+      "nCorrect": 5,
+      "nDistinct": 6,
+      "window": { "n": 5, "right": 5, "hard": 1, "fresh": 5 },
+      "needs": [],
+      "masteredNow": true
+    }
+  },
+  {
+    "note": "a question's latest answer counts, given in any order",
+    "events": [
+      { "q": "a", "c": false, "d": 1, "t": 10, "i": 0 },
+      { "q": "b", "c": false, "d": 2, "t": 10, "i": 1 },
+      { "q": "a", "c": true, "d": 1, "t": 1, "i": 0 },
+      { "q": "b", "c": true, "d": 2, "t": 1, "i": 1 },
+      { "q": "c", "c": true, "d": 2, "t": 1, "i": 2 },
+      { "q": "d", "c": true, "d": 3, "t": 1, "i": 3 },
+      { "q": "e", "c": true, "d": 1, "t": 1, "i": 4 }
+    ],
+    "expect": {
+      "state": "learning",
+      "nAttempted": 7,
+      "nCorrect": 5,
+      "nDistinct": 5,
+      "window": { "n": 5, "right": 3, "hard": 1, "fresh": 3 },
+      "needs": ["accuracy"],
+      "masteredNow": false
+    }
+  },
+  {
+    "note": "answers on a retired question are left out",
+    "events": [
+      { "q": "a", "c": true, "d": 1, "t": 1, "i": 0 },
+      { "q": "b", "c": true, "d": 2, "t": 1, "i": 1 },
+      { "q": "c", "c": true, "d": 2, "t": 1, "i": 2 },
+      { "q": "d", "c": true, "d": 3, "t": 1, "i": 3, "x": true },
+      { "q": "e", "c": true, "d": 1, "t": 1, "i": 4 }
+    ],
+    "expect": {
+      "state": "learning",
+      "nAttempted": 4,
+      "nCorrect": 4,
+      "nDistinct": 4,
+      "window": { "n": 4, "right": 4, "hard": 0, "fresh": 4 },
+      "needs": ["more", "hard"],
+      "masteredNow": false
+    }
+  },
+  {
+    "note": "order inside one attempt decides the window",
+    "events": [
+      { "q": "a", "c": true, "d": 3, "t": 5, "i": 0 },
+      { "q": "b", "c": true, "d": 2, "t": 5, "i": 1 },
+      { "q": "c", "c": true, "d": 2, "t": 5, "i": 2 },
+      { "q": "d", "c": true, "d": 1, "t": 5, "i": 3 },
+      { "q": "e", "c": true, "d": 1, "t": 5, "i": 4 },
+      { "q": "f", "c": true, "d": 2, "t": 5, "i": 5 }
+    ],
+    "expect": {
+      "state": "learning",
+      "nAttempted": 6,
+      "nCorrect": 6,
+      "nDistinct": 6,
+      "window": { "n": 5, "right": 5, "hard": 0, "fresh": 5 },
+      "needs": ["hard"],
+      "masteredNow": false
+    }
+  },
+  {
+    "note": "mastered stays mastered",
+    "prev": "mastered",
+    "events": [
+      { "q": "a", "c": false, "d": 1, "t": 1, "i": 0 },
+      { "q": "b", "c": false, "d": 2, "t": 1, "i": 1 },
+      { "q": "c", "c": false, "d": 2, "t": 1, "i": 2 }
+    ],
+    "expect": {
+      "state": "mastered",
+      "nAttempted": 3,
+      "nCorrect": 0,
+      "nDistinct": 3,
+      "window": { "n": 3, "right": 0, "hard": 0, "fresh": 0 },
+      "needs": ["more", "accuracy", "hard", "fresh"],
+      "masteredNow": false
+    }
+  },
+  {
+    "note": "carried over stays carried over while not weak",
+    "prev": "carried_over",
+    "events": [
+      { "q": "a", "c": true, "d": 1, "t": 1, "i": 0 },
+      { "q": "b", "c": true, "d": 2, "t": 1, "i": 1 }
+    ],
+    "expect": {
+      "state": "carried_over",
+      "nAttempted": 2,
+      "nCorrect": 2,
+      "nDistinct": 2,
+      "window": { "n": 2, "right": 2, "hard": 0, "fresh": 2 },
+      "needs": ["more", "hard"],
+      "masteredNow": false
+    }
+  },
+  {
+    "note": "carried over can turn weak",
+    "prev": "carried_over",
+    "events": [
+      { "q": "a", "c": false, "d": 1, "t": 1, "i": 0 },
+      { "q": "b", "c": false, "d": 2, "t": 1, "i": 1 },
+      { "q": "c", "c": false, "d": 3, "t": 1, "i": 2 }
+    ],
+    "expect": {
+      "state": "weak",
+      "nAttempted": 3,
+      "nCorrect": 0,
+      "nDistinct": 3,
+      "window": { "n": 3, "right": 0, "hard": 0, "fresh": 0 },
+      "needs": ["more", "accuracy", "hard", "fresh"],
+      "masteredNow": false
+    }
+  },
+  {
+    "note": "carried over can still be mastered",
+    "prev": "carried_over",
+    "events": [
+      { "q": "a", "c": true, "d": 1, "t": 1, "i": 0 },
+      { "q": "b", "c": true, "d": 2, "t": 1, "i": 1 },
+      { "q": "c", "c": true, "d": 2, "t": 1, "i": 2 },
+      { "q": "d", "c": true, "d": 3, "t": 1, "i": 3 },
+      { "q": "e", "c": true, "d": 1, "t": 1, "i": 4 }
+    ],
+    "expect": {
+      "state": "mastered",
+      "nAttempted": 5,
+      "nCorrect": 5,
+      "nDistinct": 5,
+      "window": { "n": 5, "right": 5, "hard": 1, "fresh": 5 },
+      "needs": [],
+      "masteredNow": true
+    }
+  },
+  {
+    "note": "tuned config: window 3, all right, no hard or fresh needed",
+    "cfg": { "window": 3, "masteredPct": 100, "needHard": 0, "needFresh": 0 },
+    "events": [
+      { "q": "a", "c": false, "d": 1, "t": 1, "i": 0 },
+      { "q": "a", "c": true, "d": 1, "t": 2, "i": 0 },
+      { "q": "b", "c": true, "d": 1, "t": 2, "i": 1 },
+      { "q": "c", "c": true, "d": 1, "t": 2, "i": 2 }
+    ],
+    "expect": {
+      "state": "mastered",
+      "nAttempted": 4,
+      "nCorrect": 3,
+      "nDistinct": 3,
+      "window": { "n": 3, "right": 3, "hard": 0, "fresh": 2 },
+      "needs": [],
+      "masteredNow": true
+    }
+  }
+]

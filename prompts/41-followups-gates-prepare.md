@@ -22,6 +22,7 @@ Skills: `frontend-design`, `design:ux-copy`, `run`. Finish with `/code-review`. 
 The core loop: Prepare shows follow-ups first, gates hold within a subject, nobody gets trapped.
 
 ## Do
+(From 40, `db/019`: `record_practice_attempt()` returns bands + follow-ups; `diagnostic_items(topic)`; relief is automatic in the server; `concept_mastery.evidence.needs` explains what's missing. Also swap Home's subject mosaics from tests to concepts (DECISIONS #94).)
 - Prepare tab: exam follow-ups first (block other Prepare work), then diagnostic follow-ups by subject, teacher-assigned, revision; subject topic list with gate state.
 - Follow-up flow: link back to the Learn section → alternative explanation if rounds ≥ 2 → fresh items → reassess.
 - Relief: auto after N rounds or exhausted pool (gate_overrides auto_relief, concept carried_over); teacher relax/restore with reason; works for no-class users.
