@@ -852,6 +852,34 @@
         "storage": "This device is out of space. Delete a download and try again.",
         "unknown": "Something went wrong. Try again."
       }
+    },
+    "revision": {
+      "title": "Due for revision",
+      "body": "You learned these a while ago. A quick check helps them stick.",
+      "nothingDue": "Nothing to revise today. These come back soon:",
+      "stage1": "1-week check",
+      "stage2": "1-month check",
+      "dueNow": "Ready today",
+      "late": {
+        "one": "%{count} day waiting",
+        "other": "%{count} days waiting"
+      },
+      "revise": {
+        "one": "Revise %{count} question",
+        "other": "Revise %{count} questions"
+      },
+      "inDays": {
+        "zero": "today",
+        "one": "in %{count} day",
+        "other": "in %{count} days"
+      },
+      "retained": {
+        "one": "%{count} idea remembered for a month",
+        "other": "%{count} ideas remembered for a month"
+      },
+      "afterPass": "You still remember it! It comes back once more later, then it's done.",
+      "afterFail": "It slipped a little, that's normal. It's in Do these first now, and comes back next week.",
+      "afterTooFew": "Answer at least 3 to count as a check."
     }
   },
   "console": {

@@ -1,6 +1,6 @@
 // The Prepare tab (wireframe 7.2 "Prepare: follow-ups first", prompt 41): open
 // follow-ups first (exam → diagnostic → teacher → revision) with their next
-// steps, the gate in plain words, then the lessons, where a topic a follow-up
+// steps, then ideas due for spaced revision (prompt 42), the gate in plain words, then the lessons, where a topic a follow-up
 // holds back shows as paused. Relief is automatic on the server (db/019) and a
 // teacher can relax a gate (db/034), so nobody is stuck. Shared by school
 // students (`/study`) and prep learners (root `/topic`).
@@ -14,6 +14,7 @@ import { space } from '../../ui/tokens';
 import { StudentHeader } from '../attempts/Header';
 import { useHome } from '../attempts/useHome';
 import { FollowUpsSection } from '../followups/FollowUpsSection';
+import { RevisionSection } from '../followups/RevisionSection';
 import { usePrepare } from '../followups/usePrepare';
 import { LessonList } from '../learn/LessonList';
 import { useStudentNav } from './StudentNav';
@@ -73,6 +74,9 @@ export function PrepareBody({
         />
       ) : null}
       {followUps}
+      {prep.revision ? (
+        <RevisionSection model={prep.revision} now={prep.now} root={root} />
+      ) : null}
       <Reveal index={4}>
         <View style={styles.divider} />
         <Text variant="bodySm" tone="textMuted">
