@@ -5,7 +5,8 @@
 // curriculum, question bank versions, learner state, access tiers) + 031
 // (prompt 21: importer batches, math_svgs, import RPCs) + 032 (prompt 22: review
 // queue RPCs) + 033 (prompt 30: lesson review) + 019 (prompt 40: mastery,
-// follow-ups, diagnostics). Draft 022 excluded. Via
+// follow-ups, diagnostics) + 034 (prompt 41: gate relax/restore,
+// stuck students). Draft 022 excluded. Via
 //   npx supabase@3.3.0 gen types typescript --db-url <harness> --schema public
 // Regenerate after each migration Hassan runs (see packages/core/README.md).
 
@@ -2121,7 +2122,9 @@ export type Database = {
         }[];
       };
       auto_mark_item: { Args: { p_answer: Json; p_type: string; p_value: Json }; Returns: boolean };
+      can_override_follow_up: { Args: { p_learner: string; p_subject: string }; Returns: boolean };
       can_review_question: { Args: { p_concept: string }; Returns: boolean };
+      class_follow_ups: { Args: { p_class: string }; Returns: Json };
       dearmor: { Args: { '': string }; Returns: string };
       dev_hard_delete_student: { Args: { p_student_id: string }; Returns: Json };
       diagnostic_items: { Args: { p_size?: number; p_topic: string }; Returns: Json };
@@ -2139,6 +2142,8 @@ export type Database = {
         }[];
       };
       fresh_items_left: { Args: { p_concept: string; p_learner: string }; Returns: number };
+      gate_relax: { Args: { p_follow_up: string; p_reason: string }; Returns: Json };
+      gate_restore: { Args: { p_follow_up: string; p_reason: string }; Returns: Json };
       gen_random_uuid: { Args: Record<PropertyKey, never>; Returns: string };
       gen_salt: { Args: { '': string }; Returns: string };
       grade_exam_session: { Args: { p_session: string }; Returns: undefined };

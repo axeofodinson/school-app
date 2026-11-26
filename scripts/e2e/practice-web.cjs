@@ -444,7 +444,7 @@ async function answer(page, right) {
       }
       check(await seen(page, 'See lesson'), 'see lesson offered after a wrong answer');
       await sleep(1200); // let the moment finish before the picture
-  await page.screenshot({ path: SHOTS + '/practice-wrong-1280.png' });
+      await page.screenshot({ path: SHOTS + '/practice-wrong-1280.png' });
     } else {
       check(await seen(page, 'Correct!'), `right answer ${i + 1}: correct`);
     }
@@ -464,6 +464,7 @@ async function answer(page, right) {
         JSON.stringify([
           'device_id',
           'finished_at',
+          'follow_up_id',
           'id',
           'items',
           'kind',

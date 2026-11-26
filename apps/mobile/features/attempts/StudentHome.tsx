@@ -1,11 +1,12 @@
 // Student Home (Mosaic wireframe "Student Home", DECISIONS #94): a brand hero with the
 // drifting tile pattern, the open test as a saffron banner, the student's subjects as
-// mosaics, and big tiles for everything else. Until mastery exists (prompt 40) a
-// subject's tiles are its tests: one tile per test this year, set when it is done.
-// Prepare (follow-ups) arrives with prompt 41; its tab already has a real empty state.
-import { attemptKey, SUBMISSION_KIND } from '@school/core';
+// mosaics, and big tiles for everything else. A subject's tiles are its concepts
+// (one per concept, set when mastered, prompt 41); a subject with no concepts yet
+// (or a project without db/019) keeps the tests view: one tile per test, set when
+// done. Open follow-ups show as "Next up" and lead to Prepare (never forced open).
+import { attemptKey, subjectMosaics, SUBMISSION_KIND } from '@school/core';
 import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { useI18n } from '../../i18n';
@@ -32,6 +33,7 @@ import {
 import { PressableSticker } from '../../ui/Sticker';
 import { radiusFor, space, type ColourRoles } from '../../ui/tokens';
 import { useAuth } from '../auth/AuthProvider';
+import { usePrepare } from '../followups/usePrepare';
 import { useMessages } from '../messages/MessagesProvider';
 import { useStudentNav } from '../student/StudentNav';
 import { useGradePresentation } from '../student/StudentPresentation';
@@ -220,6 +222,55 @@ type SubjectRow = {
   firstOpen: string | null;
 };
 
+/** "Next up": open follow-ups to clear, one tap to Prepare (wireframe 7.1). */
+function NextUp({
+  count,
+  names,
+  onPress,
+}: {
+  count: number;
+  names: string[];
+  onPress: () => void;
+}) {
+  const { t } = useI18n();
+  const { colours, presentation, scheme } = useTheme();
+  return (
+    <PressableSticker
+      radius={radiusFor('lg', presentation)}
+      depth="stickerSm"
+      sound="tap"
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={t('student.followUps.nextUpA11y', { count })}
+      faceStyle={(pressed) => [
+        styles.nextUp,
+        { backgroundColor: pressed ? colours.surfaceAlt : colours.surface },
+      ]}
+    >
+      <View
+        style={[
+          styles.nextIcon,
+          {
+            backgroundColor: colours.accentSoft,
+            borderColor: scheme === 'dark' ? colours.borderStrong : colours.ink,
+          },
+        ]}
+      >
+        <Icon name="warning" tone="onAccentSoft" />
+      </View>
+      <View style={styles.flex}>
+        <Text variant="label">{t('student.followUps.nextUp', { count })}</Text>
+        {names.length ? (
+          <Text variant="bodySm" tone="textMuted" numberOfLines={1}>
+            {names.join(' · ')}
+          </Text>
+        ) : null}
+      </View>
+      <Badge label={t('student.followUps.continue')} tone="accent" icon="forward" />
+    </PressableSticker>
+  );
+}
+
 function subjectsOf(home: Home, isDone: (a: StudentAssessment) => boolean): SubjectRow[] {
   const map = new Map<string, SubjectRow>();
   for (const a of home.assessments) {
@@ -241,7 +292,7 @@ function subjectsOf(home: Home, isDone: (a: StudentAssessment) => boolean): Subj
 }
 
 export function StudentHome() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const router = useRouter();
   const { profile } = useAuth();
   const { items } = useAttemptSync();
@@ -266,6 +317,20 @@ export function StudentHome() {
       : [];
   const subjects = home && enr ? subjectsOf(home, (a) => done.has(a.id) || queued(a)) : [];
   const cols = breakpoint === 'phone' ? 2 : breakpoint === 'tablet' ? 3 : 4;
+  const prep = usePrepare(home ? (enr?.classId ?? null) : undefined);
+  const mosaics = useMemo(
+    () =>
+      prep.data
+        ? subjectMosaics(prep.data.concepts, new Map(Object.entries(prep.data.bands)))
+        : new Map(),
+    [prep.data],
+  );
+  const nextUp = prep.model?.doFirst ?? [];
+  const nextNames = nextUp
+    .slice(0, 2)
+    .map((f) => prep.data?.followUps.find((x) => x.id === f.id))
+    .map((f) => (f ? (locale === 'ur' ? f.conceptUr : null) || f.conceptEn : ''))
+    .filter(Boolean);
   useKidHello(!!enr, todo.length > 0);
 
   let body: React.ReactNode;
@@ -312,6 +377,16 @@ export function StudentHome() {
           </Reveal>
         )}
 
+        {nextUp.length ? (
+          <Reveal index={3}>
+            <NextUp
+              count={nextUp.length}
+              names={nextNames}
+              onPress={() => router.replace('/study')}
+            />
+          </Reveal>
+        ) : null}
+
         <Reveal index={3}>
           <Text variant="heading" accessibilityRole="header" style={styles.section}>
             {t('student.home.subjects')}
@@ -329,23 +404,36 @@ export function StudentHome() {
                 index={4 + i}
                 style={{ width: `${100 / cols}%`, padding: space.xs }}
               >
-                <SubjectCard
-                  subject={{
-                    id: s.id,
-                    name: s.name,
-                    mastered: s.done,
-                    total: Math.max(1, s.total),
-                  }}
-                  label={t('student.home.subjectA11y', {
-                    subject: s.name,
-                    count: s.done,
-                    total: s.total,
-                  })}
-                  countLabel={t('student.home.subjectCount', { count: s.done, total: s.total })}
-                  onPress={() =>
-                    s.firstOpen ? router.push(`/tests/${s.firstOpen}`) : router.push('/tests')
-                  }
-                />
+                {mosaics.get(s.id)?.total ? (
+                  <SubjectCard
+                    subject={{
+                      id: s.id,
+                      name: s.name,
+                      mastered: mosaics.get(s.id)!.mastered,
+                      total: mosaics.get(s.id)!.total,
+                      band: mosaics.get(s.id)!.band ?? undefined,
+                    }}
+                    onPress={() => router.replace('/study')}
+                  />
+                ) : (
+                  <SubjectCard
+                    subject={{
+                      id: s.id,
+                      name: s.name,
+                      mastered: s.done,
+                      total: Math.max(1, s.total),
+                    }}
+                    label={t('student.home.subjectA11y', {
+                      subject: s.name,
+                      count: s.done,
+                      total: s.total,
+                    })}
+                    countLabel={t('student.home.subjectCount', { count: s.done, total: s.total })}
+                    onPress={() =>
+                      s.firstOpen ? router.push(`/tests/${s.firstOpen}`) : router.push('/tests')
+                    }
+                  />
+                )}
               </Reveal>
             ))}
           </View>
@@ -438,6 +526,21 @@ const styles = StyleSheet.create({
     borderRadius: 16,
   },
   section: { marginTop: space.xs },
+  nextUp: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: space.md,
+    padding: space.md,
+  },
+  nextIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    borderWidth: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+    transform: [{ rotate: '-4deg' }],
+  },
   grid: { flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: -space.xs },
   quickGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: space.md },
   quickCell: { flexGrow: 1, flexBasis: 150 },

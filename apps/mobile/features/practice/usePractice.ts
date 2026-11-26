@@ -79,6 +79,7 @@ export function usePractice(topicId: string) {
       mode: PracticeMode;
       startedAt: number;
       answers: PracticeAnswer[];
+      followUpId?: string | null;
     }): Promise<PracticeAttemptRow | null> => {
       if (!stores || !learnerId || !input.answers.length) return null;
       const row = buildAttemptRow({
@@ -89,6 +90,7 @@ export function usePractice(topicId: string) {
         startedAt: input.startedAt,
         finishedAt: Date.now(),
         answers: input.answers,
+        followUpId: input.followUpId ?? null,
       });
       try {
         await stores.queue.enqueue(PRACTICE_KIND, row.id, row);

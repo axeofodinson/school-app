@@ -9,7 +9,10 @@
 // `/topic/<topic>/practice`. Keys on a computer: A–D or 1–4 pick, Enter checks
 // and moves on, F flags, H opens the tip.
 import {
+  diagnosticSize,
+  FOLLOW_UP_SET_SIZE,
   modeCounts,
+  roundPreview,
   retryWrongIds,
   scorePracticeAnswer,
   selectItems,
@@ -65,6 +68,15 @@ interface Run {
   index: number;
   answers: PracticeAnswer[];
   startedAt: number;
+  /** followup mode: the follow-up this set is a round of. */
+  followUpId: string | null;
+}
+
+/** Opened from Prepare: start this set at once (`?mode=followup&followUp=…&concept=…`). */
+export interface AutoStart {
+  mode: 'followup' | 'diagnose';
+  followUpId: string | null;
+  conceptId: string | null;
 }
 
 interface Current {
@@ -136,7 +148,9 @@ function PracticeBody({
   history,
   save,
   sync,
+  auto,
 }: {
+  auto: AutoStart | null;
   data: PracticeData;
   root: string;
   history: ReturnType<typeof usePractice>['history'];
@@ -150,7 +164,52 @@ function PracticeBody({
   const { colours } = useTheme();
   const { width } = useWindowDimensions();
   const hue: SubjectHue = hueForSubject(data.topic.subjectId ?? data.topic.id);
-  const [run, setRun] = useState<Run | null>(null);
+  const conceptOrder = useMemo(
+    () => Object.fromEntries(data.concepts.map((c, i) => [c.id, i])),
+    [data.concepts],
+  );
+  const diagSize = diagnosticSize(
+    null,
+    null,
+    new Set(data.pool.map((p) => p.conceptId)).size,
+    data.pool.length,
+  );
+  /** A new set for a mode (no state change: start() and the auto-start share it). */
+  const makeRun = (
+    mode: PracticeMode,
+    opts: { conceptId?: string; retryIds?: string[]; followUpId?: string | null } = {},
+  ): { run: Run | null; fallback: boolean } => {
+    const sel = selectItems(data.pool, history, {
+      mode,
+      conceptIds: opts.conceptId ? [opts.conceptId] : undefined,
+      retryIds: opts.retryIds,
+      size: mode === 'followup' ? FOLLOW_UP_SET_SIZE : mode === 'diagnose' ? diagSize : undefined,
+      conceptOrder,
+      now: Date.now(),
+    });
+    if (!sel.items.length) return { run: null, fallback: false };
+    return {
+      fallback: sel.reason === 'fallback',
+      run: {
+        id: uuidv4(),
+        mode,
+        items: sel.items,
+        reason: sel.reason,
+        index: 0,
+        answers: [],
+        startedAt: Date.now(),
+        followUpId: mode === 'followup' ? (opts.followUpId ?? null) : null,
+      },
+    };
+  };
+  // Opened from Prepare: the follow-up round / diagnostic starts at once.
+  const [run, setRun] = useState<Run | null>(() =>
+    auto?.mode === 'followup' && auto.conceptId
+      ? makeRun('followup', { conceptId: auto.conceptId, followUpId: auto.followUpId }).run
+      : auto?.mode === 'diagnose'
+        ? makeRun('diagnose').run
+        : null,
+  );
   const [cur, setCur] = useState<Current>(freshCurrent);
   const [done, setDone] = useState<Run | null>(null);
   const [timer, setTimer] = useState(false);
@@ -186,28 +245,20 @@ function PracticeBody({
   const leave = () => (router.canGoBack() ? router.back() : router.replace(exitTo));
   const lesson = data.hasLesson ? () => router.push(`${root}/${data.topic.id}/read` as Href) : null;
 
-  const start = (mode: PracticeMode, opts: { conceptId?: string; retryIds?: string[] } = {}) => {
-    const sel = selectItems(data.pool, history, {
-      mode,
-      conceptIds: opts.conceptId ? [opts.conceptId] : undefined,
-      retryIds: opts.retryIds,
-      now: Date.now(),
-    });
-    if (!sel.items.length) {
+  const prepareHref = (root === '/topic' ? '/prepare' : '/study') as Href;
+
+  const start = (
+    mode: PracticeMode,
+    opts: { conceptId?: string; retryIds?: string[]; followUpId?: string | null } = {},
+  ) => {
+    const r = makeRun(mode, opts);
+    if (!r.run) {
       setNotice(t('student.practice.nothing'));
       return;
     }
-    setNotice(sel.reason === 'fallback' ? t('student.practice.reviewFallback') : null);
+    setNotice(r.fallback ? t('student.practice.reviewFallback') : null);
     setDone(null);
-    setRun({
-      id: uuidv4(),
-      mode,
-      items: sel.items,
-      reason: sel.reason,
-      index: 0,
-      answers: [],
-      startedAt: Date.now(),
-    });
+    setRun(r.run);
     setCur(freshCurrent());
   };
 
@@ -221,6 +272,7 @@ function PracticeBody({
         mode: r.mode,
         startedAt: r.startedAt,
         answers: r.answers,
+        followUpId: r.followUpId,
       });
       if (!row) {
         savedIds.current.delete(r.id);
@@ -394,9 +446,43 @@ function PracticeBody({
 
   if (done) {
     const wrong = retryWrongIds(done.answers);
+    const round = done.mode === 'followup' ? roundPreview(done.answers) : null;
     return (
       <MathContext.Provider value={data.math}>
         <Screen header={header}>
+          {round || done.mode === 'diagnose' ? (
+            <View
+              style={[
+                styles.notice,
+                {
+                  backgroundColor:
+                    round === 'pass' || done.mode === 'diagnose'
+                      ? colours.correctSoft
+                      : colours.accentSoft,
+                },
+              ]}
+            >
+              <Text variant="label">
+                {t(
+                  done.mode === 'diagnose'
+                    ? 'student.followUps.afterDiagnose'
+                    : round === 'pass'
+                      ? 'student.followUps.afterPass'
+                      : round === 'tooFew'
+                        ? 'student.followUps.afterTooFew'
+                        : 'student.followUps.afterNotYet',
+                )}
+              </Text>
+              <Button
+                title={t('student.followUps.toPrepare')}
+                icon="forward"
+                variant="secondary"
+                size="sm"
+                onPress={() => router.replace(prepareHref)}
+                style={styles.noticeBtn}
+              />
+            </View>
+          ) : null}
           <SetSummary
             answers={done.answers}
             byConcept={summarizeByConcept(done.answers, done.items)}
@@ -438,6 +524,20 @@ function PracticeBody({
               <Text variant="bodySm">{notice}</Text>
             </View>
           ) : null}
+          <View style={[styles.diag, { borderColor: colours.border }]}>
+            <View style={styles.flex}>
+              <Text variant="heading">{t('student.followUps.diagnoseTitle')}</Text>
+              <Text variant="bodySm" tone="textMuted">
+                {t('student.followUps.diagnoseBody', { count: diagSize })}
+              </Text>
+            </View>
+            <Button
+              title={t('student.followUps.diagnoseStart')}
+              icon="search"
+              variant="secondary"
+              onPress={() => start('diagnose')}
+            />
+          </View>
           <ModePicker
             counts={counts}
             concepts={conceptChips}
@@ -454,7 +554,19 @@ function PracticeBody({
 
 /** `/lesson/[topicId]/practice` (students) and `/topic/[topicId]/practice` (prep). */
 export function PracticeScreen({ root = '/lesson' }: { root?: string }) {
-  const { topicId } = useLocalSearchParams<{ topicId: string }>();
+  const { topicId, mode, followUp, concept } = useLocalSearchParams<{
+    topicId: string;
+    mode?: string;
+    followUp?: string;
+    concept?: string;
+  }>();
+  const auto = useMemo<AutoStart | null>(
+    () =>
+      mode === 'followup' || mode === 'diagnose'
+        ? { mode, followUpId: followUp ?? null, conceptId: concept ?? null }
+        : null,
+    [mode, followUp, concept],
+  );
   const { t } = useI18n();
   const router = useRouter();
   const { state, history, reload, save, sync } = usePractice(topicId);
@@ -462,7 +574,16 @@ export function PracticeScreen({ root = '/lesson' }: { root?: string }) {
     router.canGoBack() ? router.back() : router.replace(`${root}/${topicId}` as Href);
 
   if (state.status === 'ready' && state.data !== 'notReady')
-    return <PracticeBody data={state.data} root={root} history={history} save={save} sync={sync} />;
+    return (
+      <PracticeBody
+        data={state.data}
+        root={root}
+        history={history}
+        save={save}
+        sync={sync}
+        auto={auto}
+      />
+    );
 
   let body: ReactNode;
   if (state.status === 'loading') body = <SkeletonLines lines={6} />;
@@ -509,5 +630,16 @@ const styles = StyleSheet.create({
   headRow: { flexDirection: 'row', alignItems: 'center', gap: space.sm },
   flex: { flex: 1 },
   centre: { textAlign: 'center' },
-  notice: { padding: space.md, borderRadius: 12 },
+  notice: { padding: space.md, borderRadius: 12, gap: space.sm },
+  noticeBtn: { alignSelf: 'flex-start' },
+  diag: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    gap: space.md,
+    padding: space.md,
+    borderRadius: 16,
+    borderWidth: 2,
+    borderStyle: 'dashed',
+  },
 });

@@ -1,12 +1,23 @@
 // "Lessons" on the Prepare tab (and the prep learner's home): topics with an
 // approved lesson, by subject → chapter. One subject at a time (chips) so a
 // class with many lessons stays short. Opens offline from the device copy.
+import type { Gate, TopicPos } from '@school/core';
 import { useRouter, type Href } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { useI18n } from '../../i18n';
-import { Badge, Button, EmptyState, Icon, Reveal, SkeletonLines, Text, useTheme } from '../../ui';
+import {
+  Badge,
+  Button,
+  EmptyState,
+  Icon,
+  Reveal,
+  SkeletonLines,
+  Text,
+  useTheme,
+  useToast,
+} from '../../ui';
 import { PressableSticker } from '../../ui/Sticker';
 import { hueForSubject, radius, radiusFor, space, subjectHues } from '../../ui/tokens';
 import { useAuth } from '../auth/AuthProvider';
@@ -17,10 +28,16 @@ import { loadLessonList, type LessonListItem } from './api';
 export function LessonList({
   classId,
   root = '/lesson',
+  gate,
+  knownTopics = [],
 }: {
   classId: string | null | undefined;
   /** `/lesson` (school students) or `/topic` (prep learners). */
   root?: string;
+  /** Prompt 41: is a topic open or paused by a follow-up (core gateFor). */
+  gate?: (topic: TopicPos, positions: ReadonlyMap<string, TopicPos>) => Gate;
+  /** Topics the gate must place that may have no lesson (follow-ups' topics). */
+  knownTopics?: readonly TopicPos[];
 }) {
   const { t, locale } = useI18n();
   const router = useRouter();
@@ -46,6 +63,18 @@ export function LessonList({
     }
     return [...m.values()];
   }, [items, classId]);
+  const positions = useMemo(() => {
+    const m = new Map<string, TopicPos>(knownTopics.map((p) => [p.topicId, p]));
+    for (const it of items ?? [])
+      m.set(it.topicId, {
+        topicId: it.topicId,
+        subjectId: it.subjectId,
+        chapterOrder: it.chapterOrder,
+        topicOrder: it.topicOrder,
+      });
+    return m;
+  }, [items, knownTopics]);
+  const toast = useToast();
   const [pick, setPick] = useState<string | null>(null);
   const group = groups.find((g) => g.key === pick) ?? groups[0] ?? null;
   const ur = locale === 'ur';
@@ -110,6 +139,8 @@ export function LessonList({
       {group.items.map((it, i) => {
         const chapter = (ur ? it.chapterTitleUr : null) || it.chapterTitle;
         const showChapter = i === 0 || group.items[i - 1]!.chapterId !== it.chapterId;
+        const g = gate ? gate(positions.get(it.topicId)!, positions) : null;
+        const paused = g?.state === 'paused';
         return (
           <Reveal key={it.topicId} index={Math.min(i + 1, 8)}>
             {showChapter ? (
@@ -118,11 +149,26 @@ export function LessonList({
               </Text>
             ) : null}
             <PressableSticker
-              onPress={() => router.push(`${root}/${it.topicId}` as Href)}
+              onPress={() =>
+                paused
+                  ? toast(
+                      t(
+                        g.by === 'exam'
+                          ? 'student.followUps.pausedExam'
+                          : 'student.followUps.pausedSubject',
+                      ),
+                    )
+                  : router.push(`${root}/${it.topicId}` as Href)
+              }
               radius={radiusFor('md', presentation)}
               depth="stickerSm"
               accessibilityRole="button"
-              accessibilityLabel={(ur ? it.titleUr : null) || it.titleEn}
+              accessibilityLabel={[
+                (ur ? it.titleUr : null) || it.titleEn,
+                paused ? t('student.followUps.paused') : null,
+              ]
+                .filter(Boolean)
+                .join(', ')}
               faceStyle={(pressed) => [
                 styles.row,
                 { backgroundColor: pressed ? colours.surfaceAlt : colours.surface },
@@ -131,15 +177,22 @@ export function LessonList({
               <View
                 style={[
                   styles.swatch,
-                  { backgroundColor: subjectHues[hue][scheme], borderColor: outline },
+                  {
+                    backgroundColor: paused ? colours.surfaceAlt : subjectHues[hue][scheme],
+                    borderColor: outline,
+                  },
                 ]}
               >
-                <Icon name="book" size={18} colour={colours.ink} />
+                <Icon name={paused ? 'lock' : 'book'} size={18} colour={colours.ink} />
               </View>
-              <Text style={styles.flex} numberOfLines={2}>
+              <Text style={styles.flex} numberOfLines={2} tone={paused ? 'textMuted' : undefined}>
                 {(ur ? it.titleUr : null) || it.titleEn}
               </Text>
-              <Icon name="chevronEnd" size={20} tone="textMuted" />
+              {paused ? (
+                <Badge label={t('student.followUps.paused')} tone="neutral" icon="lock" />
+              ) : (
+                <Icon name="chevronEnd" size={20} tone="textMuted" />
+              )}
             </PressableSticker>
           </Reveal>
         );

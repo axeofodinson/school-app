@@ -284,6 +284,33 @@ let db = freshDb();
 const log = [];
 const rpcs = [];
 let student = true;
+// Prompt 41: the learner's follow-ups (already shaped like the embedded read),
+// bands, and the teacher's class view. Empty until section 11b.
+let fu = [];
+let classFu = [];
+const FU_T1 = {
+  id: 'fu1',
+  concept_id: 'k1',
+  subject_id: 's-sci',
+  kind: 'diagnostic',
+  status: 'open',
+  rounds: 2,
+  created_at: '2026-11-20T09:00:00Z',
+  closed_at: null,
+  close_reason: null,
+  concept: {
+    title_en: 'The nucleus',
+    title_ur: 'مرکزہ',
+    topic: {
+      id: 't1',
+      title_en: 'Parts of a cell',
+      title_ur: 'خلیے کے حصے',
+      sort_order: 1,
+      chapter: { sort_order: 1 },
+    },
+  },
+  subject: { name: 'Biology' },
+};
 
 const b64 = (o) => Buffer.from(JSON.stringify(o)).toString('base64url');
 function sessionFor(id, email) {
@@ -406,6 +433,21 @@ async function mock(page) {
         decision: a.p_decision,
         status: lc.status,
       });
+    }
+    if (p === '/rest/v1/follow_ups') return json(200, student ? fu : []);
+    if (p === '/rest/v1/concept_mastery')
+      return json(200, fu.length ? [{ concept_id: 'k1', state: 'weak' }] : []);
+    if (p === '/rest/v1/rpc/class_follow_ups') return json(200, classFu);
+    if (p === '/rest/v1/rpc/gate_relax') {
+      const a = req.postDataJSON();
+      rpcs.push({ gate: 'relax', ...a });
+      if (!a.p_reason) return json(400, { code: '23514', message: 'reason_required' });
+      classFu = classFu.map((r) =>
+        r.id === a.p_follow_up
+          ? { ...r, status: 'relieved', close_reason: 'teacher_relax', last_actor: TEACHER.name }
+          : r,
+      );
+      return json(200, null);
     }
     const table = p.replace('/rest/v1/', '');
     if (!db[table]) {
@@ -707,6 +749,50 @@ async function studentLogin(page) {
     await page.screenshot({ path: `${SHOTS}/gallery-visuals-2-${q.replace(/[=&]/g, '-')}.png` });
   }
 
+  // 11b. Prompt 41: an open diagnostic follow-up on t1 goes first on Prepare,
+  // with its steps; a later topic of the same subject (t3) is paused; Home says
+  // what's next.
+  fu = [FU_T1];
+  await page.setViewportSize({ width: 1280, height: 860 });
+  await page.goto(BASE + '/study');
+  check(await seen(page, 'Do this first', true), 'follow-up section first on Prepare');
+  check(await seen(page, 'The nucleus', true), 'follow-up concept named');
+  check(await seen(page, 'From your check', true), 'reason badge (diagnostic)');
+  check(await seen(page, 'Try 3', true), 'round shown as the next try');
+  check(await seen(page, 'Another way', true), 'another way offered after two rounds');
+  check(await seen(page, 'Practise 6 questions', true), 'practise a set of 6');
+  check(await seen(page, 'New topics in Biology wait'), 'gate said in plain words');
+  check(await seen(page, 'Paused', true), 'a later topic shows as paused');
+  await page.screenshot({ path: SHOTS + '/prepare-followups-1280.png', fullPage: true });
+  await page.getByText('TEST Motion: speed and graphs', { exact: true }).click();
+  check(await seen(page, 'Clear the follow-up above'), 'paused topic explains, stays put');
+  check(/\/study$/.test(page.url()), 'paused topic did not open');
+  await page.getByText('Practise 6 questions', { exact: true }).click();
+  await page.waitForURL('**/lesson/t1/practice?mode=followup*', { timeout: 8000 }).catch(() => {});
+  check(
+    page.url().includes('followUp=fu1') && page.url().includes('concept=k1'),
+    'practise opens a follow-up round for that idea',
+  );
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(BASE + '/study');
+  await seen(page, 'Do this first', true);
+  check(await noHScroll(page), 'phone: Prepare has no sideways scroll');
+  await page.screenshot({ path: SHOTS + '/prepare-followups-390.png', fullPage: true });
+  await page.goto(BASE + '/');
+  check(await seen(page, '1 follow-up to clear'), 'Home: next up names the follow-ups');
+  fu = [
+    {
+      ...FU_T1,
+      status: 'relieved',
+      closed_at: new Date().toISOString(),
+      close_reason: 'teacher_relax',
+    },
+  ];
+  await page.goto(BASE + '/study');
+  check(await seen(page, 'All caught up', true), 'nothing open: all caught up');
+  check(await seen(page, 'Your teacher let you move on'), 'teacher unlock said plainly');
+  await page.setViewportSize({ width: 1280, height: 860 });
+
   // 12. Teacher: preview a draft, approve it.
   student = false;
   db = freshDb();
@@ -744,13 +830,58 @@ async function studentLogin(page) {
   await t.getByRole('button', { name: 'Approve' }).click();
   check(await seen(t, 'Approved. Students can read it now.'), 'approve toast');
   check(
-    rpcs.length === 1 &&
+    rpcs.filter((r) => !r.gate).length === 1 &&
       rpcs[0].p_content === 'L3' &&
       rpcs[0].p_version === 1 &&
       rpcs[0].p_decision === 'approve',
     'review_lesson(L3, v1, approve)',
   );
   await t.screenshot({ path: SHOTS + '/teacher-preview-1280.png' });
+
+  // 13. Prompt 41: Who's stuck. Grouped by idea; relax needs a reason and goes
+  // through gate_relax (db/034).
+  classFu = [
+    {
+      id: 'fu1',
+      learner_id: STUDENT.id,
+      student_name: STUDENT.name,
+      student_code: STUDENT.code,
+      concept_id: 'k1',
+      concept_en: 'The nucleus',
+      concept_ur: 'مرکزہ',
+      topic_id: 't1',
+      topic_en: 'Parts of a cell',
+      topic_ur: null,
+      subject_id: 's-sci',
+      subject_name: 'Biology',
+      kind: 'diagnostic',
+      status: 'open',
+      rounds: 2,
+      created_at: '2026-11-20T09:00:00Z',
+      closed_at: null,
+      close_reason: null,
+      band: 'weak',
+      last_actor: null,
+    },
+  ];
+  await t.goto(BASE + '/stuck');
+  check(await seen(t, "Who's stuck", true), 'stuck view opens');
+  check(await seen(t, 'The nucleus', true), 'grouped by idea');
+  check(await seen(t, 'Stuck', true), 'two rounds marked stuck');
+  await t.screenshot({ path: SHOTS + '/stuck-1280.png', fullPage: true });
+  await t.getByRole('button', { name: 'Let them move on' }).first().click();
+  check(await seen(t, 'Let Ali Raza move on?'), 'relax asks first');
+  await t.getByRole('button', { name: 'Let them move on' }).last().click();
+  check(await seen(t, 'Write a short reason first.'), 'relax needs a reason');
+  await t.getByLabel('Reason (required)').fill('Did it with me in class');
+  await t.getByRole('button', { name: 'Let them move on' }).last().click();
+  check(await seen(t, 'Ali Raza can move on.'), 'relax toast');
+  const g = rpcs.find((r) => r.gate === 'relax');
+  check(
+    g && g.p_follow_up === 'fu1' && g.p_reason === 'Did it with me in class',
+    'gate_relax(fu1, reason)',
+  );
+  check(await seen(t, 'Open again', true), 'relieved row can be opened again');
 
   check(
     !log.some((l) => l.startsWith('PAGEERROR')),

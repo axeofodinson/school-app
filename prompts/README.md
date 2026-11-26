@@ -92,7 +92,7 @@ Deferred: parents (81) and iOS (82).
 | ✓ | Prompt | Model | Depends on | Blocked by | Notes |
 |---|---|---|---|---|---|
 | [x] | [40 Mastery, diagnostics and follow-up RPCs (migration 019)](40-mastery-rpcs.md) | Opus | 31 | — (thresholds decided: DECISIONS #26) | Code done 2026-11-26: draft `db/019` (server marks every practice row, bands from all evidence, follow-up rounds + auto relief, `record_practice_attempt`, `diagnostic_items`, `mastery_config`), core `mastery.ts` + shared vectors (SQL = TS). MA-1 pass; no app change (the practice upload already feeds it). Hassan: run 019 on dev after 033 |
-| [ ] | [41 Follow-ups, gates, relief and the Prepare tab](41-followups-gates-prepare.md) | Opus | 40 | — | |
+| [x] | [41 Follow-ups, gates, relief and the Prepare tab](41-followups-gates-prepare.md) | Opus | 40 | — | Done 2026-11-26: core `followups.ts` (gates, Prepare model, round preview, subject mosaics; +13 tests), practice modes `diagnose` + `followup` (`follow_up_id` on the row), Prepare follow-ups first + paused lessons, Home next-up + concept mosaics, teacher "Who's stuck" (`/stuck`) with relax/restore; draft `db/034` (gate_relax / gate_restore / class_follow_ups, smoke F-2/F-3 pass); web e2e in `learn-web.cjs` (LS-2 + FG-1). Runs on dev after 019. |
 | [ ] | [42 Spaced revision (7 / 30 days)](42-spaced-revision.md) | Opus | 41 | — | |
 
 ### Phase 5 — Teacher exams
