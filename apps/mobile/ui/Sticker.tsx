@@ -12,6 +12,7 @@ import {
 import Animated from 'react-native-reanimated';
 
 import { useMotion, usePressMotion } from './motion';
+import { useCues, type SfxName } from './sound';
 import { useTheme } from './theme';
 import { opacityLevels, stickerPressDepth, strokeWidth } from './tokens';
 
@@ -50,10 +51,17 @@ export function PressableSticker({
   faceStyle,
   outlined = true,
   hitSlop,
+  sound,
   style,
   children,
   ...a11y
 }: AccessibilityProps & {
+  /**
+   * A UI sound on tap (e.g. `tap` on cards, DECISIONS #140). When the app may play it
+   * (student screens, not exams, Sounds on), Android's own system click is switched off
+   * so only ours plays. Plays on release, so a scroll that starts on the card is silent.
+   */
+  sound?: SfxName;
   onPress?: () => void;
   /** Extra press-in hook (e.g. to start a pattern glide); feedback motion still runs. */
   onPressIn?: () => void;
@@ -75,13 +83,23 @@ export function PressableSticker({
   const d = flat ? 0 : stickerPressDepth[depth];
   const press = usePressMotion(d);
   const { focusProps, ring } = useFocusRing();
+  const { cue, allowed: soundAllowed } = useCues();
   const outline = scheme === 'dark' ? colours.borderStrong : colours.ink;
+  const ownSound = sound != null && soundAllowed;
 
   return (
     <Pressable
       {...a11y}
       {...focusProps}
-      onPress={onPress}
+      android_disableSound={ownSound}
+      onPress={
+        onPress && ownSound
+          ? () => {
+              cue(sound);
+              onPress();
+            }
+          : onPress
+      }
       disabled={disabled || busy}
       hitSlop={hitSlop}
       onPressIn={() => {

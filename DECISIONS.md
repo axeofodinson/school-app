@@ -2,6 +2,10 @@
 
 Newest first. Each: decision — reason — who/when.
 
+## 2026-11-25 — Softer sounds swapped in (Hassan)
+
+140. **v2 sound effects, and our own tap replaces Android's click on cards.** Hassan's four takes from `audio/sfx-v2-script.md` replace `pop`/`ding`/`tada` and add `tap` (trimmed and level-matched: docs/audio-scripts.md B). `PressableSticker` gets a `sound` prop: `Card` and `SubjectCard` (and the open-test banner) play `tap` on release (so starting a scroll on a card stays silent) and set `android_disableSound` so the system click doesn't double it. Where app sounds aren't allowed (staff, exams, Sounds off) nothing changes, so a staff card keeps the system click and a student with Sounds off hears it too. Follows #127.
+
 ## 2026-11-25 — Visual blocks: scenes, charts, widgets (prompt 33)
 
 128. **A scene is split into a stack of standalone SVGs, one per layer, and each layer moves as a composited view.** `sliceScene()` (core) cuts the authored SVG at each layer, keeping paint order, re-opening the layer's ancestors (their transforms and styles) and copying `<defs>`/`<style>` into every slice. Each layer then tweens only transform + opacity on the UI thread, with no SVG re-render per frame, which is the cheapest path on a 4 GB Chromebook and the same on web and Android. Turning point = the layer's estimated box centre, or `pivots` in the block. — Claude, prompt 33.
