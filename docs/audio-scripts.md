@@ -53,15 +53,17 @@ the words in this table if they do, and record what they approve. "Yellow button
 
 ---
 
-## B. Sound effects (3 clips, done)
+## B. Sound effects (4 clips, v2 done)
 
-**Being replaced (2026-11-25, DECISIONS #127):** Hassan wants softer sounds. The v2 spec (4 clips, adds `tap` for card taps) is in the project files: `audio/sfx-v2-script.md`. Swap the files in when he sends them.
-
-**Done 2026-11-25.** Hassan's ElevenLabs takes are in `apps/mobile/assets/sfx/`: `pop.wav`
-(soft bubble, first 0.18 s, raised 25 dB because the take was very quiet), `ding.wav` (two-note
-chime, 0.45 s) and `tada.wav` (cheerful flourish, 1.0 s, its silent tail cut). Each is mono
-22 kHz 16-bit with a short fade-out and a peak limit of -4.4 dB (RMS about -22 dB, so they sit
-evenly). The steps below are kept for re-recording one.
+**v2, 2026-11-25 (DECISIONS #140).** Hassan's softer ElevenLabs takes, made from the spec in
+the project files (`audio/sfx-v2-script.md`), are in `apps/mobile/assets/sfx/`:
+`tap.wav` (muted wood tap, 0.16 s: cards on student screens and the "test is open" banner),
+`pop.wav` (soft bubble, 0.22 s: picking a picture answer), `ding.wav` (two marimba notes, 1.0 s:
+a quiz sent) and `tada.wav` (warm marimba flourish, 1.1 s: finishing a picture quiz). Each:
+leading silence cut (plays the instant you tap), 4 ms fade-in, cosine fade-out, mono 22 kHz
+16-bit, loudness matched on the loudest 50 ms (about -19 dB RMS; `tap` 2 dB quieter because it is
+the most frequent), peaks at or under -6 dB, each under 50 KB. Cards with `sound="tap"` turn
+Android's system click off so only ours plays (only where app sounds are allowed).
 
 The app ships with small synthesised placeholders (`apps/mobile/assets/sfx/*.wav`,
 made by `scripts/generate-sfx.mjs`). To replace them, generate in **ElevenLabs →

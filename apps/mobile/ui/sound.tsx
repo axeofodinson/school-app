@@ -20,8 +20,13 @@ import { voiceClips, type VoiceLine } from '../assets/voice/manifest';
 import { useMotion } from './motion';
 import { useTheme } from './theme';
 
-/** Short effects (ElevenLabs takes, trimmed: docs/audio-scripts.md B; replaceable, same names). */
+/**
+ * Short effects (Hassan's ElevenLabs v2 takes, trimmed and levelled: docs/audio-scripts.md B,
+ * DECISIONS #140). `tap` = card taps, `pop` = picking a picture answer, `ding` = quiz sent,
+ * `tada` = finishing a picture quiz.
+ */
 const sfx = {
+  tap: require('../assets/sfx/tap.wav'),
   pop: require('../assets/sfx/pop.wav'),
   ding: require('../assets/sfx/ding.wav'),
   tada: require('../assets/sfx/tada.wav'),

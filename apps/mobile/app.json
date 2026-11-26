@@ -3,14 +3,14 @@
     "name": "School App",
     "slug": "school-app",
     "owner": "ice_010",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "orientation": "default",
     "icon": "./assets/icon.png",
     "scheme": "schoolapp",
     "userInterfaceStyle": "light",
     "android": {
       "package": "com.school.app",
-      "versionCode": 2,
+      "versionCode": 3,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#55a049"

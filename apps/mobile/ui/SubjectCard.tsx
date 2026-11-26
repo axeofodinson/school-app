@@ -54,6 +54,7 @@ export function SubjectCard({
     <PressableSticker
       onPressIn={() => setPresses((n) => n + 1)}
       onPress={onPress}
+      sound="tap"
       radius={r}
       accessibilityRole="button"
       accessibilityLabel={label}

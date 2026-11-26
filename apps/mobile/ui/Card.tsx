@@ -37,6 +37,7 @@ export function Card({
       <PressableSticker
         {...a11y}
         onPress={onPress}
+        sound="tap"
         radius={r}
         accessibilityRole={a11y.accessibilityRole ?? 'button'}
         style={style}
