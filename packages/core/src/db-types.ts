@@ -6,7 +6,7 @@
 // (prompt 21: importer batches, math_svgs, import RPCs) + 032 (prompt 22: review
 // queue RPCs) + 033 (prompt 30: lesson review) + 019 (prompt 40: mastery,
 // follow-ups, diagnostics) + 034 (prompt 41: gate relax/restore,
-// stuck students) + 020 (prompt 50: live exams, draw pool). Draft 022 excluded. Via
+// stuck students) + 020 (prompt 50: live exams, draw pool) + 035 (prompt 51: exam results). Draft 022 excluded. Via
 //   npx supabase@3.3.0 gen types typescript --db-url <harness> --schema public
 // Regenerate after each migration Hassan runs (see packages/core/README.md).
 
@@ -791,6 +791,8 @@ export type Database = {
           status: string;
           submitted_at: string | null;
           total: number | null;
+          void_reason: string | null;
+          voided_by: string | null;
         };
         ComputedFields: never;
         Insert: {
@@ -809,6 +811,8 @@ export type Database = {
           status?: string;
           submitted_at?: string | null;
           total?: number | null;
+          void_reason?: string | null;
+          voided_by?: string | null;
         };
         Update: {
           assessment_id?: string;
@@ -826,6 +830,8 @@ export type Database = {
           status?: string;
           submitted_at?: string | null;
           total?: number | null;
+          void_reason?: string | null;
+          voided_by?: string | null;
         };
         Relationships: [
           {
@@ -845,6 +851,13 @@ export type Database = {
           {
             foreignKeyName: 'exam_sessions_learner_id_fkey';
             columns: ['learner_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'exam_sessions_voided_by_fkey';
+            columns: ['voided_by'];
             isOneToOne: false;
             referencedRelation: 'profiles';
             referencedColumns: ['id'];
@@ -2440,6 +2453,7 @@ export type Database = {
       auto_mark_item: { Args: { p_answer: Json; p_type: string; p_value: Json }; Returns: boolean };
       can_override_follow_up: { Args: { p_learner: string; p_subject: string }; Returns: boolean };
       can_review_question: { Args: { p_concept: string }; Returns: boolean };
+      can_run_exam: { Args: { p_assessment: string }; Returns: boolean };
       class_follow_ups: { Args: { p_class: string }; Returns: Json };
       dearmor: { Args: { '': string }; Returns: string };
       dev_hard_delete_student: { Args: { p_student_id: string }; Returns: Json };
@@ -2447,6 +2461,7 @@ export type Database = {
       diagnostic_pick: { Args: { p_n: number; p_pool: Json }; Returns: Json };
       disable_push_token: { Args: { p_token: string }; Returns: undefined };
       exam_close_if_expired: { Args: { p_session: string }; Returns: boolean };
+      exam_confirm: { Args: { p_assessment: string; p_reason?: string }; Returns: Json };
       exam_draw_pool: {
         Args: { p_class: string; p_subject: string };
         Returns: {
@@ -2460,10 +2475,13 @@ export type Database = {
         }[];
       };
       exam_end: { Args: { p_assessment: string }; Returns: Json };
+      exam_item_analysis: { Args: { p_assessment: string }; Returns: Json };
       exam_join: { Args: { p_code: string }; Returns: Json };
       exam_launch: { Args: { p_assessment: string; p_minutes?: number }; Returns: Json };
+      exam_live: { Args: { p_assessment: string }; Returns: Json };
       exam_new_join_code: { Args: Record<PropertyKey, never>; Returns: string };
       exam_sweep: { Args: Record<PropertyKey, never>; Returns: number };
+      exam_void_session: { Args: { p_reason: string; p_session: string }; Returns: Json };
       find_prep_accounts: {
         Args: { p_query: string };
         Returns: {

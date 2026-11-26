@@ -69,7 +69,8 @@ unit-tested in Node, the same habit as today's `scripts/verify-*.mjs`.
 - Submit → `submit_exam_session` (idempotent; grades auto-gradable types).
 - A pg_cron job every minute closes sessions past deadline + grace and grades them (`exam_sweep`, db/020).
 - Papers are drawn once per assessment from approved exam items (core `drawPaper`, DECISIONS #146); order and MCQ options are shuffled per student on the server and kept in the session (#147). Live exams start with `exam_launch` (join code) and end with `exam_end`.
-- Integrity events (`log_exam_event`) → teacher live view via Realtime on `exam_sessions`/`exam_events`.
+- Integrity events (`log_exam_event`) and saves touch `exam_sessions.last_seen_at`; the teacher live view (`/exams/[id]`) subscribes to `exam_sessions` for that one assessment and refetches `exam_live` throttled to 3 s (db/035, DECISIONS #154). Students never subscribe.
+- Results: `exam_item_analysis` (teachers only, has keys), `exam_void_session` (reason required), `exam_confirm` → `record_grade` per paper + exam follow-ups (#151–153). Unconfirmed scores never reach `submissions`.
 - Offline exams: Phase 6 RPC accepts uploaded answers with `client_elapsed_ms`; result after sync.
 
 ## 5. Offline
