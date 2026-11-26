@@ -1,0 +1,59 @@
+[
+  {
+    "note": "concepts take turns; medium, easy, hard inside a concept",
+    "n": 6,
+    "pool": [
+      { "q": "x1", "concept": "X", "order": 1, "d": 2, "seen": null },
+      { "q": "x2", "concept": "X", "order": 1, "d": 1, "seen": null },
+      { "q": "x3", "concept": "X", "order": 1, "d": 3, "seen": null },
+      { "q": "x4", "concept": "X", "order": 1, "d": 2, "seen": null },
+      { "q": "y1", "concept": "Y", "order": 0, "d": 1, "seen": null },
+      { "q": "y2", "concept": "Y", "order": 0, "d": 3, "seen": null }
+    ],
+    "expect": ["y1", "x1", "y2", "x2", "x3", "x4"]
+  },
+  {
+    "note": "cut to n keeps every concept in front",
+    "n": 4,
+    "pool": [
+      { "q": "x1", "concept": "X", "order": 1, "d": 2, "seen": null },
+      { "q": "x2", "concept": "X", "order": 1, "d": 1, "seen": null },
+      { "q": "x3", "concept": "X", "order": 1, "d": 3, "seen": null },
+      { "q": "x4", "concept": "X", "order": 1, "d": 2, "seen": null },
+      { "q": "y1", "concept": "Y", "order": 0, "d": 1, "seen": null },
+      { "q": "y2", "concept": "Y", "order": 0, "d": 3, "seen": null }
+    ],
+    "expect": ["y1", "x1", "y2", "x2"]
+  },
+  {
+    "note": "never-seen first, then seen",
+    "n": 10,
+    "pool": [
+      { "q": "x1", "concept": "X", "order": 0, "d": 2, "seen": 500 },
+      { "q": "x2", "concept": "X", "order": 0, "d": 2, "seen": null },
+      { "q": "x3", "concept": "X", "order": 0, "d": 1, "seen": 100 }
+    ],
+    "expect": ["x2", "x1", "x3"]
+  },
+  {
+    "note": "seen longest ago first inside a difficulty",
+    "n": 10,
+    "pool": [
+      { "q": "x1", "concept": "X", "order": 0, "d": 2, "seen": 900 },
+      { "q": "x2", "concept": "X", "order": 0, "d": 2, "seen": 200 },
+      { "q": "x3", "concept": "X", "order": 0, "d": 2, "seen": 500 }
+    ],
+    "expect": ["x2", "x3", "x1"]
+  },
+  {
+    "note": "ties break on question id, concepts with the same order on concept id",
+    "n": 10,
+    "pool": [
+      { "q": "b", "concept": "K2", "order": 0, "d": 2, "seen": null },
+      { "q": "a", "concept": "K2", "order": 0, "d": 2, "seen": null },
+      { "q": "c", "concept": "K1", "order": 0, "d": 2, "seen": null }
+    ],
+    "expect": ["c", "a", "b"]
+  },
+  { "note": "empty pool", "n": 30, "pool": [], "expect": [] }
+]
