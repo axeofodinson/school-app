@@ -819,6 +819,39 @@
       "codeShape": "The code has %{count} letters and numbers.",
       "codeUnknown": "That code didn't match an exam for your class.",
       "finishedHeading": "Finished exams"
+    },
+    "downloads": {
+      "title": "Downloads",
+      "subtitle": "Chapters saved on this device for when there's no internet.",
+      "meNote": "Chapters saved for offline",
+      "save": "Save for offline",
+      "saving": "Saving…",
+      "savedSize": "Saved · %{size}",
+      "saved": "%{chapter} saved for offline (%{size})",
+      "empty": "Nothing saved yet",
+      "emptyBody": "In Lessons, tap Save for offline next to a chapter. Its lessons and practice then work without internet.",
+      "total": {
+        "one": "1 chapter · %{size} on this device",
+        "other": "%{count} chapters · %{size} on this device"
+      },
+      "counts": "Lessons %{lessons} · Practice questions %{questions}",
+      "updated": "Updated %{date}",
+      "update": "Update",
+      "updatedToast": "%{chapter} is up to date (%{size} downloaded)",
+      "delete": "Delete",
+      "deleteTitle": "Delete this download?",
+      "deleteBody": "%{chapter} will need internet again. Your practice and progress are kept.",
+      "keep": "Keep it",
+      "deleted": "Download deleted",
+      "videoNote": "Videos always need internet. Without it, lessons show the picture version instead.",
+      "errors": {
+        "network": "No internet. Try again when you're connected.",
+        "forbidden": "This chapter isn't available to you.",
+        "notReady": "Downloads aren't switched on yet.",
+        "notFound": "This chapter isn't available any more.",
+        "storage": "This device is out of space. Delete a download and try again.",
+        "unknown": "Something went wrong. Try again."
+      }
     }
   },
   "console": {

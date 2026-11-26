@@ -7,7 +7,8 @@
 // review_lesson() (db/033), never a direct status/approval write.
 //
 // Students keep a device copy of every lesson they open (their storage
-// namespace), so an opened lesson reads offline; prompt 32 adds whole packs.
+// namespace), so an opened lesson reads offline; a downloaded chapter (prompt 32,
+// features/downloads) serves every lesson in it offline.
 import {
   lessonConceptIds,
   lessonMathKeys,
@@ -18,6 +19,7 @@ import {
 } from '@school/core';
 
 import { readCache, writeCache } from '../../lib/cache';
+import { lessonFromPack } from '../downloads/api';
 import {
   classifyError,
   fail,
@@ -318,6 +320,8 @@ export async function loadLesson(
   where: { topicId?: string; contentId?: string },
   mode: LearnMode,
   cache: ScopedStore | null,
+  /** The signed-in user: a downloaded chapter (prompt 32) serves the topic offline. */
+  packUser: string | null = null,
 ): Promise<Result<LearnLoad> & { notFound?: boolean }> {
   if (!supabase) return notConfigured;
   const key = where.topicId ? cacheKey(where.topicId, where.contentId ?? null) : null;
@@ -330,8 +334,15 @@ export async function loadLesson(
     if ((e as { notFound?: boolean }).notFound)
       return { ok: false, error: 'unknown', notFound: true };
     const kind = classifyError(e as PgError);
-    if (mode === 'student' && key && kind !== 'forbidden') {
-      const copy = await readCache<LessonData>(cache, key);
+    if (mode === 'student' && kind !== 'forbidden') {
+      // A downloaded chapter first (deliberate, kept fresh), then the copy of the last read.
+      if (packUser && where.topicId) {
+        const pack = await lessonFromPack(packUser, where.topicId, where.contentId ?? null).catch(
+          () => null,
+        );
+        if (pack) return ok(pack);
+      }
+      const copy = key ? await readCache<LessonData>(cache, key) : null;
       if (copy) return ok({ ...copy, fromCache: true });
     }
     return { ok: false, error: kind };

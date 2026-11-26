@@ -20,6 +20,7 @@ import {
 } from '@school/core';
 
 import { readCache, writeCache } from '../../lib/cache';
+import { practiceFromPack } from '../downloads/api';
 import { classifyError, notConfigured, ok, type PgError, type Result } from '../../lib/result';
 import { supabase } from '../../lib/supabase';
 import { isMissingSchema, type ConceptInfo, type TopicInfo } from '../learn/api';
@@ -201,7 +202,11 @@ export async function loadPractice(
     const kind = classifyError(e as PgError);
     if (kind !== 'forbidden') {
       const copy = await readCache<PracticeData>(cache, poolKey(topicId));
+      // A downloaded chapter (prompt 32) when this topic was never opened here;
+      // the last copy has this learner's server history, so it wins when present.
+      const pack = copy ? null : await practiceFromPack(learnerId, topicId).catch(() => null);
       if (copy) return ok({ ...copy, fromCache: true });
+      if (pack) return ok(pack);
     }
     return { ok: false, error: kind };
   }

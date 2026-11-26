@@ -113,6 +113,15 @@ export function MeScreen() {
       href: '/attendance' as const,
     },
     {
+      key: 'downloads',
+      title: t('student.downloads.title'),
+      note: t('student.downloads.meNote'),
+      icon: 'cloud' as const,
+      soft: 'primarySoft' as const,
+      fg: 'onPrimarySoft' as const,
+      href: '/downloads' as const,
+    },
+    {
       key: 'settings',
       title: t('auth.settings.title'),
       note: t('student.me.settingsNote'),

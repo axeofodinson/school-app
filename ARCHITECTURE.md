@@ -75,7 +75,8 @@ unit-tested in Node, the same habit as today's `scripts/verify-*.mjs`.
 
 ## 5. Offline
 - `packages/core/sync`: durable queue (AsyncStorage on native, IndexedDB on web), per-user namespace, client UUIDs, exponential retry, visible status.
-- Content cache: question bank and Learn packs keyed by `(id, version)`; delta fetch by `updated_at`.
+- Content cache: Learn packs (prompt 32) per chapter from `learn_pack(chapter, have)` (db/036, runs under the learner's RLS), stored as immutable `(id, version)` entries + a per-user index (core `packs.ts`; IndexedDB on web, the documents folder on Android); delta by version (`have`), not `updated_at` (DECISIONS #156–158). Lesson and practice reads fall back to a downloaded chapter, then to the last device copy.
+- Web app shell: `public/sw.js` precaches the whole build listed by `scripts/sw-manifest.mjs` (#159); data requests are never cached by it.
 - Rules for conflicts: `LMS_AUDIT.md` §3.3.
 
 ## 6. Rendering
