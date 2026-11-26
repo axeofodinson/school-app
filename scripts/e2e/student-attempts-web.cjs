@@ -246,6 +246,7 @@ async function mock(page) {
         : json(200, rows);
     if (p === '/rest/v1/rpc/student_login_email') return json(200, handle(STUDENT.code));
     if (p === '/rest/v1/rpc/my_live_exams') return json(200, []);
+    if (p === '/rest/v1/rpc/my_offline_exams') return json(200, []);
     if (p === '/rest/v1/rpc/student_paper') {
       // Like db/018: id, type, body, marks, order, level of a paper; never the answer.
       const { p_assessment_id: aid } = req.postDataJSON();

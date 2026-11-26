@@ -107,7 +107,7 @@ function StudentRow({
           {s.name}
         </Text>
         {detail.length ? (
-          <Text variant="bodySm" tone="textMuted" numberOfLines={1}>
+          <Text variant="bodySm" tone="textMuted" numberOfLines={3}>
             {detail.join(' · ')}
           </Text>
         ) : null}
