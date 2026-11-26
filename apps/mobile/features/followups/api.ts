@@ -5,7 +5,7 @@
 //
 // The learner's copy is kept in their storage namespace, so Prepare and Home
 // open offline with the last known state.
-import type { FollowUpView, MasteryState, ScopedStore } from '@school/core';
+import type { FollowUpView, MasteryState, RevisionRow, ScopedStore } from '@school/core';
 
 import { readCache, writeCache } from '../../lib/cache';
 import {
@@ -37,8 +37,21 @@ export interface ConceptRef {
   topicId: string;
 }
 
+/** A concept in spaced revision (db/019 schedules it, db/037 moves it on). */
+export interface RevisionItem extends RevisionRow {
+  conceptEn: string;
+  conceptUr: string | null;
+  topicId: string | null;
+  topicEn: string | null;
+  topicUr: string | null;
+  subjectId: string | null;
+  subjectName: string | null;
+}
+
 export interface PrepareData {
   followUps: FollowUpItem[];
+  /** Concepts with a revision stage (due, later, or retained). */
+  revisions: RevisionItem[];
   /** concept id → band (only concepts the learner has practised). */
   bands: Record<string, MasteryState>;
   /** Active concepts of the class (Home mosaics); empty for prep learners. */
@@ -71,6 +84,39 @@ type FuRow = {
   } | null;
   subject: { name: string } | null;
 };
+
+type RevRow = {
+  concept_id: string;
+  state: MasteryState;
+  review_stage: number;
+  next_review_at: string | null;
+  concept: {
+    title_en: string;
+    title_ur: string | null;
+    topic: {
+      id: string;
+      title_en: string;
+      title_ur: string | null;
+      chapter: { subject: { id: string; name: string } | null } | null;
+    } | null;
+  } | null;
+};
+
+function shapeRevisions(rows: RevRow[]): RevisionItem[] {
+  return rows.map((r) => ({
+    conceptId: r.concept_id,
+    state: r.state,
+    stage: r.review_stage,
+    nextReviewAt: r.next_review_at,
+    conceptEn: r.concept?.title_en ?? '',
+    conceptUr: r.concept?.title_ur ?? null,
+    topicId: r.concept?.topic?.id ?? null,
+    topicEn: r.concept?.topic?.title_en ?? null,
+    topicUr: r.concept?.topic?.title_ur ?? null,
+    subjectId: r.concept?.topic?.chapter?.subject?.id ?? null,
+    subjectName: r.concept?.topic?.chapter?.subject?.name ?? null,
+  }));
+}
 
 type ConceptRow = {
   id: string;
@@ -118,7 +164,7 @@ export async function loadPrepare(
   if (!supabase) return notConfigured;
   const db = supabase;
   const since = new Date(Date.now() - RECENT_MS).toISOString();
-  const [fu, cm, cs] = await Promise.all([
+  const [fu, cm, cs, rv] = await Promise.all([
     db
       .from('follow_ups')
       .select(
@@ -148,8 +194,19 @@ export async function loadPrepare(
           .retry(false)
           .overrideTypes<ConceptRow[], { merge: false }>()
       : Promise.resolve({ data: [] as ConceptRow[], error: null as PgError | null }),
+    db
+      .from('concept_mastery')
+      .select(
+        'concept_id, state, review_stage, next_review_at, concept:concepts(title_en, title_ur, topic:topics(id, title_en, title_ur, chapter:chapters(subject:subjects(id, name))))',
+      )
+      .eq('learner_id', learnerId)
+      .gte('review_stage', 1)
+      .order('next_review_at', { nullsFirst: false })
+      .limit(300)
+      .retry(false)
+      .overrideTypes<RevRow[], { merge: false }>(),
   ]);
-  const err = fu.error ?? cm.error ?? cs.error;
+  const err = fu.error ?? cm.error ?? cs.error ?? rv.error;
   if (err) {
     if (isMissingSchema(err)) return ok('notReady');
     const copy = await readCache<PrepareData>(cache, CACHE);
@@ -165,7 +222,12 @@ export async function loadPrepare(
     if (!r.topic || r.topic.status === 'retired' || !s || s.class_id !== classId) continue;
     concepts.push({ id: r.id, subjectId: s.id, topicId: r.topic.id });
   }
-  const data: PrepareData = { followUps: shapeFollowUps(fu.data ?? []), bands, concepts };
+  const data: PrepareData = {
+    followUps: shapeFollowUps(fu.data ?? []),
+    revisions: shapeRevisions(rv.data ?? []),
+    bands,
+    concepts,
+  };
   await writeCache(cache, CACHE, data);
   return ok(data);
 }
