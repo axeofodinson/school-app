@@ -9,7 +9,8 @@
   "exports": {
     ".": "./src/index.ts",
     "./db-types": "./src/db-types.ts",
-    "./design": "./src/design/index.ts"
+    "./design": "./src/design/index.ts",
+    "./samples/*": "./samples/*"
   },
   "scripts": {
     "test": "vitest run",

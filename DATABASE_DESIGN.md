@@ -84,7 +84,9 @@ sanitised and within `visualBudget` (≤ 60 KB, ≤ 400 elements). No schema cha
  "steps": [{"caption": {"en": "", "ur": ""}, "ms": 900,
             "set": {"car": {"x": 120, "y": 0, "scale": 1, "rotate": 0, "opacity": 1},
                     "arrow": {"opacity": 0}}}],
+ "pivots": {"car": [40, 108]},
  "predict_question_id": "uuid|null"}
+// pivots (optional): turning point per layer in SVG units for scale/rotate; default = the layer's box centre.
 
 {"type": "chart", "concept_id": "…", "alt": {…}, "kind": "bar|line|pie|scatter|table",
  "x": {"label": {"en": "", "ur": ""}, "unit": "s", "values": [0, 1, 2, 3]},
@@ -96,6 +98,12 @@ sanitised and within `visualBudget` (≤ 60 KB, ≤ 400 elements). No schema cha
  "widget": "number_line|fraction_bars|function_graph|geometry_shape|angle|balance|probability|motion_graph|circuit",
  "params": {"expr": "m*x + c", "sliders": {"m": [-5, 5, 1, 1], "c": [-10, 10, 1, 2]}, "x": [-10, 10]},
  "task": {"en": "", "ur": ""}, "predict_question_id": "uuid|null"}
+// params per built widget (prompt 33; sliders are [min, max, step, start]):
+//   function_graph {"expr", "sliders", "x": [x0, x1], "y": [y0, y1]}
+//   fraction_bars  {"bars": [{"den": 2, "shaded": 1}, …] (≤ 4), "max_den": 12}
+//   number_line    {"min", "max", "step", "start", "jump", "target"} (≤ 200 steps)
+//   motion_graph   {"u", "a", "t": seconds, "sliders": {"u": […], "a": […]}, "graph": "distance|speed"}
+// Other catalogue widgets show their text version until built.
 
 {"type": "compare", "concept_id": "…", "alt": {…},
  "left":  {"title": {"en": "", "ur": ""}, "svg": "…", "text": {"en": "", "ur": ""}, "tone": "wrong_idea"},
@@ -152,7 +160,7 @@ changes keeps the question `draft` (it shows in the "Changes asked" tab while it
 latest review on the current version says so); reject sets it `retired`. A
 question's queue state is derived, never stored twice.
 
-**practice_attempts.items:** `[{"q": uuid, "v": 3, "a": "B", "c": true, "ms": 8200}]`.
+**practice_attempts.items:** `[{"q": uuid, "v": 3, "a": "B", "c": true, "ms": 8200}]`, plus `"f": 1` (flagged) and `"t": 1` (tip opened first) only when set (prompt 31, DECISIONS #119). Built by `buildAttemptRow` in `packages/core/src/practice`; `kind` is `practice` (practice, drill, retry) or `revision` (smart review). `c`/`n_correct` are client-marked: prompt 40 re-scores from `a`.
 
 ## 5. Migration plan
 | File | Phase | Contents |
@@ -168,6 +176,7 @@ question's queue state is derived, never stored twice.
 | `024_profiles_self_update_guard.sql` | applied to production 2026-11-24 | trigger: non-staff clients edit only their own `full_name`/`phone` (closes the self-promote hole, DECISIONS #62) |
 | `031_content_importer.sql` | 2 (prompt 21; draft, runs after 017 + 023) | import batch status/file/chapter/topic/counts + `learning_content.import_batch_id`; `math_svgs` (one pre-rendered SVG per TeX, insert-only, unsafe markup refused by CHECK); pg_trgm + `question_match_text(body)` + GIN index; `import_find_matches(subject, texts[])`, `import_content(chunk)` (invoker, chunked, client ids = retry-safe), `retire_import_batch(batch, reason)` (DECISIONS #102–106) |
 | `032_review_queue.sql` | 2 (prompt 22; draft, runs after 031) | approvals/reviews written only by `review_question()` / `review_approve_many()` / `review_edit_question()` (security definer; teacher scope = `teaches_concept`, staff any; stale version refused; reason required to send back or reject); `item_approvals` guard trigger (revoke once, never change or delete) + `item_reviews` immutable; `t_questions_review_reset` (new version of an approved question → draft, `ai` → `ai_edited`) + `t_questions_review_revoke` (new version or retire → approvals revoked); `is_approved()` version-aware; `review_queue()` / `review_counts()` (invoker) (DECISIONS #107–111) |
+| `033_lesson_review.sql` | 3 (prompt 30; draft, runs after 017 + 023 + 031 + 032) | students read a lesson version only when it carries a live `learn` approval (`item_approvals`, prompt 22) and the lesson is `approved` (replaces `p_lcv_read`); `review_lesson(content, version, decision, translation_ok?, notes?)` (security definer, staff only, stale-version and reason checks) (DECISIONS #112–116) |
 | `023_access_tiers.sql` | 0/2 (after 017; before Google sign-in is switched on) | `profiles.access_tier` (`school`/`prep_only`), `merged_into`/`merged_at`; `handle_new_user_v2` + `auth.identities` guard; `profiles_guard` (self-edit = name/phone only); `is_school_member()` + restrictive policies; `account_links` (insert-only); `find_prep_accounts()`, `link_prep_account()` (draft, dry-run verified; DECISIONS #57–61). Re-run after applying 022 so project tables get their policy |
 
 Every migration: idempotent, dry-run with `db/test/` harness before Supabase.

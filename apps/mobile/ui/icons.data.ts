@@ -293,6 +293,64 @@ export const iconData = {
     { t: 'path', d: 'M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71' },
     { t: 'path', d: 'M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71' },
   ],
+  play: [
+    { t: 'path', d: 'M6 3.5v17a1 1 0 0 0 1.5.86l14-8.5a1 1 0 0 0 0-1.72l-14-8.5A1 1 0 0 0 6 3.5z' },
+  ],
+  pause: [
+    { t: 'rect', x: 14, y: 4, width: 4, height: 16, rx: 1 },
+    { t: 'rect', x: 6, y: 4, width: 4, height: 16, rx: 1 },
+  ],
+  replay: [
+    { t: 'path', d: 'M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8' },
+    { t: 'path', d: 'M3 3v5h5' },
+  ],
+  maximize: [
+    { t: 'path', d: 'M8 3H5a2 2 0 0 0-2 2v3' },
+    { t: 'path', d: 'M21 8V5a2 2 0 0 0-2-2h-3' },
+    { t: 'path', d: 'M3 16v3a2 2 0 0 0 2 2h3' },
+    { t: 'path', d: 'M16 21h3a2 2 0 0 0 2-2v-3' },
+  ],
+  minimize: [
+    { t: 'path', d: 'M8 3v3a2 2 0 0 1-2 2H3' },
+    { t: 'path', d: 'M21 8h-3a2 2 0 0 1-2-2V3' },
+    { t: 'path', d: 'M3 16h3a2 2 0 0 1 2 2v3' },
+    { t: 'path', d: 'M16 21v-3a2 2 0 0 1 2-2h3' },
+  ],
+  zoomIn: [
+    { t: 'circle', cx: 11, cy: 11, r: 8 },
+    { t: 'path', d: 'm21 21-4.3-4.3' },
+    { t: 'path', d: 'M11 8v6' },
+    { t: 'path', d: 'M8 11h6' },
+  ],
+  zoomOut: [
+    { t: 'circle', cx: 11, cy: 11, r: 8 },
+    { t: 'path', d: 'm21 21-4.3-4.3' },
+    { t: 'path', d: 'M8 11h6' },
+  ],
+  fileText: [
+    { t: 'path', d: 'M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z' },
+    { t: 'path', d: 'M14 2v4a2 2 0 0 0 2 2h4' },
+    { t: 'path', d: 'M10 9H8' },
+    { t: 'path', d: 'M16 13H8' },
+    { t: 'path', d: 'M16 17H8' },
+  ],
+  video: [
+    { t: 'path', d: 'm16 13 5.22 3.48a.5.5 0 0 0 .78-.42V7.87a.5.5 0 0 0-.75-.43L16 10.5' },
+    { t: 'rect', x: 2, y: 6, width: 14, height: 12, rx: 2 },
+  ],
+  image: [
+    { t: 'rect', x: 3, y: 3, width: 18, height: 18, rx: 2 },
+    { t: 'circle', cx: 9, cy: 9, r: 2 },
+    { t: 'path', d: 'm21 15-3.09-3.09a2 2 0 0 0-2.82 0L6 21' },
+  ],
+  flag: [
+    { t: 'path', d: 'M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z' },
+    { t: 'path', d: 'M4 22v-7' },
+  ],
+  columns: [
+    { t: 'rect', x: 3, y: 3, width: 18, height: 18, rx: 2 },
+    { t: 'path', d: 'M12 3v18' },
+  ],
 } as const satisfies Record<string, readonly IconShape[]>;
 
 export type IconName = keyof typeof iconData;

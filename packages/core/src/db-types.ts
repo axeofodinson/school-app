@@ -2161,6 +2161,16 @@ export type Database = {
         Args: { p_patch: Json; p_question: string; p_version: number };
         Returns: Json;
       };
+      review_lesson: {
+        Args: {
+          p_content: string;
+          p_decision: string;
+          p_notes?: string;
+          p_translation_ok?: boolean;
+          p_version: number;
+        };
+        Returns: Json;
+      };
       review_question: {
         Args: {
           p_decision: string;
