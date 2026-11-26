@@ -6,7 +6,7 @@
 // (prompt 21: importer batches, math_svgs, import RPCs) + 032 (prompt 22: review
 // queue RPCs) + 033 (prompt 30: lesson review) + 019 (prompt 40: mastery,
 // follow-ups, diagnostics) + 034 (prompt 41: gate relax/restore,
-// stuck students) + 020 (prompt 50: live exams, draw pool) + 035 (prompt 51: exam results) + 036 (prompt 32: learn packs). Draft 022 excluded. Via
+// stuck students) + 020 (prompt 50: live exams, draw pool) + 035 (prompt 51: exam results) + 036 (prompt 32: learn packs) + 037 (prompt 42: spaced revision) + 038 (prompt 60: offline exams). Draft 022 excluded. Via
 //   npx supabase@3.3.0 gen types typescript --db-url <harness> --schema public
 // Regenerate after each migration Hassan runs (see packages/core/README.md).
 
@@ -718,6 +718,80 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: 'exam_events_session_id_fkey';
+            columns: ['session_id'];
+            isOneToOne: false;
+            referencedRelation: 'exam_sessions';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      exam_offline_uploads: {
+        Row: {
+          accept_reason: string | null;
+          accepted_at: string | null;
+          accepted_by: string | null;
+          answers: NonNullable<Json>;
+          client_elapsed_ms: number;
+          client_finished_at: string | null;
+          client_flags: NonNullable<Json>;
+          client_started_at: string | null;
+          device_id: string | null;
+          id: string;
+          learner_id: string;
+          received_at: string;
+          session_id: string;
+          verdict: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          accept_reason?: string | null;
+          accepted_at?: string | null;
+          accepted_by?: string | null;
+          answers: NonNullable<Json>;
+          client_elapsed_ms: number;
+          client_finished_at?: string | null;
+          client_flags?: NonNullable<Json>;
+          client_started_at?: string | null;
+          device_id?: string | null;
+          id: string;
+          learner_id: string;
+          received_at?: string;
+          session_id: string;
+          verdict: string;
+        };
+        Update: {
+          accept_reason?: string | null;
+          accepted_at?: string | null;
+          accepted_by?: string | null;
+          answers?: NonNullable<Json>;
+          client_elapsed_ms?: number;
+          client_finished_at?: string | null;
+          client_flags?: NonNullable<Json>;
+          client_started_at?: string | null;
+          device_id?: string | null;
+          id?: string;
+          learner_id?: string;
+          received_at?: string;
+          session_id?: string;
+          verdict?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'exam_offline_uploads_accepted_by_fkey';
+            columns: ['accepted_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'exam_offline_uploads_learner_id_fkey';
+            columns: ['learner_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'exam_offline_uploads_session_id_fkey';
             columns: ['session_id'];
             isOneToOne: false;
             referencedRelation: 'exam_sessions';
@@ -2146,6 +2220,126 @@ export type Database = {
           },
         ];
       };
+      retention_daily: {
+        Row: {
+          checks: number;
+          computed_at: string;
+          day: string;
+          due_now: number;
+          learners: number;
+          overdue: number;
+          passed: number;
+          stage: number;
+          subject_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          checks?: number;
+          computed_at?: string;
+          day: string;
+          due_now?: number;
+          learners?: number;
+          overdue?: number;
+          passed?: number;
+          stage: number;
+          subject_id: string;
+        };
+        Update: {
+          checks?: number;
+          computed_at?: string;
+          day?: string;
+          due_now?: number;
+          learners?: number;
+          overdue?: number;
+          passed?: number;
+          stage?: number;
+          subject_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'retention_daily_subject_id_fkey';
+            columns: ['subject_id'];
+            isOneToOne: false;
+            referencedRelation: 'subjects';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      revision_checks: {
+        Row: {
+          attempt_id: string;
+          checked_at: string;
+          concept_id: string;
+          due_at: string;
+          id: string;
+          is_test_data: boolean;
+          learner_id: string;
+          n_correct: number;
+          n_items: number;
+          passed: boolean;
+          stage: number;
+          subject_id: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          attempt_id: string;
+          checked_at?: string;
+          concept_id: string;
+          due_at: string;
+          id?: string;
+          is_test_data?: boolean;
+          learner_id: string;
+          n_correct: number;
+          n_items: number;
+          passed: boolean;
+          stage: number;
+          subject_id?: string | null;
+        };
+        Update: {
+          attempt_id?: string;
+          checked_at?: string;
+          concept_id?: string;
+          due_at?: string;
+          id?: string;
+          is_test_data?: boolean;
+          learner_id?: string;
+          n_correct?: number;
+          n_items?: number;
+          passed?: boolean;
+          stage?: number;
+          subject_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'revision_checks_attempt_id_fkey';
+            columns: ['attempt_id'];
+            isOneToOne: false;
+            referencedRelation: 'practice_attempts';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'revision_checks_concept_id_fkey';
+            columns: ['concept_id'];
+            isOneToOne: false;
+            referencedRelation: 'concepts';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'revision_checks_learner_id_fkey';
+            columns: ['learner_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'revision_checks_subject_id_fkey';
+            columns: ['subject_id'];
+            isOneToOne: false;
+            referencedRelation: 'subjects';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       students: {
         Row: {
           admission_date: string;
@@ -2480,6 +2674,26 @@ export type Database = {
       exam_launch: { Args: { p_assessment: string; p_minutes?: number }; Returns: Json };
       exam_live: { Args: { p_assessment: string }; Returns: Json };
       exam_new_join_code: { Args: Record<PropertyKey, never>; Returns: string };
+      exam_offline_accept: { Args: { p_reason: string; p_upload: string }; Returns: Json };
+      exam_offline_download: { Args: { p_assessment: string }; Returns: Json };
+      exam_offline_status: { Args: { p_assessment: string }; Returns: Json };
+      exam_offline_submit: {
+        Args: {
+          p_answers: Json;
+          p_device?: string;
+          p_elapsed_ms: number;
+          p_finished_at?: string;
+          p_flags?: Json;
+          p_session: string;
+          p_started_at?: string;
+          p_upload: string;
+        };
+        Returns: Json;
+      };
+      exam_schedule_offline: {
+        Args: { p_assessment: string; p_closes: string; p_minutes?: number; p_opens: string };
+        Returns: Json;
+      };
       exam_sweep: { Args: Record<PropertyKey, never>; Returns: number };
       exam_void_session: { Args: { p_reason: string; p_session: string }; Returns: Json };
       find_prep_accounts: {
@@ -2546,6 +2760,7 @@ export type Database = {
         }[];
       };
       my_live_exams: { Args: Record<PropertyKey, never>; Returns: Json };
+      my_offline_exams: { Args: Record<PropertyKey, never>; Returns: Json };
       my_role: { Args: Record<PropertyKey, never>; Returns: string };
       my_student_id: { Args: Record<PropertyKey, never>; Returns: string };
       pgp_armor_headers: { Args: { '': string }; Returns: Record<string, unknown>[] };
@@ -2592,6 +2807,7 @@ export type Database = {
       record_practice_attempt: { Args: { p_attempt: Json }; Returns: Json };
       register_push_token: { Args: { p_device_info?: Json; p_token: string }; Returns: undefined };
       relieve_follow_up: { Args: { p_id: string; p_why: string }; Returns: undefined };
+      retention_rollup: { Args: { p_day?: string }; Returns: number };
       retire_import_batch: { Args: { p_batch: string; p_note: string }; Returns: Json };
       review_approve_many: {
         Args: { p_items: Json; p_scopes: string[]; p_translation_ok?: boolean };
@@ -2661,6 +2877,7 @@ export type Database = {
           version: number;
         }[];
       };
+      revision_apply_attempt: { Args: { p_attempt: string }; Returns: Json };
       save_exam_answer: {
         Args: { p_answer: Json; p_client_at?: string; p_question: string; p_session: string };
         Returns: Json;

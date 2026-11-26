@@ -880,6 +880,55 @@
       "afterPass": "You still remember it! It comes back once more later, then it's done.",
       "afterFail": "It slipped a little, that's normal. It's in Do these first now, and comes back next week.",
       "afterTooFew": "Answer at least 3 to count as a check."
+    },
+    "offlineExam": {
+      "title": "Offline exam",
+      "listTitle": "Offline exams",
+      "until": "do it by %{date}",
+      "open": "Open",
+      "badge": {
+        "notSaved": "Not saved yet",
+        "saved": "Saved on this device",
+        "started": "Started",
+        "toSend": "Waiting to send",
+        "sent": "Sent",
+        "closed": "Closed"
+      },
+      "downloadTitle": "Save this exam on your device",
+      "downloadBody": "Save it now while you have internet. Then you can do it later, even with no Wi-Fi. The answers are not in the download.",
+      "download": "Save the exam",
+      "errors": {
+        "notOpen": "This exam hasn't opened yet.",
+        "closed": "This exam has closed.",
+        "notAvailable": "This exam isn't available.",
+        "notEnrolled": "This exam is for another class.",
+        "network": "No internet. Connect once to save the exam.",
+        "unknown": "Something went wrong. Try again."
+      },
+      "saved": "Saved on this device",
+      "readyTitle": {
+        "one": "Ready: %{count} minute once you start",
+        "other": "Ready: %{count} minutes once you start"
+      },
+      "readyBody": "Start any time before %{date}. You don't need internet. The timer starts when you press Start and keeps going even if you close the app, so start when you have time to finish.",
+      "honest": "Your answers stay on this device until it's back online, then they're sent. Your teacher can see how long you took.",
+      "start": "Start the exam",
+      "takingNote": "No internet needed. Every answer is saved on this device.",
+      "onDevice": "Saved here",
+      "expiredTitle": "This exam closed before you started it",
+      "expiredBody": "Talk to your teacher if you missed it.",
+      "sendingTitle": "Sending your answers…",
+      "sendingBody": "Your answers are safe on this device.",
+      "waitingTitle": "Handed in. Waiting for internet",
+      "waitingBody": "Your answers are safe on this device. They'll send by themselves when you're back online. You can close the app.",
+      "refused": "The school couldn't take this upload. Show this screen to your teacher.",
+      "verdict": {
+        "accepted": "Handed in",
+        "late": "Sent after the exam closed",
+        "over_time": "Sent, but over the time",
+        "already_closed": "You had already handed this in"
+      },
+      "flaggedBody": "Your answers are kept. Your teacher will look at them and decide."
     }
   },
   "console": {
@@ -2756,6 +2805,28 @@
         "closed": "This one is closed. Reopen it or make a new one.",
         "network": "No connection. Try again.",
         "unknown": "Couldn't start the exam."
+      },
+      "offlineTitle": "Or let them do it offline",
+      "offlineBody": "Students save the paper while online (no answers in it) and do it any time in the window, even without internet. Lower integrity: the device keeps the time.",
+      "offlineDays": {
+        "one": "Open %{count} day",
+        "other": "Open %{count} days"
+      },
+      "offlineStart": "Open offline exam",
+      "offlineScheduled": "Offline exam open until %{date}",
+      "offlineOpenBody": {
+        "one": "Open until %{date}. %{count} minute once a student starts.",
+        "other": "Open until %{date}. %{count} minutes once a student starts."
+      },
+      "offlineErrors": {
+        "notYours": "You don't teach this class and subject.",
+        "noQuestions": "Add questions first.",
+        "closed": "This exam has closed.",
+        "started": "Students have already started this exam.",
+        "live": "It's running live now. End it first.",
+        "window": "Pick a window that ends in the future (31 days at most).",
+        "network": "No connection. Nothing changed.",
+        "unknown": "Something went wrong. Nothing changed."
       }
     },
     "examLive": {
@@ -2875,6 +2946,30 @@
         "forbidden": "You can't change this exam.",
         "network": "No connection. Nothing changed. Try again.",
         "unknown": "Something went wrong. Nothing changed."
+      },
+      "offline": {
+        "badge": "Offline",
+        "open": "Offline exam open",
+        "took": {
+          "one": "took %{count} min",
+          "other": "took %{count} min"
+        },
+        "hidden": {
+          "one": "left the app once",
+          "other": "left the app %{count} times"
+        },
+        "clockBack": "device clock changed",
+        "verdict": {
+          "late": "Sent late",
+          "over_time": "Over time",
+          "already_closed": "Sent twice",
+          "accepted": "On time"
+        },
+        "acceptedLate": "Accepted",
+        "accept": "Accept",
+        "acceptTitle": "Accept %{name}'s answers?",
+        "acceptBody": "These answers came in after the window or over the time, so they weren't marked. Accepting marks them and counts the score. Say why.",
+        "accepted": "%{name}'s answers accepted and marked"
       }
     }
   }

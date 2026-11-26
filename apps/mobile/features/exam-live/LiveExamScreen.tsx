@@ -36,7 +36,7 @@ import { space } from '../../ui/tokens';
 import { ERROR_KEYS } from '../scope/LoadState';
 import { endExam } from '../exams/api';
 import { JoinCode } from '../exams/LivePanel';
-import { confirmExam, voidSession, type LiveStudent } from './api';
+import { acceptOfflineUpload, confirmExam, voidSession, type LiveStudent } from './api';
 import { ResultsView } from './ResultsView';
 import { useLiveExam } from './useLiveExam';
 
@@ -76,12 +76,14 @@ function StudentRow({
   questions,
   canVoid,
   onVoid,
+  onAccept,
 }: {
   s: LiveStudent;
   status: LiveStatus;
   questions: number;
   canVoid: boolean;
   onVoid: (s: LiveStudent) => void;
+  onAccept: (s: LiveStudent) => void;
 }) {
   const { t } = useI18n();
   const { colours } = useTheme();
@@ -92,6 +94,12 @@ function StudentRow({
     detail.push(t('staff.examLive.score', { score: s.score, total: s.total ?? 0 }));
   }
   if (s.late) detail.push(t('staff.examLive.late', { count: s.late }));
+  const off = s.offline;
+  if (off?.elapsedMs != null)
+    detail.push(t('staff.examLive.offline.took', { count: Math.round(off.elapsedMs / 60000) }));
+  if (off?.hidden) detail.push(t('staff.examLive.offline.hidden', { count: off.hidden }));
+  if (off?.clockBack) detail.push(t('staff.examLive.offline.clockBack'));
+  const flagged = !!off?.verdict && off.verdict !== 'accepted' && !off.acceptedAt;
   return (
     <View style={[styles.student, { borderTopColor: colours.border }]}>
       <View style={styles.flex}>
@@ -121,10 +129,30 @@ function StudentRow({
           </Text>
         </View>
       ) : null}
+      {off ? (
+        <Badge label={t('staff.examLive.offline.badge')} tone="neutral" icon="cloudOff" />
+      ) : null}
+      {flagged ? (
+        <Badge
+          label={t(`staff.examLive.offline.verdict.${off!.verdict!}`)}
+          tone="weak"
+          icon="warning"
+        />
+      ) : off?.acceptedAt ? (
+        <Badge label={t('staff.examLive.offline.acceptedLate')} tone="neutral" icon="check" />
+      ) : null}
       {s.flags ? (
         <Badge label={t('staff.examLive.flags', { count: s.flags })} tone="learning" icon="flag" />
       ) : null}
       <Badge label={t(`staff.examLive.status.${status}`)} tone={look.tone} icon={look.icon} />
+      {flagged && canVoid && off?.uploadId && status !== 'void' ? (
+        <Button
+          title={t('staff.examLive.offline.accept')}
+          size="sm"
+          variant="secondary"
+          onPress={() => onAccept(s)}
+        />
+      ) : null}
       {canVoid && s.sessionId && status !== 'void' ? (
         <Button
           title={t('staff.examLive.void')}
@@ -146,9 +174,11 @@ export function LiveExamScreen({ assessmentId }: { assessmentId: string }) {
   const ex = useLiveExam(assessmentId);
   const { live, analysis, offset, running } = ex;
   const [tab, setTab] = useState<Tab | null>(null);
-  const shown: Tab = tab ?? (running ? 'live' : 'results');
+  const offlineOpen = live?.mode === 'offline_exam' && live.status === 'published';
+  const shown: Tab = tab ?? (running || offlineOpen ? 'live' : 'results');
 
   const [voiding, setVoiding] = useState<LiveStudent | null>(null);
+  const [accepting, setAccepting] = useState<LiveStudent | null>(null);
   const [reason, setReason] = useState('');
   const [confirming, setConfirming] = useState(false);
   const [ending, setEnding] = useState(false);
@@ -223,6 +253,18 @@ export function LiveExamScreen({ assessmentId }: { assessmentId: string }) {
     setVoiding(null);
     void ex.reload();
   };
+  const doAccept = async () => {
+    const id = accepting?.offline?.uploadId;
+    if (!accepting || !id) return;
+    if (!reason.trim()) return setErr(t('staff.examLive.errors.reasonRequired'));
+    setBusy(true);
+    const r = await acceptOfflineUpload(id, reason.trim());
+    setBusy(false);
+    if (!r.ok) return setErr(t(`staff.examLive.errors.${r.error}`));
+    toast(t('staff.examLive.offline.accepted', { name: accepting.name }), 'success');
+    setAccepting(null);
+    void ex.reload();
+  };
   const doConfirm = async () => {
     setBusy(true);
     const r = await confirmExam(assessmentId);
@@ -264,6 +306,8 @@ export function LiveExamScreen({ assessmentId }: { assessmentId: string }) {
         </View>
         {running ? (
           <Badge label={t('staff.quick.liveNow')} tone="accent" icon="clock" />
+        ) : offlineOpen ? (
+          <Badge label={t('staff.examLive.offline.open')} tone="accent" icon="cloudOff" />
         ) : confirmed ? (
           <Badge label={t('staff.examLive.confirmedBadge')} tone="correct" icon="checkCircle" />
         ) : live.status === 'closed' ? (
@@ -341,6 +385,11 @@ export function LiveExamScreen({ assessmentId }: { assessmentId: string }) {
                     setReason('');
                     setErr(null);
                   }}
+                  onAccept={(x) => {
+                    setAccepting(x);
+                    setReason('');
+                    setErr(null);
+                  }}
                 />
               ))}
             </>
@@ -362,6 +411,35 @@ export function LiveExamScreen({ assessmentId }: { assessmentId: string }) {
           }}
         />
       )}
+
+      <Sheet
+        visible={!!accepting}
+        onClose={() => setAccepting(null)}
+        title={accepting ? t('staff.examLive.offline.acceptTitle', { name: accepting.name }) : ''}
+        footer={
+          <View style={styles.sheetActions}>
+            <Button
+              title={t('staff.stuck.cancel')}
+              variant="ghost"
+              onPress={() => setAccepting(null)}
+            />
+            <Button title={t('staff.examLive.offline.accept')} loading={busy} onPress={doAccept} />
+          </View>
+        }
+      >
+        <Text tone="textMuted">{t('staff.examLive.offline.acceptBody')}</Text>
+        <TextField
+          label={t('staff.examLive.reason')}
+          value={reason}
+          onChangeText={(v) => {
+            setReason(v);
+            setErr(null);
+          }}
+          error={err ?? undefined}
+          multiline
+          onSubmitEditing={doAccept}
+        />
+      </Sheet>
 
       <Sheet
         visible={!!voiding}
