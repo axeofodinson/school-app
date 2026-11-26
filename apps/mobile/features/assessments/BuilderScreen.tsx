@@ -6,6 +6,7 @@ import {
   questionsLocked,
   statusActions,
   statusAfter,
+  swapQuestion,
   planUpload,
   togglePick,
   type AssessmentDraft,
@@ -37,6 +38,8 @@ import {
   updateAssessment,
   type AssessmentDetail,
 } from './api';
+import { loadDrawPool } from '../exams/api';
+import { LivePanel } from '../exams/LivePanel';
 import { DetailsForm } from './DetailsForm';
 import { PickedList } from './PickedList';
 import { QuestionPicker } from './QuestionPicker';
@@ -152,6 +155,28 @@ function Builder({
     [questions, locale],
   );
   const labelFor = (id: string) => labels.get(id) || t('staff.assessments.unknownQuestion');
+  // Generated papers (prompt 50): swap a question for another approved exam item
+  // of the same topic. Only while the question set can still change.
+  const pool = useResult(
+    !locked && existing && sel.classId && subjectId ? `pool:${sel.classId}:${subjectId}` : null,
+    () => loadDrawPool(sel.classId!, subjectId!),
+  );
+  const drawItems =
+    pool.state?.status === 'ready' && pool.state.data !== 'notReady' ? pool.state.data : null;
+  const onSwap = drawItems?.length
+    ? (qid: string) => {
+        const next = swapQuestion(
+          drawItems,
+          draft.picks.map((p) => p.questionId),
+          qid,
+        );
+        if (!next) return toast(t('staff.quick.noSwap'), 'info');
+        edit((d) => ({
+          ...d,
+          picks: d.picks.map((p) => (p.questionId === qid ? { ...p, questionId: next.id } : p)),
+        }));
+      }
+    : undefined;
 
   const onScope = useCallback(
     (v: ScopeValue) => {
@@ -400,12 +425,16 @@ function Builder({
                 onSubmit={() => save(status)}
                 locked={locked}
                 badMarksId={badMarksId}
+                onSwap={onSwap}
               />
             </View>
           </Card>
         </>
       )}
 
+      {existing && !isFile && existing.items.length ? (
+        <LivePanel assessmentId={existing.id} status={status} onChanged={onSaved} />
+      ) : null}
       {error ? (
         <Text tone="onWrongSoft" accessibilityRole="alert" accessibilityLiveRegion="polite">
           {error}

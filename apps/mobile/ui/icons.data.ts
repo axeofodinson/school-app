@@ -264,6 +264,7 @@ export const iconData = {
     { t: 'path', d: 'M5 12h14' },
     { t: 'path', d: 'M12 5v14' },
   ],
+  minus: [{ t: 'path', d: 'M5 12h14' }],
   arrowUp: [
     { t: 'path', d: 'm5 12 7-7 7 7' },
     { t: 'path', d: 'M12 19V5' },

@@ -21,6 +21,7 @@ import {
 } from '../../ui';
 import { PressableSticker } from '../../ui/Sticker';
 import { hueForSubject, radiusFor, space, subjectHues } from '../../ui/tokens';
+import { LiveExams, useExamOverview } from '../exams/LiveExams';
 import { useStudentNav } from '../student/StudentNav';
 import { useGradePresentation } from '../student/StudentPresentation';
 import { useAttemptSync } from './AttemptSync';
@@ -117,6 +118,7 @@ export function TestsScreen() {
   const { items, drafts } = useAttemptSync();
   const nav = useStudentNav('tests');
   const ready = state?.status === 'ready' ? state.data.enrollment : null;
+  const exams = useExamOverview(ready && typeof ready !== 'string' ? ready.classId : null);
   useGradePresentation(ready && typeof ready !== 'string' ? (ready.gradeLevel ?? null) : undefined);
   const [draftKeys, setDraftKeys] = useState<ReadonlySet<string>>(new Set());
   useEffect(() => {
@@ -186,7 +188,11 @@ export function TestsScreen() {
     });
     return a.status === 'closed' && (s === 'todo' || s === 'started') ? 'closed' : s;
   };
-  const rows = home.assessments.map((a) => ({ a, s: rowState(a) }));
+  // Exams (db/020) live in their own section above, taken on the exam screen.
+  const examIds = new Set(exams.data?.examIds ?? []);
+  const rows = home.assessments
+    .filter((a) => !examIds.has(a.id))
+    .map((a) => ({ a, s: rowState(a) }));
   const todo = rows.filter(
     (r) => r.s === 'todo' || r.s === 'started' || r.s === 'problem' || r.s === 'worksheet',
   );
@@ -224,6 +230,7 @@ export function TestsScreen() {
           style={styles.banner}
         />
       ) : null}
+      <LiveExams overview={exams.data} />
       {rows.length === 0 ? (
         <EmptyState icon="tasks" title={t('student.assessments.empty')} />
       ) : (

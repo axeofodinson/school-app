@@ -6,7 +6,7 @@
 // (prompt 21: importer batches, math_svgs, import RPCs) + 032 (prompt 22: review
 // queue RPCs) + 033 (prompt 30: lesson review) + 019 (prompt 40: mastery,
 // follow-ups, diagnostics) + 034 (prompt 41: gate relax/restore,
-// stuck students). Draft 022 excluded. Via
+// stuck students) + 020 (prompt 50: live exams, draw pool). Draft 022 excluded. Via
 //   npx supabase@3.3.0 gen types typescript --db-url <harness> --schema public
 // Regenerate after each migration Hassan runs (see packages/core/README.md).
 
@@ -158,6 +158,7 @@ export type Database = {
           join_code: string | null;
           mode: string;
           opens_at: string | null;
+          project_id: string | null;
           results_confirmed_at: string | null;
           results_confirmed_by: string | null;
           scheduled_on: string | null;
@@ -185,6 +186,7 @@ export type Database = {
           join_code?: string | null;
           mode?: string;
           opens_at?: string | null;
+          project_id?: string | null;
           results_confirmed_at?: string | null;
           results_confirmed_by?: string | null;
           scheduled_on?: string | null;
@@ -211,6 +213,7 @@ export type Database = {
           join_code?: string | null;
           mode?: string;
           opens_at?: string | null;
+          project_id?: string | null;
           results_confirmed_at?: string | null;
           results_confirmed_by?: string | null;
           scheduled_on?: string | null;
@@ -236,6 +239,13 @@ export type Database = {
             columns: ['created_by'];
             isOneToOne: false;
             referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'assessments_project_id_fkey';
+            columns: ['project_id'];
+            isOneToOne: false;
+            referencedRelation: 'projects';
             referencedColumns: ['id'];
           },
           {
@@ -1604,6 +1614,312 @@ export type Database = {
           },
         ];
       };
+      project_concepts: {
+        Row: {
+          concept_id: string;
+          project_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          concept_id: string;
+          project_id: string;
+        };
+        Update: {
+          concept_id?: string;
+          project_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'project_concepts_concept_id_fkey';
+            columns: ['concept_id'];
+            isOneToOne: false;
+            referencedRelation: 'concepts';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'project_concepts_project_id_fkey';
+            columns: ['project_id'];
+            isOneToOne: false;
+            referencedRelation: 'projects';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      project_rubric_criteria: {
+        Row: {
+          concept_id: string | null;
+          id: string;
+          levels: NonNullable<Json>;
+          max_points: number;
+          project_id: string;
+          retired_at: string | null;
+          sort_order: number;
+          title_en: string;
+          title_ur: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          concept_id?: string | null;
+          id?: string;
+          levels?: NonNullable<Json>;
+          max_points: number;
+          project_id: string;
+          retired_at?: string | null;
+          sort_order?: number;
+          title_en: string;
+          title_ur?: string | null;
+        };
+        Update: {
+          concept_id?: string | null;
+          id?: string;
+          levels?: NonNullable<Json>;
+          max_points?: number;
+          project_id?: string;
+          retired_at?: string | null;
+          sort_order?: number;
+          title_en?: string;
+          title_ur?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'project_rubric_criteria_concept_id_fkey';
+            columns: ['concept_id'];
+            isOneToOne: false;
+            referencedRelation: 'concepts';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'project_rubric_criteria_project_id_fkey';
+            columns: ['project_id'];
+            isOneToOne: false;
+            referencedRelation: 'projects';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      project_scores: {
+        Row: {
+          assessment_id: string;
+          criterion_id: string;
+          enrollment_id: string;
+          points: number;
+          remark: string | null;
+          scored_at: string;
+          scored_by: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          assessment_id: string;
+          criterion_id: string;
+          enrollment_id: string;
+          points: number;
+          remark?: string | null;
+          scored_at?: string;
+          scored_by?: string | null;
+        };
+        Update: {
+          assessment_id?: string;
+          criterion_id?: string;
+          enrollment_id?: string;
+          points?: number;
+          remark?: string | null;
+          scored_at?: string;
+          scored_by?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'project_scores_assessment_id_fkey';
+            columns: ['assessment_id'];
+            isOneToOne: false;
+            referencedRelation: 'assessments';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'project_scores_criterion_id_fkey';
+            columns: ['criterion_id'];
+            isOneToOne: false;
+            referencedRelation: 'project_rubric_criteria';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'project_scores_enrollment_id_fkey';
+            columns: ['enrollment_id'];
+            isOneToOne: false;
+            referencedRelation: 'enrollments';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'project_scores_scored_by_fkey';
+            columns: ['scored_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      project_team_members: {
+        Row: {
+          assessment_id: string;
+          enrollment_id: string;
+          team_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          assessment_id: string;
+          enrollment_id: string;
+          team_id: string;
+        };
+        Update: {
+          assessment_id?: string;
+          enrollment_id?: string;
+          team_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'project_team_members_assessment_id_fkey';
+            columns: ['assessment_id'];
+            isOneToOne: false;
+            referencedRelation: 'assessments';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'project_team_members_enrollment_id_fkey';
+            columns: ['enrollment_id'];
+            isOneToOne: false;
+            referencedRelation: 'enrollments';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'project_team_members_team_id_fkey';
+            columns: ['team_id'];
+            isOneToOne: false;
+            referencedRelation: 'project_teams';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      project_teams: {
+        Row: {
+          assessment_id: string;
+          created_at: string;
+          created_by: string | null;
+          id: string;
+          name: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          assessment_id: string;
+          created_at?: string;
+          created_by?: string | null;
+          id?: string;
+          name: string;
+        };
+        Update: {
+          assessment_id?: string;
+          created_at?: string;
+          created_by?: string | null;
+          id?: string;
+          name?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'project_teams_assessment_id_fkey';
+            columns: ['assessment_id'];
+            isOneToOne: false;
+            referencedRelation: 'assessments';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'project_teams_created_by_fkey';
+            columns: ['created_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      projects: {
+        Row: {
+          blocks: NonNullable<Json>;
+          created_at: string;
+          created_by: string | null;
+          grade_max: number;
+          grade_min: number;
+          id: string;
+          is_test_data: boolean;
+          licence_note: string | null;
+          materials: NonNullable<Json>;
+          sdg_theme: number | null;
+          source: string;
+          status: string;
+          subject_id: string | null;
+          summary_en: string | null;
+          summary_ur: string | null;
+          team_size_max: number;
+          title_en: string;
+          title_ur: string | null;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          blocks?: NonNullable<Json>;
+          created_at?: string;
+          created_by?: string | null;
+          grade_max?: number;
+          grade_min?: number;
+          id?: string;
+          is_test_data?: boolean;
+          licence_note?: string | null;
+          materials?: NonNullable<Json>;
+          sdg_theme?: number | null;
+          source?: string;
+          status?: string;
+          subject_id?: string | null;
+          summary_en?: string | null;
+          summary_ur?: string | null;
+          team_size_max?: number;
+          title_en: string;
+          title_ur?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          blocks?: NonNullable<Json>;
+          created_at?: string;
+          created_by?: string | null;
+          grade_max?: number;
+          grade_min?: number;
+          id?: string;
+          is_test_data?: boolean;
+          licence_note?: string | null;
+          materials?: NonNullable<Json>;
+          sdg_theme?: number | null;
+          source?: string;
+          status?: string;
+          subject_id?: string | null;
+          summary_en?: string | null;
+          summary_ur?: string | null;
+          team_size_max?: number;
+          title_en?: string;
+          title_ur?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'projects_created_by_fkey';
+            columns: ['created_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'projects_subject_id_fkey';
+            columns: ['subject_id'];
+            isOneToOne: false;
+            referencedRelation: 'subjects';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       push_tokens: {
         Row: {
           created_at: string;
@@ -2130,6 +2446,24 @@ export type Database = {
       diagnostic_items: { Args: { p_size?: number; p_topic: string }; Returns: Json };
       diagnostic_pick: { Args: { p_n: number; p_pool: Json }; Returns: Json };
       disable_push_token: { Args: { p_token: string }; Returns: undefined };
+      exam_close_if_expired: { Args: { p_session: string }; Returns: boolean };
+      exam_draw_pool: {
+        Args: { p_class: string; p_subject: string };
+        Returns: {
+          chapter_id: string;
+          difficulty: number;
+          id: string;
+          last_used_at: string;
+          topic_id: string;
+          type: string;
+          version: number;
+        }[];
+      };
+      exam_end: { Args: { p_assessment: string }; Returns: Json };
+      exam_join: { Args: { p_code: string }; Returns: Json };
+      exam_launch: { Args: { p_assessment: string; p_minutes?: number }; Returns: Json };
+      exam_new_join_code: { Args: Record<PropertyKey, never>; Returns: string };
+      exam_sweep: { Args: Record<PropertyKey, never>; Returns: number };
       find_prep_accounts: {
         Args: { p_query: string };
         Returns: {
@@ -2192,6 +2526,7 @@ export type Database = {
           read_count: number;
         }[];
       };
+      my_live_exams: { Args: Record<PropertyKey, never>; Returns: Json };
       my_role: { Args: Record<PropertyKey, never>; Returns: string };
       my_student_id: { Args: Record<PropertyKey, never>; Returns: string };
       pgp_armor_headers: { Args: { '': string }; Returns: Record<string, unknown>[] };
@@ -2311,6 +2646,17 @@ export type Database = {
         Args: { p_answer: Json; p_client_at?: string; p_question: string; p_session: string };
         Returns: Json;
       };
+      score_project: {
+        Args: {
+          p_assessment: string;
+          p_enrollment: string;
+          p_reason?: string;
+          p_remark?: string;
+          p_scores: Json;
+          p_whole_team?: boolean;
+        };
+        Returns: number;
+      };
       start_exam_session: { Args: { p_assessment: string }; Returns: Json };
       student_login_email: { Args: { p_student_code: string }; Returns: string };
       student_login_handle: { Args: { p_student_id: string }; Returns: string };
@@ -2338,6 +2684,7 @@ export type Database = {
       teaches_chapter: { Args: { cid: string }; Returns: boolean };
       teaches_chapter_subject: { Args: { cid: string }; Returns: boolean };
       teaches_class: { Args: { cid: string }; Returns: boolean };
+      teaches_class_subject_now: { Args: { p_class: string; p_subject: string }; Returns: boolean };
       teaches_concept: { Args: { cid: string }; Returns: boolean };
       teaches_learner: { Args: { lid: string }; Returns: boolean };
       teaches_topic: { Args: { tid: string }; Returns: boolean };

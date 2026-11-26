@@ -22,3 +22,4 @@ export * from './review';
 export * from './practice';
 export * from './mastery';
 export * from './followups';
+export * from './exams';

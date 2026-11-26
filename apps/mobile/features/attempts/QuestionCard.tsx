@@ -130,12 +130,15 @@ export function QuestionCard({
   value,
   onChange,
   disabled,
+  relabel,
 }: {
   index: number;
   question: AttemptQuestion;
   value: AnswerValue;
   onChange: (v: AnswerValue) => void;
   disabled?: boolean;
+  /** Exams (db/020) shuffle options per student: letter them by position, answer by key. */
+  relabel?: boolean;
 }) {
   const { t, locale } = useI18n();
   const body = isObj(question.body) ? question.body : {};
@@ -156,17 +159,18 @@ export function QuestionCard({
     const options = Array.isArray(body.options) ? body.options.filter(isObj) : [];
     input = (
       <View accessibilityRole="radiogroup" style={styles.stack}>
-        {options.map((o) => {
+        {options.map((o, i) => {
           const key = String(o.key ?? '');
+          const letter = relabel ? String.fromCharCode(65 + i) : key;
           return (
             <Choice
               key={key}
-              label={`${key}. ${String(o.text ?? '')}`}
+              label={`${letter}. ${String(o.text ?? '')}`}
               selected={value === key}
               onPress={() => onChange(key)}
               disabled={disabled}
             >
-              <OptionFace letter={key} text={String(o.text ?? '')} selected={value === key} />
+              <OptionFace letter={letter} text={String(o.text ?? '')} selected={value === key} />
             </Choice>
           );
         })}

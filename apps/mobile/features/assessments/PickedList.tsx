@@ -17,6 +17,7 @@ export function PickedList({
   onSubmit,
   locked,
   badMarksId,
+  onSwap,
 }: {
   picks: PickedQuestion[];
   labelFor: (questionId: string) => string;
@@ -24,6 +25,8 @@ export function PickedList({
   onSubmit: () => void;
   locked: boolean;
   badMarksId: string | null;
+  /** Generated papers (prompt 50): swap for another random question of the same topic. */
+  onSwap?: (questionId: string) => void;
 }) {
   const { t } = useI18n();
   const { colours } = useTheme();
@@ -86,6 +89,16 @@ export function PickedList({
                   accessibilityHint={label}
                   onPress={() => onChange(movePick(picks, p.questionId, 1))}
                 />
+                {onSwap ? (
+                  <Button
+                    title={t('staff.quick.swap')}
+                    variant="ghost"
+                    size="sm"
+                    icon="replay"
+                    accessibilityHint={label}
+                    onPress={() => onSwap(p.questionId)}
+                  />
+                ) : null}
                 <Button
                   title={t('staff.assessments.remove')}
                   variant="ghost"

@@ -14,11 +14,13 @@ function ChipButton<V extends string>({
   selected,
   disabled,
   onChange,
+  multi,
 }: {
   chip: Chip<V>;
   selected: boolean;
   disabled?: boolean;
   onChange: (v: V) => void;
+  multi?: boolean;
 }) {
   const { colours, p } = useTheme();
   const { focusProps, ring } = useFocusRing();
@@ -27,7 +29,7 @@ function ChipButton<V extends string>({
       {...focusProps}
       onPress={() => onChange(chip.value)}
       disabled={disabled}
-      accessibilityRole="radio"
+      accessibilityRole={multi ? 'checkbox' : 'radio'}
       accessibilityLabel={chip.label}
       accessibilityState={{ selected, checked: selected, disabled: Boolean(disabled) }}
       style={({ pressed }) => [
@@ -97,3 +99,35 @@ const styles = StyleSheet.create({
     borderRadius: radius.full,
   },
 });
+
+/** Several choices at once (e.g. chapters); none picked means "all". */
+export function MultiChipPicker<V extends string>({
+  label,
+  chips,
+  value,
+  onChange,
+}: {
+  label: string;
+  chips: readonly Chip<V>[];
+  value: readonly V[];
+  onChange: (v: V[]) => void;
+}) {
+  return (
+    <View style={styles.wrap}>
+      <Text variant="label">{label}</Text>
+      <View accessibilityLabel={label} style={styles.row}>
+        {chips.map((c) => (
+          <ChipButton
+            key={c.value}
+            chip={c}
+            multi
+            selected={value.includes(c.value)}
+            onChange={(v) =>
+              onChange(value.includes(v) ? value.filter((x) => x !== v) : [...value, v])
+            }
+          />
+        ))}
+      </View>
+    </View>
+  );
+}

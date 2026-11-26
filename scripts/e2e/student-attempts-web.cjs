@@ -165,6 +165,8 @@ const db = {
   follow_ups: [],
   concept_mastery: [],
   concepts: [],
+  // Tests reads the class's live exams (prompt 50); none here.
+  exam_sessions: [],
 };
 
 const net = { down: false, loseNextFor: 'a-lost' };
@@ -211,6 +213,7 @@ function matches(row, key, cond) {
   const [op, ...rest] = cond.split('.');
   const arg = rest.join('.');
   if (op === 'eq') return String(val) === arg;
+  if (op === 'neq') return val != null && String(val) !== arg; // SQL: NULL never matches
   if (op === 'in')
     return arg
       .replace(/^\(|\)$/g, '')
@@ -242,6 +245,7 @@ async function mock(page) {
           : json(406, { code: 'PGRST116' })
         : json(200, rows);
     if (p === '/rest/v1/rpc/student_login_email') return json(200, handle(STUDENT.code));
+    if (p === '/rest/v1/rpc/my_live_exams') return json(200, []);
     if (p === '/rest/v1/rpc/student_paper') {
       // Like db/018: id, type, body, marks, order, level of a paper; never the answer.
       const { p_assessment_id: aid } = req.postDataJSON();
