@@ -11,6 +11,7 @@ import { Badge, Button, Card, Icon, Text, TextField, useTheme } from '../../ui';
 import { space } from '../../ui/tokens';
 import { useResult } from '../scope/useResult';
 import { joinExam, loadExamOverview, type ExamOverview } from './api';
+import { OfflineExamList } from './OfflineExamList';
 
 /** The overview for a class; `examIds` lets the Tests list leave exams to this section. */
 export function useExamOverview(classId: string | null) {
@@ -39,7 +40,8 @@ export function LiveExams({ overview }: { overview: ExamOverview | null }) {
   const [code, setCode] = useState('');
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  if (!overview) return null;
+  // Offline (or before the first load): the papers saved on this device still open.
+  if (!overview) return <OfflineExamList server={null} />;
 
   const join = async () => {
     const c = normaliseJoinCode(code);
@@ -59,6 +61,7 @@ export function LiveExams({ overview }: { overview: ExamOverview | null }) {
 
   return (
     <View style={styles.wrap}>
+      <OfflineExamList server={overview.offline} />
       {overview.live.map((e) => {
         const going = e.sessionStatus === 'in_progress';
         return (

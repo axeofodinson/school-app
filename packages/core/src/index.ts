@@ -26,3 +26,4 @@ export * from './exams';
 export * from './examResults';
 export * from './packs';
 export * from './revision';
+export * from './offlineExam';

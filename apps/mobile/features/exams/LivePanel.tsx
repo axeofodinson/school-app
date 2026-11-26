@@ -7,10 +7,22 @@ import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { useI18n } from '../../i18n';
-import { Badge, Button, Card, Text, TextField, useTheme, useToast } from '../../ui';
+import {
+  Badge,
+  Button,
+  Card,
+  SegmentedControl,
+  Text,
+  TextField,
+  useTheme,
+  useToast,
+} from '../../ui';
 import { space } from '../../ui/tokens';
 import { useResult } from '../scope/useResult';
-import { endExam, launchExam, loadLiveState } from './api';
+import { endExam, launchExam, loadLiveState, scheduleOfflineExam } from './api';
+
+const OFFLINE_DAYS = ['1', '3', '7'] as const;
+type OfflineDays = (typeof OFFLINE_DAYS)[number];
 
 export function JoinCode({ code }: { code: string }) {
   const { t } = useI18n();
@@ -40,9 +52,10 @@ export function LivePanel({
   status: AssessmentStatus;
   onChanged: () => void;
 }) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const toast = useToast();
   const router = useRouter();
+  const [days, setDays] = useState<OfflineDays>('3');
   const res = useResult(`live:${assessmentId}:${status}`, () => loadLiveState(assessmentId));
   const [minutes, setMinutes] = useState('');
   const [busy, setBusy] = useState(false);
@@ -66,12 +79,41 @@ export function LivePanel({
     );
   }
   const running = live.mode === 'live_exam' && status === 'published' && !!live.joinCode;
-
-  const start = async () => {
+  const offlineOpen = live.mode === 'offline_exam' && status === 'published';
+  const until = (iso: string | null) =>
+    iso
+      ? new Date(iso).toLocaleString(locale === 'ur' ? 'ur-PK' : 'en-GB', {
+          weekday: 'short',
+          day: 'numeric',
+          month: 'short',
+          hour: 'numeric',
+          minute: '2-digit',
+          numberingSystem: 'latn',
+        })
+      : '';
+  const minutesValue = (): number | null | false => {
     const m = minutes.trim() ? Number(minutes) : null;
     if (m !== null && (!Number.isInteger(m) || m < 1 || m > 600)) {
-      return setErr(t('staff.quick.minutesInvalid'));
+      setErr(t('staff.quick.minutesInvalid'));
+      return false;
     }
+    return m;
+  };
+  const offline = async () => {
+    const m = minutesValue();
+    if (m === false) return;
+    setBusy(true);
+    const r = await scheduleOfflineExam(assessmentId, Number(days), m);
+    setBusy(false);
+    if (!r.ok) return setErr(t(`staff.quick.offlineErrors.${r.error}`));
+    toast(t('staff.quick.offlineScheduled', { date: until(r.closesAt) }), 'success');
+    onChanged();
+    res.reload();
+  };
+
+  const start = async () => {
+    const m = minutesValue();
+    if (m === false) return;
     setBusy(true);
     const r = await launchExam(assessmentId, m);
     setBusy(false);
@@ -97,8 +139,26 @@ export function LivePanel({
             {t('staff.quick.liveTitle')}
           </Text>
           {running ? <Badge label={t('staff.quick.liveNow')} tone="accent" icon="clock" /> : null}
+          {offlineOpen ? (
+            <Badge label={t('staff.examLive.offline.open')} tone="accent" icon="cloudOff" />
+          ) : null}
         </View>
-        {running ? (
+        {offlineOpen ? (
+          <>
+            <Text tone="textMuted">
+              {t('staff.quick.offlineOpenBody', {
+                date: until(live.closesAt),
+                count: Math.round((live.durationSeconds ?? 1800) / 60),
+              })}
+            </Text>
+            <Text tone="textMuted">
+              {t('staff.quick.progress', { started: live.started, submitted: live.submitted })}
+            </Text>
+            <View style={styles.row}>
+              <Button title={t('staff.examLive.open')} icon="users" size="sm" onPress={openLive} />
+            </View>
+          </>
+        ) : running ? (
           <>
             <JoinCode code={live.joinCode!} />
             <Text tone="textMuted">
@@ -147,6 +207,31 @@ export function LivePanel({
                 onPress={start}
               />
             </View>
+            <View style={styles.offline}>
+              <Text variant="label">{t('staff.quick.offlineTitle')}</Text>
+              <Text variant="bodySm" tone="textMuted">
+                {t('staff.quick.offlineBody')}
+              </Text>
+              <View style={styles.chips}>
+                <SegmentedControl
+                  accessibilityLabel={t('staff.quick.offlineTitle')}
+                  segments={OFFLINE_DAYS.map((d) => ({
+                    value: d,
+                    label: t('staff.quick.offlineDays', { count: Number(d) }),
+                  }))}
+                  value={days}
+                  onChange={setDays}
+                />
+                <Button
+                  title={t('staff.quick.offlineStart')}
+                  icon="cloudOff"
+                  variant="secondary"
+                  size="sm"
+                  loading={busy}
+                  onPress={offline}
+                />
+              </View>
+            </View>
           </>
         )}
       </View>
@@ -159,6 +244,8 @@ const styles = StyleSheet.create({
   row: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'flex-end', gap: space.sm },
   flex: { flex: 1 },
   minutes: { width: 140 },
+  offline: { gap: space.xs },
+  chips: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: space.sm },
   code: {
     alignSelf: 'flex-start',
     alignItems: 'center',

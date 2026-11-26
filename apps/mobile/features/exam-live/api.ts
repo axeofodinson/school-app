@@ -28,6 +28,19 @@ export interface LiveStudent extends LiveRow {
   answered: number;
   flags: number;
   late: number;
+  /** Offline exams (db/038): how it reached the server. Null for online papers. */
+  offline: OfflineInfo | null;
+}
+
+export type OfflineVerdictName = 'accepted' | 'late' | 'over_time' | 'already_closed';
+export interface OfflineInfo {
+  uploadId: string | null;
+  verdict: OfflineVerdictName | null;
+  receivedAt: string | null;
+  acceptedAt: string | null;
+  elapsedMs: number | null;
+  hidden: number;
+  clockBack: number;
 }
 
 export interface ExamLive {
@@ -78,6 +91,7 @@ export function parseLive(d: Json): ExamLive {
       answered: num(r.answered) ?? 0,
       flags: num(r.flags) ?? 0,
       late: num(r.late) ?? 0,
+      offline: null,
     })),
   };
 }
@@ -91,7 +105,43 @@ export async function loadExamLive(assessmentId: string): Promise<Result<Ready<E
       return { ok: false, error: 'forbidden' };
     return fail(r.error);
   }
-  return ok<Ready<ExamLive>>(parseLive((r.data ?? {}) as Json));
+  const live = parseLive((r.data ?? {}) as Json);
+  if (live.mode === 'offline_exam') {
+    // Offline delivery (db/038): elapsed time, the upload's verdict, device flags.
+    const o = await supabase
+      .rpc('exam_offline_status', { p_assessment: assessmentId })
+      .retry(false);
+    const rows = Array.isArray(o.data) ? (o.data as Json[]) : [];
+    const bySession = new Map(rows.map((x) => [str(x.session_id), x]));
+    for (const st of live.students) {
+      const x = st.sessionId ? bySession.get(st.sessionId) : undefined;
+      if (!x || x.delivery !== 'offline') continue;
+      const f = (x.client_flags ?? {}) as Json;
+      st.offline = {
+        uploadId: str(x.upload_id),
+        verdict: str(x.verdict) as OfflineVerdictName | null,
+        receivedAt: str(x.received_at),
+        acceptedAt: str(x.accepted_at),
+        elapsedMs: num(x.client_elapsed_ms),
+        hidden: num(f.hidden) ?? 0,
+        clockBack: num(f.clock_back) ?? 0,
+      };
+    }
+  }
+  return ok<Ready<ExamLive>>(live);
+}
+
+/** Accept a flagged offline upload (late / over time) with a reason: then it is graded. */
+export async function acceptOfflineUpload(
+  uploadId: string,
+  reason: string,
+): Promise<ActionResult<true>> {
+  if (!supabase) return { ok: false, error: 'unknown' };
+  const r = await supabase
+    .rpc('exam_offline_accept', { p_upload: uploadId, p_reason: reason })
+    .retry(false);
+  if (r.error) return { ok: false, error: actionError(r.error) };
+  return { ok: true, data: true };
 }
 
 export interface ItemRow extends ItemNumbers {
@@ -152,7 +202,7 @@ export type ExamActionError =
 function actionError(e: { message?: string; code?: string }): ExamActionError {
   const m = e.message ?? '';
   if (m.includes('reason_required')) return 'reasonRequired';
-  if (m.includes('already_confirmed')) return 'alreadyConfirmed';
+  if (m.includes('already_confirmed') || m.includes('results_confirmed')) return 'alreadyConfirmed';
   if (m.includes('exam_still_running')) return 'stillRunning';
   if (m.includes('not_your_class')) return 'forbidden';
   const k = classifyError(e);

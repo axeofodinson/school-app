@@ -109,6 +109,39 @@ export async function launchExam(
   return { ok: true, data: { joinCode: d.join_code, durationSeconds: d.duration_seconds } };
 }
 
+export type ScheduleError =
+  'notYours' | 'noQuestions' | 'closed' | 'started' | 'live' | 'window' | 'network' | 'unknown';
+
+/** Publish as an offline exam (db/038): open now for `days`, `minutes` long once started. */
+export async function scheduleOfflineExam(
+  assessmentId: string,
+  days: number,
+  minutes: number | null,
+): Promise<{ ok: true; closesAt: string } | { ok: false; error: ScheduleError }> {
+  if (!supabase) return { ok: false, error: 'unknown' };
+  const opens = new Date();
+  const closes = new Date(opens.getTime() + days * 24 * 60 * 60 * 1000);
+  const r = await supabase
+    .rpc('exam_schedule_offline', {
+      p_assessment: assessmentId,
+      p_opens: opens.toISOString(),
+      p_closes: closes.toISOString(),
+      p_minutes: minutes ?? undefined,
+    })
+    .retry(false);
+  if (r.error) {
+    const m = r.error.message ?? '';
+    if (m.includes('not_your_class')) return { ok: false, error: 'notYours' };
+    if (m.includes('exam_no_questions')) return { ok: false, error: 'noQuestions' };
+    if (m.includes('exam_closed')) return { ok: false, error: 'closed' };
+    if (m.includes('exam_already_started')) return { ok: false, error: 'started' };
+    if (m.includes('exam_running_live')) return { ok: false, error: 'live' };
+    if (m.includes('bad_window')) return { ok: false, error: 'window' };
+    return { ok: false, error: classifyError(r.error) === 'network' ? 'network' : 'unknown' };
+  }
+  return { ok: true, closesAt: String((r.data as unknown as { closes_at: string }).closes_at) };
+}
+
 export async function endExam(assessmentId: string): Promise<Result<number>> {
   if (!supabase) return notConfigured;
   const r = await supabase.rpc('exam_end', { p_assessment: assessmentId }).retry(false);
@@ -170,8 +203,22 @@ export interface FinishedExam {
   total: number | null;
 }
 
+/** An offline exam in its window (or just after, with my result). */
+export interface OfflineExamListed {
+  assessmentId: string;
+  title: string;
+  subjectName: string | null;
+  durationSeconds: number | null;
+  closesAt: string;
+  sessionStatus: LiveExam['sessionStatus'];
+  score: number | null;
+  total: number | null;
+}
+
 export interface ExamOverview {
   live: LiveExam[];
+  /** Offline exams (db/038); empty before it runs. */
+  offline: OfflineExamListed[];
   finished: FinishedExam[];
   /** Exam-mode assessment ids: the Tests list leaves them to this section. */
   examIds: string[];
@@ -180,7 +227,7 @@ export interface ExamOverview {
 export async function loadExamOverview(classId: string): Promise<Result<Ready<ExamOverview>>> {
   if (!supabase) return notConfigured;
   const db = supabase;
-  const [live, ids, mine] = await Promise.all([
+  const [live, ids, mine, off] = await Promise.all([
     db.rpc('my_live_exams').retry(false),
     db
       .from('assessments')
@@ -190,8 +237,27 @@ export async function loadExamOverview(classId: string): Promise<Result<Ready<Ex
       .limit(300)
       .retry(false),
     db.from('exam_sessions').select('assessment_id, status, score, total').limit(300).retry(false),
+    db.rpc('my_offline_exams').retry(false),
   ]);
-  const err = live.error ?? ids.error ?? mine.error;
+  const offRows =
+    off.error && isMissingSchema(off.error)
+      ? []
+      : ((off.data ?? []) as unknown as {
+          assessment_id: string;
+          title: string;
+          subject_name: string | null;
+          duration_seconds: number | null;
+          closes_at: string;
+          session_status: LiveExam['sessionStatus'];
+          score: number | null;
+          total: number | null;
+        }[]);
+  const offIds = new Set(offRows.map((x) => x.assessment_id));
+  const err =
+    live.error ??
+    ids.error ??
+    mine.error ??
+    (off.error && !isMissingSchema(off.error) ? off.error : null);
   if (err) return isMissingSchema(err) ? ok('notReady') : fail(err);
   const liveRows = (live.data ?? []) as unknown as {
     assessment_id: string;
@@ -204,6 +270,7 @@ export async function loadExamOverview(classId: string): Promise<Result<Ready<Ex
   const titles = new Map((ids.data ?? []).map((x) => [x.id, x.title]));
   const finished: FinishedExam[] = (mine.data ?? [])
     .filter((x) => x.status !== 'in_progress' && x.status !== 'void' && titles.has(x.assessment_id))
+    .filter((x) => !offIds.has(x.assessment_id))
     .filter((x) => !liveIds.has(x.assessment_id) || x.status !== 'in_progress')
     .map((x) => ({
       assessmentId: x.assessment_id,
@@ -222,6 +289,16 @@ export async function loadExamOverview(classId: string): Promise<Result<Ready<Ex
         durationSeconds: x.duration_seconds,
         sessionStatus: x.session_status,
       })),
+    offline: offRows.map((x) => ({
+      assessmentId: x.assessment_id,
+      title: x.title,
+      subjectName: x.subject_name,
+      durationSeconds: x.duration_seconds,
+      closesAt: x.closes_at,
+      sessionStatus: x.session_status,
+      score: x.score == null ? null : Number(x.score),
+      total: x.total == null ? null : Number(x.total),
+    })),
     finished,
     examIds: [...titles.keys()],
   });
