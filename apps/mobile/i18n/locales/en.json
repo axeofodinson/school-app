@@ -768,6 +768,57 @@
         "other": "%{count} follow-ups to clear. Open Prepare."
       },
       "continue": "Continue"
+    },
+    "exam": {
+      "title": "Exam",
+      "introTitle": "Ready when you are",
+      "introBody": "The timer starts when you tap Start, and it keeps going even if you close the app. Every answer saves as you tap.",
+      "honest": "Your teacher can see if you leave this screen during the exam.",
+      "start": "Start",
+      "backToTests": "Back to Tests",
+      "retry": "Try again",
+      "errors": {
+        "notOpen": "This exam hasn't started yet. Wait for your teacher.",
+        "closed": "This exam is over.",
+        "notAvailable": "This exam isn't available.",
+        "notEnrolled": "This exam is for another class.",
+        "network": "No connection. Your answers are safe. Try again.",
+        "unknown": "Something went wrong. Try again."
+      },
+      "answered": "%{answered}/%{count} done",
+      "answeredOf": "You answered %{answered} of %{count}.",
+      "handIn": "Hand in",
+      "handInAnyway": "Hand in anyway",
+      "keepGoing": "Keep going",
+      "blankWarn": {
+        "one": "You left 1 question blank. Hand in anyway?",
+        "other": "You left %{count} questions blank. Hand in anyway?"
+      },
+      "handing": "Handing in…",
+      "sendingLeft": {
+        "one": "Sending your last answer…",
+        "other": "Sending your last %{count} answers…"
+      },
+      "late": "Time is up. New answers can't count now.",
+      "timeLeftA11y": "Time left %{time}",
+      "doneTitle": "Handed in",
+      "scoreA11y": "You got %{score} out of %{total}",
+      "toMark": {
+        "one": "Your teacher will mark 1 answer.",
+        "other": "Your teacher will mark %{count} answers."
+      },
+      "toMarkShort": "Being marked",
+      "liveNow": "Live now",
+      "join": "Join",
+      "continue": "Continue",
+      "minutes": {
+        "one": "%{count} min",
+        "other": "%{count} min"
+      },
+      "codeLabel": "Exam code from your teacher",
+      "codeShape": "The code has %{count} letters and numbers.",
+      "codeUnknown": "That code didn't match an exam for your class.",
+      "finishedHeading": "Finished exams"
     }
   },
   "console": {
@@ -2552,6 +2603,98 @@
         "alreadyOpen": "This student already has an open follow-up on this idea.",
         "network": "No internet. Try again when you're online.",
         "unknown": "Something went wrong. Try again."
+      }
+    },
+    "quick": {
+      "cta": "Quick create",
+      "title": "Quick create",
+      "subtitle": "Pick a class and subject, check the plan, publish. Questions are drawn at random from those approved for exams.",
+      "step1": "1 · Class and subject",
+      "step2": "2 · Plan",
+      "step3": "3 · Publish",
+      "type": "Type",
+      "delivery": "How students take it",
+      "deliveryTests": "In Tests, any time",
+      "deliveryLive": "Live in class, now",
+      "chapters": "Chapters (none picked = all)",
+      "count": "Questions",
+      "minutes": "Minutes",
+      "marksEach": "Marks each",
+      "less": "Fewer: %{what}",
+      "more": "More: %{what}",
+      "mix": "Difficulty",
+      "mixes": {
+        "easier": "Easier",
+        "balanced": "Balanced",
+        "harder": "Harder"
+      },
+      "summary": {
+        "one": "%{count} question from %{available} ready · %{marks} marks · %{minutes} min",
+        "other": "%{count} questions from %{available} ready · %{marks} marks · %{minutes} min"
+      },
+      "levels": {
+        "easy": "%{count} easy",
+        "medium": "%{count} medium",
+        "hard": "%{count} hard"
+      },
+      "borrowed": {
+        "one": "1 question came from another difficulty to make up the count.",
+        "other": "%{count} questions came from another difficulty to make up the count."
+      },
+      "short": {
+        "one": "1 question short: only %{got} fit this plan. Add chapters, approve more questions, or publish with fewer.",
+        "other": "%{count} questions short: only %{got} fit this plan. Add chapters, approve more questions, or publish with fewer."
+      },
+      "drawAgain": "Draw again",
+      "reviewFirst": "Review first",
+      "publish": "Publish",
+      "publishFewer": {
+        "one": "Publish with %{count} question",
+        "other": "Publish with %{count} questions"
+      },
+      "publishLive": "Publish and start now",
+      "published": "Published: %{title}",
+      "savedAsDraft": "Saved as a draft. Check it and publish from here.",
+      "autoTitle": "%{subject} %{type} · %{date}",
+      "noSubjects": "No subjects in this class yet. Add one in Curriculum first.",
+      "poolError": "Couldn't load the question bank.",
+      "notReady": "Not switched on yet",
+      "notReadyBody": "Generated tests need the exam update (db/020) on this project.",
+      "noneApproved": "No questions approved for exams here yet",
+      "noneApprovedBody": "Approve questions with the Exam scope in the review queue, then come back.",
+      "toReview": "Open the review queue",
+      "errors": {
+        "network": "No connection. Nothing was saved. Try again.",
+        "forbidden": "You can't create tests for this class.",
+        "notConfigured": "The app isn't connected to a database.",
+        "unknown": "Something went wrong. Nothing was published."
+      },
+      "swap": "Swap",
+      "noSwap": "No other approved question in this topic to swap in.",
+      "liveTitle": "Live exam",
+      "liveBody": "Start it in class now: students join with a code and the server keeps the time. Leave minutes blank to use the plan's.",
+      "startLive": "Start live exam",
+      "liveNow": "Live now",
+      "joinCode": "Join code",
+      "codeA11y": "Join code %{code}",
+      "readOut": "Read this code out to the class",
+      "readOutBody": "Students open Tests and type the code, or tap the exam if it's already listed.",
+      "openExam": "Open the exam",
+      "progress": "%{started} started · %{submitted} handed in",
+      "refresh": "Refresh",
+      "end": "End exam",
+      "started": "Live exam started.",
+      "ended": {
+        "one": "Exam ended. 1 open paper was handed in.",
+        "other": "Exam ended. %{count} open papers were handed in."
+      },
+      "minutesInvalid": "Minutes must be a whole number from 1 to 600.",
+      "launchErrors": {
+        "notYours": "Only this subject's teacher can start it.",
+        "noQuestions": "Add questions first.",
+        "closed": "This one is closed. Reopen it or make a new one.",
+        "network": "No connection. Try again.",
+        "unknown": "Couldn't start the exam."
       }
     }
   }

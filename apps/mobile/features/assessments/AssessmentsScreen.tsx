@@ -64,8 +64,14 @@ function List({ scope }: { scope: ReadyScope }) {
           )}
         </Text>
         <Button
+          title={t('staff.quick.cta')}
+          icon="sparkles"
+          onPress={() => router.push('/assessments/quick')}
+        />
+        <Button
           title={t('staff.assessments.new')}
           icon="pencil"
+          variant="secondary"
           onPress={() => router.push('/assessments/new')}
         />
       </View>

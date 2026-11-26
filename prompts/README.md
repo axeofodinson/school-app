@@ -99,7 +99,7 @@ Deferred: parents (81) and iOS (82).
 
 | ✓ | Prompt | Model | Depends on | Blocked by | Notes |
 |---|---|---|---|---|---|
-| [ ] | [50 Quick-generate assessments (3 clicks) + student exam screen](50-exam-launch-and-take.md) | Opus | 22, 41 | — | Scope widened 2026-11-24: random draw from a blueprint for every assessment type, not only live exams (DECISIONS #67) |
+| [x] | [50 Quick-generate assessments (3 clicks) + student exam screen](50-exam-launch-and-take.md) | Opus | 22, 41 | — | Scope widened 2026-11-24: random draw from a blueprint for every assessment type, not only live exams (DECISIONS #67) **Done 2026-11-26:** core `exams.ts` (draw, clock, join codes, save bookkeeping; +14 tests), draft `db/020_exam_launch.sql` (draw pool, per-student option shuffle, launch/join/end, sweep via pg_cron; smoke EX-1 + 40 parallel students 0 lost), quick create + builder swap + live panel, student exam screen + Tests section (web e2e EX-2). Left for 51/60: live view, item analysis, offline acceptance. |
 | [ ] | [51 Live exam view, item analysis, exam follow-ups, confirm to grades](51-live-view-results.md) | Opus | 50 | — | |
 
 ### Phase 6 — Offline, shared devices, scale
